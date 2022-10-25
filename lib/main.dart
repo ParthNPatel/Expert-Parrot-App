@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
       builder: (context, orientation, deviceType) => GetMaterialApp(
         title: 'Flutter Demo',
         home: const SplashScreen(),
+        debugShowCheckedModeBanner: false,
       ),
     );
   }

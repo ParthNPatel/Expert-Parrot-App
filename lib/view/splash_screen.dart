@@ -16,7 +16,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // TODO: implement initState
     super.initState();
     Future.delayed(Duration(seconds: 2), () {
-      Get.to(() => LoginScreen());
+      Get.off(() => LoginScreen());
     });
   }
 
@@ -24,15 +24,17 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: CommonWidget.commonBackGround(
+          backGround: 'assets/png/background_image.png',
           body: Column(
-        children: [
-          Spacer(),
-          Image.asset('assets/png/splash_logo.png', scale: 2.5),
-          Spacer(),
-          Image.asset('assets/png/med schedule _ Notification.png', scale: 2.5),
-          CommonWidget.commonSizedBox(height: 20)
-        ],
-      )),
+            children: [
+              Spacer(),
+              Image.asset('assets/png/splash_logo.png', scale: 2.5),
+              Spacer(),
+              Image.asset('assets/png/med schedule _ Notification.png',
+                  scale: 2.5),
+              CommonWidget.commonSizedBox(height: 20)
+            ],
+          )),
     );
   }
 }

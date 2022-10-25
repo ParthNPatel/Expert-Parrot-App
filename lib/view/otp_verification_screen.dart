@@ -8,6 +8,8 @@ import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:sizer/sizer.dart';
 
+import 'dashboard_screen.dart';
+
 class OtpVerificationScreen extends StatefulWidget {
   const OtpVerificationScreen({Key? key}) : super(key: key);
 
@@ -71,7 +73,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             ),
           ),
           CommonWidget.commonSizedBox(height: 28),
-          CommonWidget.commonButton(onTap: () {}, text: 'Verify'),
+          CommonWidget.commonButton(
+              onTap: () {
+                Get.offAll(() => DashBoardScreen());
+              },
+              text: 'Verify'),
         ],
       )),
     );

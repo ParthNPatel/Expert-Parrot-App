@@ -13,14 +13,15 @@ class CommonWidget {
     return SizedBox(height: height, width: width);
   }
 
-  static Widget commonBackGround({required Widget body}) {
+  static Widget commonBackGround(
+      {required Widget body, String backGround = ImageConst.backGround}) {
     return Container(
       height: Get.height,
       width: Get.width,
       padding: EdgeInsets.symmetric(horizontal: 18),
       decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage(ImageConst.backGround), fit: BoxFit.fill)),
+          image:
+              DecorationImage(image: AssetImage(backGround), fit: BoxFit.fill)),
       child: SafeArea(child: body),
     );
   }
