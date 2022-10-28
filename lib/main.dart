@@ -1,4 +1,5 @@
 import 'package:expert_parrot_app/view/bottom_nav_screen.dart';
+import 'package:expert_parrot_app/view/medicine_graph_screen.dart';
 import 'package:expert_parrot_app/view/splash_screen.dart';
 import 'package:expert_parrot_app/view/water_graph_screen.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
     return Sizer(
       builder: (context, orientation, deviceType) => GetMaterialApp(
         title: 'Flutter Demo',
-        home: const WaterGraphScreen(),
+        home: const MedicineGraphScreen(),
         // home: const BottomNavScreen(),
         debugShowCheckedModeBanner: false,
       ),

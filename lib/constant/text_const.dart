@@ -7,6 +7,8 @@ class TextConst {
   static String medSchedule = 'Med Schedule';
   static String addAMed = 'Add A Med';
   static String overview = 'Overview';
+  static String quickAddForToady = 'Quick Add For Today';
+  static String today = 'Today';
   static String dailyStepsReport = 'Daily Steps Report';
   static String resetPassword = 'Reset Password';
   static String inzoid = 'Inzoid';
@@ -18,6 +20,7 @@ class TextConst {
   static String enterYourNewPassword = 'Enter Your New Password';
   static String email = 'Email';
   static String water = 'Water';
+  static String medicineReport = 'Medicine Report';
   static String signIn = 'Sign In';
   static String reset = 'Reset';
   static String signUp = 'Sign Up';
