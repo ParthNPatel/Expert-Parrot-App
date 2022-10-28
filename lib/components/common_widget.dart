@@ -87,11 +87,16 @@ class CommonWidget {
     );
   }
 
-  static commonButton({required VoidCallback onTap, required String text}) {
+  static commonButton(
+      {required VoidCallback onTap,
+      required String text,
+      Color color = blackButtonColor1E232C,
+      double radius = 8}) {
     return MaterialButton(
       onPressed: onTap,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      color: CommonColor.blackButtonColor1E232C,
+      shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
+      color: color,
       height: 40.sp,
       child: Padding(
         padding: const EdgeInsets.all(8.0),

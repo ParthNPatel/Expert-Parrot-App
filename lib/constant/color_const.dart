@@ -15,3 +15,7 @@ class CommonColor {
   static Color themRGBO = const Color.fromRGBO(69, 196, 44, 0.13);
   static Color geryB4B4B4 = const Color(0xffB4B4B4);
 }
+
+const greenColor = Color(0xff1BD15D);
+
+const blackButtonColor1E232C = const Color(0xfff1E232C);

@@ -1,5 +1,6 @@
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/view/dashboard_screen.dart';
+import 'package:expert_parrot_app/view/profile_screen.dart';
 import 'package:expert_parrot_app/view/reminder_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -30,7 +31,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
           : pageSelected == 1
               ? ReminderScreen()
               : pageSelected == 2
-                  ? Center(child: Text("Profile"))
+                  ? ProfileScreen()
                   : pageSelected == 3
                       ? Center(child: Text("Chat"))
                       : Center(child: Text("Video")),

@@ -1,5 +1,5 @@
 class TextConst {
-  static String fontFamily = 'DMSans-Regular';
+  static String fontFamily = 'Poppins-Regular';
   static String emailPhone = 'Email/ Phone';
   static String newPassword = 'New Password';
   static String welcomeBackTo = 'Welcome back to';

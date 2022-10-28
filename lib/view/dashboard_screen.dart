@@ -4,6 +4,7 @@ import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 import 'package:get/get.dart';
@@ -104,13 +105,250 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                       CommonText.textBoldWight500(
                           text: TextConst.medSchedule, fontSize: 18.sp),
                       Spacer(),
-                      Image.asset(
-                        ImageConst.addIcon,
-                        scale: 3,
-                      ),
-                      CommonWidget.commonSizedBox(width: 6),
-                      CommonText.textGradient(
-                          text: TextConst.addAMed, fontSize: 15.sp),
+                      InkWell(
+                          onTap: () {
+                            Get.dialog(
+                              Dialog(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Container(
+                                  width: 300.sp,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 15),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            CommonText.textBoldWight500(
+                                              text: "Add Medicine",
+                                              fontSize: 17.sp,
+                                            ),
+                                            InkWell(
+                                              onTap: () {
+                                                Get.back();
+                                              },
+                                              child:
+                                                  CommonWidget.commonSvgPitcher(
+                                                image: ImageConst.close,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      CommonWidget.dottedLineWidget(),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 20),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            CommonText.textBoldWight500(
+                                                text: "Med Info",
+                                                fontSize: 13.sp,
+                                                color: Colors.black),
+                                            SizedBox(
+                                              height: 12,
+                                            ),
+                                            Container(
+                                              height: 40.sp,
+                                              width: double.infinity,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                                color: Color(0xffF8F8F6),
+                                              ),
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 5.w),
+                                                child: Row(
+                                                  children: [
+                                                    SvgPicture.asset(
+                                                      'assets/svg/pills.svg',
+                                                      height: 15.sp,
+                                                      width: 15.sp,
+                                                      color: Color(0xff9B9B9B),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 18,
+                                                    ),
+                                                    CommonText.textBoldWight500(
+                                                        text: "Disprien",
+                                                        fontSize: 13.sp,
+                                                        color: Colors.black),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 20,
+                                            ),
+                                            CommonText.textBoldWight500(
+                                                text: "Strength",
+                                                fontSize: 13.sp,
+                                                color: Colors.black),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  height: 40.sp,
+                                                  // width: double.infinity,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15),
+                                                    color: Color(0xffF8F8F6),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 5.w),
+                                                    child: Row(
+                                                      children: [
+                                                        SvgPicture.asset(
+                                                          'assets/svg/network.svg',
+                                                          height: 15.sp,
+                                                          width: 15.sp,
+                                                          color:
+                                                              Color(0xff9B9B9B),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 18,
+                                                        ),
+                                                        CommonText
+                                                            .textBoldWight500(
+                                                                text: "500 mg",
+                                                                fontSize: 13.sp,
+                                                                color: Colors
+                                                                    .black),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Container(
+                                                  height: 40.sp,
+                                                  // width: double.infinity,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15),
+                                                    color: Color(0xffF8F8F6),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 5.w),
+                                                    child: Row(
+                                                      children: [
+                                                        SvgPicture.asset(
+                                                          'assets/svg/calender.svg',
+                                                          height: 15.sp,
+                                                          width: 15.sp,
+                                                          color:
+                                                              Color(0xff9B9B9B),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 18,
+                                                        ),
+                                                        CommonText
+                                                            .textBoldWight500(
+                                                                text: "30 days",
+                                                                fontSize: 13.sp,
+                                                                color: Colors
+                                                                    .black),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              height: 20,
+                                            ),
+                                            CommonText.textBoldWight500(
+                                                text: "Appearance",
+                                                fontSize: 13.sp,
+                                                color: Colors.black),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Container(
+                                              height: 40.sp,
+                                              width: 85.sp,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                                color: Color(0xffF8F8F6),
+                                              ),
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 5.w),
+                                                child: Row(
+                                                  children: [
+                                                    SvgPicture.asset(
+                                                      'assets/svg/pills.svg',
+                                                      height: 15.sp,
+                                                      width: 15.sp,
+                                                      color: Color(0xff9B9B9B),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 18,
+                                                    ),
+                                                    CommonText.textBoldWight500(
+                                                        text: "Pills",
+                                                        fontSize: 13.sp,
+                                                        color: Colors.black),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(height: 20),
+                                            CommonWidget.commonButton(
+                                                color: greenColor,
+                                                radius: 10,
+                                                onTap: () {
+                                                  Get.back();
+                                                },
+                                                text: "Next")
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                ImageConst.addIcon,
+                                scale: 3,
+                              ),
+                              CommonWidget.commonSizedBox(width: 6),
+                              CommonText.textGradient(
+                                  text: TextConst.addAMed, fontSize: 15.sp),
+                            ],
+                          ))
                     ]),
                     CommonWidget.commonSizedBox(height: 20),
                     ListView.builder(
@@ -154,84 +392,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           onTap: () {
                             if (index == 3) {
                               Get.dialog(
-                                Dialog(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Container(
-                                    height: 300.sp,
-                                    width: 300.sp,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 20, vertical: 15),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              CommonText.textBoldWight500(
-                                                text: "Calculating BMI",
-                                                fontSize: 18.sp,
-                                              ),
-                                              InkWell(
-                                                onTap: () {
-                                                  Get.back();
-                                                },
-                                                child: CommonWidget
-                                                    .commonSvgPitcher(
-                                                  image: ImageConst.close,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                        CommonWidget.dottedLineWidget(),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 20, vertical: 20),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              CommonText.textBoldWight500(
-                                                  text: "Formula:",
-                                                  fontSize: 13.sp,
-                                                  color: Colors.black),
-                                              SizedBox(
-                                                height: 12,
-                                              ),
-                                              CommonText.textBoldWight400(
-                                                  text:
-                                                      "weight (kg) / [height (m)]2",
-                                                  fontSize: 11.sp,
-                                                  color: Colors.black),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                              CommonText.textBoldWight400(
-                                                  text: "or",
-                                                  fontSize: 11.sp,
-                                                  color: Color(0xff979797)),
-                                              SizedBox(
-                                                height: 5,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                                bmiDialog(),
                               );
                             }
                           },
@@ -303,6 +464,212 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     )
                   ],
                 ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Dialog bmiDialog() {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Container(
+        width: 300.sp,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CommonText.textBoldWight500(
+                    text: "Calculating BMI",
+                    fontSize: 17.sp,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Get.back();
+                    },
+                    child: CommonWidget.commonSvgPitcher(
+                      image: ImageConst.close,
+                    ),
+                  )
+                ],
+              ),
+            ),
+            CommonWidget.dottedLineWidget(),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 5,
+                  ),
+                  CommonText.textBoldWight500(
+                      text: "Formula:", fontSize: 13.sp, color: Colors.black),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  CommonText.textBoldWight400(
+                      text: "weight (kg) / [height (m)]2",
+                      fontSize: 11.sp,
+                      color: Colors.black),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  CommonText.textBoldWight400(
+                      text: "or", fontSize: 11.sp, color: Color(0xff979797)),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  CommonText.textBoldWight400(
+                      text:
+                          "[weight (kg) / height (cm) / height (cm)] x 10,000",
+                      fontSize: 11.sp,
+                      color: Colors.black),
+                  SizedBox(
+                    height: 13,
+                  ),
+                  CommonText.textBoldWight500(
+                      text: "Strength", fontSize: 13.sp, color: Colors.black),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        height: 50.sp,
+                        width: 63.sp,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.grey.shade100,
+                                  blurRadius: 4,
+                                  spreadRadius: 1,
+                                  offset: Offset(1, 1))
+                            ]),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CommonText.textBoldWight500(
+                              text: '180cm',
+                              color: greenColor,
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            CommonText.textBoldWight500(
+                              text: 'Height',
+                              fontSize: 10.sp,
+                              color: Color(0xff444444),
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 15,
+                      ),
+                      Container(
+                        height: 50.sp,
+                        width: 63.sp,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.grey.shade100,
+                                  blurRadius: 4,
+                                  spreadRadius: 1,
+                                  offset: Offset(1, 1))
+                            ]),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CommonText.textBoldWight500(
+                              text: '65kg',
+                              color: greenColor,
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            CommonText.textBoldWight500(
+                              text: 'Weight',
+                              fontSize: 10.sp,
+                              color: Color(0xff444444),
+                            )
+                          ],
+                        ),
+                      ),
+                      Spacer(),
+                      Container(
+                        height: 23.sp,
+                        width: 55.sp,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: greenColor),
+                        child: Center(
+                          child: Text(
+                            "Edit",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 13,
+                  ),
+                  CommonText.textBoldWight500(
+                      text: "Result", fontSize: 13.sp, color: Colors.black),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Row(
+                    children: [
+                      CommonText.textBoldWight500(
+                        text: '20.1',
+                        color: greenColor,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      CommonText.textBoldWight500(
+                        text: 'BMI',
+                        fontSize: 10.sp,
+                        color: Color(0xff444444),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Image.asset(
+                        ImageConst.bmiIcon,
+                        scale: 5,
+                        color: Colors.grey.shade300,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  CommonWidget.commonButton(
+                      color: greenColor,
+                      radius: 10,
+                      onTap: () {
+                        Get.back();
+                      },
+                      text: "Next")
+                ],
               ),
             ),
           ],
