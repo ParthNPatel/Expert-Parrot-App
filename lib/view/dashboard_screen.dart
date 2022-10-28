@@ -6,6 +6,7 @@ import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
+import 'package:get/get.dart';
 
 class DashBoardScreen extends StatefulWidget {
   const DashBoardScreen({Key? key}) : super(key: key);
@@ -93,6 +94,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             CommonWidget.commonSizedBox(height: 20),
             Expanded(
               child: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -147,7 +149,92 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                         // 'name_of_count': '78KG',
                         // 'name_of_subject': 'This Week',
                         // 'color': Color(0xffFAF0DB),
+
                         return overViewWidget(
+                          onTap: () {
+                            if (index == 3) {
+                              Get.dialog(
+                                Dialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Container(
+                                    height: 300.sp,
+                                    width: 300.sp,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20, vertical: 15),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              CommonText.textBoldWight500(
+                                                text: "Calculating BMI",
+                                                fontSize: 18.sp,
+                                              ),
+                                              InkWell(
+                                                onTap: () {
+                                                  Get.back();
+                                                },
+                                                child: CommonWidget
+                                                    .commonSvgPitcher(
+                                                  image: ImageConst.close,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        CommonWidget.dottedLineWidget(),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 20, vertical: 20),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              CommonText.textBoldWight500(
+                                                  text: "Formula:",
+                                                  fontSize: 13.sp,
+                                                  color: Colors.black),
+                                              SizedBox(
+                                                height: 12,
+                                              ),
+                                              CommonText.textBoldWight400(
+                                                  text:
+                                                      "weight (kg) / [height (m)]2",
+                                                  fontSize: 11.sp,
+                                                  color: Colors.black),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              CommonText.textBoldWight400(
+                                                  text: "or",
+                                                  fontSize: 11.sp,
+                                                  color: Color(0xff979797)),
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                          },
                           name: overViewData[index]['name'],
                           image: overViewData[index]['image'],
                           medGm: overViewData[index]['name_of_count'],
@@ -326,56 +413,60 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     );
   }
 
-  Container overViewWidget({
+  Widget overViewWidget({
     required String name,
     required String medGm,
     required String type,
     required String image,
     required Color color,
+    required VoidCallback onTap,
   }) {
-    return Container(
-        height: 16.h,
-        padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(
-            color: color, borderRadius: BorderRadius.circular(16)),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CommonWidget.commonSizedBox(width: 12),
-            Expanded(
-              flex: 4,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  CommonText.textBoldWight400(
-                      text: name,
-                      color: CommonColor.blackColor0D0D0D,
-                      fontSize: 14.sp),
-                  CommonWidget.commonSizedBox(height: 12),
-                  CommonText.textBoldWight700(
-                      text: medGm,
-                      color: CommonColor.blackColor1D253C,
-                      fontSize: 18.sp),
-                  CommonText.textBoldWight500(
-                      text: type,
-                      color: CommonColor.blackColor1D253C.withOpacity(0.5),
-                      fontSize: 10.sp),
-                ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+          height: 16.h,
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+              color: color, borderRadius: BorderRadius.circular(16)),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CommonWidget.commonSizedBox(width: 12),
+              Expanded(
+                flex: 4,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    CommonText.textBoldWight400(
+                        text: name,
+                        color: CommonColor.blackColor0D0D0D,
+                        fontSize: 14.sp),
+                    CommonWidget.commonSizedBox(height: 12),
+                    CommonText.textBoldWight700(
+                        text: medGm,
+                        color: CommonColor.blackColor1D253C,
+                        fontSize: 18.sp),
+                    CommonText.textBoldWight500(
+                        text: type,
+                        color: CommonColor.blackColor1D253C.withOpacity(0.5),
+                        fontSize: 10.sp),
+                  ],
+                ),
               ),
-            ),
-            CommonWidget.commonSizedBox(width: 12),
-            Expanded(
-              flex: 2,
-              child: Image.asset(
-                image,
-                scale: 5,
-              ),
-            )
-          ],
-        ));
+              CommonWidget.commonSizedBox(width: 12),
+              Expanded(
+                flex: 2,
+                child: Image.asset(
+                  image,
+                  scale: 5,
+                ),
+              )
+            ],
+          )),
+    );
   }
 
   Row dateShowWidet() {

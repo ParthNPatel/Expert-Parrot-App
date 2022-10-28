@@ -1,3 +1,4 @@
+import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -205,5 +206,18 @@ class CommonWidget {
     } else {
       return '${tm.day} $month ${tm.year}';
     }
+  }
+
+  static Widget dottedLineWidget() {
+    return DottedLine(
+      lineLength: double.infinity,
+      lineThickness: 1.0,
+      dashLength: 10.0,
+      dashColor: Color(0xffbac2ba),
+      dashRadius: 0.0,
+      dashGapLength: 6.0,
+      dashGapColor: Colors.transparent,
+      dashGapRadius: 0.0,
+    );
   }
 }

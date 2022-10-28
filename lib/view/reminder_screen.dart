@@ -59,16 +59,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
             SizedBox(
               height: 13,
             ),
-            DottedLine(
-              lineLength: double.infinity,
-              lineThickness: 1.0,
-              dashLength: 10.0,
-              dashColor: Color(0xffbac2ba),
-              dashRadius: 0.0,
-              dashGapLength: 6.0,
-              dashGapColor: Colors.transparent,
-              dashGapRadius: 0.0,
-            ),
+            CommonWidget.dottedLineWidget(),
             SizedBox(
               height: 23,
             ),

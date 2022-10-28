@@ -17,4 +17,5 @@ class ImageConst {
   static const String med2Icon = 'assets/png/med2.png';
   static const String med3Icon = 'assets/png/med3.png';
   static const String notification = 'assets/png/notification.png';
+  static const String close = 'assets/svg/close.svg';
 }
