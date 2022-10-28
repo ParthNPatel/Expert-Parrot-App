@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import '../components/common_widget.dart';
-import 'delet2.dart';
-import 'delete.dart';
 
 class WaterGraphScreen extends StatefulWidget {
   const WaterGraphScreen({Key? key}) : super(key: key);
