@@ -1,5 +1,6 @@
 import 'package:expert_parrot_app/view/bottom_nav_screen.dart';
 import 'package:expert_parrot_app/view/splash_screen.dart';
+import 'package:expert_parrot_app/view/water_graph_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -25,7 +26,8 @@ class MyApp extends StatelessWidget {
     return Sizer(
       builder: (context, orientation, deviceType) => GetMaterialApp(
         title: 'Flutter Demo',
-        home: const BottomNavScreen(),
+        home: const WaterGraphScreen(),
+        // home: const BottomNavScreen(),
         debugShowCheckedModeBanner: false,
       ),
     );

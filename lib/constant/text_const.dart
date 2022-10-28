@@ -17,13 +17,14 @@ class TextConst {
   static String moreThen6 = 'Enter More Then 6 digit password';
   static String enterYourNewPassword = 'Enter Your New Password';
   static String email = 'Email';
+  static String water = 'Water';
   static String signIn = 'Sign In';
   static String reset = 'Reset';
   static String signUp = 'Sign Up';
   static String saveUpdate = 'Save Update';
   static String forgotPassword = 'Forgot Password?';
   static String continueAsGuest = 'Continue As Guest ';
-  static String canNotBeEmpty = 'Email or Password can not be empty';
+  static String canNotWaterBeEmpty = 'Email or Password can not be empty';
   static String enterValidEmail = 'Please enter valid email';
   static String failed = 'Failed';
   static String verification = 'Verification';
