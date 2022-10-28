@@ -430,7 +430,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       ),
       CommonWidget.commonSizedBox(width: 6),
       Image.asset(
-        'assets/png/Face.png',
+        'assets/png/face.png',
         scale: 4,
       ),
     ]);
