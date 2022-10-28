@@ -49,20 +49,21 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   'Enter the verification code we just sent on your email address.',
               fontSize: 12.sp),
           CommonWidget.commonSizedBox(height: 20),
-          Container(
-            width: 280,
+          Center(
             child: OTPTextField(
               length: 4,
-              width: MediaQuery.of(context).size.width,
+              width: 280.sp,
               fieldWidth: 60,
               keyboardType: TextInputType.number,
+              contentPadding: EdgeInsets.symmetric(vertical: 5),
               style: TextStyle(fontSize: 17),
               textFieldAlignment: MainAxisAlignment.spaceAround,
               fieldStyle: FieldStyle.box,
+              outlineBorderRadius: 7,
               otpFieldStyle: OtpFieldStyle(
                 backgroundColor: Colors.white,
                 borderColor: CommonColor.themColor35C2C1,
-                disabledBorderColor: Colors.transparent,
+                disabledBorderColor: Color(0xffE8ECF4),
                 enabledBorderColor: CommonColor.themColor35C2C1,
                 errorBorderColor: CommonColor.themColor35C2C1,
                 focusBorderColor: CommonColor.themColor35C2C1,

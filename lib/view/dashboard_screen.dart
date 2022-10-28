@@ -16,7 +16,62 @@ class DashBoardScreen extends StatefulWidget {
 class _DashBoardScreenState extends State<DashBoardScreen> {
   TextEditingController _emailOrMobileController = TextEditingController();
   String? verificationCode;
-
+  List overViewData = [
+    {
+      'name': 'Water',
+      'image': ImageConst.glassIcon,
+      'name_of_count': '10',
+      'name_of_subject': 'Glasses',
+      'color': Color(0xffF5E1E9),
+    },
+    {
+      'name': 'Weight',
+      'image': ImageConst.weightIcon,
+      'name_of_count': '78KG',
+      'name_of_subject': 'This Week',
+      'color': Color(0xffFAF0DB),
+    },
+    {
+      'name': 'Weight',
+      'image': ImageConst.hartIcon,
+      'name_of_count': '78',
+      'name_of_subject': 'This Week',
+      'color': Color(0xffDCEDF9),
+    },
+    {
+      'name': 'BMI',
+      'image': ImageConst.bmiIcon,
+      'name_of_count': '78',
+      'name_of_subject': 'Kg/m2',
+      'color': Color.fromRGBO(242, 255, 159, 0.52),
+    },
+  ];
+  List medScheduleList = [
+    {
+      'image': ImageConst.med3Icon,
+      'medName': 'Disprien',
+      'medGm': '300 gm',
+      'iconColor': Color(0xff21D200),
+      'timeOfDay': 'Take 1 Pills (Daily)',
+      'iconColor': Color.fromRGBO(69, 196, 44, 0.13)
+    },
+    {
+      'image': ImageConst.med3Icon,
+      'medName': 'Disprien',
+      'medGm': '300 gm',
+      'iconColor': Color(0xff21D200),
+      'timeOfDay': 'Take 1 Pills (Daily)',
+      'iconColor': Color.fromRGBO(69, 196, 44, 0.13)
+    },
+    {
+      'image': ImageConst.med3Icon,
+      'medName': 'Disprien',
+      'medGm': '300 gm',
+      'iconColor': Color(0xff21D200),
+      'timeOfDay': 'Take 1 Pills (Daily)',
+      'iconColor': Color.fromRGBO(69, 196, 44, 0.13)
+    },
+  ];
   @override
   void dispose() {
     // TODO: implement dispose
@@ -29,32 +84,186 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: CommonWidget.commonBackGround(
-          body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CommonWidget.commonSizedBox(height: 10),
-          userNameWidget(),
-          CommonWidget.commonSizedBox(height: 20),
-          dateShowWidet(),
-          CommonWidget.commonSizedBox(height: 30),
-          Row(children: [
-            CommonText.textBoldWight400(text: 'Med Schedule ', fontSize: 18.sp),
-            Spacer(),
-            Image.asset(
-              ImageConst.addIcon,
-              scale: 3,
+        body: Column(
+          children: [
+            CommonWidget.commonSizedBox(height: 10),
+            userNameWidget(),
+            CommonWidget.commonSizedBox(height: 20),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    dateShowWidet(),
+                    CommonWidget.commonSizedBox(height: 30),
+                    Row(children: [
+                      CommonText.textBoldWight400(
+                          text: 'Med Schedule ', fontSize: 18.sp),
+                      Spacer(),
+                      Image.asset(
+                        ImageConst.addIcon,
+                        scale: 3,
+                      ),
+                      CommonWidget.commonSizedBox(width: 6),
+                      CommonText.textGradient(
+                          text: 'Add A Med', fontSize: 15.sp),
+                    ]),
+                    CommonWidget.commonSizedBox(height: 20),
+                    ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: medScheduleList.length,
+                      itemBuilder: (context, index) {
+                        return medDetailsWidget(
+                            image: ImageConst.med3Icon,
+                            medName: 'Disprien',
+                            medGm: '300 gm',
+                            iconColor: Color(0xff21D200),
+                            timeOfDay: 'Take 1 Pills (Daily)',
+                            color: Color.fromRGBO(69, 196, 44, 0.13));
+                      },
+                    ),
+                    medDetailsWidget(
+                        image: ImageConst.med2Icon,
+                        medName: 'Novolin',
+                        medGm: '10 gm',
+                        iconColor: Color(0xff9255E5),
+                        timeOfDay: 'Twice a Day',
+                        color: Color.fromRGBO(111, 44, 196, 0.13)),
+                    CommonWidget.commonSizedBox(height: 20),
+                    medDetailsWidget(
+                        image: ImageConst.med1Icon,
+                        medName: 'Softgel',
+                        medGm: '300 gm',
+                        timeOfDay: 'Daily',
+                        iconColor: Color(0xffFFDD2C),
+                        color: Color.fromRGBO(193, 196, 44, 0.13)),
+                    CommonWidget.commonSizedBox(height: 20),
+                    CommonText.textBoldWight500(
+                        text: 'Overview',
+                        fontSize: 18.sp,
+                        color: CommonColor.blackColor0D0D0D),
+                    CommonWidget.commonSizedBox(height: 20),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      itemCount: 4,
+                      physics: NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 16,
+                          crossAxisCount: 2,
+                          childAspectRatio: 2 / 1.5),
+                      itemBuilder: (context, index) {
+                        // 'name': 'Weight',
+                        // 'image': 'assets/png/glass_icon.png.png',
+                        // 'name_of_count': '78KG',
+                        // 'name_of_subject': 'This Week',
+                        // 'color': Color(0xffFAF0DB),
+                        return overViewWidget(
+                          name: overViewData[index]['name'],
+                          image: overViewData[index]['image'],
+                          medGm: overViewData[index]['name_of_count'],
+                          type: overViewData[index]['name_of_subject'],
+                          color: overViewData[index]['color'],
+                        );
+                      },
+                    ),
+                    CommonWidget.commonSizedBox(height: 30),
+                    Align(
+                      alignment: Alignment.center,
+                      child: CommonText.textBoldWight500(
+                          text: 'Daily Steps Report',
+                          fontSize: 18.sp,
+                          color: CommonColor.blackColor0D0D0D),
+                    ),
+                    Align(
+                      alignment: Alignment.center,
+                      child: SizedBox(
+                        height: 320,
+                        width: 400,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.asset('assets/png/report_circle.png',
+                                fit: BoxFit.contain),
+                            Positioned(
+                                top: 70,
+                                child: Column(
+                                  children: [
+                                    Image.asset(
+                                      'assets/png/steps_icon.png',
+                                      scale: 4,
+                                    ),
+                                    CommonText.textBoldWight500(
+                                        text: '2508',
+                                        fontSize: 18.sp,
+                                        color: CommonColor.blackColor434343),
+                                  ],
+                                )),
+                            Positioned(
+                              top: 180,
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    reportEventWidget(
+                                        height: 33,
+                                        padding: 10,
+                                        text: '31 kcal',
+                                        image: ImageConst.kcalIcon),
+                                    reportEventWidget(
+                                        padding: 4,
+                                        text: '50 min',
+                                        image: ImageConst.timeIcon),
+                                    reportEventWidget(
+                                        padding: 0,
+                                        height: 43,
+                                        text: '2 km ',
+                                        image: ImageConst.locationIcon),
+                                  ]),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
             ),
-            CommonWidget.commonSizedBox(width: 6),
-            CommonText.textGradient(text: 'Add A Med', fontSize: 15.sp),
-          ]),
-          medDetailsWidget(
-              image: 'assets/png/med1.png',
-              medName: 'Disprien',
-              medGm: '300gm',
-              timeOfDay: 'Take 1 Pills (Daily)',
-              color: Color(0xff21D200)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget reportEventWidget(
+      {required String image,
+      required String text,
+      double height = 40,
+      double padding = 4,
+      double width = 50}) {
+    return Container(
+      height: 60,
+      // color: Colors.lightGreen,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          SizedBox(
+            height: height,
+            width: width,
+            child: Image.asset(
+              image,
+              // scale: 3.5,
+            ),
+          ),
+          Positioned(
+              top: 50,
+              child: CommonText.textBoldWight500(
+                  text: text,
+                  fontSize: 9.sp,
+                  color: CommonColor.blackColor616161.withOpacity(0.7)))
         ],
-      )),
+      ),
     );
   }
 
@@ -63,9 +272,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       required String medGm,
       required String timeOfDay,
       required Color color,
+      required Color iconColor,
       required String image}) {
     return Container(
-        height: 16.h,
+        // height: 16.h,
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
             color: color.withOpacity(0.1),
@@ -79,7 +289,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                   color: Colors.white,
                 ),
                 child: Image.asset(
-                  'assets/png/med1.png',
+                  image,
                   scale: 5,
                 )),
             CommonWidget.commonSizedBox(width: 16),
@@ -110,10 +320,62 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                   Container(),
                   Icon(
                     Icons.check_circle_outlined,
-                    color: color,
+                    color: iconColor,
                     size: 22.sp,
                   ),
                 ]),
+          ],
+        ));
+  }
+
+  Container overViewWidget({
+    required String name,
+    required String medGm,
+    required String type,
+    required String image,
+    required Color color,
+  }) {
+    return Container(
+        height: 16.h,
+        padding: EdgeInsets.all(16),
+        decoration: BoxDecoration(
+            color: color, borderRadius: BorderRadius.circular(16)),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            CommonWidget.commonSizedBox(width: 12),
+            Expanded(
+              flex: 4,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  CommonText.textBoldWight400(
+                      text: name,
+                      color: CommonColor.blackColor0D0D0D,
+                      fontSize: 14.sp),
+                  CommonWidget.commonSizedBox(height: 12),
+                  CommonText.textBoldWight700(
+                      text: medGm,
+                      color: CommonColor.blackColor1D253C,
+                      fontSize: 18.sp),
+                  CommonText.textBoldWight500(
+                      text: type,
+                      color: CommonColor.blackColor1D253C.withOpacity(0.5),
+                      fontSize: 10.sp),
+                ],
+              ),
+            ),
+            CommonWidget.commonSizedBox(width: 12),
+            Expanded(
+              flex: 2,
+              child: Image.asset(
+                image,
+                scale: 5,
+              ),
+            )
           ],
         ));
   }
@@ -144,7 +406,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
   Row userNameWidget() {
     return Row(children: [
-      CommonText.textBoldWight400(text: 'Good Moring, ', fontSize: 18.sp),
+      CommonText.textBoldWight400(text: 'Good Morning, ', fontSize: 18.sp),
       CommonText.textBoldWight400(text: 'Alex!', fontSize: 18.sp),
       Spacer(),
       Image.asset('assets/png/notification.png'),
