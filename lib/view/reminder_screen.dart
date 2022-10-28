@@ -1,6 +1,5 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
-import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

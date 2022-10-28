@@ -1,6 +1,7 @@
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
+import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -33,16 +34,16 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       'color': Color(0xffFAF0DB),
     },
     {
-      'name': 'Weight',
+      'name': 'Heart Rate',
       'image': ImageConst.hartIcon,
-      'name_of_count': '78',
+      'name_of_count': '96',
       'name_of_subject': 'This Week',
       'color': Color(0xffDCEDF9),
     },
     {
       'name': 'BMI',
       'image': ImageConst.bmiIcon,
-      'name_of_count': '78',
+      'name_of_count': '20.1',
       'name_of_subject': 'Kg/m2',
       'color': Color.fromRGBO(242, 255, 159, 0.52),
     },
@@ -98,8 +99,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     dateShowWidet(),
                     CommonWidget.commonSizedBox(height: 30),
                     Row(children: [
-                      CommonText.textBoldWight400(
-                          text: 'Med Schedule ', fontSize: 18.sp),
+                      CommonText.textBoldWight500(
+                          text: TextConst.medSchedule, fontSize: 18.sp),
                       Spacer(),
                       Image.asset(
                         ImageConst.addIcon,
@@ -107,7 +108,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                       ),
                       CommonWidget.commonSizedBox(width: 6),
                       CommonText.textGradient(
-                          text: 'Add A Med', fontSize: 15.sp),
+                          text: TextConst.addAMed, fontSize: 15.sp),
                     ]),
                     CommonWidget.commonSizedBox(height: 20),
                     ListView.builder(
@@ -127,7 +128,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     ),
                     CommonWidget.commonSizedBox(height: 20),
                     CommonText.textBoldWight500(
-                        text: 'Overview',
+                        text: TextConst.overview,
                         fontSize: 18.sp,
                         color: CommonColor.blackColor0D0D0D),
                     CommonWidget.commonSizedBox(height: 20),
@@ -159,7 +160,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     Align(
                       alignment: Alignment.center,
                       child: CommonText.textBoldWight500(
-                          text: 'Daily Steps Report',
+                          text: TextConst.dailyStepsReport,
                           fontSize: 18.sp,
                           color: CommonColor.blackColor0D0D0D),
                     ),
@@ -421,8 +422,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
   Row userNameWidget() {
     return Row(children: [
-      CommonText.textBoldWight400(text: 'Good Morning, ', fontSize: 18.sp),
-      CommonText.textBoldWight400(text: 'Alex!', fontSize: 18.sp),
+      CommonText.textBoldWight400(text: 'Good Morning, ', fontSize: 16.sp),
+      CommonText.textBoldWight500(text: 'Alex!', fontSize: 18.sp),
       Spacer(),
       Image.asset(
         ImageConst.notification,
@@ -430,7 +431,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       ),
       CommonWidget.commonSizedBox(width: 6),
       Image.asset(
-        'assets/png/Face.png',
+        'assets/png/face.png',
         scale: 4,
       ),
     ]);
