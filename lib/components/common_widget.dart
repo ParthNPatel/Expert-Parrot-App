@@ -38,7 +38,7 @@ class CommonWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(10)),
       child: IconButton(
-        icon: SvgPicture.asset(ImageConst.backArrow),
+        icon: SvgPicture.asset(image),
         onPressed: onTap,
       ),
     );
