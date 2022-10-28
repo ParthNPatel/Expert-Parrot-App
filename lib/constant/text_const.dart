@@ -4,6 +4,10 @@ class TextConst {
   static String newPassword = 'New Password';
   static String welcomeBackTo = 'Welcome back to';
   static String updatePassword = 'Update Password';
+  static String medSchedule = 'Med Schedule';
+  static String addAMed = 'Add A Med';
+  static String overview = 'Overview';
+  static String dailyStepsReport = 'Daily Steps Report';
   static String resetPassword = 'Reset Password';
   static String inzoid = 'Inzoid';
   static String RegisteredMobileOrEmail =
