@@ -1,4 +1,5 @@
 import 'package:expert_parrot_app/components/common_widget.dart';
+import 'package:expert_parrot_app/view/depandent_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -339,7 +340,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               text: 'Activity History',
             ),
             CommonListTile(
-              onTap: () {},
+              onTap: () {
+                Get.to(() => DependentScreen());
+              },
               image: 'assets/svg/dependent.svg',
               text: 'Depandent',
             ),

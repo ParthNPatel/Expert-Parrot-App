@@ -76,7 +76,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                 (index) => Padding(
                     padding: EdgeInsets.only(
                         right: index == 1 ? 30 : 0, left: index == 2 ? 30 : 0),
-                    child: InkWell(
+                    child: InkResponse(
                       splashColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       onTap: () {

@@ -1485,16 +1485,22 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                         ),
                       ),
                       Spacer(),
-                      Container(
-                        height: 23.sp,
-                        width: 55.sp,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: CommonColor.greenColor),
-                        child: Center(
-                          child: Text(
-                            "Edit",
-                            style: TextStyle(color: Colors.white),
+                      GestureDetector(
+                        onTap: () async {
+                          Get.back();
+                          Get.dialog(await enterHeightWwightDialog());
+                        },
+                        child: Container(
+                          height: 23.sp,
+                          width: 55.sp,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: CommonColor.greenColor),
+                          child: Center(
+                            child: Text(
+                              "Edit",
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                         ),
                       )

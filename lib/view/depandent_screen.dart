@@ -103,6 +103,9 @@ class _DependentScreenState extends State<DependentScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    SizedBox(
+                      height: 15,
+                    ),
                     Align(
                       alignment: Alignment.center,
                       child: Container(
