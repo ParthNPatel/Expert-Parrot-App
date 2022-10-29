@@ -38,8 +38,10 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
             ),
             CommonWidget.commonSizedBox(height: 25),
             tabWidget(),
+            CommonWidget.commonSizedBox(height: 25),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(children: [
                   Container(
@@ -64,17 +66,74 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
                       color: CommonColor.blackColor353535,
                       fontSize: 14.sp),
                 ]),
+                Column(children: [
+                  Row(
+                    children: [
+                      CommonText.textBoldWight400(
+                          text: '09:28 AM',
+                          color: CommonColor.blackColor353535,
+                          fontSize: 13.sp),
+                      CommonWidget.commonSvgPitcher(
+                        image: ImageConst.verified,
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      CommonText.textBoldWight400(
+                          text: '09:28 AM',
+                          color: CommonColor.blackColor353535,
+                          fontSize: 13.sp),
+                      CommonWidget.commonSvgPitcher(
+                        image: ImageConst.verified,
+                      )
+                    ],
+                  ),
+                ]),
+              ],
+            ),
+            CommonWidget.commonSizedBox(height: 6),
+            CommonWidget.commonSvgPitcher(
+              image: 'assets/svg/Line 5.svg',
+            ),
+            CommonWidget.commonSizedBox(height: 6),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(children: [
+                  Container(
+                      height: 28.sp,
+                      width: 28.sp,
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          new BoxShadow(
+                            color: Colors.grey.shade200,
+                            blurRadius: 20.0,
+                          ),
+                        ],
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                      ),
+                      child: Image.asset(ImageConst.med1Icon)),
+                  CommonWidget.commonSizedBox(width: 8),
+                  CommonText.textBoldWight500(
+                      text: 'Disprien',
+                      color: CommonColor.blackColor353535,
+                      fontSize: 14.sp),
+                ]),
                 Row(
                   children: [
-                    CommonText.textBoldWight500(
-                        text: '09:28 AM',
+                    CommonText.textBoldWight400(
+                        text: '01:30 PM',
                         color: CommonColor.blackColor353535,
                         fontSize: 13.sp),
                     CommonWidget.commonSvgPitcher(
                       image: ImageConst.verified,
                     )
                   ],
-                )
+                ),
               ],
             ),
           ],
