@@ -1,7 +1,9 @@
 import 'package:expert_parrot_app/view/bottom_nav_screen.dart';
 import 'package:expert_parrot_app/view/dashboard_screen.dart';
+import 'package:expert_parrot_app/view/depandent_screen.dart';
 import 'package:expert_parrot_app/view/medicine_graph_screen.dart';
 import 'package:expert_parrot_app/view/video_screen.dart';
+import 'package:expert_parrot_app/view/viedeo_play_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -30,7 +32,8 @@ class MyApp extends StatelessWidget {
       builder: (context, orientation, deviceType) => GetMaterialApp(
         initialBinding: BaseBindings(),
         title: 'Expert Parrot',
-        home: const BottomNavScreen(),
+        home: const DependentScreen(),
+        // home: const VideoScreen(),
         // home: const BottomNavScreen(),
         debugShowCheckedModeBanner: false,
       ),

@@ -5,10 +5,12 @@ class TextConst {
   static String welcomeBackTo = 'Welcome back to';
   static String updatePassword = 'Update Password';
   static String medSchedule = 'Med Schedule';
+  static String videos = 'Videos';
   static String addAMed = 'Add A Med';
   static String overview = 'Overview';
   static String quickAddForToady = 'Quick Add For Today';
   static String today = 'Today';
+  static String share = 'Share';
   static String dailyStepsReport = 'Daily Steps Report';
   static String resetPassword = 'Reset Password';
   static String inzoid = 'Inzoid';
@@ -56,4 +58,5 @@ class TextConst {
   static String season = 'Season';
   static String material = 'Material';
   static String color = 'Color';
+  static String videoBody = 'Video Body';
 }

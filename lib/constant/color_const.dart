@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class CommonColor {
   static Color borderColorE8ECF4 = const Color(0xffE8ECF4);
+  static Color whiteColorEDEDED = const Color(0xffEDEDED);
   static Color themColor35C2C1 = const Color(0xff35C2C1);
   static Color blackColor0D0D0D = const Color(0xff0D0D0D);
   static Color blackColor353535 = const Color(0xff353535);
@@ -20,6 +21,8 @@ class CommonColor {
   static Color gery696969 = const Color(0xff696969);
   static Color gery8A8A8A = const Color(0xff8A8A8A);
   static Color geryD9D9D9 = const Color(0xffD9D9D9);
+  static Color gery787878 = const Color(0xff787878);
+  static Color gery636363 = const Color(0xff636363);
 }
 
 const greenColor = Color(0xff1BD15D);

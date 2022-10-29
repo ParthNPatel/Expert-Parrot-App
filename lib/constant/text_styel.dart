@@ -3,6 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 
 class CommonText {
+  static textBoldWight300(
+      {required String text,
+      double? fontSize,
+      Color? color,
+      FontWeight fontWeight = FontWeight.w300}) {
+    return Text(
+      text,
+      style: TextStyle(
+          fontWeight: fontWeight,
+          fontSize: fontSize,
+          color: color,
+          fontFamily: TextConst.fontFamily),
+    );
+  }
+
   static textBoldWight400(
       {required String text,
       double? fontSize,
