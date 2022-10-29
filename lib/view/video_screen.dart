@@ -1,6 +1,8 @@
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
+import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
+import 'package:expert_parrot_app/view/viedeo_play_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
@@ -14,6 +16,11 @@ class VideoScreen extends StatefulWidget {
 }
 
 class _VideoScreenState extends State<VideoScreen> {
+  List<String> imageList = [
+    ImageConst.video1Image,
+    ImageConst.video2Image,
+    ImageConst.video3Image,
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,13 +40,98 @@ class _VideoScreenState extends State<VideoScreen> {
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16)),
-                        height: 300,
-                        child: Column(children: []),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Get.to(() => VideoPlayScreen());
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8)),
+                              height: 210,
+                              child: Column(children: [
+                                Container(
+                                    width: Get.width,
+                                    height: 150,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(8),
+                                          topRight: Radius.circular(8)),
+                                      child: Image.asset(
+                                        imageList[index],
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 5),
+                                  child: Row(children: [
+                                    CommonText.textBoldWight400(
+                                        text: TextConst.videoBody,
+                                        fontSize: 13.sp,
+                                        color: Colors.black),
+                                    Spacer(),
+                                    Image.asset(
+                                      ImageConst.doubleArrow,
+                                      scale: 4,
+                                    )
+                                  ]),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 0),
+                                  child: Row(children: [
+                                    CommonText.textBoldWight500(
+                                        text: 'Video Short description Here',
+                                        fontSize: 9.sp,
+                                        color: CommonColor.gery787878),
+                                    Spacer(),
+                                    CommonText.textBoldWight500(
+                                        text: '09:35 AM',
+                                        fontSize: 9.sp,
+                                        color: CommonColor.gery787878),
+                                  ]),
+                                ),
+                              ]),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 30, vertical: 10),
+                            child: Row(
+                              children: [
+                                Column(children: [
+                                  CommonWidget.commonSvgPitcher(
+                                      height: 20,
+                                      image: ImageConst.hartBorderIcon,
+                                      color: CommonColor.gery636363),
+                                  CommonText.textBoldWight400(
+                                      text: '143K',
+                                      fontSize: 13.sp,
+                                      color: CommonColor.gery636363),
+                                ]),
+                                Spacer(),
+                                Column(children: [
+                                  Image.asset(ImageConst.shareIcon,
+                                      scale: 4, color: CommonColor.gery636363),
+
+                                  // CommonWidget.commonSvgPitcher(
+                                  //     height: 20,
+                                  //     image: ImageConst.shareIcon,
+                                  //     color: CommonColor.gery636363),
+                                  CommonText.textBoldWight400(
+                                      text: TextConst.share,
+                                      fontSize: 13.sp,
+                                      color: CommonColor.gery636363),
+                                ]),
+                              ],
+                            ),
+                          )
+                        ],
                       ),
                     );
                   },

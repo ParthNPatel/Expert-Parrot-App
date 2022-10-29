@@ -7,6 +7,7 @@ class ImageConst {
   static const String bmiIcon = 'assets/png/bmi_icon.png';
   static const String glassIcon = 'assets/png/glass_icon.png.png';
   static const String hartIcon = 'assets/png/hart_icon.png.png';
+  static const String hartBorderIcon = 'assets/svg/Heart.svg';
   static const String kcalIcon = 'assets/png/kcal_icon.png';
   static const String locationIcon = 'assets/png/location_icon.png';
   static const String reportCircleIcon = 'assets/png/report_circle.png';
@@ -22,9 +23,15 @@ class ImageConst {
   static const String capsule2 = 'assets/svg/capsul2.svg';
   static const String capsule3 = 'assets/svg/capsul3.svg';
   static const String capsule4 = 'assets/svg/capsul4.svg';
+  static const String video1Image = 'assets/png/video1_image.png';
+  static const String video2Image = 'assets/png/video2_image.png';
+  static const String video3Image = 'assets/png/video3_image.png';
   static const String doubleTickIcon = 'assets/png/double_tick.png';
   static const String eyesIcon = 'assets/png/Frame.png';
   static const String water1Icon = 'assets/png/water 1.png';
   static const String plasticBottle = 'assets/png/plastic-bottle 1.png';
   static const String glassOfWater = 'assets/png/glass-of-water 1.png';
+  static const String doubleArrow = 'assets/png/double_arrow.png';
+  static const String shareIcon = 'assets/png/share_icon.png';
+  static const String closeIcon = 'assets/svg/close_icon.svg';
 }
