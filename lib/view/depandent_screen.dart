@@ -4,7 +4,9 @@ import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
+import 'package:expert_parrot_app/view/medical_report_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 
@@ -122,8 +124,11 @@ class _DependentScreenState extends State<DependentScreen> {
                         ),
                       ),
                     ),
-                    GestureDetector(
-                        onTap: () {}, child: Image.asset(ImageConst.checkbox)),
+                    InkWell(
+                        onTap: () {
+                          Get.to(() => MedicalReportScreen());
+                        },
+                        child: Image.asset(ImageConst.checkbox)),
                     CommonWidget.commonSizedBox(height: 10),
                     Align(
                         child: CommonText.textBoldWight500(

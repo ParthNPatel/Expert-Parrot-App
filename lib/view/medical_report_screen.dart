@@ -261,7 +261,8 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
           },
         ),
         Spacer(),
-        CommonText.textBoldWight500(text: "Reminder", fontSize: 18.sp),
+        CommonText.textBoldWight500(
+            text: "Ella Medical Report", fontSize: 18.sp),
         Spacer(),
       ],
     );
