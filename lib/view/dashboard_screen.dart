@@ -169,10 +169,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     dateShowWidet(),
-                    CommonWidget.commonSizedBox(height: 30),
+                    CommonWidget.commonSizedBox(height: 20),
                     Row(children: [
                       CommonText.textBoldWight500(
-                          text: TextConst.medSchedule, fontSize: 18.sp),
+                          text: TextConst.medSchedule, fontSize: 17.sp),
                       Spacer(),
                       InkWell(
                           onTap: () {
@@ -191,7 +191,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               ),
                               CommonWidget.commonSizedBox(width: 6),
                               CommonText.textGradient(
-                                  text: TextConst.addAMed, fontSize: 15.sp),
+                                  text: TextConst.addAMed, fontSize: 14.sp),
                             ],
                           ))
                     ]),
@@ -214,7 +214,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     CommonWidget.commonSizedBox(height: 20),
                     CommonText.textBoldWight500(
                         text: TextConst.overview,
-                        fontSize: 18.sp,
+                        fontSize: 17.sp,
                         color: CommonColor.blackColor0D0D0D),
                     CommonWidget.commonSizedBox(height: 20),
                     GridView.builder(
@@ -1598,14 +1598,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       child: Container(
           // height: 16.h,
 
-          padding: EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 8),
+          padding: EdgeInsets.only(top: 10, bottom: 10, left: 16, right: 8),
           decoration: BoxDecoration(
               color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(16)),
           child: Row(
             children: [
               Container(
-                  padding: EdgeInsets.all(14),
+                  height: 30.sp,
+                  padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.white,
@@ -1625,13 +1626,13 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           CommonText.textBoldWight500(
                               text: medName,
                               color: CommonColor.blackColor0D0D0D,
-                              fontSize: 18.sp),
+                              fontSize: 15.sp),
                           Icon(Icons.more_vert, color: CommonColor.geryB4B4B4),
                         ]),
                     CommonText.textBoldWight400(
                         text: medGm,
                         color: CommonColor.blackColor0D0D0D,
-                        fontSize: 14.sp),
+                        fontSize: 11.sp),
                     CommonWidget.commonSizedBox(height: 10),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1639,7 +1640,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           CommonText.textBoldWight400(
                               text: timeOfDay,
                               color: CommonColor.blackColor0D0D0D,
-                              fontSize: 12.sp),
+                              fontSize: 9.sp),
                           Container(
                               height: 18.sp,
                               width: 18.sp,
@@ -1675,7 +1676,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       onTap: onTap,
       child: Container(
           height: 16.h,
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
           decoration: BoxDecoration(
               color: color, borderRadius: BorderRadius.circular(16)),
           child: Column(
@@ -1686,8 +1687,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
               CommonText.textBoldWight400(
                   text: name,
                   color: CommonColor.blackColor0D0D0D,
-                  fontSize: 14.sp),
-              CommonWidget.commonSizedBox(height: 4),
+                  fontSize: 13.sp),
+              CommonWidget.commonSizedBox(height: 8),
               Row(
                 children: [
                   Expanded(
@@ -1695,15 +1696,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          CommonText.textBoldWight700(
+                          CommonText.textBoldWight600(
                               text: medGm,
                               color: CommonColor.blackColor1D253C,
-                              fontSize: 18.sp),
+                              fontSize: 15.sp),
                           CommonText.textBoldWight500(
                               text: type,
                               color:
                                   CommonColor.blackColor1D253C.withOpacity(0.5),
-                              fontSize: 10.sp),
+                              fontSize: 9.sp),
                         ]),
                   ),
                   Expanded(
