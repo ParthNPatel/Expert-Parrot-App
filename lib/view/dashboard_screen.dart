@@ -76,6 +76,16 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       'color': Color.fromRGBO(193, 196, 44, 0.13)
     },
   ];
+
+  int medicineSelected = 0;
+
+  List<String> medicines = [
+    'Duloxetine',
+    'Disprin',
+    'Duloxetine',
+    'Dicyclomine',
+    'Desvenlafaxine',
+  ];
   @override
   void dispose() {
     // TODO: implement dispose
@@ -107,25 +117,28 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                       Spacer(),
                       InkWell(
                           onTap: () {
-                            Get.dialog(
-                              Dialog(
+                            Get.dialog(StatefulBuilder(
+                              builder: (context, setState) => Dialog(
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Container(
+                                  height: 400.sp,
                                   width: 300.sp,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Column(
-                                    mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20, vertical: 15),
+                                        padding: EdgeInsets.only(
+                                            left: 20,
+                                            top: 13,
+                                            right: 20,
+                                            bottom: 13),
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
@@ -147,196 +160,322 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                         ),
                                       ),
                                       CommonWidget.dottedLineWidget(),
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 20, vertical: 20),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            CommonText.textBoldWight500(
-                                                text: "Med Info",
-                                                fontSize: 13.sp,
-                                                color: Colors.black),
-                                            SizedBox(
-                                              height: 12,
-                                            ),
-                                            Container(
-                                              height: 40.sp,
-                                              width: double.infinity,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                                color: Color(0xffF8F8F6),
-                                              ),
-                                              child: Padding(
+                                      Expanded(
+                                        child: SingleChildScrollView(
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
                                                 padding: EdgeInsets.symmetric(
-                                                    horizontal: 5.w),
-                                                child: Row(
+                                                    horizontal: 20,
+                                                    vertical: 20),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
-                                                    SvgPicture.asset(
-                                                      'assets/svg/pills.svg',
-                                                      height: 15.sp,
-                                                      width: 15.sp,
-                                                      color: Color(0xff9B9B9B),
-                                                    ),
                                                     SizedBox(
-                                                      width: 18,
+                                                      height: 5,
                                                     ),
                                                     CommonText.textBoldWight500(
-                                                        text: "Disprien",
+                                                        text: "Med Info",
                                                         fontSize: 13.sp,
                                                         color: Colors.black),
+                                                    SizedBox(
+                                                      height: 12,
+                                                    ),
+                                                    Theme(
+                                                      data: Theme.of(context)
+                                                          .copyWith(
+                                                              dividerColor: Colors
+                                                                  .transparent),
+                                                      child: ExpansionTile(
+                                                        title: Container(
+                                                          height: 40.sp,
+                                                          width:
+                                                              double.infinity,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        15),
+                                                            color: Color(
+                                                                0xffF8F8F6),
+                                                          ),
+                                                          child: Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        5.w),
+                                                            child: Padding(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          10,
+                                                                      vertical:
+                                                                          10),
+                                                              child: Row(
+                                                                children: [
+                                                                  SvgPicture
+                                                                      .asset(
+                                                                    'assets/svg/pills.svg',
+                                                                    height:
+                                                                        15.sp,
+                                                                    width:
+                                                                        15.sp,
+                                                                    color: Color(
+                                                                        0xff9B9B9B),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width: 18,
+                                                                  ),
+                                                                  CommonText.textBoldWight500(
+                                                                      text:
+                                                                          "${medicines[medicineSelected]}",
+                                                                      fontSize:
+                                                                          13.sp,
+                                                                      color: Colors
+                                                                          .black),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        children: List.generate(
+                                                            medicines.length,
+                                                            (index) =>
+                                                                GestureDetector(
+                                                                  onTap: () {
+                                                                    setState(
+                                                                        () {
+                                                                      medicineSelected =
+                                                                          index;
+                                                                    });
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    color: medicineSelected ==
+                                                                            index
+                                                                        ? Color(
+                                                                            0xffe1f9ea)
+                                                                        : Colors
+                                                                            .white,
+                                                                    padding: EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                            10,
+                                                                        vertical:
+                                                                            10),
+                                                                    child: Row(
+                                                                      children: [
+                                                                        Container(
+                                                                          height:
+                                                                              18,
+                                                                          width:
+                                                                              18,
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            border:
+                                                                                Border.all(color: medicineSelected == index ? Colors.transparent : Color(0xffd8d8d8)),
+                                                                            color: medicineSelected == index
+                                                                                ? greenColor
+                                                                                : Colors.white,
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(3),
+                                                                          ),
+                                                                          child: Center(
+                                                                              child: Icon(
+                                                                            Icons.check,
+                                                                            size:
+                                                                                10,
+                                                                            color:
+                                                                                Colors.white,
+                                                                          )),
+                                                                        ),
+                                                                        SizedBox(
+                                                                          width:
+                                                                              10,
+                                                                        ),
+                                                                        CommonText.textBoldWight500(
+                                                                            text:
+                                                                                medicines[index])
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                )),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 20,
+                                                    ),
+                                                    CommonText.textBoldWight500(
+                                                        text: "Strength",
+                                                        fontSize: 13.sp,
+                                                        color: Colors.black),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Container(
+                                                          height: 40.sp,
+                                                          // width: double.infinity,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        15),
+                                                            color: Color(
+                                                                0xffF8F8F6),
+                                                          ),
+                                                          child: Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        5.w),
+                                                            child: Row(
+                                                              children: [
+                                                                SvgPicture
+                                                                    .asset(
+                                                                  'assets/svg/network.svg',
+                                                                  height: 15.sp,
+                                                                  width: 15.sp,
+                                                                  color: Color(
+                                                                      0xff9B9B9B),
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 18,
+                                                                ),
+                                                                CommonText.textBoldWight500(
+                                                                    text:
+                                                                        "500 mg",
+                                                                    fontSize:
+                                                                        13.sp,
+                                                                    color: Colors
+                                                                        .black),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 10,
+                                                        ),
+                                                        Container(
+                                                          height: 40.sp,
+                                                          // width: double.infinity,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        15),
+                                                            color: Color(
+                                                                0xffF8F8F6),
+                                                          ),
+                                                          child: Padding(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        5.w),
+                                                            child: Row(
+                                                              children: [
+                                                                SvgPicture
+                                                                    .asset(
+                                                                  'assets/svg/calender.svg',
+                                                                  height: 15.sp,
+                                                                  width: 15.sp,
+                                                                  color: Color(
+                                                                      0xff9B9B9B),
+                                                                ),
+                                                                SizedBox(
+                                                                  width: 18,
+                                                                ),
+                                                                CommonText.textBoldWight500(
+                                                                    text:
+                                                                        "30 days",
+                                                                    fontSize:
+                                                                        13.sp,
+                                                                    color: Colors
+                                                                        .black),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      height: 20,
+                                                    ),
+                                                    CommonText.textBoldWight500(
+                                                        text: "Appearance",
+                                                        fontSize: 13.sp,
+                                                        color: Colors.black),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Container(
+                                                      height: 40.sp,
+                                                      width: 85.sp,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(15),
+                                                        color:
+                                                            Color(0xffF8F8F6),
+                                                      ),
+                                                      child: Padding(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal:
+                                                                    5.w),
+                                                        child: Row(
+                                                          children: [
+                                                            SvgPicture.asset(
+                                                              'assets/svg/pills.svg',
+                                                              height: 15.sp,
+                                                              width: 15.sp,
+                                                              color: Color(
+                                                                  0xff9B9B9B),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 18,
+                                                            ),
+                                                            CommonText
+                                                                .textBoldWight500(
+                                                                    text:
+                                                                        "Pills",
+                                                                    fontSize:
+                                                                        13.sp,
+                                                                    color: Colors
+                                                                        .black),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 20),
+                                                    CommonWidget.commonButton(
+                                                        color: greenColor,
+                                                        radius: 10,
+                                                        onTap: () {
+                                                          Get.back();
+                                                        },
+                                                        text: "Next")
                                                   ],
                                                 ),
                                               ),
-                                            ),
-                                            SizedBox(
-                                              height: 20,
-                                            ),
-                                            CommonText.textBoldWight500(
-                                                text: "Strength",
-                                                fontSize: 13.sp,
-                                                color: Colors.black),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Row(
-                                              children: [
-                                                Container(
-                                                  height: 40.sp,
-                                                  // width: double.infinity,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15),
-                                                    color: Color(0xffF8F8F6),
-                                                  ),
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 5.w),
-                                                    child: Row(
-                                                      children: [
-                                                        SvgPicture.asset(
-                                                          'assets/svg/network.svg',
-                                                          height: 15.sp,
-                                                          width: 15.sp,
-                                                          color:
-                                                              Color(0xff9B9B9B),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 18,
-                                                        ),
-                                                        CommonText
-                                                            .textBoldWight500(
-                                                                text: "500 mg",
-                                                                fontSize: 13.sp,
-                                                                color: Colors
-                                                                    .black),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Container(
-                                                  height: 40.sp,
-                                                  // width: double.infinity,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15),
-                                                    color: Color(0xffF8F8F6),
-                                                  ),
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 5.w),
-                                                    child: Row(
-                                                      children: [
-                                                        SvgPicture.asset(
-                                                          'assets/svg/calender.svg',
-                                                          height: 15.sp,
-                                                          width: 15.sp,
-                                                          color:
-                                                              Color(0xff9B9B9B),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 18,
-                                                        ),
-                                                        CommonText
-                                                            .textBoldWight500(
-                                                                text: "30 days",
-                                                                fontSize: 13.sp,
-                                                                color: Colors
-                                                                    .black),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              height: 20,
-                                            ),
-                                            CommonText.textBoldWight500(
-                                                text: "Appearance",
-                                                fontSize: 13.sp,
-                                                color: Colors.black),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Container(
-                                              height: 40.sp,
-                                              width: 85.sp,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                                color: Color(0xffF8F8F6),
-                                              ),
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 5.w),
-                                                child: Row(
-                                                  children: [
-                                                    SvgPicture.asset(
-                                                      'assets/svg/pills.svg',
-                                                      height: 15.sp,
-                                                      width: 15.sp,
-                                                      color: Color(0xff9B9B9B),
-                                                    ),
-                                                    SizedBox(
-                                                      width: 18,
-                                                    ),
-                                                    CommonText.textBoldWight500(
-                                                        text: "Pills",
-                                                        fontSize: 13.sp,
-                                                        color: Colors.black),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(height: 20),
-                                            CommonWidget.commonButton(
-                                                color: greenColor,
-                                                radius: 10,
-                                                onTap: () {
-                                                  Get.back();
-                                                },
-                                                text: "Next")
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
-                            );
+                            )).then((value) {
+                              setState(() {});
+                            });
                           },
                           child: Row(
                             children: [
