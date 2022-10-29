@@ -45,6 +45,7 @@ dependencies:
   intl: ^0.17.0
   fl_chart: ^0.55.2
   video_player: ^2.4.7
+  get_storage: ^2.0.3
 
 
 

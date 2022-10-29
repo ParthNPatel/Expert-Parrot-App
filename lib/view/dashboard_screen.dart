@@ -1,8 +1,10 @@
+import 'dart:math';
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
+import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -19,6 +21,10 @@ class DashBoardScreen extends StatefulWidget {
 
 class _DashBoardScreenState extends State<DashBoardScreen> {
   TextEditingController _emailOrMobileController = TextEditingController();
+
+  TextEditingController _heightController = TextEditingController();
+  TextEditingController _weightController = TextEditingController();
+
   String? verificationCode;
   DateTime dayOf = DateTime.now();
   List overViewData = [
@@ -227,11 +233,19 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                         // 'color': Color(0xffFAF0DB),
 
                         return overViewWidget(
-                          onTap: () {
+                          onTap: () async {
                             if (index == 3) {
-                              Get.dialog(
-                                bmiDialog(),
-                              );
+                              if (GetStorageServices.getUserBMI() != null) {
+                                Get.dialog(
+                                  bmiDialog(),
+                                );
+                              } else {
+                                Get.dialog(
+                                  await enterHeightWwightDialog(),
+                                ).then((value) {
+                                  setState(() {});
+                                });
+                              }
                             }
                           },
                           name: overViewData[index]['name'],
@@ -305,6 +319,139 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Future<StatefulBuilder> enterHeightWwightDialog() async {
+    return StatefulBuilder(
+      builder: (context, setState) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Container(
+          width: 300.sp,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CommonText.textBoldWight500(
+                      text: "Calculating BMI",
+                      fontSize: 17.sp,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Get.back();
+                      },
+                      child: CommonWidget.commonSvgPitcher(
+                        image: ImageConst.close,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              CommonWidget.dottedLineWidget(),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CommonText.textBoldWight400(
+                      text:
+                          "please enter your height and weight to calculate BMI",
+                      fontSize: 11.sp,
+                      color: Color(0xff9B9B9B),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    CommonText.textBoldWight500(
+                        text: "Height (cm)",
+                        fontSize: 13.sp,
+                        color: Colors.black),
+                    SizedBox(
+                      height: 12,
+                    ),
+                    TextFormField(
+                      controller: _heightController,
+                      decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Color(0xffF8F8F6),
+                          hintText: "Enter your height",
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(20),
+                          )),
+                    ),
+                    SizedBox(
+                      height: 12,
+                    ),
+                    CommonText.textBoldWight500(
+                        text: "Weight (kg)",
+                        fontSize: 13.sp,
+                        color: Colors.black),
+                    SizedBox(
+                      height: 12,
+                    ),
+                    TextFormField(
+                      controller: _weightController,
+                      decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Color(0xffF8F8F6),
+                          hintText: "Enter your weight",
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(20),
+                          )),
+                    ),
+                    SizedBox(height: 23),
+                    CommonWidget.commonButton(
+                        color: greenColor,
+                        radius: 10,
+                        onTap: () async {
+                          if (_heightController.text.isNotEmpty &&
+                              _weightController.text.isNotEmpty) {
+                            double weight =
+                                double.parse(_weightController.text);
+                            double height =
+                                double.parse(_heightController.text);
+
+                            var bmi = await weight / pow((height / 100), 2);
+
+                            GetStorageServices.setUserBMI(
+                                bmi.toStringAsFixed(1));
+
+                            GetStorageServices.setUserHeight(
+                                height: _heightController.text);
+                            GetStorageServices.setUserWeight(
+                                _weightController.text);
+                            Get.back();
+                          } else {
+                            CommonWidget.getSnackBar(
+                                color: Colors.red,
+                                duration: 2,
+                                colorText: Colors.white,
+                                title: "Required",
+                                message: 'Please enter height and weight.');
+                          }
+                        },
+                        text: "Next")
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -1284,7 +1431,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             CommonText.textBoldWight500(
-                              text: '180cm',
+                              text: '${GetStorageServices.getUserHeight()}cm',
                               color: greenColor,
                             ),
                             SizedBox(
@@ -1318,7 +1465,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             CommonText.textBoldWight500(
-                              text: '65kg',
+                              text: '${GetStorageServices.getUserWeight()} kg',
                               color: greenColor,
                             ),
                             SizedBox(
@@ -1359,7 +1506,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                   Row(
                     children: [
                       CommonText.textBoldWight500(
-                        text: '20.1',
+                        text: '${GetStorageServices.getUserBMI()}',
                         color: greenColor,
                       ),
                       SizedBox(

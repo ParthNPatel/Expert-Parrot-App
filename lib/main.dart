@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
       builder: (context, orientation, deviceType) => GetMaterialApp(
         initialBinding: BaseBindings(),
         title: 'Expert Parrot',
-        home: const DependentScreen(),
+        home: const BottomNavScreen(),
         // home: const VideoScreen(),
         // home: const BottomNavScreen(),
         debugShowCheckedModeBanner: false,
