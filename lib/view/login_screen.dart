@@ -47,7 +47,16 @@ class _LoginScreenState extends State<LoginScreen> {
           CommonWidget.commonSizedBox(height: 28),
           CommonWidget.commonButton(
               onTap: () {
-                Get.to(() => OtpVerificationScreen());
+                if (_emailOrMobileController.text.isNotEmpty) {
+                  Get.to(() => OtpVerificationScreen());
+                } else {
+                  CommonWidget.getSnackBar(
+                      duration: 2,
+                      title: "Required",
+                      message: 'Please enter email or mobile no',
+                      color: Colors.red,
+                      colorText: Colors.white);
+                }
               },
               text: 'Send OTP'),
           CommonWidget.commonSizedBox(height: 24),

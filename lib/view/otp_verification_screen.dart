@@ -1,6 +1,7 @@
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
+import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otp_text_field/otp_field.dart';
@@ -68,7 +69,14 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 errorBorderColor: CommonColor.themColor35C2C1,
                 focusBorderColor: CommonColor.themColor35C2C1,
               ),
+              onChanged: (value) {
+                setState(() {});
+                verificationCode = value;
+              },
               onCompleted: (pin) {
+                setState(
+                  () {},
+                );
                 verificationCode = pin;
               },
             ),
@@ -76,7 +84,19 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           CommonWidget.commonSizedBox(height: 28),
           CommonWidget.commonButton(
               onTap: () {
-                Get.offAll(() => DashBoardScreen());
+                if (verificationCode != null && verificationCode!.length == 4) {
+                  if (verificationCode!.length == 4) {
+                    GetStorageServices.setUserLoggedIn();
+                    Get.offAll(() => DashBoardScreen());
+                  } else {
+                    CommonWidget.getSnackBar(
+                        duration: 2,
+                        title: "Failed",
+                        message: 'Otp must be 4 digit',
+                        color: Colors.red,
+                        colorText: Colors.white);
+                  }
+                }
               },
               text: 'Verify'),
         ],
