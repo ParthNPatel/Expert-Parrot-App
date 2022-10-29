@@ -72,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             width: 60.sp,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
-                                color: greenColor),
+                                color: CommonColor.greenColor),
                             child: Center(
                               child: Text(
                                 "Edit",
@@ -106,7 +106,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               children: [
                                 CommonText.textBoldWight500(
                                   text: '180cm',
-                                  color: greenColor,
+                                  color: CommonColor.greenColor,
                                 ),
                                 SizedBox(
                                   height: 5,
@@ -137,7 +137,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               children: [
                                 CommonText.textBoldWight500(
                                   text: '65kg',
-                                  color: greenColor,
+                                  color: CommonColor.greenColor,
                                 ),
                                 SizedBox(
                                   height: 5,
@@ -168,7 +168,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               children: [
                                 CommonText.textBoldWight500(
                                   text: '22yo',
-                                  color: greenColor,
+                                  color: CommonColor.greenColor,
                                 ),
                                 SizedBox(
                                   height: 5,

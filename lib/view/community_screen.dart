@@ -453,7 +453,7 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                             height: 28.sp,
                             width: 65,
                             decoration: BoxDecoration(
-                              color: greenColor,
+                              color: CommonColor.greenColor,
                               borderRadius: BorderRadius.circular(3),
                             ),
                             child: Center(

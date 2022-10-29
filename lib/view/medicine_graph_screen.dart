@@ -88,7 +88,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CommonWidget.commonSizedBox(height: 23),
-                    dateShowWidet(),
+                    dateShowWidget(),
                     CommonWidget.commonSizedBox(height: 23),
                     graphWidget(),
                     CommonWidget.commonSizedBox(height: 20),
@@ -145,13 +145,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                     shape: BoxShape.circle,
                     color: Colors.white,
                   ),
-                  child: CommonWidget.commonSvgPitcher(
-                      image:
-                          image) /* Image.asset(
-                    image,
-                    scale: 5,
-                  )*/
-                  ),
+                  child: CommonWidget.commonSvgPitcher(image: image)),
               CommonWidget.commonSizedBox(width: 10),
               Expanded(
                 child: Column(
@@ -222,7 +216,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
     );
   }
 
-  Row dateShowWidet() {
+  Row dateShowWidget() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

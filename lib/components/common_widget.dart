@@ -50,8 +50,8 @@ class CommonWidget {
   static Widget commonBackButton(
       {final onTap, String image = ImageConst.backArrow}) {
     return Container(
-      height: 36.sp,
-      width: 36.sp,
+      height: 30.sp,
+      width: 30.sp,
       decoration: BoxDecoration(
           border: Border.all(
             color: Colors.grey.withOpacity(0.3),
