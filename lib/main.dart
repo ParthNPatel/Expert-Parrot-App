@@ -1,5 +1,6 @@
 import 'package:expert_parrot_app/view/bottom_nav_screen.dart';
 import 'package:expert_parrot_app/view/splash_screen.dart';
+import 'package:expert_parrot_app/view/viedeo_play_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
