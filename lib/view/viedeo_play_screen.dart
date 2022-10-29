@@ -25,11 +25,14 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
       ..initialize().then((_) {
         setState(() {});
       });
+
+    _controller.play();
   }
 
   @override
   void dispose() {
     super.dispose();
+
     _controller.dispose();
   }
 

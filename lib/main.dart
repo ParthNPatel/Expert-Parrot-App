@@ -1,17 +1,9 @@
-import 'package:expert_parrot_app/view/bottom_nav_screen.dart';
-import 'package:expert_parrot_app/view/dashboard_screen.dart';
-import 'package:expert_parrot_app/view/depandent_screen.dart';
-import 'package:expert_parrot_app/view/medical_report_screen.dart';
-import 'package:expert_parrot_app/view/medicine_graph_screen.dart';
 import 'package:expert_parrot_app/view/splash_screen.dart';
-import 'package:expert_parrot_app/view/video_screen.dart';
-import 'package:expert_parrot_app/view/viedeo_play_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:sizer/sizer.dart';
-
 import 'controller/HandleFloatController.dart';
 
 void main() {

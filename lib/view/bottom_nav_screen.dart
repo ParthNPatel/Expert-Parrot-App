@@ -2,6 +2,7 @@ import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/view/dashboard_screen.dart';
 import 'package:expert_parrot_app/view/profile_screen.dart';
 import 'package:expert_parrot_app/view/reminder_screen.dart';
+import 'package:expert_parrot_app/view/video_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -40,7 +41,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                   ? ProfileScreen()
                   : pageSelected == 3
                       ? CommunityScreen()
-                      : Center(child: Text("Video")),
+                      : VideoScreen(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: GetBuilder<HandleFloatController>(
         builder: (controller) => controller.isVisible == false

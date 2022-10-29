@@ -5,6 +5,7 @@ import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
+import 'package:expert_parrot_app/view/water_graph_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -246,6 +247,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                   setState(() {});
                                 });
                               }
+                            } else if (index == 0) {
+                              Get.to(() => WaterGraphScreen());
                             }
                           },
                           name: overViewData[index]['name'],

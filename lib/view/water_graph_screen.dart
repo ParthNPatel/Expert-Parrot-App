@@ -93,13 +93,16 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                       ),
                       Row(
                         children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 10),
-                            child: CommonText.textBoldWight500(
-                                text: dayList[index],
-                                fontSize: 15.sp,
-                                color: CommonColor.blackColor1D253C),
+                          SizedBox(
+                            width: 55.sp,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 10),
+                              child: CommonText.textBoldWight500(
+                                  text: dayList[index],
+                                  fontSize: 15.sp,
+                                  color: CommonColor.blackColor1D253C),
+                            ),
                           ),
                           CommonWidget.commonSizedBox(width: 20),
                           CommonText.textBoldWight500(
