@@ -858,8 +858,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8),
       child: Container(
-          height: 16.h,
-          padding: EdgeInsets.all(16),
+          // height: 16.h,
+
+          padding: EdgeInsets.only(top: 16, bottom: 16, left: 16, right: 8),
           decoration: BoxDecoration(
               color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(16)),
@@ -876,44 +877,49 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     scale: 5,
                   )),
               CommonWidget.commonSizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CommonText.textBoldWight500(
-                      text: medName,
-                      color: CommonColor.blackColor0D0D0D,
-                      fontSize: 18.sp),
-                  CommonText.textBoldWight400(
-                      text: medGm,
-                      color: CommonColor.blackColor0D0D0D,
-                      fontSize: 14.sp),
-                  CommonWidget.commonSizedBox(height: 10),
-                  CommonText.textBoldWight400(
-                      text: timeOfDay,
-                      color: CommonColor.blackColor0D0D0D,
-                      fontSize: 12.sp),
-                ],
-              ),
-              Spacer(),
-              Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.more_vert, color: CommonColor.geryB4B4B4),
-                    Container(
-                        height: 18.sp,
-                        width: 18.sp,
-                        alignment: Alignment.center,
-                        child: Icon(
-                          Icons.check, size: 16,
-                          color: iconColor,
-                          //size: 18.sp,
-                        ),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: iconColor, width: 1.5),
-                            shape: BoxShape.circle,
-                            color: Colors.white)),
-                  ]),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CommonText.textBoldWight500(
+                              text: medName,
+                              color: CommonColor.blackColor0D0D0D,
+                              fontSize: 18.sp),
+                          Icon(Icons.more_vert, color: CommonColor.geryB4B4B4),
+                        ]),
+                    CommonText.textBoldWight400(
+                        text: medGm,
+                        color: CommonColor.blackColor0D0D0D,
+                        fontSize: 14.sp),
+                    CommonWidget.commonSizedBox(height: 10),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CommonText.textBoldWight400(
+                              text: timeOfDay,
+                              color: CommonColor.blackColor0D0D0D,
+                              fontSize: 12.sp),
+                          Container(
+                              height: 18.sp,
+                              width: 18.sp,
+                              alignment: Alignment.center,
+                              child: Icon(
+                                Icons.check, size: 16,
+                                color: iconColor,
+                                //size: 18.sp,
+                              ),
+                              decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: iconColor, width: 1.5),
+                                  shape: BoxShape.circle,
+                                  color: Colors.white)),
+                        ]),
+                  ],
+                ),
+              ),
             ],
           )),
     );
@@ -934,41 +940,41 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
               color: color, borderRadius: BorderRadius.circular(16)),
-          child: Row(
+          child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CommonWidget.commonSizedBox(width: 12),
-              Expanded(
-                flex: 4,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    CommonText.textBoldWight400(
-                        text: name,
-                        color: CommonColor.blackColor0D0D0D,
-                        fontSize: 14.sp),
-                    CommonWidget.commonSizedBox(height: 12),
-                    CommonText.textBoldWight700(
-                        text: medGm,
-                        color: CommonColor.blackColor1D253C,
-                        fontSize: 18.sp),
-                    CommonText.textBoldWight500(
-                        text: type,
-                        color: CommonColor.blackColor1D253C.withOpacity(0.5),
-                        fontSize: 10.sp),
-                  ],
-                ),
-              ),
-              CommonWidget.commonSizedBox(width: 12),
-              Expanded(
-                flex: 2,
-                child: Image.asset(
-                  image,
-                  scale: 5,
-                ),
+              CommonText.textBoldWight400(
+                  text: name,
+                  color: CommonColor.blackColor0D0D0D,
+                  fontSize: 14.sp),
+              CommonWidget.commonSizedBox(height: 4),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CommonText.textBoldWight700(
+                              text: medGm,
+                              color: CommonColor.blackColor1D253C,
+                              fontSize: 18.sp),
+                          CommonText.textBoldWight500(
+                              text: type,
+                              color:
+                                  CommonColor.blackColor1D253C.withOpacity(0.5),
+                              fontSize: 10.sp),
+                        ]),
+                  ),
+                  Expanded(
+                    child: Image.asset(
+                      image,
+                      scale: 5,
+                    ),
+                  ),
+                ],
               )
             ],
           )),

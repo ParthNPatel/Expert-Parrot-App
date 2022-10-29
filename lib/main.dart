@@ -1,4 +1,5 @@
 import 'package:expert_parrot_app/view/bottom_nav_screen.dart';
+import 'package:expert_parrot_app/view/dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
     return Sizer(
       builder: (context, orientation, deviceType) => GetMaterialApp(
         title: 'Expert Parrot',
-        home: const BottomNavScreen(),
+        home: const DashBoardScreen(),
         // home: const BottomNavScreen(),
         debugShowCheckedModeBanner: false,
       ),
