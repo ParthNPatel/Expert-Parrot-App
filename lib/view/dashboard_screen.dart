@@ -1684,7 +1684,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CommonText.textBoldWight400(
+              CommonText.textBoldWight500(
                   text: name,
                   color: CommonColor.blackColor0D0D0D,
                   fontSize: 13.sp),

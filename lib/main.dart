@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
         title: 'Expert Parrot',
         // home: const SplashScreen(),`
         // home: const VideoScreen(),
-        home: const BottomNavScreen(),
+        home: SplashScreen(),
         debugShowCheckedModeBanner: false,
       ),
     );

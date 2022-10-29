@@ -4,6 +4,7 @@ import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
+import 'package:expert_parrot_app/view/dependent_water_graph.dart';
 import 'package:expert_parrot_app/view/medical_report_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -85,7 +86,9 @@ class _DependentScreenState extends State<DependentScreen> {
           children: [
             CommonWidget.commonSizedBox(height: 10),
             CommonWidget.header(
-                backOnTap: () {},
+                backOnTap: () {
+                  Get.back();
+                },
                 addOnTap: () {},
                 titleText: TextConst.dependentView),
             CommonWidget.commonSizedBox(height: 13),
@@ -147,7 +150,11 @@ class _DependentScreenState extends State<DependentScreen> {
                           childAspectRatio: 2 / 1.5),
                       itemBuilder: (context, index) {
                         return overViewWidget(
-                          onTap: () {},
+                          onTap: () {
+                            if (index == 0) {
+                              Get.to(() => DependentWaterGraphScreen());
+                            }
+                          },
                           name: overViewData[index]['name'],
                           image: overViewData[index]['image'],
                           medGm: overViewData[index]['name_of_count'],
