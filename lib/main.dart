@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
+import 'controller/HandleFloatController.dart';
+
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
@@ -26,11 +28,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Sizer(
       builder: (context, orientation, deviceType) => GetMaterialApp(
+        initialBinding: BaseBindings(),
         title: 'Expert Parrot',
         home: const BottomNavScreen(),
         // home: const BottomNavScreen(),
         debugShowCheckedModeBanner: false,
       ),
     );
+  }
+}
+
+class BaseBindings extends Bindings {
+  @override
+  void dependencies() {
+    Get.lazyPut(() => HandleFloatController(), fenix: true);
   }
 }

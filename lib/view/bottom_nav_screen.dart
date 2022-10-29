@@ -4,8 +4,10 @@ import 'package:expert_parrot_app/view/profile_screen.dart';
 import 'package:expert_parrot_app/view/reminder_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
+import '../controller/HandleFloatController.dart';
 import 'community_screen.dart';
 
 class BottomNavScreen extends StatefulWidget {
@@ -25,6 +27,8 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
 
   int pageSelected = 0;
 
+  HandleFloatController controller = Get.find();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,21 +42,25 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                       ? CommunityScreen()
                       : Center(child: Text("Video")),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: InkWell(
-        splashColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        onTap: () {
-          setState(() {
-            pageSelected = 4;
-          });
-        },
-        child: Image.asset(
-          pageSelected == 4
-              ? "assets/png/video_outlined.png"
-              : "assets/png/video.png",
-          height: 50.sp,
-          width: 50.sp,
-        ),
+      floatingActionButton: GetBuilder<HandleFloatController>(
+        builder: (controller) => controller.isVisible == false
+            ? InkWell(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                onTap: () {
+                  setState(() {
+                    pageSelected = 4;
+                  });
+                },
+                child: Image.asset(
+                  pageSelected == 4
+                      ? "assets/png/video_outlined.png"
+                      : "assets/png/video.png",
+                  height: 50.sp,
+                  width: 50.sp,
+                ),
+              )
+            : SizedBox(),
       ),
       bottomNavigationBar: Container(
         height: 48.sp,

@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 import 'package:get/get.dart';
+import '../controller/HandleFloatController.dart';
 
 class DashBoardScreen extends StatefulWidget {
   const DashBoardScreen({Key? key}) : super(key: key);
@@ -128,10 +129,19 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     'Thrice a day',
   ];
 
+  HandleFloatController controller = Get.find();
+
+  @override
+  void initState() {
+    controller.isVisible = false;
+    super.initState();
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+
     _emailOrMobileController.dispose();
   }
 
