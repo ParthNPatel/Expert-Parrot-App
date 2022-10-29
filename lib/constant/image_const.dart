@@ -18,6 +18,12 @@ class ImageConst {
   static const String med3Icon = 'assets/png/med3.png';
   static const String notification = 'assets/png/notification.png';
   static const String close = 'assets/svg/close.svg';
+  static const String capsule1 = 'assets/svg/capsul1.svg';
+  static const String capsule2 = 'assets/svg/capsul2.svg';
+  static const String capsule3 = 'assets/svg/capsul3.svg';
+  static const String capsule4 = 'assets/svg/capsul4.svg';
+  static const String doubleTickIcon = 'assets/png/double_tick.png';
+  static const String eyesIcon = 'assets/png/Frame.png';
   static const String water1Icon = 'assets/png/water 1.png';
   static const String plasticBottle = 'assets/png/plastic-bottle 1.png';
   static const String glassOfWater = 'assets/png/glass-of-water 1.png';

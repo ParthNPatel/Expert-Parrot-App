@@ -11,6 +11,25 @@ import '../constant/text_const.dart';
 import '../constant/text_styel.dart';
 
 class CommonWidget {
+  static Widget header(
+      {required final backOnTap,
+      required String titleText,
+      required final addOnTap}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        CommonWidget.commonBackButton(
+          onTap: backOnTap,
+        ),
+        CommonText.textBoldWight500(text: titleText, fontSize: 18.sp),
+        CommonWidget.commonBackButton(
+          image: ImageConst.add,
+          onTap: addOnTap,
+        ),
+      ],
+    );
+  }
+
   static SizedBox commonSizedBox({double? height, double? width}) {
     return SizedBox(height: height, width: width);
   }
