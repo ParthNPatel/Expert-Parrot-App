@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:sizer/sizer.dart';
 
+import 'community_screen.dart';
+
 class BottomNavScreen extends StatefulWidget {
   const BottomNavScreen({Key? key}) : super(key: key);
 
@@ -33,7 +35,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
               : pageSelected == 2
                   ? ProfileScreen()
                   : pageSelected == 3
-                      ? Center(child: Text("Chat"))
+                      ? CommunityScreen()
                       : Center(child: Text("Video")),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: InkWell(
@@ -45,7 +47,9 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
           });
         },
         child: Image.asset(
-          "assets/png/video.png",
+          pageSelected == 4
+              ? "assets/png/video_outlined.png"
+              : "assets/png/video.png",
           height: 50.sp,
           width: 50.sp,
         ),

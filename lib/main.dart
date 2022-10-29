@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
     return Sizer(
       builder: (context, orientation, deviceType) => GetMaterialApp(
         title: 'Expert Parrot',
-        home: const DashBoardScreen(),
+        home: const BottomNavScreen(),
         // home: const BottomNavScreen(),
         debugShowCheckedModeBanner: false,
       ),

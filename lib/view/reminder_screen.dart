@@ -35,7 +35,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
     },
     {
       'image': 'assets/png/foot.png',
-      'title': 'Congratulations, You have finis...',
+      'title': 'Congratulations, You have...',
       'time': '29 May',
       'color': Color(0xffcef7f6)
     },
@@ -46,6 +46,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
       'color': Color(0xfff3e9ec)
     },
   ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
