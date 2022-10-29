@@ -34,4 +34,9 @@ class ImageConst {
   static const String doubleArrow = 'assets/png/double_arrow.png';
   static const String shareIcon = 'assets/png/share_icon.png';
   static const String closeIcon = 'assets/svg/close_icon.svg';
+  static const String profile2 = 'assets/png/profile2.png';
+  static const String profile1 = 'assets/png/profile1.png';
+  static const String checkbox = 'assets/png/checkbox.png';
+  static const String verticalGraph = 'assets/png/vertical_graph.png';
+  static const String verified = 'assets/svg/Verified.svg';
 }

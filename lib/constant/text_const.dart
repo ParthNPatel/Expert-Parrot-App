@@ -23,6 +23,7 @@ class TextConst {
   static String email = 'Email';
   static String water = 'Water';
   static String medicineReport = 'Medicine Report';
+  static String dependentView = 'Dependent View';
   static String signIn = 'Sign In';
   static String reset = 'Reset';
   static String signUp = 'Sign Up';
@@ -41,7 +42,7 @@ class TextConst {
   static String profileAndPassword = 'Profile & Password';
   static String stepUp = 'Step up your profile';
   static String fullName = 'Full Name';
-  static String referalCode = 'Referal Code (Optional)';
+  static String referalCode = 'Referral Code (Optional)';
   static String inputYourCode = 'Input your code';
   static String letsGo = 'Let’s Go';
   static String brandMania = 'Brand Mania';

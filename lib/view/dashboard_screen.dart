@@ -417,7 +417,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     ),
                     SizedBox(height: 23),
                     CommonWidget.commonButton(
-                        color: greenColor,
+                        color: CommonColor.greenColor,
                         radius: 10,
                         onTap: () async {
                           if (_heightController.text.isNotEmpty &&
@@ -527,7 +527,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               data: Theme.of(context)
                                   .copyWith(dividerColor: Colors.transparent),
                               child: ExpansionTile(
-                                  iconColor: greenColor,
+                                  iconColor: CommonColor.greenColor,
                                   title: Row(
                                     children: [
                                       SvgPicture.asset(
@@ -581,12 +581,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                         .transparent
                                                                     : Color(
                                                                         0xffd8d8d8)),
-                                                            color:
-                                                                medicineSelected ==
-                                                                        index
-                                                                    ? greenColor
-                                                                    : Colors
-                                                                        .white,
+                                                            color: medicineSelected ==
+                                                                    index
+                                                                ? CommonColor
+                                                                    .greenColor
+                                                                : Colors.white,
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
@@ -700,7 +699,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                             0xffd8d8d8)),
                                                                 color: strengthSelected ==
                                                                         index
-                                                                    ? greenColor
+                                                                    ? CommonColor
+                                                                        .greenColor
                                                                     : Colors
                                                                         .white,
                                                                 borderRadius:
@@ -805,7 +805,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                             0xffd8d8d8)),
                                                                 color: daysSelected ==
                                                                         index
-                                                                    ? greenColor
+                                                                    ? CommonColor
+                                                                        .greenColor
                                                                     : Colors
                                                                         .white,
                                                                 borderRadius:
@@ -916,7 +917,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                     0xffd8d8d8)),
                                                     color: appearanceSelected ==
                                                             index
-                                                        ? greenColor
+                                                        ? CommonColor.greenColor
                                                         : Colors.white,
                                                     borderRadius:
                                                         BorderRadius.circular(
@@ -947,7 +948,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           ),
                           SizedBox(height: 20),
                           CommonWidget.commonButton(
-                              color: greenColor,
+                              color: CommonColor.greenColor,
                               radius: 10,
                               onTap: () {
                                 Get.back();
@@ -1048,7 +1049,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                             child:
                                                                 ExpansionTile(
                                                                     iconColor:
-                                                                        greenColor,
+                                                                        CommonColor
+                                                                            .greenColor,
                                                                     title: Row(
                                                                       children: [
                                                                         SizedBox(
@@ -1087,7 +1089,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                                         width: 18,
                                                                                         decoration: BoxDecoration(
                                                                                           border: Border.all(color: frequencySelected == index ? Colors.transparent : Color(0xffd8d8d8)),
-                                                                                          color: frequencySelected == index ? greenColor : Colors.white,
+                                                                                          color: frequencySelected == index ? CommonColor.greenColor : Colors.white,
                                                                                           borderRadius: BorderRadius.circular(3),
                                                                                         ),
                                                                                         child: Center(
@@ -1185,7 +1187,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                                       width: 18,
                                                                                       decoration: BoxDecoration(
                                                                                         border: Border.all(color: timeSelected == index ? Colors.transparent : Color(0xffd8d8d8)),
-                                                                                        color: timeSelected == index ? greenColor : Colors.white,
+                                                                                        color: timeSelected == index ? CommonColor.greenColor : Colors.white,
                                                                                         borderRadius: BorderRadius.circular(3),
                                                                                       ),
                                                                                       child: Center(
@@ -1280,8 +1282,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                 child: Icon(
                                                                   Icons.add,
                                                                   size: 15,
-                                                                  color:
-                                                                      greenColor,
+                                                                  color: CommonColor
+                                                                      .greenColor,
                                                                 ),
                                                               ),
                                                             )
@@ -1290,8 +1292,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                         SizedBox(height: 20),
                                                         CommonWidget
                                                             .commonButton(
-                                                                color:
-                                                                    greenColor,
+                                                                color: CommonColor
+                                                                    .greenColor,
                                                                 radius: 10,
                                                                 onTap: () {
                                                                   Get.back();
@@ -1300,8 +1302,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                           "Added!",
                                                                       message:
                                                                           'Your medicine has been added successfully.',
-                                                                      color:
-                                                                          greenColor,
+                                                                      color: CommonColor
+                                                                          .greenColor,
                                                                       colorText:
                                                                           Colors
                                                                               .white);
@@ -1432,7 +1434,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           children: [
                             CommonText.textBoldWight500(
                               text: '${GetStorageServices.getUserHeight()}cm',
-                              color: greenColor,
+                              color: CommonColor.greenColor,
                             ),
                             SizedBox(
                               height: 5,
@@ -1466,7 +1468,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           children: [
                             CommonText.textBoldWight500(
                               text: '${GetStorageServices.getUserWeight()} kg',
-                              color: greenColor,
+                              color: CommonColor.greenColor,
                             ),
                             SizedBox(
                               height: 5,
@@ -1485,7 +1487,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                         width: 55.sp,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: greenColor),
+                            color: CommonColor.greenColor),
                         child: Center(
                           child: Text(
                             "Edit",
@@ -1507,7 +1509,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     children: [
                       CommonText.textBoldWight500(
                         text: '${GetStorageServices.getUserBMI()}',
-                        color: greenColor,
+                        color: CommonColor.greenColor,
                       ),
                       SizedBox(
                         width: 5,
@@ -1529,7 +1531,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                   ),
                   SizedBox(height: 20),
                   CommonWidget.commonButton(
-                      color: greenColor,
+                      color: CommonColor.greenColor,
                       radius: 10,
                       onTap: () {
                         Get.back();
@@ -1565,7 +1567,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             ),
           ),
           Positioned(
-              top: 50,
+              top: 45,
               child: CommonText.textBoldWight500(
                   text: text,
                   fontSize: 9.sp,
