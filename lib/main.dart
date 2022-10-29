@@ -1,3 +1,4 @@
+import 'package:expert_parrot_app/view/bottom_nav_screen.dart';
 import 'package:expert_parrot_app/view/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,9 +31,9 @@ class MyApp extends StatelessWidget {
       builder: (context, orientation, deviceType) => GetMaterialApp(
         initialBinding: BaseBindings(),
         title: 'Expert Parrot',
-        home: const SplashScreen(),
+        // home: const SplashScreen(),`
         // home: const VideoScreen(),
-        // home: const BottomNavScreen(),
+        home: const BottomNavScreen(),
         debugShowCheckedModeBanner: false,
       ),
     );

@@ -307,7 +307,7 @@ class _DependentScreenState extends State<DependentScreen> {
       onTap: onTap,
       child: Container(
           height: 16.h,
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
           decoration: BoxDecoration(
               color: color, borderRadius: BorderRadius.circular(16)),
           child: Column(
@@ -318,8 +318,8 @@ class _DependentScreenState extends State<DependentScreen> {
               CommonText.textBoldWight400(
                   text: name,
                   color: CommonColor.blackColor0D0D0D,
-                  fontSize: 14.sp),
-              CommonWidget.commonSizedBox(height: 4),
+                  fontSize: 13.sp),
+              CommonWidget.commonSizedBox(height: 8),
               Row(
                 children: [
                   Expanded(
@@ -327,15 +327,15 @@ class _DependentScreenState extends State<DependentScreen> {
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          CommonText.textBoldWight700(
+                          CommonText.textBoldWight600(
                               text: medGm,
                               color: CommonColor.blackColor1D253C,
-                              fontSize: 18.sp),
+                              fontSize: 15.sp),
                           CommonText.textBoldWight500(
                               text: type,
                               color:
                                   CommonColor.blackColor1D253C.withOpacity(0.5),
-                              fontSize: 10.sp),
+                              fontSize: 9.sp),
                         ]),
                   ),
                   Expanded(
