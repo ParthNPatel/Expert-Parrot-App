@@ -1,5 +1,7 @@
 import 'package:expert_parrot_app/view/bottom_nav_screen.dart';
 import 'package:expert_parrot_app/view/dashboard_screen.dart';
+import 'package:expert_parrot_app/view/medicine_graph_screen.dart';
+import 'package:expert_parrot_app/view/video_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';

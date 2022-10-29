@@ -20,56 +20,37 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
   TextEditingController _emailOrMobileController = TextEditingController();
   String? verificationCode;
   DateTime dayOf = DateTime.now();
-  List overViewData = [
-    {
-      'name': 'Water',
-      'image': ImageConst.glassIcon,
-      'name_of_count': '10',
-      'name_of_subject': 'Glasses',
-    },
-    {
-      'name': 'Weight',
-      'image': ImageConst.weightIcon,
-      'name_of_count': '78KG',
-      'name_of_subject': 'This Week',
-      'color': Color(0xffFAF0DB),
-    },
-    {
-      'name': 'Heart Rate',
-      'image': ImageConst.hartIcon,
-      'name_of_count': '96',
-      'name_of_subject': 'This Week',
-    },
-    {
-      'name': 'BMI',
-      'image': ImageConst.bmiIcon,
-      'name_of_count': '20.1',
-      'name_of_subject': 'Kg/m2',
-    },
-  ];
   List medScheduleList = [
     {
-      'image': ImageConst.med3Icon,
-      'medName': 'Disprien',
-      'medGm': '300 gm',
+      'image': ImageConst.capsule1,
+      'medName': 'Softgel',
+      'medGm': '(100MG)',
       'iconColor': Color(0xff21D200),
-      'timeOfDay': 'Take 1 Pills (Daily)',
+      'dose': '3 Dose',
       'color': Color.fromRGBO(69, 196, 44, 0.13)
     },
     {
-      'image': ImageConst.med2Icon,
-      'medName': 'Novolin',
-      'medGm': '10 gm',
+      'image': ImageConst.capsule2,
+      'medName': 'Ativan',
+      'medGm': '(50MG)',
       'iconColor': Color(0xff9255E5),
-      'timeOfDay': 'Twice a Day',
+      'dose': '2 Dose',
       'color': Color.fromRGBO(111, 44, 196, 0.13)
     },
     {
-      'image': ImageConst.med1Icon,
-      'medName': 'Softgel',
-      'medGm': '300 gm',
+      'image': ImageConst.capsule3,
+      'medName': 'Invokana',
+      'medGm': '(100MG)',
       'iconColor': Color(0xffFFDD2C),
-      'timeOfDay': 'Daily',
+      'dose': '2 Dose',
+      'color': Color.fromRGBO(193, 196, 44, 0.13)
+    },
+    {
+      'image': ImageConst.capsule4,
+      'medName': 'Xanax',
+      'medGm': '(200MG)',
+      'iconColor': Color(0xffFFDD2C),
+      'dose': '1 Dose',
       'color': Color.fromRGBO(193, 196, 44, 0.13)
     },
   ];
@@ -100,16 +81,16 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
               dashGapColor: Colors.transparent,
               dashGapRadius: 0.0,
             ),
-            CommonWidget.commonSizedBox(height: 23),
-            dateShowWidet(),
-            CommonWidget.commonSizedBox(height: 23),
-            graphWidget(),
             Expanded(
               child: SingleChildScrollView(
                 physics: BouncingScrollPhysics(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    CommonWidget.commonSizedBox(height: 23),
+                    dateShowWidet(),
+                    CommonWidget.commonSizedBox(height: 23),
+                    graphWidget(),
                     CommonWidget.commonSizedBox(height: 20),
                     ListView.builder(
                       physics: NeverScrollableScrollPhysics(),
@@ -121,24 +102,11 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                           medName: medScheduleList[index]['medName'],
                           medGm: medScheduleList[index]['medGm'],
                           iconColor: medScheduleList[index]['iconColor'],
-                          timeOfDay: medScheduleList[index]['timeOfDay'],
+                          dose: medScheduleList[index]['dose'],
                         );
                       },
                     ),
-                    CommonWidget.commonSizedBox(height: 20),
-                    CommonText.textBoldWight500(
-                        text: TextConst.overview,
-                        fontSize: 18.sp,
-                        color: CommonColor.blackColor0D0D0D),
-                    CommonWidget.commonSizedBox(height: 20),
-                    CommonWidget.commonSizedBox(height: 30),
-                    Align(
-                      alignment: Alignment.center,
-                      child: CommonText.textBoldWight500(
-                          text: TextConst.dailyStepsReport,
-                          fontSize: 18.sp,
-                          color: CommonColor.blackColor0D0D0D),
-                    ),
+                    CommonWidget.commonSizedBox(height: 100),
                   ],
                 ),
               ),
@@ -152,67 +120,103 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
   Widget medDetailsWidget(
       {required String medName,
       required String medGm,
-      required String timeOfDay,
+      required String dose,
       required Color iconColor,
       required String image}) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8),
       child: Container(
-          height: 16.h,
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.all(12),
           decoration: BoxDecoration(
               color: Colors.white, borderRadius: BorderRadius.circular(16)),
           child: Row(
             children: [
               Container(
+                  height: 38.sp,
+                  width: 38.sp,
                   padding: EdgeInsets.all(14),
                   decoration: BoxDecoration(
+                    boxShadow: [
+                      new BoxShadow(
+                        color: Colors.grey.shade200,
+                        blurRadius: 20.0,
+                      ),
+                    ],
                     shape: BoxShape.circle,
                     color: Colors.white,
                   ),
-                  child: Image.asset(
+                  child: CommonWidget.commonSvgPitcher(
+                      image:
+                          image) /* Image.asset(
                     image,
                     scale: 5,
-                  )),
-              CommonWidget.commonSizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CommonText.textBoldWight500(
-                      text: medName,
-                      color: CommonColor.blackColor0D0D0D,
-                      fontSize: 18.sp),
-                  CommonText.textBoldWight400(
-                      text: medGm,
-                      color: CommonColor.blackColor0D0D0D,
-                      fontSize: 14.sp),
-                  CommonWidget.commonSizedBox(height: 10),
-                  CommonText.textBoldWight400(
-                      text: timeOfDay,
-                      color: CommonColor.blackColor0D0D0D,
-                      fontSize: 12.sp),
-                ],
-              ),
-              Spacer(),
-              Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  )*/
+                  ),
+              CommonWidget.commonSizedBox(width: 10),
+              Expanded(
+                child: Column(
                   children: [
-                    Icon(Icons.more_vert, color: CommonColor.geryB4B4B4),
-                    Container(
-                        height: 18.sp,
-                        width: 18.sp,
-                        alignment: Alignment.center,
-                        child: Icon(
-                          Icons.check, size: 16,
-                          color: iconColor,
-                          //size: 18.sp,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            CommonText.textBoldWight500(
+                                text: medName,
+                                color: CommonColor.blackColor353535,
+                                fontSize: 15.sp),
+                            CommonWidget.commonSizedBox(width: 5),
+                            CommonText.textBoldWight400(
+                                text: medGm,
+                                color: CommonColor.gery8A8A8A,
+                                fontSize: 11.sp),
+                          ],
                         ),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: iconColor, width: 1.5),
-                            shape: BoxShape.circle,
-                            color: Colors.white)),
-                  ]),
+                        CommonText.textBoldWight500(
+                            text: dose,
+                            color: CommonColor.blackColor353535,
+                            fontSize: 13.sp),
+                      ],
+                    ),
+                    CommonWidget.commonSizedBox(height: 6),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: List.generate(
+                              int.parse(dose.split(' ').first), (index) {
+                            return index + 1 < int.parse(dose.split(' ').first)
+                                ? Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: Image.asset(
+                                      ImageConst.doubleTickIcon,
+                                      scale: 4.5,
+                                    ),
+                                  )
+                                : Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: Image.asset(
+                                        ImageConst.doubleTickIcon,
+                                        scale: 4.5,
+                                        color: CommonColor.geryD9D9D9),
+                                  );
+                          }),
+                        ),
+                        Row(
+                          children: [
+                            Image.asset(ImageConst.eyesIcon, scale: 3.5),
+                            CommonWidget.commonSizedBox(width: 4),
+                            CommonText.textGradient(
+                                text: 'View', fontSize: 13.sp),
+                          ],
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ],
           )),
     );

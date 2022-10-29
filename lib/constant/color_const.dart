@@ -4,6 +4,7 @@ class CommonColor {
   static Color borderColorE8ECF4 = const Color(0xffE8ECF4);
   static Color themColor35C2C1 = const Color(0xff35C2C1);
   static Color blackColor0D0D0D = const Color(0xff0D0D0D);
+  static Color blackColor353535 = const Color(0xff353535);
   static Color blackColor434343 = const Color(0xff434343);
   static Color blackColor1D253C = const Color(0xff1D253C);
   static Color blackColor616161 = const Color(0xff616161);
@@ -17,6 +18,8 @@ class CommonColor {
   static Color geryB4B4B4 = const Color(0xffB4B4B4);
   static Color gery727272 = const Color(0xff727272);
   static Color gery696969 = const Color(0xff696969);
+  static Color gery8A8A8A = const Color(0xff8A8A8A);
+  static Color geryD9D9D9 = const Color(0xffD9D9D9);
 }
 
 const greenColor = Color(0xff1BD15D);
