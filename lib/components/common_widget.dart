@@ -37,8 +37,8 @@ class CommonWidget {
   static Widget commonBackGround(
       {required Widget body, String backGround = ImageConst.backGround}) {
     return Container(
-      height: Get.height,
-      width: Get.width,
+      height: double.infinity,
+      width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 18),
       decoration: BoxDecoration(
           image:
