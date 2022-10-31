@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 import 'package:get/get.dart';
 import '../controller/HandleFloatController.dart';
+import 'medicine_graph_screen.dart';
 
 class DashBoardScreen extends StatefulWidget {
   const DashBoardScreen({Key? key}) : super(key: key);
@@ -195,7 +196,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                             ],
                           ))
                     ]),
-                    CommonWidget.commonSizedBox(height: 20),
+                    CommonWidget.commonSizedBox(height: 8),
                     ListView.builder(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
@@ -211,12 +212,21 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                         );
                       },
                     ),
-                    CommonWidget.commonSizedBox(height: 20),
-                    CommonText.textBoldWight500(
-                        text: TextConst.overview,
-                        fontSize: 17.sp,
-                        color: CommonColor.blackColor0D0D0D),
-                    CommonWidget.commonSizedBox(height: 20),
+                    CommonWidget.commonSizedBox(height: 16),
+                    Row(children: [
+                      CommonText.textBoldWight500(
+                          text: TextConst.overview,
+                          fontSize: 17.sp,
+                          color: CommonColor.blackColor0D0D0D),
+                      Spacer(),
+                      InkWell(
+                          onTap: () {
+                            Get.to(() => MedicineGraphScreen());
+                          },
+                          child: CommonText.textGradient(
+                              text: 'My Medical Report', fontSize: 14.sp))
+                    ]),
+                    CommonWidget.commonSizedBox(height: 16),
                     GridView.builder(
                       shrinkWrap: true,
                       itemCount: 4,
@@ -339,121 +349,123 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    CommonText.textBoldWight500(
-                      text: "Calculating BMI",
-                      fontSize: 17.sp,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Get.back();
-                      },
-                      child: CommonWidget.commonSvgPitcher(
-                        image: ImageConst.close,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CommonText.textBoldWight500(
+                        text: "Calculating BMI",
+                        fontSize: 17.sp,
                       ),
-                    )
-                  ],
-                ),
-              ),
-              CommonWidget.dottedLineWidget(),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CommonText.textBoldWight400(
-                      text:
-                          "please enter your height and weight to calculate BMI",
-                      fontSize: 11.sp,
-                      color: Color(0xff9B9B9B),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    CommonText.textBoldWight500(
-                        text: "Height (cm)",
-                        fontSize: 13.sp,
-                        color: Colors.black),
-                    SizedBox(
-                      height: 12,
-                    ),
-                    TextFormField(
-                      controller: _heightController,
-                      decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Color(0xffF8F8F6),
-                          hintText: "Enter your height",
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(20),
-                          )),
-                    ),
-                    SizedBox(
-                      height: 12,
-                    ),
-                    CommonText.textBoldWight500(
-                        text: "Weight (kg)",
-                        fontSize: 13.sp,
-                        color: Colors.black),
-                    SizedBox(
-                      height: 12,
-                    ),
-                    TextFormField(
-                      controller: _weightController,
-                      decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Color(0xffF8F8F6),
-                          hintText: "Enter your weight",
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(20),
-                          )),
-                    ),
-                    SizedBox(height: 23),
-                    CommonWidget.commonButton(
-                        color: CommonColor.greenColor,
-                        radius: 10,
-                        onTap: () async {
-                          if (_heightController.text.isNotEmpty &&
-                              _weightController.text.isNotEmpty) {
-                            double weight =
-                                double.parse(_weightController.text);
-                            double height =
-                                double.parse(_heightController.text);
-
-                            var bmi = await weight / pow((height / 100), 2);
-
-                            GetStorageServices.setUserBMI(
-                                bmi.toStringAsFixed(1));
-
-                            GetStorageServices.setUserHeight(
-                                height: _heightController.text);
-                            GetStorageServices.setUserWeight(
-                                _weightController.text);
-                            Get.back();
-                          } else {
-                            CommonWidget.getSnackBar(
-                                color: Colors.red,
-                                duration: 2,
-                                colorText: Colors.white,
-                                title: "Required",
-                                message: 'Please enter height and weight.');
-                          }
+                      InkWell(
+                        onTap: () {
+                          Get.back();
                         },
-                        text: "Next")
-                  ],
+                        child: CommonWidget.commonSvgPitcher(
+                          image: ImageConst.close,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                CommonWidget.dottedLineWidget(),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CommonText.textBoldWight400(
+                        text:
+                            "please enter your height and weight to calculate BMI",
+                        fontSize: 11.sp,
+                        color: Color(0xff9B9B9B),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      CommonText.textBoldWight500(
+                          text: "Height (cm)",
+                          fontSize: 13.sp,
+                          color: Colors.black),
+                      SizedBox(
+                        height: 12,
+                      ),
+                      TextFormField(
+                        controller: _heightController,
+                        decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Color(0xffF8F8F6),
+                            hintText: "Enter your height",
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.circular(20),
+                            )),
+                      ),
+                      SizedBox(
+                        height: 12,
+                      ),
+                      CommonText.textBoldWight500(
+                          text: "Weight (kg)",
+                          fontSize: 13.sp,
+                          color: Colors.black),
+                      SizedBox(
+                        height: 12,
+                      ),
+                      TextFormField(
+                        controller: _weightController,
+                        decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Color(0xffF8F8F6),
+                            hintText: "Enter your weight",
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.circular(20),
+                            )),
+                      ),
+                      SizedBox(height: 23),
+                      CommonWidget.commonButton(
+                          color: CommonColor.greenColor,
+                          radius: 10,
+                          onTap: () async {
+                            if (_heightController.text.isNotEmpty &&
+                                _weightController.text.isNotEmpty) {
+                              double weight =
+                                  double.parse(_weightController.text);
+                              double height =
+                                  double.parse(_heightController.text);
+
+                              var bmi = await weight / pow((height / 100), 2);
+
+                              GetStorageServices.setUserBMI(
+                                  bmi.toStringAsFixed(1));
+
+                              GetStorageServices.setUserHeight(
+                                  height: _heightController.text);
+                              GetStorageServices.setUserWeight(
+                                  _weightController.text);
+                              Get.back();
+                            } else {
+                              CommonWidget.getSnackBar(
+                                  color: Colors.red,
+                                  duration: 2,
+                                  colorText: Colors.white,
+                                  title: "Required",
+                                  message: 'Please enter height and weight.');
+                            }
+                          },
+                          text: "Next")
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

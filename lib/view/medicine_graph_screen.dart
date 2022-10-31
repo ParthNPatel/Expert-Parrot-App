@@ -91,7 +91,14 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                     dateShowWidget(),
                     CommonWidget.commonSizedBox(height: 23),
                     graphWidget(),
-                    CommonWidget.commonSizedBox(height: 20),
+                    CommonWidget.commonSizedBox(height: 16),
+                    Align(
+                        alignment: Alignment.center,
+                        child: CommonText.textBoldWight500(
+                            text: 'Pill List',
+                            fontSize: 18.sp,
+                            color: CommonColor.blackColor0D0D0D)),
+                    CommonWidget.commonSizedBox(height: 4),
                     ListView.builder(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,

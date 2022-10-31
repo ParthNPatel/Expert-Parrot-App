@@ -48,21 +48,24 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
           });
         },
         child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            Container(
-              height: Get.height,
-              width: Get.width,
-              color: Colors.black,
-              child: _controller.value.isInitialized
-                  ? Container(
-                      height: Get.height,
-                      width: Get.width,
-                      child: AspectRatio(
-                        aspectRatio: Get.height,
-                        child: VideoPlayer(_controller),
-                      ),
-                    )
-                  : Container(),
+            AbsorbPointer(
+              child: Container(
+                height: Get.height,
+                width: Get.width,
+                color: Colors.black,
+                child: _controller.value.isInitialized
+                    ? Container(
+                        height: Get.height,
+                        width: Get.width,
+                        child: AspectRatio(
+                          aspectRatio: Get.height,
+                          child: VideoPlayer(_controller),
+                        ),
+                      )
+                    : Container(),
+              ),
             ),
             SafeArea(
               child: Padding(
@@ -79,20 +82,40 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                   horizontal: 20,
                 ),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    CommonWidget.commonSvgPitcher(
-                        height: 20,
-                        image: ImageConst.hartBorderIcon,
-                        color: Colors.white),
-                    CommonText.textBoldWight400(
-                        text: '143K', fontSize: 13.sp, color: Colors.white),
+                    InkWell(
+                      onTap: () {
+                        print('on like tap');
+                      },
+                      child: Column(
+                        children: [
+                          CommonWidget.commonSvgPitcher(
+                              height: 20,
+                              image: ImageConst.hartBorderIcon,
+                              color: Colors.white),
+                          CommonText.textBoldWight400(
+                              text: '143K',
+                              fontSize: 13.sp,
+                              color: Colors.white),
+                        ],
+                      ),
+                    ),
                     CommonWidget.commonSizedBox(height: 20),
-                    Image.asset(ImageConst.shareIcon, scale: 4),
-                    CommonText.textBoldWight400(
-                        text: TextConst.share,
-                        fontSize: 13.sp,
-                        color: Colors.white),
+                    InkWell(
+                        onTap: () {
+                          print('on tap in share');
+                        },
+                        child: Column(
+                          children: [
+                            Image.asset(ImageConst.shareIcon, scale: 4),
+                            CommonText.textBoldWight400(
+                                text: TextConst.share,
+                                fontSize: 13.sp,
+                                color: Colors.white),
+                          ],
+                        )),
                     CommonWidget.commonSizedBox(height: 20),
                     Align(
                       alignment: Alignment.centerLeft,
@@ -122,26 +145,18 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
   }
 
   AppBar header() {
-    Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        CommonWidget.commonBackButton(
-          onTap: () {
-            print('back work');
-            Get.back();
-          },
-        ),
-        Spacer(),
-        CommonText.textBoldWight500(text: "Reminder", fontSize: 18.sp),
-        Spacer(),
-      ],
-    );
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
       leading: Row(
         children: [
-          CommonWidget.commonSvgPitcher(image: ImageConst.closeIcon),
+          InkWell(
+              onTap: () {
+                print('back work');
+                Get.back();
+              },
+              child:
+                  CommonWidget.commonSvgPitcher(image: ImageConst.closeIcon)),
         ],
       ),
       title: CommonText.textBoldWight700(

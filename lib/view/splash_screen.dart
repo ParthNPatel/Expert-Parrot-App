@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:expert_parrot_app/view/bottom_nav_screen.dart';
 import 'package:expert_parrot_app/view/login_screen.dart';
@@ -16,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(
+    Timer(
       Duration(seconds: 2),
       () => Navigator.pushReplacement(
         context,
@@ -28,6 +30,18 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
       ),
     );
+    // Future.delayed(
+    //   Duration(seconds: 2),
+    //   () => Navigator.pushReplacement(
+    //     context,
+    //     MaterialPageRoute(
+    //       builder: (context) =>
+    //           GetStorageServices.getUserLoggedInStatus() == true
+    //               ? BottomNavScreen()
+    //               : LoginScreen(),
+    //     ),
+    //   ),
+    // );
   }
 
   @override

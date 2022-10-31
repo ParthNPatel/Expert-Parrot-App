@@ -40,7 +40,7 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
               CommonWidget.commonSizedBox(height: 23),
               graphWidget(),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
+                padding: EdgeInsets.only(top: 20, bottom: 10),
                 child: CommonText.textBoldWight500(
                     text: TextConst.quickAddForToady,
                     fontSize: 18.sp,
@@ -59,11 +59,11 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                 children: [
                   Image.asset(
                     ImageConst.glassOfWater,
-                    scale: 4,
+                    scale: 4.5,
                   ),
                   CommonText.textBoldWight600(
-                      text: 'O',
-                      fontSize: 18.sp,
+                      text: ' 0',
+                      fontSize: 20.sp,
                       color: CommonColor.blackColor1D253C),
                   CommonText.textBoldWight400(
                       text: ' fl oz of your ',
@@ -71,7 +71,7 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                       color: CommonColor.gery727272),
                   CommonText.textBoldWight500(
                       text: '64 ',
-                      fontSize: 16.sp,
+                      fontSize: 14.sp,
                       color: CommonColor.blackColor1D253C),
                   CommonText.textBoldWight400(
                       text: 'fl oz goal',
@@ -79,7 +79,7 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                       color: CommonColor.gery727272),
                 ],
               ),
-              CommonWidget.commonSizedBox(height: 20),
+              CommonWidget.commonSizedBox(height: 12),
               ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
@@ -100,18 +100,18 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                                   horizontal: 10, vertical: 10),
                               child: CommonText.textBoldWight500(
                                   text: dayList[index],
-                                  fontSize: 15.sp,
+                                  fontSize: 12.sp,
                                   color: CommonColor.blackColor1D253C),
                             ),
                           ),
                           CommonWidget.commonSizedBox(width: 20),
                           CommonText.textBoldWight500(
                               text: '0 ',
-                              fontSize: 15.sp,
+                              fontSize: 14.sp,
                               color: CommonColor.blackColor1D253C),
                           CommonText.textBoldWight500(
                               text: 'fl oz',
-                              fontSize: 15.sp,
+                              fontSize: 12.sp,
                               color: CommonColor.gery696969)
                         ],
                       ),
@@ -145,7 +145,7 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
 
   Padding waterBottleWidget() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 30),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -171,19 +171,20 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
       required String typeOfBottle,
       required String oz}) {
     return Container(
-        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14), color: Colors.white),
+            borderRadius: BorderRadius.circular(12), color: Colors.white),
         child: Column(
           children: [
-            SizedBox(height: 40, child: Image.asset(image)),
-            CommonWidget.commonSizedBox(height: 20),
+            CommonWidget.commonSizedBox(height: 18),
+            SizedBox(height: 35, child: Image.asset(image)),
+            CommonWidget.commonSizedBox(height: 15),
             CommonText.textBoldWight500(
                 text: typeOfBottle,
-                fontSize: 15.sp,
+                fontSize: 13.sp,
                 color: CommonColor.blackColor1D253C),
             CommonText.textBoldWight400(
-                text: oz, fontSize: 12.sp, color: CommonColor.gery727272),
+                text: oz, fontSize: 11.sp, color: CommonColor.gery727272),
           ],
         ));
   }

@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
           }),
           CommonWidget.commonSizedBox(height: 40),
           CommonText.textBoldWight500(
-              text: 'Welcome back! Glad\n to see you, Again!', fontSize: 24.sp),
+              text: 'Welcome back! Glad\n to see you, Again!', fontSize: 22.sp),
           CommonWidget.commonSizedBox(height: 28),
           CommonWidget.textFormField(
               controller: _emailOrMobileController,

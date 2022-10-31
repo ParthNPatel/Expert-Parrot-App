@@ -145,19 +145,6 @@ class _VideoScreenState extends State<VideoScreen> {
   }
 
   AppBar header() {
-    Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        CommonWidget.commonBackButton(
-          onTap: () {
-            Get.back();
-          },
-        ),
-        Spacer(),
-        CommonText.textBoldWight500(text: "Reminder", fontSize: 18.sp),
-        Spacer(),
-      ],
-    );
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -171,7 +158,7 @@ class _VideoScreenState extends State<VideoScreen> {
         ],
       ),
       title: CommonText.textBoldWight500(
-          text: "Reminder",
+          text: "Videos",
           fontSize: 18.sp,
           color: CommonColor.blackButtonColor1E232C),
       centerTitle: true,

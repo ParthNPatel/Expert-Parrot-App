@@ -21,7 +21,7 @@ class CommonWidget {
         CommonWidget.commonBackButton(
           onTap: backOnTap,
         ),
-        CommonText.textBoldWight500(text: titleText, fontSize: 18.sp),
+        CommonText.textBoldWight500(text: titleText, fontSize: 16.sp),
         CommonWidget.commonBackButton(
           image: ImageConst.add,
           onTap: addOnTap,

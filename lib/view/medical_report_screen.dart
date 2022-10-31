@@ -36,7 +36,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
                 // scale: 5.5,
               ),
             ),
-            CommonWidget.commonSizedBox(height: 25),
+            CommonWidget.commonSizedBox(height: 20),
             tabWidget(),
             CommonWidget.commonSizedBox(height: 25),
             Row(
@@ -61,7 +61,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
                       child: CommonWidget.commonSvgPitcher(
                           height: 50, image: ImageConst.capsule1)),
                   CommonWidget.commonSizedBox(width: 8),
-                  CommonText.textBoldWight500(
+                  CommonText.textBoldWight400(
                       text: 'Softgel',
                       color: CommonColor.blackColor353535,
                       fontSize: 14.sp),
@@ -118,7 +118,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
                       ),
                       child: Image.asset(ImageConst.med1Icon)),
                   CommonWidget.commonSizedBox(width: 8),
-                  CommonText.textBoldWight500(
+                  CommonText.textBoldWight400(
                       text: 'Disprien',
                       color: CommonColor.blackColor353535,
                       fontSize: 14.sp),
@@ -231,7 +231,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
               border: Border.all(color: CommonColor.greenColor, width: 2),
               shape: BoxShape.circle),
           width: 44.sp,
-          child: Image.asset(ImageConst.profile1),
+          child: Image.asset(ImageConst.profile2),
         ),
         CommonWidget.commonSizedBox(width: 10),
         Column(
@@ -252,20 +252,6 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
   }
 
   AppBar header() {
-    Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        CommonWidget.commonBackButton(
-          onTap: () {
-            Get.back();
-          },
-        ),
-        Spacer(),
-        CommonText.textBoldWight500(
-            text: "Ella Medical Report", fontSize: 18.sp),
-        Spacer(),
-      ],
-    );
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -279,8 +265,8 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
         ],
       ),
       title: CommonText.textBoldWight500(
-          text: "Reminder",
-          fontSize: 18.sp,
+          text: "Ella Medical Report",
+          fontSize: 16.sp,
           color: CommonColor.blackButtonColor1E232C),
       centerTitle: true,
     );
