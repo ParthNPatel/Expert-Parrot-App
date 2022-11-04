@@ -100,7 +100,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     'Dicyclomine',
     'Desvenla',
   ];
-
   List strength = [
     '100 mg',
     '200 mg',
