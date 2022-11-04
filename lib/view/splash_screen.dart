@@ -54,7 +54,7 @@ class _SplashScreenState extends State<SplashScreen> {
               Spacer(),
               Image.asset('assets/png/splash_logo.png', scale: 2.5),
               Spacer(),
-              Image.asset('assets/png/med schedule _ Notification.png',
+              Image.asset('assets/png/med_schedule_Notification.png',
                   scale: 2.5),
               CommonWidget.commonSizedBox(height: 20)
             ],

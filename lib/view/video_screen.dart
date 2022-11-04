@@ -5,8 +5,10 @@ import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:expert_parrot_app/view/viedeo_play_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:sizer/sizer.dart';
 import '../components/common_widget.dart';
+import '../components/favourite_button.dart';
 
 class VideoScreen extends StatefulWidget {
   const VideoScreen({Key? key}) : super(key: key);
@@ -105,29 +107,34 @@ class _VideoScreenState extends State<VideoScreen> {
                             child: Row(
                               children: [
                                 Column(children: [
-                                  CommonWidget.commonSvgPitcher(
-                                      height: 20,
-                                      image: ImageConst.hartBorderIcon,
-                                      color: CommonColor.gery636363),
+                                  FavouriteButton(),
                                   CommonText.textBoldWight400(
                                       text: '143K',
                                       fontSize: 13.sp,
                                       color: CommonColor.gery636363),
                                 ]),
                                 Spacer(),
-                                Column(children: [
-                                  Image.asset(ImageConst.shareIcon,
-                                      scale: 4, color: CommonColor.gery636363),
+                                GestureDetector(
+                                  onTap: () {
+                                    Share.share(
+                                        'check out my website https://example.com',
+                                        subject: 'Look what I made!');
+                                  },
+                                  child: Column(children: [
+                                    Image.asset(ImageConst.shareIcon,
+                                        scale: 4,
+                                        color: CommonColor.gery636363),
 
-                                  // CommonWidget.commonSvgPitcher(
-                                  //     height: 20,
-                                  //     image: ImageConst.shareIcon,
-                                  //     color: CommonColor.gery636363),
-                                  CommonText.textBoldWight400(
-                                      text: TextConst.share,
-                                      fontSize: 13.sp,
-                                      color: CommonColor.gery636363),
-                                ]),
+                                    // CommonWidget.commonSvgPitcher(
+                                    //     height: 20,
+                                    //     image: ImageConst.shareIcon,
+                                    //     color: CommonColor.gery636363),
+                                    CommonText.textBoldWight400(
+                                        text: TextConst.share,
+                                        fontSize: 13.sp,
+                                        color: CommonColor.gery636363),
+                                  ]),
+                                ),
                               ],
                             ),
                           )

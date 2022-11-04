@@ -372,7 +372,7 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                   SizedBox(
                     width: 5,
                   ),
-                  CommonText.textBoldWight400(text: "10", fontSize: 11.sp),
+                  CommonText.textBoldWight400(text: "2", fontSize: 11.sp),
                 ],
               ),
             ),
@@ -493,6 +493,36 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                       CommonText.textBoldWight400(
                           text:
                               "Ultricies ultricies interdum sodales.\nVitae feugiat vitae quis id",
+                          color: Color(0xffa1a1a1),
+                          fontSize: 10.sp),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Row(
+                children: [
+                  Image.asset(
+                    'assets/png/person1.png',
+                    height: 40.sp,
+                    width: 40.sp,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CommonText.textBoldWight500(
+                          text: "Robert Albert", fontSize: 12.sp),
+                      SizedBox(
+                        height: 3,
+                      ),
+                      CommonText.textBoldWight400(
+                          text:
+                              "Vitae feugiat vitae quis id Ultricies\n ultricies interdum sodales.",
                           color: Color(0xffa1a1a1),
                           fontSize: 10.sp),
                     ],
