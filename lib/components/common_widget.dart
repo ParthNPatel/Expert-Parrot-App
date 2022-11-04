@@ -65,14 +65,16 @@ class CommonWidget {
     );
   }
 
-  static Widget textFormField(
-      {String? hintText,
-      List<TextInputFormatter>? inpuFormator,
-      required TextEditingController controller,
-      int? maxLength,
-      TextInputType? keyBoardType,
-      bool isObscured = false,
-      Widget? suffix}) {
+  static Widget textFormField({
+    String? hintText,
+    List<TextInputFormatter>? inpuFormator,
+    required TextEditingController controller,
+    int? maxLength,
+    TextInputType? keyBoardType,
+    bool isObscured = false,
+    Widget? suffix,
+    Widget? prefix,
+  }) {
     return SizedBox(
       height: 43.sp,
       child: TextFormField(
@@ -87,6 +89,7 @@ class CommonWidget {
         ),
         cursorColor: Colors.black,
         decoration: InputDecoration(
+            prefixIcon: prefix,
             contentPadding: EdgeInsets.only(top: 7.sp, left: 12.sp),
             suffixIcon: suffix,
             filled: true,
@@ -200,12 +203,13 @@ class CommonWidget {
 
     Duration difference = today.difference(tm);
     if (difference.compareTo(Duration(minutes: 1)) < 1) {
-      return 'Now';
+      return 'Today';
     } else if (difference.compareTo(Duration(hours: 1)) < 1) {
-      // return '${difference.inMinutes} minute';
-      return '${DateFormat.jm().format(tm)}';
+      return '${difference.inMinutes} minute';
+      // return '${DateFormat.jm().format(tm)}';
     } else if (difference.compareTo(oneDay) < 1) {
-      return '${DateFormat.jm().format(tm)}';
+      return 'Today';
+      // return '${DateFormat.jm().format(tm)}';
       // return '${difference.inHours} hours';
     } else if (difference.compareTo(twoDay) < 1) {
       return "yesterday";

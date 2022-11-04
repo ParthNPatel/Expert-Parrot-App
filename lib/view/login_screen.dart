@@ -1,12 +1,16 @@
+import 'dart:convert';
+
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-
+import 'package:country_picker/country_picker.dart';
+import '../model/country_model.dart';
 import 'otp_verification_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -17,73 +21,166 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController _emailOrMobileController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _mobileController = TextEditingController();
+
+  TextEditingController searchTextEditing = new TextEditingController();
+
+  String? countryCode = "+91";
+
+  List<CountryModel> _searchResult = [];
+
+  List<CountryModel> _countryList = [];
+
+  CountryModel? seletedCountry;
+
+  Future<List<CountryModel>> loadCountry() async {
+    String jsonString = await _loadAStudentAsset();
+    final jsonResponse = json.decode(jsonString);
+
+    List<CountryModel> listData = jsonResponse
+        .map<CountryModel>((json) => CountryModel.fromJson(json))
+        .toList();
+    return listData;
+  }
+
+  Country? selectedCountry;
+  @override
+  void initState() {
+    loadCountry();
+    seletedCountry = CountryModel("India", "🇮🇳", "IN", "+91");
+    super.initState();
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    _emailOrMobileController.dispose();
+    _emailController.dispose();
   }
 
+  bool isChecked = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: CommonWidget.commonBackGround(
-          body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CommonWidget.commonSizedBox(height: 8),
-          CommonWidget.commonBackButton(onTap: () {
-            Get.back();
-          }),
-          CommonWidget.commonSizedBox(height: 40),
-          CommonText.textBoldWight500(
-              text: 'Welcome back! Glad\n to see you, Again!', fontSize: 22.sp),
-          CommonWidget.commonSizedBox(height: 28),
-          CommonWidget.textFormField(
-              controller: _emailOrMobileController,
-              hintText: 'Enter Email Or Mobile No'),
-          CommonWidget.commonSizedBox(height: 28),
-          CommonWidget.commonButton(
-              onTap: () {
-                if (_emailOrMobileController.text.isNotEmpty) {
-                  Get.to(() => OtpVerificationScreen());
-                } else {
-                  CommonWidget.getSnackBar(
-                      duration: 2,
-                      title: "Required",
-                      message: 'Please enter email or mobile no',
-                      color: Colors.red,
-                      colorText: Colors.white);
-                }
-              },
-              text: 'Send OTP'),
-          CommonWidget.commonSizedBox(height: 24),
-          CommonWidget.commonSvgPitcher(
-            image: 'assets/svg/Login with.svg',
-          ),
-          CommonWidget.commonSizedBox(height: 14),
-          Row(
-            children: [
-              commonBackButton(
-                image: 'assets/svg/facebook_ic.svg',
-                onTap: () {},
-              ),
-              CommonWidget.commonSizedBox(width: 8),
-              commonBackButton(
-                image: 'assets/svg/google_ic.svg',
-                onTap: () {},
-              ),
-              CommonWidget.commonSizedBox(width: 8),
-              commonBackButton(
-                image: 'assets/svg/cib_apple.svg',
-                onTap: () {},
-              ),
-            ],
-          )
-        ],
-      )),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CommonWidget.commonSizedBox(height: 8),
+            // CommonWidget.commonBackButton(onTap: () {
+            //   Get.back();
+            // }),
+            CommonWidget.commonSizedBox(height: 20),
+            CommonText.textBoldWight500(
+                text: 'Welcome back! Glad\nto see you, Again!',
+                fontSize: 22.sp),
+            CommonWidget.commonSizedBox(height: 28),
+            isChecked == true
+                ? CommonWidget.textFormField(
+                    prefix: InkWell(
+                      onTap: () {
+                        // _displayDialog(context);
+                        showCountryPicker(
+                          context: context,
+                          showPhoneCode:
+                              true, // optional. Shows phone code before the country name.
+                          onSelect: (Country country) {
+                            print('Select country: ${country.displayName}');
+                            setState(() {
+                              selectedCountry = country;
+                            });
+                          },
+                        );
+                      },
+                      child: Container(
+                          margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                          alignment: Alignment.center,
+                          height: 50.0,
+                          width: 100,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(
+                                selectedCountry != null
+                                    ? "+ ${selectedCountry!.phoneCode}"
+                                    : "+91",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                ),
+                              )
+                            ],
+                          )),
+                    ),
+                    keyBoardType: TextInputType.number,
+                    controller: _mobileController,
+                    hintText: 'Enter Mobile No')
+                : CommonWidget.textFormField(
+                    controller: _emailController, hintText: 'Enter Email'),
+            Row(
+              children: [
+                SizedBox(
+                  height: 45,
+                  width: 45,
+                  child: FittedBox(
+                    child: Checkbox(
+                      value: isChecked,
+                      activeColor: CommonColor.greenColor,
+                      onChanged: (value) {
+                        setState(() {
+                          isChecked = value!;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                CommonText.textBoldWight500(text: "Continue with Mobile No")
+              ],
+            ),
+            CommonWidget.commonSizedBox(height: 28),
+            CommonWidget.commonButton(
+                onTap: () {
+                  if (_emailController.text.isNotEmpty ||
+                      _mobileController.text.isNotEmpty) {
+                    Get.to(() => OtpVerificationScreen());
+                  } else {
+                    CommonWidget.getSnackBar(
+                        duration: 2,
+                        title: "Required",
+                        message: 'Please enter email or mobile no',
+                        color: Colors.red,
+                        colorText: Colors.white);
+                  }
+                },
+                text: 'Send OTP'),
+            CommonWidget.commonSizedBox(height: 24),
+            CommonWidget.commonSvgPitcher(
+              image: 'assets/svg/Login with.svg',
+            ),
+            CommonWidget.commonSizedBox(height: 14),
+            Row(
+              children: [
+                commonBackButton(
+                  image: 'assets/svg/facebook_ic.svg',
+                  onTap: () {},
+                ),
+                CommonWidget.commonSizedBox(width: 8),
+                commonBackButton(
+                  image: 'assets/svg/google_ic.svg',
+                  onTap: () {},
+                ),
+                CommonWidget.commonSizedBox(width: 8),
+                commonBackButton(
+                  image: 'assets/svg/cib_apple.svg',
+                  onTap: () {},
+                ),
+              ],
+            )
+          ],
+        ),
+      ),
     );
   }
 
@@ -106,5 +203,163 @@ class _LoginScreenState extends State<LoginScreen> {
             )),
       ),
     );
+  }
+
+  _displayDialog(BuildContext context) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter modalSetState) {
+            return AlertDialog(
+              content: SizedBox(
+                width: double.maxFinite,
+                height: 360.0,
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      color: Theme.of(context).primaryColor,
+                      child: Card(
+                        child: ListTile(
+                          leading: const Icon(Icons.search),
+                          title: TextField(
+                            controller: searchTextEditing,
+                            decoration: const InputDecoration(
+                                hintText: 'Search', border: InputBorder.none),
+                            onChanged: (value) {
+                              onSearchTextChanged(value, modalSetState);
+                            },
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.cancel),
+                            onPressed: () {
+                              searchTextEditing.clear();
+                              onSearchTextChanged('', modalSetState);
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: _searchResult.isNotEmpty ||
+                              searchTextEditing.text.isNotEmpty
+                          ? ListView.builder(
+                              itemCount: _searchResult.length,
+                              itemBuilder: (context, i) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      seletedCountry = _searchResult[i];
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                  child: Card(
+                                    margin: const EdgeInsets.all(6.0),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Row(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 8.0, right: 10.0),
+                                            child: Text(
+                                              _searchResult[i].flag,
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                          Text(
+                                            _searchResult[i].name,
+                                            maxLines: 2,
+                                            textAlign: TextAlign.justify,
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            )
+                          : ListView.builder(
+                              itemCount: _countryList.length,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      seletedCountry = _countryList[index];
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                  child: Card(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 8.0, right: 10.0),
+                                            child: Text(
+                                              _countryList[index].flag,
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                          Text(
+                                            _countryList[index].name,
+                                            maxLines: 2,
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(5.0),
+                    child: const Text('CANCEL'),
+                  ),
+                )
+              ],
+            );
+          });
+        });
+  }
+
+  Future<String> _loadAStudentAsset() async {
+    return await rootBundle.loadString('assets/country.JSON');
+  }
+
+  onSearchTextChanged(String text, StateSetter modalSetState) async {
+    _searchResult.clear();
+    if (text.isEmpty) {
+      modalSetState(() {});
+      return;
+    }
+    for (var value in _countryList) {
+      if (value.name.toLowerCase().contains(text.toLowerCase()))
+        _searchResult.add(value);
+    }
+
+    modalSetState(() {});
   }
 }

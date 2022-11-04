@@ -584,34 +584,16 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                             vertical: 10),
                                                     child: Row(
                                                       children: [
-                                                        Container(
-                                                          height: 18,
-                                                          width: 18,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            border: Border.all(
-                                                                color: medicineSelected ==
-                                                                        index
-                                                                    ? Colors
-                                                                        .transparent
-                                                                    : Color(
-                                                                        0xffd8d8d8)),
-                                                            color: medicineSelected ==
-                                                                    index
-                                                                ? CommonColor
-                                                                    .greenColor
-                                                                : Colors.white,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        3),
-                                                          ),
-                                                          child: Center(
-                                                              child: Icon(
-                                                            Icons.check,
-                                                            size: 10,
-                                                            color: Colors.white,
-                                                          )),
+                                                        Icon(
+                                                          Icons.check,
+                                                          size: 17,
+                                                          color:
+                                                              medicineSelected ==
+                                                                      index
+                                                                  ? CommonColor
+                                                                      .greenColor
+                                                                  : Colors
+                                                                      .white,
                                                         ),
                                                         SizedBox(
                                                           width: 10,
@@ -700,36 +682,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                 vertical: 10),
                                                         child: Row(
                                                           children: [
-                                                            Container(
-                                                              height: 18,
-                                                              width: 18,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                border: Border.all(
-                                                                    color: strengthSelected ==
-                                                                            index
-                                                                        ? Colors
-                                                                            .transparent
-                                                                        : Color(
-                                                                            0xffd8d8d8)),
-                                                                color: strengthSelected ==
-                                                                        index
-                                                                    ? CommonColor
-                                                                        .greenColor
-                                                                    : Colors
-                                                                        .white,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            3),
-                                                              ),
-                                                              child: Center(
-                                                                  child: Icon(
-                                                                Icons.check,
-                                                                size: 10,
-                                                                color: Colors
-                                                                    .white,
-                                                              )),
+                                                            Icon(
+                                                              Icons.check,
+                                                              size: 17,
+                                                              color: strengthSelected ==
+                                                                      index
+                                                                  ? CommonColor
+                                                                      .greenColor
+                                                                  : Colors
+                                                                      .transparent,
                                                             ),
                                                             SizedBox(
                                                               width: 10,
@@ -806,36 +767,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                 vertical: 10),
                                                         child: Row(
                                                           children: [
-                                                            Container(
-                                                              height: 18,
-                                                              width: 18,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                border: Border.all(
-                                                                    color: daysSelected ==
-                                                                            index
-                                                                        ? Colors
-                                                                            .transparent
-                                                                        : Color(
-                                                                            0xffd8d8d8)),
-                                                                color: daysSelected ==
-                                                                        index
-                                                                    ? CommonColor
-                                                                        .greenColor
-                                                                    : Colors
-                                                                        .white,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            3),
-                                                              ),
-                                                              child: Center(
-                                                                  child: Icon(
-                                                                Icons.check,
-                                                                size: 10,
-                                                                color: Colors
-                                                                    .white,
-                                                              )),
+                                                            Icon(
+                                                              Icons.check,
+                                                              size: 17,
+                                                              color: daysSelected ==
+                                                                      index
+                                                                  ? CommonColor
+                                                                      .greenColor
+                                                                  : Colors
+                                                                      .transparent,
                                                             ),
                                                             SizedBox(
                                                               width: 10,
@@ -918,32 +858,13 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                 horizontal: 10, vertical: 10),
                                             child: Row(
                                               children: [
-                                                Container(
-                                                  height: 18,
-                                                  width: 18,
-                                                  decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        color:
-                                                            appearanceSelected ==
-                                                                    index
-                                                                ? Colors
-                                                                    .transparent
-                                                                : Color(
-                                                                    0xffd8d8d8)),
-                                                    color: appearanceSelected ==
-                                                            index
-                                                        ? CommonColor.greenColor
-                                                        : Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            3),
-                                                  ),
-                                                  child: Center(
-                                                      child: Icon(
-                                                    Icons.check,
-                                                    size: 10,
-                                                    color: Colors.white,
-                                                  )),
+                                                Icon(
+                                                  Icons.check,
+                                                  size: 17,
+                                                  color: appearanceSelected ==
+                                                          index
+                                                      ? CommonColor.greenColor
+                                                      : Colors.transparent,
                                                 ),
                                                 SizedBox(
                                                   width: 10,
@@ -1099,20 +1020,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                                                                                   child: Row(
                                                                                     children: [
-                                                                                      Container(
-                                                                                        height: 18,
-                                                                                        width: 18,
-                                                                                        decoration: BoxDecoration(
-                                                                                          border: Border.all(color: frequencySelected == index ? Colors.transparent : Color(0xffd8d8d8)),
-                                                                                          color: frequencySelected == index ? CommonColor.greenColor : Colors.white,
-                                                                                          borderRadius: BorderRadius.circular(3),
-                                                                                        ),
-                                                                                        child: Center(
-                                                                                            child: Icon(
-                                                                                          Icons.check,
-                                                                                          size: 10,
-                                                                                          color: Colors.white,
-                                                                                        )),
+                                                                                      Icon(
+                                                                                        Icons.check,
+                                                                                        size: 17,
+                                                                                        color: frequencySelected == index ? CommonColor.greenColor : Colors.transparent,
                                                                                       ),
                                                                                       SizedBox(
                                                                                         width: 10,
@@ -1197,20 +1108,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                                                                                 child: Row(
                                                                                   children: [
-                                                                                    Container(
-                                                                                      height: 18,
-                                                                                      width: 18,
-                                                                                      decoration: BoxDecoration(
-                                                                                        border: Border.all(color: timeSelected == index ? Colors.transparent : Color(0xffd8d8d8)),
-                                                                                        color: timeSelected == index ? CommonColor.greenColor : Colors.white,
-                                                                                        borderRadius: BorderRadius.circular(3),
-                                                                                      ),
-                                                                                      child: Center(
-                                                                                          child: Icon(
-                                                                                        Icons.check,
-                                                                                        size: 10,
-                                                                                        color: Colors.white,
-                                                                                      )),
+                                                                                    Icon(
+                                                                                      Icons.check,
+                                                                                      size: 17,
+                                                                                      color: timeSelected == index ? CommonColor.greenColor : Colors.transparent,
                                                                                     ),
                                                                                     SizedBox(
                                                                                       width: 10,
@@ -1235,49 +1136,67 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                             fontSize: 13.sp,
                                                             color:
                                                                 Colors.black),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
                                                         Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .end,
                                                           children: [
-                                                            Container(
-                                                              height: 40.sp,
-                                                              width: 170.sp,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
+                                                            Column(
+                                                              children:
+                                                                  List.generate(
+                                                                timeSelected ==
+                                                                        0
+                                                                    ? 1
+                                                                    : timeSelected ==
+                                                                            1
+                                                                        ? 2
+                                                                        : 3,
+                                                                (index) =>
+                                                                    Container(
+                                                                  height: 40.sp,
+                                                                  width: 170.sp,
+                                                                  margin: EdgeInsets
+                                                                      .only(
+                                                                          top:
+                                                                              10),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
                                                                             15),
-                                                                color: Color(
-                                                                    0xffF8F8F6),
-                                                              ),
-                                                              child: Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 18,
-                                                                  ),
-                                                                  SvgPicture
-                                                                      .asset(
-                                                                    'assets/svg/notification2.svg',
-                                                                    height:
-                                                                        15.sp,
-                                                                    width:
-                                                                        15.sp,
                                                                     color: Color(
-                                                                        0xff9B9B9B),
+                                                                        0xffF8F8F6),
                                                                   ),
-                                                                  SizedBox(
-                                                                    width: 18,
+                                                                  child: Row(
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width:
+                                                                            18,
+                                                                      ),
+                                                                      SvgPicture
+                                                                          .asset(
+                                                                        'assets/svg/notification2.svg',
+                                                                        height:
+                                                                            15.sp,
+                                                                        width: 15
+                                                                            .sp,
+                                                                        color: Color(
+                                                                            0xff9B9B9B),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            18,
+                                                                      ),
+                                                                      CommonText.textBoldWight500(
+                                                                          text:
+                                                                              "10:00 AM",
+                                                                          fontSize: 13
+                                                                              .sp,
+                                                                          color:
+                                                                              Colors.black),
+                                                                    ],
                                                                   ),
-                                                                  CommonText.textBoldWight500(
-                                                                      text:
-                                                                          "10:00 AM",
-                                                                      fontSize:
-                                                                          13.sp,
-                                                                      color: Colors
-                                                                          .black),
-                                                                ],
+                                                                ),
                                                               ),
                                                             ),
                                                             Spacer(),
@@ -1610,7 +1529,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       child: Container(
           // height: 16.h,
 
-          padding: EdgeInsets.only(top: 10, bottom: 10, left: 16, right: 8),
+          padding: EdgeInsets.only(
+            top: 10,
+            bottom: 10,
+            left: 16,
+          ),
           decoration: BoxDecoration(
               color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(16)),
@@ -1639,7 +1562,23 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               text: medName,
                               color: CommonColor.blackColor0D0D0D,
                               fontSize: 15.sp),
-                          Icon(Icons.more_vert, color: CommonColor.geryB4B4B4),
+                          PopupMenuButton(
+                            padding: EdgeInsets.zero,
+                            icon: Icon(
+                              Icons.more_vert,
+                              color: CommonColor.geryB4B4B4,
+                            ),
+                            itemBuilder: (context) {
+                              return [
+                                PopupMenuItem(
+                                  child: Text("Mark as Taken"),
+                                ),
+                                PopupMenuItem(
+                                  child: Text("Delete"),
+                                ),
+                              ];
+                            },
+                          )
                         ]),
                     CommonText.textBoldWight400(
                         text: medGm,
@@ -1653,20 +1592,23 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               text: timeOfDay,
                               color: CommonColor.blackColor0D0D0D,
                               fontSize: 9.sp),
-                          Container(
-                              height: 18.sp,
-                              width: 18.sp,
-                              alignment: Alignment.center,
-                              child: Icon(
-                                Icons.check, size: 16,
-                                color: iconColor,
-                                //size: 18.sp,
-                              ),
-                              decoration: BoxDecoration(
-                                  border:
-                                      Border.all(color: iconColor, width: 1.5),
-                                  shape: BoxShape.circle,
-                                  color: Colors.white)),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: Container(
+                                height: 18.sp,
+                                width: 18.sp,
+                                alignment: Alignment.center,
+                                child: Icon(
+                                  Icons.check, size: 16,
+                                  color: iconColor,
+                                  //size: 18.sp,
+                                ),
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: iconColor, width: 1.5),
+                                    shape: BoxShape.circle,
+                                    color: Colors.white)),
+                          ),
                         ]),
                   ],
                 ),
@@ -1781,12 +1723,12 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       Spacer(),
       Image.asset(
         ImageConst.notification,
-        scale: 4,
+        scale: 5,
       ),
       CommonWidget.commonSizedBox(width: 6),
       Image.asset(
         'assets/png/face.png',
-        scale: 4,
+        scale: 5,
       ),
     ]);
   }
