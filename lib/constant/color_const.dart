@@ -11,6 +11,7 @@ class CommonColor {
   static Color blackColor434343 = const Color(0xff434343);
   static Color blackColor1D253C = const Color(0xff1D253C);
   static Color blackColor616161 = const Color(0xff616161);
+  static Color blueColor222B48 = const Color(0xff222B48);
   static Color textFieldColor7f8f9 = const Color(0xfff7f8f9);
   static Color hintTextColor8391A1 = const Color(0xfff8391A1);
   static Color blackButtonColor1E232C = const Color(0xfff1E232C);
@@ -19,6 +20,7 @@ class CommonColor {
   static Color themRGBO = const Color.fromRGBO(69, 196, 44, 0.13);
   static Color geryRGBO00036 = const Color.fromRGBO(0, 0, 0, 0.36);
   static Color geryB4B4B4 = const Color(0xffB4B4B4);
+  static Color gery9D9D9D = const Color(0xff9D9D9D);
   static Color gery727272 = const Color(0xff727272);
   static Color gery696969 = const Color(0xff696969);
   static Color gery8A8A8A = const Color(0xff8A8A8A);
@@ -26,6 +28,7 @@ class CommonColor {
   static Color gery787878 = const Color(0xff787878);
   static Color gery636363 = const Color(0xff636363);
   static Color gery72777A = const Color(0xff72777A);
+  static Color geryE2E2E2 = const Color(0xffE2E2E2);
   static const greenColor = Color(0xff1BD15D);
 }
 
