@@ -1,10 +1,13 @@
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/controller/HandleFloatController.dart';
+import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
+import 'package:expert_parrot_app/view/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import '../components/common_widget.dart';
+import '../constant/image_const.dart';
 import '../constant/text_styel.dart';
 
 class CommunityScreen extends StatefulWidget {
@@ -15,6 +18,7 @@ class CommunityScreen extends StatefulWidget {
 }
 
 class _CommunityScreenState extends State<CommunityScreen> {
+  TextEditingController _queryController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,7 +104,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                             ),
                             CommonText.textBoldWight400(
                                 text:
-                                    "If anyone have knowalge text in commment box.",
+                                    "If anyone have knowledge text in comment box.",
                                 color: Color(0xffa1a1a1),
                                 fontSize: 11.sp),
                           ],
@@ -299,12 +303,120 @@ class _CommunityScreenState extends State<CommunityScreen> {
           },
         ),
         CommonText.textBoldWight500(text: "Community", fontSize: 18.sp),
-        Image.asset(
-          'assets/png/chat1.png',
-          height: 23.sp,
-          width: 23.sp,
+        InkWell(
+          onTap: () async {
+            if (GetStorageServices.getUserLoggedInStatus() == true) {
+              Get.dialog(await askYourQuestion());
+            } else {
+              Get.off(() => LoginScreen());
+            }
+          },
+          child: Image.asset(
+            'assets/png/chat1.png',
+            height: 23.sp,
+            width: 23.sp,
+          ),
         )
       ],
+    );
+  }
+
+  Future<StatefulBuilder> askYourQuestion() async {
+    return StatefulBuilder(
+      builder: (context, setState) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Container(
+          width: 300.sp,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CommonText.textBoldWight500(
+                        text: "Ask Your Query",
+                        fontSize: 17.sp,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Get.back();
+                        },
+                        child: CommonWidget.commonSvgPitcher(
+                          image: ImageConst.close,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                CommonWidget.dottedLineWidget(),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CommonText.textBoldWight400(
+                        text: "please enter your medicine related query",
+                        fontSize: 11.sp,
+                        color: Color(0xff9B9B9B),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      TextFormField(
+                        controller: _queryController,
+                        decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Color(0xffF8F8F6),
+                            hintText: "Enter your query",
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.circular(20),
+                            )),
+                      ),
+                      SizedBox(height: 23),
+                      CommonWidget.commonButton(
+                          color: CommonColor.greenColor,
+                          radius: 10,
+                          onTap: () async {
+                            if (_queryController.text.isNotEmpty) {
+                              Get.back();
+
+                              CommonWidget.getSnackBar(
+                                  duration: 2,
+                                  color: CommonColor.greenColor,
+                                  colorText: Colors.white,
+                                  title: "Submitted",
+                                  message:
+                                      'Your query has been submitted successfully.');
+                            } else {
+                              CommonWidget.getSnackBar(
+                                  color: Colors.red,
+                                  duration: 2,
+                                  colorText: Colors.white,
+                                  title: "Required",
+                                  message: 'Please enter your query.');
+                            }
+                          },
+                          text: "Submit")
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
