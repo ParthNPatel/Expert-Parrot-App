@@ -84,7 +84,6 @@ class _DependentScreenState extends State<DependentScreen> {
       body: CommonWidget.commonBackGround(
         body: Column(
           children: [
-            CommonWidget.commonSizedBox(height: 10),
             CommonWidget.header(
                 backOnTap: () {
                   Get.back();

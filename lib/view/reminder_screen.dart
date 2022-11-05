@@ -106,9 +106,6 @@ class _ReminderScreenState extends State<ReminderScreen> {
       body: CommonWidget.commonBackGround(
         body: Column(
           children: [
-            SizedBox(
-              height: 10,
-            ),
             header(),
             SizedBox(
               height: 13,

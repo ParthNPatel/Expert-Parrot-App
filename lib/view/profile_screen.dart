@@ -1,5 +1,7 @@
 import 'package:expert_parrot_app/components/common_widget.dart';
+import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:expert_parrot_app/view/depandent_screen.dart';
+import 'package:expert_parrot_app/view/splash_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,9 +26,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: CommonWidget.commonBackGround(
         body: Column(
           children: [
-            SizedBox(
-              height: 10,
-            ),
             header(),
             SizedBox(
               height: 13,
@@ -237,9 +236,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               text: 'Privacy Policy',
             ),
             CommonListTile(
-              onTap: () {},
+              onTap: () {
+                GetStorageServices.logOut();
+                Get.offAll(() => SplashScreen());
+              },
               image: 'assets/svg/setting.svg',
-              text: 'Settings',
+              text: 'Log Out',
             ),
             SizedBox(
               height: 3,

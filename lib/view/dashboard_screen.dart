@@ -159,7 +159,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       body: CommonWidget.commonBackGround(
         body: Column(
           children: [
-            CommonWidget.commonSizedBox(height: 10),
             userNameWidget(),
             CommonWidget.commonSizedBox(height: 20),
             Expanded(

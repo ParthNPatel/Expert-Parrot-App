@@ -34,4 +34,11 @@ class GetStorageServices {
   static getUserLoggedInStatus() {
     return getStorage.read('isUserLoggedIn');
   }
+
+  static logOut() {
+    getStorage.remove("height");
+    getStorage.remove("weight");
+    getStorage.remove("bmi");
+    getStorage.remove("isUserLoggedIn");
+  }
 }
