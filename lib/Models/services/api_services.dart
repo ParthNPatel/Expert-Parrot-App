@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:http/http.dart' as http;
 
 import 'app_exception.dart';
@@ -10,10 +11,8 @@ enum APIType { aPost, aGet }
 
 class APIService {
   var response;
-  String baseUrl = 'https://theprimoapp.com/meyaoo/api/';
-  Map<String, String> headers = {
-    "Accept": "application/json",
-  };
+  String baseUrl = 'http://3.109.139.48:5000';
+
   @override
   Future getResponse(
       {required String url,
@@ -21,10 +20,16 @@ class APIService {
       Map<String, dynamic>? body,
       Map<String, String>? header,
       bool fileUpload = false}) async {
+    Map<String, String> headers = GetStorageServices.getBarrierToken() != null
+        ? {
+            'Authorization': 'Bearer ${GetStorageServices.getBarrierToken()}',
+            'Content-Type': 'application/json'
+          }
+        : {'Content-Type': 'application/json'};
     try {
       if (apitype == APIType.aGet) {
         final result =
-            await http.get(Uri.parse(baseUrl + url), headers: header);
+            await http.get(Uri.parse(baseUrl + url), headers: headers);
         response = returnResponse(result.statusCode, result.body);
         log("RES status code ${result.statusCode}");
         log("res${result.body}");
@@ -33,7 +38,7 @@ class APIService {
         print("REQUEST PARAMETER $body");
 
         final result = await http.post(Uri.parse(baseUrl + url),
-            body: body, headers: header);
+            body: json.encode(body), headers: headers);
         print("resp${result.body}");
         response = returnResponse(result.statusCode, result.body);
         print(result.statusCode);

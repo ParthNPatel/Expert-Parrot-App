@@ -1,16 +1,17 @@
-import 'package:expert_parrot_app/Models/requestModel/login_req_model.dart';
+import 'package:expert_parrot_app/Models/responseModel/log_in_res_model.dart';
 import 'package:expert_parrot_app/constant/api_const.dart';
+
 import '../services/api_services.dart';
 import '../services/base_service.dart';
 
 class LoginRepo extends BaseService {
-  static Future loginUserRepo({required LoginReqModel model}) async {
+  static Future<LogInResponseModel> loginUserRepo(
+      {required Map<String, dynamic> model}) async {
     var response = await APIService().getResponse(
-        url: APIConst.baseUrl + APIConst.loginUrl,
-        apitype: APIType.aPost,
-        body: model.toJson());
+        url: APIConst.loginUrl, apitype: APIType.aPost, body: model);
     print('Login response===>>>  $response');
-    //LoginReqModel loginReqModel = LoginReqModel.fromJson(response);
-    // return loginReqModel;
+    LogInResponseModel logInResponseModel =
+        LogInResponseModel.fromJson(response);
+    return logInResponseModel;
   }
 }

@@ -1,19 +1,28 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:expert_parrot_app/Models/repo/login_repo.dart';
-import 'package:expert_parrot_app/Models/requestModel/login_req_model.dart';
+import 'dart:developer';
+
+import 'package:country_picker/country_picker.dart';
+import 'package:expert_parrot_app/Models/apis/api_response.dart';
+import 'package:expert_parrot_app/Models/responseModel/log_in_res_model.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
-import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
+import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
+import 'package:expert_parrot_app/services/app_notification.dart';
+import 'package:expert_parrot_app/view/bottom_nav_screen.dart';
+import 'package:expert_parrot_app/view/otp_verification_screen.dart';
+import 'package:expert_parrot_app/viewModel/log_in_view_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:flutter_progress_hud/flutter_progress_hud.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sizer/sizer.dart';
-import 'package:country_picker/country_picker.dart';
+
 import '../model/country_model.dart';
-import 'otp_verification_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -46,6 +55,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return listData;
   }
 
+  LogInViewModel logInViewModel = Get.put(LogInViewModel());
+
   Country? selectedCountry;
   @override
   void initState() {
@@ -61,161 +72,308 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailController.dispose();
   }
 
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+
+  Future sendOtp(final progress) async {
+    progress.show();
+
+    await firebaseAuth.verifyPhoneNumber(
+      phoneNumber: countryCode! + _mobileController.text,
+      codeSent: (String verificationId, int? forceResendingToken) {
+        setState(() {
+          Get.to(() => OtpVerificationScreen(
+                verificationId: verificationId,
+                logInId: _mobileController.text.trim(),
+              ));
+        });
+        progress.dismiss();
+      },
+      verificationFailed: (FirebaseAuthException verificationFailed) {
+        print('----verificationFailed---${verificationFailed.message}');
+        CommonWidget.getSnackBar(
+          message: verificationFailed.message!,
+          title: 'Failed',
+          duration: 2,
+          color: Colors.red,
+        );
+        progress.dismiss();
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {},
+      verificationCompleted: (PhoneAuthCredential phoneAuthCredential) {
+        print('Done');
+        progress.dismiss();
+      },
+    );
+  }
+
+  Future googleAuthMethod(final progress) async {
+    progress.show();
+
+    if (GetStorageServices.getFcm() == null ||
+        GetStorageServices.getFcm() == '') {
+      await AppNotificationHandler.getFcmToken();
+    }
+    final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+    GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
+
+    GoogleSignInAuthentication googleSignInAuthentication =
+        await googleSignInAccount!.authentication;
+
+    AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleSignInAuthentication.accessToken,
+      idToken: googleSignInAuthentication.idToken,
+    );
+
+    log('AUTH DETAILS :- ${credential}');
+    progress.dismiss();
+    try {
+      await logInViewModel.logInViewModel(model: {
+        "name": "Helo",
+        "loginType": "google",
+        "loginId": "${credential.signInMethod}",
+        "water": 3,
+        "weight": 65,
+        "heartRate": 98,
+        "bmi": 21.1,
+        "fcm_token": "${GetStorageServices.getFcm()}",
+        "userTime": "${DateTime.now()}"
+      });
+
+      if (logInViewModel.logInApiResponse.status.toString() ==
+          Status.COMPLETE.toString()) {
+        LogInResponseModel responseModel = logInViewModel.logInApiResponse.data;
+
+        Get.offAll(() => BottomNavScreen());
+        GetStorageServices.setUserLoggedIn();
+        GetStorageServices.setBarrierToken(responseModel.token);
+
+        progress.dismiss();
+      }
+      if (logInViewModel.logInApiResponse.status.toString() ==
+          Status.ERROR.toString()) {
+        CommonWidget.getSnackBar(
+          message: '',
+          title: 'Failed',
+          duration: 2,
+          color: Colors.red,
+        );
+        progress.dismiss();
+      }
+    } catch (e) {
+      CommonWidget.getSnackBar(
+        message: '',
+        title: 'Something went wrong',
+        duration: 2,
+        color: Colors.red,
+      );
+      progress.dismiss();
+    }
+  }
+
+  Future facebookAuthMethod(final progress) async {
+    try {
+      progress.show();
+      final result = await FacebookAuth.instance
+          .login(permissions: ['public_profile', 'email']);
+
+      if (result.status == LoginStatus.success) {
+        log('RESPONSE');
+        OAuthCredential facebookAuthCredential =
+            FacebookAuthProvider.credential(result.accessToken!.token);
+        log('RESPONSE1');
+
+        final userData = await FacebookAuth.instance.getUserData();
+
+        log('RESPONSE2');
+        await logInViewModel.logInViewModel(model: {
+          "name": "${userData['name']}",
+          "loginType": "facebook",
+          "loginId": "${userData['id']}",
+          "water": 3,
+          "weight": 65,
+          "heartRate": 98,
+          "bmi": 21.1,
+          "fcm_token": "${GetStorageServices.getFcm()}",
+          "userTime": "${DateTime.now()}"
+        });
+
+        if (logInViewModel.logInApiResponse.status.toString() ==
+            Status.COMPLETE.toString()) {
+          LogInResponseModel responseModel =
+              logInViewModel.logInApiResponse.data;
+
+          Get.offAll(() => BottomNavScreen());
+          GetStorageServices.setUserLoggedIn();
+          GetStorageServices.setBarrierToken(responseModel.token);
+
+          progress.dismiss();
+        }
+        if (logInViewModel.logInApiResponse.status.toString() ==
+            Status.ERROR.toString()) {
+          CommonWidget.getSnackBar(
+            message: '',
+            title: 'Failed',
+            duration: 2,
+            color: Colors.red,
+          );
+          progress.dismiss();
+        }
+        progress.dismiss();
+      }
+    } catch (error) {
+      progress.dismiss();
+      print('ERRORRRRRR $error');
+    }
+  }
+
   bool isChecked = false;
   @override
   Widget build(BuildContext context) {
+    log('DATE TIME :- ${DateTime.now()}');
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: CommonWidget.commonBackGround(
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CommonWidget.commonSizedBox(height: 8),
-            // CommonWidget.commonBackButton(onTap: () {
-            //   Get.back();
-            // }),
-            CommonWidget.commonSizedBox(height: 20),
-            CommonText.textBoldWight500(
-                text: 'Welcome back! Glad\nto see you, Again!',
-                fontSize: 22.sp),
-            CommonWidget.commonSizedBox(height: 28),
-            isChecked == true
-                ? CommonWidget.textFormField(
-                    controller: _emailController, hintText: 'Enter Email')
-                : CommonWidget.textFormField(
-                    prefix: SizedBox(
-                      width: 60.sp,
-                      child: InkWell(
-                        onTap: () {
-                          // _displayDialog(context);
-                          showCountryPicker(
-                            context: context,
-                            showPhoneCode:
-                                true, // optional. Shows phone code before the country name.
-                            onSelect: (Country country) {
-                              print('Select country: ${country.displayName}');
+      body: ProgressHUD(
+        child: Builder(
+          builder: (context) {
+            final progress = ProgressHUD.of(context);
+
+            return CommonWidget.commonBackGround(
+              body: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CommonWidget.commonSizedBox(height: 8),
+                  // CommonWidget.commonBackButton(onTap: () {
+                  //   Get.back();
+                  // }),
+                  CommonWidget.commonSizedBox(height: 20),
+                  CommonText.textBoldWight500(
+                      text: 'Welcome back! Glad\nto see you, Again!',
+                      fontSize: 22.sp),
+                  CommonWidget.commonSizedBox(height: 28),
+                  isChecked == true
+                      ? CommonWidget.textFormField(
+                          controller: _emailController, hintText: 'Enter Email')
+                      : CommonWidget.textFormField(
+                          prefix: SizedBox(
+                            width: 60.sp,
+                            child: InkWell(
+                              onTap: () {
+                                // _displayDialog(context);
+                                showCountryPicker(
+                                  context: context,
+                                  showPhoneCode:
+                                      true, // optional. Shows phone code before the country name.
+                                  onSelect: (Country country) {
+                                    print(
+                                        'Select country: ${country.displayName}');
+                                    setState(() {
+                                      selectedCountry = country;
+                                    });
+                                  },
+                                );
+                              },
+                              child: Container(
+                                  margin: const EdgeInsets.fromLTRB(
+                                      0.0, 0.0, 0.0, 0.0),
+                                  alignment: Alignment.center,
+                                  height: 50.0,
+                                  width: 100,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Text(
+                                        selectedCountry != null
+                                            ? "+ ${selectedCountry!.phoneCode}"
+                                            : "+91",
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                        ),
+                                      )
+                                    ],
+                                  )),
+                            ),
+                          ),
+                          keyBoardType: TextInputType.number,
+                          controller: _mobileController,
+                          hintText: 'Enter Mobile No'),
+                  Row(
+                    children: [
+                      SizedBox(
+                        height: 45,
+                        width: 45,
+                        child: FittedBox(
+                          child: Checkbox(
+                            value: isChecked,
+                            activeColor: CommonColor.greenColor,
+                            onChanged: (value) {
                               setState(() {
-                                selectedCountry = country;
+                                isChecked = value!;
                               });
+
+                              log('VALUE OF LOGIN :- $isChecked');
                             },
-                          );
-                        },
-                        child: Container(
-                            margin:
-                                const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-                            alignment: Alignment.center,
-                            height: 50.0,
-                            width: 100,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text(
-                                  selectedCountry != null
-                                      ? "+ ${selectedCountry!.phoneCode}"
-                                      : "+91",
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                  ),
-                                )
-                              ],
-                            )),
+                          ),
+                        ),
                       ),
-                    ),
-                    keyBoardType: TextInputType.number,
-                    controller: _mobileController,
-                    hintText: 'Enter Mobile No'),
-            Row(
-              children: [
-                SizedBox(
-                  height: 45,
-                  width: 45,
-                  child: FittedBox(
-                    child: Checkbox(
-                      value: isChecked,
-                      activeColor: CommonColor.greenColor,
-                      onChanged: (value) {
-                        setState(() {
-                          isChecked = value!;
-                        });
-                      },
-                    ),
+                      CommonText.textBoldWight500(text: "Continue with Email")
+                    ],
                   ),
-                ),
-                CommonText.textBoldWight500(text: "Continue with Email")
-              ],
-            ),
-            CommonWidget.commonSizedBox(height: 28),
-            CommonWidget.commonButton(
-                onTap: () async {
-                  // LoginReqModel model = LoginReqModel();
-                  //
-                  // model.name = "Parth";
-                  // model.fcmToken =
-                  //     "e2kl8jtGQDWyp8nPm0O0u1:APA91bGIPIr8b4wSYiL_VEuz5I1HHE7VGH68tPi8X4AAxCAyl1Y5OW6cSnhMo1vMATj5kJEGmqWhGeabveOAQ7GxA3rOLLf3-GCJtKRPfsBJ_OM54Pm-G7zcPmDuaFXh04ZGvx7rtT3l";
-                  // model.loginId = "${DateTime.now()}";
-                  // model.loginType = "phone";
-                  //
-                  // LoginRepo.loginUserRepo(model: model);
-
-                  var headers = {'Content-Type': 'application/json'};
-                  var request = http.Request(
-                      'POST', Uri.parse('http://3.109.139.48:5000/auth/login'));
-                  request.body = json.encode({
-                    "name": "Parth",
-                    "loginType": "phone",
-                    "loginId": "${DateTime.now()}",
-                    "fcm_token":
-                        "e2kl8jtGQDWyp8nPm0O0u1:APA91bGIPIr8b4wSYiL_VEuz5I1HHE7VGH68tPi8X4AAxCAyl1Y5OW6cSnhMo1vMATj5kJEGmqWhGeabveOAQ7GxA3rOLLf3-GCJtKRPfsBJ_OM54Pm-G7zcPmDuaFXh04ZGvx7rtT3l"
-                  });
-
-                  request.headers.addAll(headers);
-
-                  http.StreamedResponse response = await request.send();
-
-                  if (response.statusCode == 200) {
-                    print(await response.stream.bytesToString());
-                  } else {
-                    print(response.reasonPhrase);
-                  }
-
-                  if (_emailController.text.isNotEmpty ||
-                      _mobileController.text.isNotEmpty) {
-                    Get.to(() => OtpVerificationScreen());
-                  } else {
-                    CommonWidget.getSnackBar(
-                        duration: 2,
-                        title: "Required",
-                        message: 'Please enter email or mobile no',
-                        color: Colors.red,
-                        colorText: Colors.white);
-                  }
-                },
-                text: 'Send OTP'),
-            CommonWidget.commonSizedBox(height: 24),
-            CommonWidget.commonSvgPitcher(
-              image: 'assets/svg/Login with.svg',
-            ),
-            CommonWidget.commonSizedBox(height: 14),
-            Row(
-              children: [
-                commonBackButton(
-                  image: 'assets/svg/facebook_ic.svg',
-                  onTap: () {},
-                ),
-                CommonWidget.commonSizedBox(width: 8),
-                commonBackButton(
-                  image: 'assets/svg/google_ic.svg',
-                  onTap: () {},
-                ),
-                CommonWidget.commonSizedBox(width: 8),
-                commonBackButton(
-                  image: 'assets/svg/cib_apple.svg',
-                  onTap: () {},
-                ),
-              ],
-            )
-          ],
+                  CommonWidget.commonSizedBox(height: 28),
+                  CommonWidget.commonButton(
+                      onTap: () async {
+                        if (_emailController.text.isNotEmpty ||
+                            _mobileController.text.isNotEmpty) {
+                          if (isChecked == false) {
+                            /// Mobile
+                            ///
+                            await sendOtp(progress);
+                          } else {
+                            /// Email
+                          }
+                        } else {
+                          CommonWidget.getSnackBar(
+                              duration: 2,
+                              title: "Required",
+                              message: 'Please enter email or mobile no',
+                              color: Colors.red,
+                              colorText: Colors.white);
+                        }
+                      },
+                      text: 'Send OTP'),
+                  CommonWidget.commonSizedBox(height: 24),
+                  CommonWidget.commonSvgPitcher(
+                    image: 'assets/svg/Login with.svg',
+                  ),
+                  CommonWidget.commonSizedBox(height: 14),
+                  Row(
+                    children: [
+                      commonBackButton(
+                        image: 'assets/svg/facebook_ic.svg',
+                        onTap: () async {
+                          await facebookAuthMethod(progress);
+                        },
+                      ),
+                      CommonWidget.commonSizedBox(width: 8),
+                      commonBackButton(
+                        image: 'assets/svg/google_ic.svg',
+                        onTap: () async {
+                          await googleAuthMethod(progress);
+                        },
+                      ),
+                      CommonWidget.commonSizedBox(width: 8),
+                      commonBackButton(
+                        image: 'assets/svg/cib_apple.svg',
+                        onTap: () {},
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
@@ -237,7 +395,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: SvgPicture.asset(image, fit: BoxFit.contain),
-            )),
+            ),),
       ),
     );
   }

@@ -11,6 +11,22 @@ class GetStorageServices {
     return getStorage.read('height');
   }
 
+  static setBarrierToken(token) {
+    getStorage.write('barrierToken', token);
+  }
+
+  static getBarrierToken() {
+    return getStorage.read('barrierToken');
+  }
+
+  static setFcm(String fcm) {
+    getStorage.write('fcm', fcm);
+  }
+
+  static getFcm() {
+    return getStorage.read('fcm');
+  }
+
   static setUserWeight(String weight) {
     getStorage.write('weight', weight);
   }

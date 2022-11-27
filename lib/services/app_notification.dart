@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:developer';
+
+import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class AppNotificationHandler {
@@ -123,9 +124,10 @@ class AppNotificationHandler {
     try {
       String? token = await firebaseMessaging.getToken();
 
-      //await GetStorageServices.setFcmToken(token!);
       // log('--------get fcm pref ${GetStorageServices.getFcmToken()}');
       log("=========fcm-token===$token");
+      await GetStorageServices.setFcm(token!);
+
       return token;
     } catch (e) {
       return null;

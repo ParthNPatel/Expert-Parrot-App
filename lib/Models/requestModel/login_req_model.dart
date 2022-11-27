@@ -2,11 +2,12 @@ class LoginReqModel {
   String? name;
   String? loginType;
   String? loginId;
-  int? water;
-  int? weight;
-  int? heartRate;
+  String? water;
+  String? weight;
+  String? heartRate;
   double? bmi;
   String? fcmToken;
+  String? userTime;
 
   LoginReqModel(
       {this.name,
@@ -15,11 +16,13 @@ class LoginReqModel {
       this.water,
       this.weight,
       this.heartRate,
+      this.userTime,
       this.bmi,
       this.fcmToken});
 
   LoginReqModel.fromJson(Map<String, dynamic> json) {
     name = json['name'];
+    userTime = json['userTime'];
     loginType = json['loginType'];
     loginId = json['loginId'];
     water = json['water'];
@@ -39,6 +42,7 @@ class LoginReqModel {
     data['heartRate'] = this.heartRate;
     data['bmi'] = this.bmi;
     data['fcm_token'] = this.fcmToken;
+    data['userTime'] = this.userTime;
     return data;
   }
 }
