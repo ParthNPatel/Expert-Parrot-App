@@ -1,12 +1,12 @@
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:expert_parrot_app/view/depandent_screen.dart';
+import 'package:expert_parrot_app/view/login_screen.dart';
 import 'package:expert_parrot_app/view/splash_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-
 import '../constant/color_const.dart';
 import '../constant/text_styel.dart';
 
@@ -238,7 +238,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             CommonListTile(
               onTap: () {
                 GetStorageServices.logOut();
-                Get.offAll(() => SplashScreen());
+                Get.offAll(() => LoginScreen());
               },
               image: 'assets/svg/setting.svg',
               text: 'Log Out',

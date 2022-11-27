@@ -11,7 +11,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 import 'package:get/get.dart';
-import '../controller/HandleFloatController.dart';
+import '../controller/handle_float_controller.dart';
 import 'medicine_graph_screen.dart';
 
 class DashBoardScreen extends StatefulWidget {

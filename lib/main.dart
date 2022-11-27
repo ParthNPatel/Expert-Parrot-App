@@ -1,14 +1,43 @@
+import 'package:expert_parrot_app/services/app_notification.dart';
 import 'package:expert_parrot_app/view/bottom_nav_screen.dart';
 import 'package:expert_parrot_app/view/splash_screen.dart';
 import 'package:expert_parrot_app/view/viedeo_play_screen.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:sizer/sizer.dart';
-import 'controller/HandleFloatController.dart';
+import 'controller/handle_float_controller.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  await GetStorage.init();
+
+  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  await AppNotificationHandler.getFcmToken();
+
+  // AppNotificationHandler.getInitialMsg();
+  // AppNotificationHandler.onMsgOpen();
+  await FirebaseMessaging.instance.subscribeToTopic('all');
+
+  // Update the iOS foreground notification presentation options to allow
+  // heads up notifications.
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  AppNotificationHandler.showMsgHandler();
+
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,

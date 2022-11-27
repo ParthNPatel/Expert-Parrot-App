@@ -49,6 +49,13 @@ dependencies:
   share_plus: ^6.2.0
 
   country_picker: ^2.0.16
+  firebase_core: ^1.19.1
+  flutter_local_notifications: ^9.1.4
+  firebase_messaging: ^11.3.0
+  http: ^0.13.5
+
+dependency_overrides:
+  firebase_core_platform_interface: 4.5.1
 
 
 dev_dependencies:

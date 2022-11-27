@@ -1,5 +1,7 @@
 import 'dart:convert';
-
+import 'package:http/http.dart' as http;
+import 'package:expert_parrot_app/Models/repo/login_repo.dart';
+import 'package:expert_parrot_app/Models/requestModel/login_req_model.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
@@ -79,46 +81,50 @@ class _LoginScreenState extends State<LoginScreen> {
             CommonWidget.commonSizedBox(height: 28),
             isChecked == true
                 ? CommonWidget.textFormField(
-                    prefix: InkWell(
-                      onTap: () {
-                        // _displayDialog(context);
-                        showCountryPicker(
-                          context: context,
-                          showPhoneCode:
-                              true, // optional. Shows phone code before the country name.
-                          onSelect: (Country country) {
-                            print('Select country: ${country.displayName}');
-                            setState(() {
-                              selectedCountry = country;
-                            });
-                          },
-                        );
-                      },
-                      child: Container(
-                          margin: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-                          alignment: Alignment.center,
-                          height: 50.0,
-                          width: 100,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Text(
-                                selectedCountry != null
-                                    ? "+ ${selectedCountry!.phoneCode}"
-                                    : "+91",
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                ),
-                              )
-                            ],
-                          )),
+                    controller: _emailController, hintText: 'Enter Email')
+                : CommonWidget.textFormField(
+                    prefix: SizedBox(
+                      width: 60.sp,
+                      child: InkWell(
+                        onTap: () {
+                          // _displayDialog(context);
+                          showCountryPicker(
+                            context: context,
+                            showPhoneCode:
+                                true, // optional. Shows phone code before the country name.
+                            onSelect: (Country country) {
+                              print('Select country: ${country.displayName}');
+                              setState(() {
+                                selectedCountry = country;
+                              });
+                            },
+                          );
+                        },
+                        child: Container(
+                            margin:
+                                const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                            alignment: Alignment.center,
+                            height: 50.0,
+                            width: 100,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text(
+                                  selectedCountry != null
+                                      ? "+ ${selectedCountry!.phoneCode}"
+                                      : "+91",
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                  ),
+                                )
+                              ],
+                            )),
+                      ),
                     ),
                     keyBoardType: TextInputType.number,
                     controller: _mobileController,
-                    hintText: 'Enter Mobile No')
-                : CommonWidget.textFormField(
-                    controller: _emailController, hintText: 'Enter Email'),
+                    hintText: 'Enter Mobile No'),
             Row(
               children: [
                 SizedBox(
@@ -136,12 +142,43 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                CommonText.textBoldWight500(text: "Continue with Mobile No")
+                CommonText.textBoldWight500(text: "Continue with Email")
               ],
             ),
             CommonWidget.commonSizedBox(height: 28),
             CommonWidget.commonButton(
-                onTap: () {
+                onTap: () async {
+                  // LoginReqModel model = LoginReqModel();
+                  //
+                  // model.name = "Parth";
+                  // model.fcmToken =
+                  //     "e2kl8jtGQDWyp8nPm0O0u1:APA91bGIPIr8b4wSYiL_VEuz5I1HHE7VGH68tPi8X4AAxCAyl1Y5OW6cSnhMo1vMATj5kJEGmqWhGeabveOAQ7GxA3rOLLf3-GCJtKRPfsBJ_OM54Pm-G7zcPmDuaFXh04ZGvx7rtT3l";
+                  // model.loginId = "${DateTime.now()}";
+                  // model.loginType = "phone";
+                  //
+                  // LoginRepo.loginUserRepo(model: model);
+
+                  var headers = {'Content-Type': 'application/json'};
+                  var request = http.Request(
+                      'POST', Uri.parse('http://3.109.139.48:5000/auth/login'));
+                  request.body = json.encode({
+                    "name": "Parth",
+                    "loginType": "phone",
+                    "loginId": "${DateTime.now()}",
+                    "fcm_token":
+                        "e2kl8jtGQDWyp8nPm0O0u1:APA91bGIPIr8b4wSYiL_VEuz5I1HHE7VGH68tPi8X4AAxCAyl1Y5OW6cSnhMo1vMATj5kJEGmqWhGeabveOAQ7GxA3rOLLf3-GCJtKRPfsBJ_OM54Pm-G7zcPmDuaFXh04ZGvx7rtT3l"
+                  });
+
+                  request.headers.addAll(headers);
+
+                  http.StreamedResponse response = await request.send();
+
+                  if (response.statusCode == 200) {
+                    print(await response.stream.bytesToString());
+                  } else {
+                    print(response.reasonPhrase);
+                  }
+
                   if (_emailController.text.isNotEmpty ||
                       _mobileController.text.isNotEmpty) {
                     Get.to(() => OtpVerificationScreen());

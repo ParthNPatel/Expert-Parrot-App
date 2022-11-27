@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "559711292684",
+    "project_id": "health-app-8c2d0",
+    "storage_bucket": "health-app-8c2d0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:559711292684:android:7a6b76b46d9871f2910d29",
+        "android_client_info": {
+          "package_name": "com.example.expert_parrot_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "559711292684-vd5crborraa3tj5glp432duore43rh59.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1_niVBdwIJqsUZIUlSkMErit23_L6Z_E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "559711292684-vd5crborraa3tj5glp432duore43rh59.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
