@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
+
 import '../components/common_widget.dart';
 import '../constant/image_const.dart';
 import '../constant/text_styel.dart';
@@ -40,302 +41,305 @@ class _CommunityScreenState extends State<CommunityScreen> {
       //extendBody: false,
       //primary: false,
       body: CommonWidget.commonBackGround(
-          body: Column(
-        children: [
-          SizedBox(
-            height: 10,
-          ),
-          header(),
-          SizedBox(
-            height: 13,
-          ),
-          CommonWidget.dottedLineWidget(),
-          SizedBox(
-            height: 23,
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              child: Column(
-                children: [
-                  CommonText.textBoldWight500(
-                    text: 'Today',
-                    color: Color(0xff939492),
-                  ),
-                  SizedBox(
-                    height: 13,
-                  ),
-                  GetBuilder<GetPostViewModel>(builder: (controller) {
-                    if (controller.getPostApiResponse.status ==
-                        Status.LOADING) {
-                      return CircularProgressIndicator();
-                    }
-
-                    if (controller.getPostApiResponse.status ==
-                        Status.COMPLETE) {
-                      GetPostResponseModel response =
-                          controller.getPostApiResponse.data;
-
-                      print('================== > ${response.data![0].title}');
-
-                      return ListView.separated(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: response.data!.length,
-                          separatorBuilder: (_, index) {
-                            return SizedBox(
-                              height: 20,
-                            );
-                          },
-                          itemBuilder: (_, index) {
-                            return Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 15),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Image.asset(
-                                        'assets/png/person1.png',
-                                        height: 40.sp,
-                                        width: 40.sp,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          CommonText.textBoldWight500(
-                                              text: "Vill Parmar",
-                                              fontSize: 12.sp),
-                                          CommonText.textBoldWight400(
-                                              text: "ON, Canada",
-                                              color: Color(0xffa1a1a1),
-                                              fontSize: 10.sp),
-                                        ],
-                                      ),
-                                      Spacer(),
-                                      CommonText.textBoldWight400(
-                                          text:
-                                              "${DateFormat.yMMMEd().format(DateTime.parse("${response.data![index].createdAt!}"))}",
-                                          color: Color(0xffa1a1a1),
-                                          fontSize: 10.sp),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 13,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      CommonText.textBoldWight400(
-                                          text:
-                                              "${response.data![index].title}",
-                                          color: Color(0xffa1a1a1),
-                                          fontSize: 11.sp),
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                      CommonText.textBoldWight400(
-                                          text:
-                                              "${response.data![index].description}",
-                                          color: Color(0xffa1a1a1),
-                                          fontSize: 11.sp),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 13,
-                                  ),
-                                  Divider(
-                                    thickness: 1.2,
-                                    color: Color(0xffE0E1E2),
-                                  ),
-                                  SizedBox(
-                                    height: 13,
-                                  ),
-                                  LikeAndCommentWidget(
-                                      likeCount: response.data![index].likes,
-                                      commentCount: response
-                                          .data![index].comments!.length,
-                                      isLiked: response.data![index].isLiked!),
-                                ],
-                              ),
-                            );
-                          });
-                    }
-                    return SizedBox();
-                  }),
-                  // Container(
-                  //   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.white,
-                  //     borderRadius: BorderRadius.circular(20),
-                  //   ),
-                  //   child: Column(
-                  //     children: [
-                  //       Row(
-                  //         children: [
-                  //           Image.asset(
-                  //             'assets/png/person1.png',
-                  //             height: 40.sp,
-                  //             width: 40.sp,
-                  //           ),
-                  //           SizedBox(
-                  //             width: 10,
-                  //           ),
-                  //           Column(
-                  //             crossAxisAlignment: CrossAxisAlignment.start,
-                  //             children: [
-                  //               CommonText.textBoldWight500(
-                  //                   text: "Adam LR", fontSize: 12.sp),
-                  //               CommonText.textBoldWight400(
-                  //                   text: "QR, Canada",
-                  //                   color: Color(0xffa1a1a1),
-                  //                   fontSize: 10.sp),
-                  //             ],
-                  //           ),
-                  //           Spacer(),
-                  //           CommonText.textBoldWight400(
-                  //               text: "2 hour ago",
-                  //               color: Color(0xffa1a1a1),
-                  //               fontSize: 10.sp),
-                  //         ],
-                  //       ),
-                  //       SizedBox(
-                  //         height: 13,
-                  //       ),
-                  //       Column(
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         children: [
-                  //           CommonText.textBoldWight400(
-                  //               text: "anyone know softgel pill details?",
-                  //               color: Color(0xffa1a1a1),
-                  //               fontSize: 11.sp),
-                  //           SizedBox(
-                  //             height: 10,
-                  //           ),
-                  //           Container(
-                  //             height: 130.sp,
-                  //             width: double.infinity,
-                  //             decoration: BoxDecoration(
-                  //               borderRadius: BorderRadius.circular(10),
-                  //               image: DecorationImage(
-                  //                   image: AssetImage(
-                  //                     "assets/png/medicine.png",
-                  //                   ),
-                  //                   fit: BoxFit.cover),
-                  //             ),
-                  //           )
-                  //         ],
-                  //       ),
-                  //       SizedBox(
-                  //         height: 8,
-                  //       ),
-                  //       Divider(
-                  //         thickness: 1.2,
-                  //         color: Color(0xffE0E1E2),
-                  //       ),
-                  //       SizedBox(
-                  //         height: 13,
-                  //       ),
-                  //       // LikeAndCommentWidget(),
-                  //     ],
-                  //   ),
-                  // ),
-                  // SizedBox(
-                  //   height: 25,
-                  // ),
-                  // CommonText.textBoldWight500(
-                  //   text: 'Yesterday',
-                  //   color: Color(0xff939492),
-                  // ),
-                  // SizedBox(
-                  //   height: 13,
-                  // ),
-                  // Container(
-                  //   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.white,
-                  //     borderRadius: BorderRadius.circular(20),
-                  //   ),
-                  //   child: Column(
-                  //     children: [
-                  //       Row(
-                  //         children: [
-                  //           Image.asset(
-                  //             'assets/png/person1.png',
-                  //             height: 40.sp,
-                  //             width: 40.sp,
-                  //           ),
-                  //           SizedBox(
-                  //             width: 10,
-                  //           ),
-                  //           Column(
-                  //             crossAxisAlignment: CrossAxisAlignment.start,
-                  //             children: [
-                  //               CommonText.textBoldWight500(
-                  //                   text: "Vill Parmar", fontSize: 12.sp),
-                  //               CommonText.textBoldWight400(
-                  //                   text: "ON, Canada",
-                  //                   color: Color(0xffa1a1a1),
-                  //                   fontSize: 10.sp),
-                  //             ],
-                  //           ),
-                  //           Spacer(),
-                  //           CommonText.textBoldWight400(
-                  //               text: "1 hour ago",
-                  //               color: Color(0xffa1a1a1),
-                  //               fontSize: 10.sp),
-                  //         ],
-                  //       ),
-                  //       SizedBox(
-                  //         height: 13,
-                  //       ),
-                  //       Column(
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         children: [
-                  //           CommonText.textBoldWight400(
-                  //               text:
-                  //                   "anyone know softgel pill details? What is a softgel pill? What is inside a softgel?",
-                  //               color: Color(0xffa1a1a1),
-                  //               fontSize: 11.sp),
-                  //           SizedBox(
-                  //             height: 20,
-                  //           ),
-                  //           CommonText.textBoldWight400(
-                  //               text:
-                  //                   "If anyone have knowalge text in commment box.",
-                  //               color: Color(0xffa1a1a1),
-                  //               fontSize: 11.sp),
-                  //         ],
-                  //       ),
-                  //       SizedBox(
-                  //         height: 13,
-                  //       ),
-                  //       Divider(
-                  //         thickness: 1.2,
-                  //         color: Color(0xffE0E1E2),
-                  //       ),
-                  //       SizedBox(
-                  //         height: 13,
-                  //       ),
-                  //       // LikeAndCommentWidget(),
-                  //     ],
-                  //   ),
-                  // ),
-                ],
-              ),
+        body: Column(
+          children: [
+            SizedBox(
+              height: 10,
             ),
-          )
-        ],
-      )),
+            header(),
+            SizedBox(
+              height: 13,
+            ),
+            CommonWidget.dottedLineWidget(),
+            SizedBox(
+              height: 23,
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    CommonText.textBoldWight500(
+                      text: 'Today',
+                      color: Color(0xff939492),
+                    ),
+                    SizedBox(
+                      height: 13,
+                    ),
+                    GetBuilder<GetPostViewModel>(builder: (controller) {
+                      if (controller.getPostApiResponse.status ==
+                          Status.LOADING) {
+                        return CircularProgressIndicator();
+                      }
+
+                      if (controller.getPostApiResponse.status ==
+                          Status.COMPLETE) {
+                        GetPostResponseModel response =
+                            controller.getPostApiResponse.data;
+
+                        print(
+                            '================== > ${response.data![0].title}');
+
+                        return ListView.separated(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: response.data!.length,
+                            separatorBuilder: (_, index) {
+                              return SizedBox(
+                                height: 20,
+                              );
+                            },
+                            itemBuilder: (_, index) {
+                              return Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 15),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Image.asset(
+                                          'assets/png/person1.png',
+                                          height: 40.sp,
+                                          width: 40.sp,
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            CommonText.textBoldWight500(
+                                                text: "Vill Parmar",
+                                                fontSize: 12.sp),
+                                            CommonText.textBoldWight400(
+                                                text: "ON, Canada",
+                                                color: Color(0xffa1a1a1),
+                                                fontSize: 10.sp),
+                                          ],
+                                        ),
+                                        Spacer(),
+                                        CommonText.textBoldWight400(
+                                            text:
+                                                "${DateFormat.yMMMEd().format(DateTime.parse("${response.data![index].createdAt!}"))}",
+                                            color: Color(0xffa1a1a1),
+                                            fontSize: 10.sp),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 13,
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        CommonText.textBoldWight400(
+                                            text:
+                                                "${response.data![index].title}",
+                                            color: Color(0xffa1a1a1),
+                                            fontSize: 11.sp),
+                                        SizedBox(
+                                          height: 20,
+                                        ),
+                                        CommonText.textBoldWight400(
+                                            text:
+                                                "${response.data![index].description}",
+                                            color: Color(0xffa1a1a1),
+                                            fontSize: 11.sp),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 13,
+                                    ),
+                                    Divider(
+                                      thickness: 1.2,
+                                      color: Color(0xffE0E1E2),
+                                    ),
+                                    SizedBox(
+                                      height: 13,
+                                    ),
+                                    LikeAndCommentWidget(
+                                        likeCount: response.data![index].likes,
+                                        commentCount: response
+                                            .data![index].comments!.length,
+                                        isLiked:
+                                            response.data![index].isLiked!),
+                                  ],
+                                ),
+                              );
+                            });
+                      }
+                      return SizedBox();
+                    }),
+                    // Container(
+                    //   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.white,
+                    //     borderRadius: BorderRadius.circular(20),
+                    //   ),
+                    //   child: Column(
+                    //     children: [
+                    //       Row(
+                    //         children: [
+                    //           Image.asset(
+                    //             'assets/png/person1.png',
+                    //             height: 40.sp,
+                    //             width: 40.sp,
+                    //           ),
+                    //           SizedBox(
+                    //             width: 10,
+                    //           ),
+                    //           Column(
+                    //             crossAxisAlignment: CrossAxisAlignment.start,
+                    //             children: [
+                    //               CommonText.textBoldWight500(
+                    //                   text: "Adam LR", fontSize: 12.sp),
+                    //               CommonText.textBoldWight400(
+                    //                   text: "QR, Canada",
+                    //                   color: Color(0xffa1a1a1),
+                    //                   fontSize: 10.sp),
+                    //             ],
+                    //           ),
+                    //           Spacer(),
+                    //           CommonText.textBoldWight400(
+                    //               text: "2 hour ago",
+                    //               color: Color(0xffa1a1a1),
+                    //               fontSize: 10.sp),
+                    //         ],
+                    //       ),
+                    //       SizedBox(
+                    //         height: 13,
+                    //       ),
+                    //       Column(
+                    //         crossAxisAlignment: CrossAxisAlignment.start,
+                    //         children: [
+                    //           CommonText.textBoldWight400(
+                    //               text: "anyone know softgel pill details?",
+                    //               color: Color(0xffa1a1a1),
+                    //               fontSize: 11.sp),
+                    //           SizedBox(
+                    //             height: 10,
+                    //           ),
+                    //           Container(
+                    //             height: 130.sp,
+                    //             width: double.infinity,
+                    //             decoration: BoxDecoration(
+                    //               borderRadius: BorderRadius.circular(10),
+                    //               image: DecorationImage(
+                    //                   image: AssetImage(
+                    //                     "assets/png/medicine.png",
+                    //                   ),
+                    //                   fit: BoxFit.cover),
+                    //             ),
+                    //           )
+                    //         ],
+                    //       ),
+                    //       SizedBox(
+                    //         height: 8,
+                    //       ),
+                    //       Divider(
+                    //         thickness: 1.2,
+                    //         color: Color(0xffE0E1E2),
+                    //       ),
+                    //       SizedBox(
+                    //         height: 13,
+                    //       ),
+                    //       // LikeAndCommentWidget(),
+                    //     ],
+                    //   ),
+                    // ),
+                    // SizedBox(
+                    //   height: 25,
+                    // ),
+                    // CommonText.textBoldWight500(
+                    //   text: 'Yesterday',
+                    //   color: Color(0xff939492),
+                    // ),
+                    // SizedBox(
+                    //   height: 13,
+                    // ),
+                    // Container(
+                    //   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.white,
+                    //     borderRadius: BorderRadius.circular(20),
+                    //   ),
+                    //   child: Column(
+                    //     children: [
+                    //       Row(
+                    //         children: [
+                    //           Image.asset(
+                    //             'assets/png/person1.png',
+                    //             height: 40.sp,
+                    //             width: 40.sp,
+                    //           ),
+                    //           SizedBox(
+                    //             width: 10,
+                    //           ),
+                    //           Column(
+                    //             crossAxisAlignment: CrossAxisAlignment.start,
+                    //             children: [
+                    //               CommonText.textBoldWight500(
+                    //                   text: "Vill Parmar", fontSize: 12.sp),
+                    //               CommonText.textBoldWight400(
+                    //                   text: "ON, Canada",
+                    //                   color: Color(0xffa1a1a1),
+                    //                   fontSize: 10.sp),
+                    //             ],
+                    //           ),
+                    //           Spacer(),
+                    //           CommonText.textBoldWight400(
+                    //               text: "1 hour ago",
+                    //               color: Color(0xffa1a1a1),
+                    //               fontSize: 10.sp),
+                    //         ],
+                    //       ),
+                    //       SizedBox(
+                    //         height: 13,
+                    //       ),
+                    //       Column(
+                    //         crossAxisAlignment: CrossAxisAlignment.start,
+                    //         children: [
+                    //           CommonText.textBoldWight400(
+                    //               text:
+                    //                   "anyone know softgel pill details? What is a softgel pill? What is inside a softgel?",
+                    //               color: Color(0xffa1a1a1),
+                    //               fontSize: 11.sp),
+                    //           SizedBox(
+                    //             height: 20,
+                    //           ),
+                    //           CommonText.textBoldWight400(
+                    //               text:
+                    //                   "If anyone have knowalge text in commment box.",
+                    //               color: Color(0xffa1a1a1),
+                    //               fontSize: 11.sp),
+                    //         ],
+                    //       ),
+                    //       SizedBox(
+                    //         height: 13,
+                    //       ),
+                    //       Divider(
+                    //         thickness: 1.2,
+                    //         color: Color(0xffE0E1E2),
+                    //       ),
+                    //       SizedBox(
+                    //         height: 13,
+                    //       ),
+                    //       // LikeAndCommentWidget(),
+                    //     ],
+                    //   ),
+                    // ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 
