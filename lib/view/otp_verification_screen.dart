@@ -10,6 +10,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_progress_hud/flutter_progress_hud.dart';
 import 'package:get/get.dart';
+import 'package:otp_text_field/otp_field.dart';
+import 'package:otp_text_field/otp_field_style.dart';
+import 'package:otp_text_field/style.dart';
 import 'package:sizer/sizer.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
@@ -25,6 +28,7 @@ class OtpVerificationScreen extends StatefulWidget {
 class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   TextEditingController _emailOrMobileController = TextEditingController();
   String? verificationCode;
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -40,7 +44,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       PhoneAuthCredential phoneAuthProvider =
           await PhoneAuthProvider.credential(
               verificationId: widget.verificationId!,
-              smsCode: _emailOrMobileController.text);
+              smsCode: verificationCode!);
       if (phoneAuthProvider == null) {
         Get.snackbar('Empty', 'Enter OTP');
         progress.dismiss();
@@ -118,46 +122,46 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                           'Enter the verification code we just sent on your email address.',
                       fontSize: 12.sp),
                   CommonWidget.commonSizedBox(height: 20),
-                  // Center(
-                  //   child: OTPTextField(
-                  //     length: 4,
-                  //     width: 280.sp,
-                  //     fieldWidth: 60,
-                  //     keyboardType: TextInputType.number,
-                  //     contentPadding: EdgeInsets.symmetric(vertical: 5),
-                  //     style: TextStyle(fontSize: 17),
-                  //     textFieldAlignment: MainAxisAlignment.spaceAround,
-                  //     fieldStyle: FieldStyle.box,
-                  //     outlineBorderRadius: 7,
-                  //     otpFieldStyle: OtpFieldStyle(
-                  //       backgroundColor: Colors.white,
-                  //       borderColor: CommonColor.themColor35C2C1,
-                  //       disabledBorderColor: Color(0xffE8ECF4),
-                  //       enabledBorderColor: CommonColor.themColor35C2C1,
-                  //       errorBorderColor: CommonColor.themColor35C2C1,
-                  //       focusBorderColor: CommonColor.themColor35C2C1,
-                  //     ),
-                  //     onChanged: (value) {
-                  //       setState(() {});
-                  //       verificationCode = value;
-                  //     },
-                  //     onCompleted: (pin) {
-                  //       setState(
-                  //         () {},
-                  //       );
-                  //       verificationCode = pin;
-                  //     },
-                  //   ),
-                  // ),
-                  TextField(
-                    controller: _emailOrMobileController,
+                  Center(
+                    child: OTPTextField(
+                      length: 6,
+                      width: 260.sp,
+                      fieldWidth: 40,
+                      keyboardType: TextInputType.number,
+                      contentPadding: EdgeInsets.symmetric(vertical: 5),
+                      style: TextStyle(fontSize: 17),
+                      textFieldAlignment: MainAxisAlignment.spaceAround,
+                      fieldStyle: FieldStyle.box,
+                      outlineBorderRadius: 7,
+                      otpFieldStyle: OtpFieldStyle(
+                        backgroundColor: Colors.white,
+                        borderColor: CommonColor.themColor35C2C1,
+                        disabledBorderColor: Color(0xffE8ECF4),
+                        enabledBorderColor: CommonColor.themColor35C2C1,
+                        errorBorderColor: CommonColor.themColor35C2C1,
+                        focusBorderColor: CommonColor.themColor35C2C1,
+                      ),
+                      onChanged: (value) {
+                        setState(() {});
+                        verificationCode = value;
+                      },
+                      onCompleted: (pin) {
+                        setState(
+                          () {},
+                        );
+                        verificationCode = pin;
+                      },
+                    ),
                   ),
+                  // TextField(
+                  //   controller: _emailOrMobileController,
+                  // ),
                   CommonWidget.commonSizedBox(height: 28),
                   CommonWidget.commonButton(
                     onTap: () async {
-                      if (_emailOrMobileController.text.toString().isNotEmpty) {
-                        if (_emailOrMobileController.text.toString().length ==
-                            6) {
+                      if (_emailOrMobileController.text.toString().isNotEmpty ||
+                          verificationCode != null) {
+                        if (verificationCode.toString().length == 6) {
                           progress!.show();
                           await enterOtp(progress);
                         } else {

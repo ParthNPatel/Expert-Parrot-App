@@ -4,4 +4,5 @@ class APIConst {
   static String loginUrl = "/auth/login";
   static String addMedicine = "/medicine/";
   static String userData = "/user/";
+  static String getPosts = "/post";
 }
