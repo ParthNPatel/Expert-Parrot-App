@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="facebook_app_id">1510555619447919</string>
+    <string name="fb_login_protocol_scheme">fb1510555619447919</string>
+    <string name="facebook_client_token">71e6ddad7ddf12d59acf4058b8155fe2</string>
+    <string name="app_name">Parrot</string>
+
+
+</resources>
