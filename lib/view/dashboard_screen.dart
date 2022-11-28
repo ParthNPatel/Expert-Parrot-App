@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/responseModel/user_data_res_model.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
+import 'package:expert_parrot_app/components/home_shimmer.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_const.dart';
@@ -64,48 +65,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       'name_of_count': '20.1',
       'name_of_subject': 'Kg/m2',
       'color': Color.fromRGBO(242, 255, 159, 0.52),
-    },
-  ];
-  List medScheduleList = [
-    {
-      'image': ImageConst.med3Icon,
-      'medName': 'Disprien',
-      'medGm': '300 gm',
-      'iconColor': Color(0xff21D200),
-      'timeOfDay': 'Take 1 Pills (Daily)',
-      'color': Color.fromRGBO(69, 196, 44, 0.13)
-    },
-    {
-      'image': ImageConst.med2Icon,
-      'medName': 'Novolin',
-      'medGm': '10 gm',
-      'iconColor': Color(0xff9255E5),
-      'timeOfDay': 'Twice a Day',
-      'color': Color.fromRGBO(111, 44, 196, 0.13)
-    },
-    {
-      'image': ImageConst.med1Icon,
-      'medName': 'Softgel',
-      'medGm': '300 gm',
-      'iconColor': Color(0xffFFDD2C),
-      'timeOfDay': 'Daily',
-      'color': Color.fromRGBO(193, 196, 44, 0.13)
-    },
-    {
-      'image': ImageConst.med1Icon,
-      'medName': 'Softgel',
-      'medGm': '300 gm',
-      'iconColor': Color(0xffFFDD2C),
-      'timeOfDay': 'Daily',
-      'color': Color.fromRGBO(193, 196, 44, 0.13)
-    },
-    {
-      'image': ImageConst.med1Icon,
-      'medName': 'Softgel',
-      'medGm': '300 gm',
-      'iconColor': Color(0xffFFDD2C),
-      'timeOfDay': 'Daily',
-      'color': Color.fromRGBO(193, 196, 44, 0.13)
     },
   ];
 
@@ -179,9 +138,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     _emailOrMobileController.dispose();
   }
 
-  List showCategories = [];
-  List dateTimes = [];
-  List data = ['Select', 'Select', 'select'];
+  List dateTimes = ['select1'];
+  int select = 1;
+  List LastData = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -191,32 +150,52 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           builder: (controller) {
             try {
               if (controller.userDataApiResponse.status == Status.LOADING) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
+                return HomeShimmer();
               }
               if (controller.userDataApiResponse.status == Status.COMPLETE) {
                 UserDataResponseModel userResponse =
                     controller.userDataApiResponse.data;
-
+                LastData.clear();
                 List data = [
                   '${userResponse.data!.water}',
                   '${userResponse.data!.weight}',
                   '${userResponse.data!.heartRate}',
                   '${userResponse.data!.bmi}'
                 ];
+                int lenght = userResponse.data!.medicines!.length;
+                if (lenght > 3) {
+                  LastData.insert(0, {
+                    'medName':
+                        '${userResponse.data!.medicines![lenght - 3].name!}',
+                    'medGm':
+                        '${userResponse.data!.medicines![lenght - 3].strength} gm',
+                    'timeOfDay':
+                        '${userResponse.data!.medicines![lenght - 3].totalTimes} pills ${userResponse.data!.medicines![lenght - 3].frequency}',
+                    'ap':
+                        '${userResponse.data!.medicines![lenght - 3].appearance}'
+                  });
+                  LastData.insert(1, {
+                    'medName':
+                        '${userResponse.data!.medicines![lenght - 2].name!}',
+                    'medGm':
+                        '${userResponse.data!.medicines![lenght - 2].strength} gm',
+                    'timeOfDay':
+                        '${userResponse.data!.medicines![lenght - 2].totalTimes} pills ${userResponse.data!.medicines![lenght - 2].frequency}',
+                    'ap':
+                        '${userResponse.data!.medicines![lenght - 2].appearance}'
+                  });
+                  LastData.insert(2, {
+                    'medName':
+                        '${userResponse.data!.medicines![lenght - 1].name!}',
+                    'medGm':
+                        '${userResponse.data!.medicines![lenght - 1].strength} gm',
+                    'timeOfDay':
+                        '${userResponse.data!.medicines![lenght - 1].totalTimes} pills ${userResponse.data!.medicines![lenght - 1].frequency}',
+                    'ap':
+                        '${userResponse.data!.medicines![lenght - 1].appearance}'
+                  });
+                }
 
-                var notData = userResponse.data!.medicines;
-                notData!.forEach(
-                  (element) {
-                    if (showCategories.contains(element.appearance)) {
-                    } else {
-                      showCategories.add(element.appearance);
-                    }
-                  },
-                );
-
-                log.log('TOTAL CATEGORIES :- $showCategories');
                 return Column(
                   children: [
                     userNameWidget(userResponse),
@@ -261,42 +240,84 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                             ),
                             CommonWidget.commonSizedBox(height: 8),
                             ListView.builder(
+                              reverse: true,
                               physics: NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
-                              itemCount: showCategories.length,
-                              itemBuilder: (context, index1) {
-                                var x = showCategories[index1];
-                                return SizedBox(
-                                  height: 140,
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    itemCount:
-                                        userResponse.data!.medicines!.length,
-                                    itemBuilder: (context, index) {
-                                      return userResponse
-                                                  .data!
-                                                  .medicines![index]
-                                                  .appearance ==
-                                              showCategories[index1]
-                                          ? medDetailsWidget(
-                                              image: medScheduleList[index1]
-                                                  ['image'],
-                                              medName:
-                                                  '${userResponse.data!.medicines!.last.name!} , ${userResponse.data!.medicines![index].appearance}',
-                                              medGm:
-                                                  '${userResponse.data!.medicines!.last.strength} gm',
-                                              iconColor: medScheduleList[index1]
-                                                  ['iconColor'],
-                                              timeOfDay:
-                                                  '${userResponse.data!.medicines!.last.totalTimes} pills ${userResponse.data!.medicines!.last.frequency}',
-                                              color: medScheduleList[index1]
-                                                  ['color'],
-                                            )
-                                          : SizedBox();
-                                    },
-                                  ),
-                                );
+                              itemCount:
+                                  userResponse.data!.medicines!.length > 3
+                                      ? LastData.length
+                                      : userResponse.data!.medicines!.length,
+                              itemBuilder: (context, index) {
+                                var LastEqual = LastData[index]['ap'];
+                                var UserEqual = userResponse
+                                    .data!.medicines![index].appearance;
+                                return userResponse.data!.medicines!.length > 3
+                                    ? medDetailsWidget(
+                                        image: LastEqual == 'Pills'
+                                            ? ImageConst.med3Icon
+                                            : LastEqual == 'Gel'
+                                                ? ImageConst.med2Icon
+                                                : LastEqual == 'Syrup'
+                                                    ? ImageConst.med1Icon
+                                                    : ImageConst.med1Icon,
+                                        medName:
+                                            '${LastData[index]['medName']}',
+                                        medGm: '${LastData[index]['medGm']}',
+                                        iconColor: LastEqual == 'Pills'
+                                            ? Color(0xff21D200)
+                                            : LastEqual == 'Gel'
+                                                ? Color(0xff9255E5)
+                                                : LastEqual == 'Syrup'
+                                                    ? Color(0xffFFDD2C)
+                                                    : Color(0xffFFDD2C),
+                                        timeOfDay:
+                                            '${LastData[index]['timeOfDay']}',
+                                        color: LastEqual == 'Pills'
+                                            ? Color.fromRGBO(69, 196, 44, 0.13)
+                                            : LastEqual == 'Gel'
+                                                ? Color.fromRGBO(
+                                                    111, 44, 196, 0.13)
+                                                : LastEqual == 'Syrup'
+                                                    ? Color.fromRGBO(
+                                                        193, 196, 44, 0.13)
+                                                    : Color.fromRGBO(
+                                                        193, 196, 44, 0.13))
+                                    : medDetailsWidget(
+                                        image: UserEqual == 'Pills'
+                                            ? ImageConst.med3Icon
+                                            : UserEqual == 'Gel'
+                                                ? ImageConst.med2Icon
+                                                : UserEqual == 'Syrup'
+                                                    ? ImageConst.med1Icon
+                                                    : ImageConst.med1Icon,
+                                        medName:
+                                            '${userResponse.data!.medicines![index].name!} , ${userResponse.data!.medicines![index].appearance}',
+                                        medGm:
+                                            '${userResponse.data!.medicines![index].strength} gm',
+                                        iconColor: UserEqual == 'Pills'
+                                            ? Color(0xff21D200)
+                                            : UserEqual == 'Gel'
+                                                ? Color(0xff9255E5)
+                                                : UserEqual == 'Syrup'
+                                                    ? Color(0xffFFDD2C)
+                                                    : Color(0xffFFDD2C),
+                                        timeOfDay:
+                                            '${userResponse.data!.medicines![index].totalTimes} pills ${userResponse.data!.medicines![index].frequency}',
+                                        color: UserEqual == 'Pills'
+                                            ? Color.fromRGBO(69, 196, 44, 0.13)
+                                            : UserEqual == 'Gel'
+                                                ? Color.fromRGBO(
+                                                    111, 44, 196, 0.13)
+                                                : UserEqual == 'Syrup'
+                                                    ? Color.fromRGBO(
+                                                        193, 196, 44, 0.13)
+                                                    : Color.fromRGBO(
+                                                        193,
+                                                        196,
+                                                        44,
+                                                        0.13,
+                                                      ),
+                                      );
                               },
                             ),
                             CommonWidget.commonSizedBox(height: 16),
@@ -1228,17 +1249,62 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                             timeSelected =
                                                                                 index;
                                                                           });
-                                                                          if (dateTimes.length == 2 &&
-                                                                              timeSelected == 0) {
-                                                                            dateTimes.removeLast();
-                                                                          } else if (dateTimes.length == 3 &&
-                                                                              timeSelected == 0) {
-                                                                            dateTimes.removeLast();
-                                                                            dateTimes.removeLast();
-                                                                          } else if (dateTimes.length == 3 &&
-                                                                              timeSelected == 1) {
-                                                                            dateTimes.removeLast();
+
+                                                                          log.log(
+                                                                              'SELECT INDEX:-$timeSelected');
+                                                                          if (timeSelected ==
+                                                                              0) {
+                                                                            select =
+                                                                                1;
+
+                                                                            if (dateTimes.length == 3 &&
+                                                                                select == 1) {
+                                                                              dateTimes.removeLast();
+                                                                              dateTimes.removeLast();
+                                                                            }
+                                                                            if (dateTimes.length == 2 &&
+                                                                                select == 1) {
+                                                                              dateTimes.removeLast();
+                                                                            }
                                                                           }
+
+                                                                          if (timeSelected ==
+                                                                              1) {
+                                                                            select =
+                                                                                2;
+
+                                                                            if (dateTimes.length == 1 &&
+                                                                                select == 2) {
+                                                                              dateTimes.insert(1, 'select2');
+                                                                            }
+
+                                                                            if (dateTimes.length == 3 &&
+                                                                                select == 2) {
+                                                                              dateTimes.removeLast();
+                                                                            }
+
+                                                                            log.log('SELCET2  $dateTimes');
+                                                                          }
+
+                                                                          if (timeSelected ==
+                                                                              2) {
+                                                                            select =
+                                                                                3;
+
+                                                                            if (dateTimes.length == 2 &&
+                                                                                select == 3) {
+                                                                              dateTimes.insert(2, 'select3');
+                                                                            }
+                                                                            if (dateTimes.length == 1 &&
+                                                                                select == 3) {
+                                                                              dateTimes.insert(1, 'select2');
+                                                                              dateTimes.insert(2, 'select3');
+                                                                            }
+
+                                                                            log.log('SELCET3  $dateTimes');
+                                                                          }
+                                                                          setState(
+                                                                              () {});
                                                                         },
                                                                         child:
                                                                             Container(
@@ -1288,33 +1354,16 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                             Column(
                                                               children:
                                                                   List.generate(
-                                                                timeSelected ==
-                                                                        0
-                                                                    ? 1
-                                                                    : timeSelected ==
-                                                                            1
-                                                                        ? 2
-                                                                        : 3,
+                                                                dateTimes
+                                                                    .length,
                                                                 (index) =>
                                                                     GestureDetector(
-                                                                  onTap: () {
-                                                                    if (timeSelected ==
-                                                                        0) {
-                                                                      pickTime();
-                                                                      log.log(
-                                                                          'FIRST ${dateTimes}');
-                                                                    } else if (timeSelected ==
-                                                                        1) {
-                                                                      pickTime();
-
-                                                                      log.log(
-                                                                          'SECOND ${dateTimes}');
-                                                                    } else {
-                                                                      pickTime();
-
-                                                                      log.log(
-                                                                          'THIRD ${dateTimes}');
-                                                                    }
+                                                                  onTap:
+                                                                      () async {
+                                                                    await pickTime(
+                                                                        index);
+                                                                    setState(
+                                                                        () {});
                                                                   },
                                                                   child:
                                                                       Container(
@@ -1356,7 +1405,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                         ),
                                                                         CommonText.textBoldWight500(
                                                                             text:
-                                                                                "${data[index]}",
+                                                                                "${dateTimes[index]}",
                                                                             fontSize:
                                                                                 13.sp,
                                                                             color: Colors.black),
@@ -1398,7 +1447,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                 radius: 10,
                                                                 onTap:
                                                                     () async {
-                                                                  await addMedicine();
+                                                                  await addMedicineData();
                                                                 },
                                                                 text: "Add")
                                                       ],
@@ -1436,66 +1485,68 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     );
   }
 
-  pickTime() async {
+  pickTime(index) async {
     TimeOfDay? pickedTime = await showTimePicker(
       initialTime: TimeOfDay.now(),
       context: context,
     );
 
     if (pickedTime != null) {
-      print(pickedTime.format(context)); //output 10:51 PM
-      DateTime parsedTime =
-          DateFormat.jm().parse(pickedTime.format(context).toString());
-      print(parsedTime); //output 1970-01-01 22:53:00.000
-      String formattedTime = DateFormat('HH:mm').format(parsedTime);
-      print('SELECTED TIME :- $formattedTime'); //output 14:59:00
-
+      var formattedTime = pickedTime.format(context);
+      print('SELECT TIME :- ${formattedTime}');
       setState(() {
-        dateTimes.add(formattedTime); //// set the value of text field.
+        dateTimes[index] = formattedTime;
       });
-      if (timeSelected == 0) {
-        data[0] = formattedTime;
-      } else if (timeSelected == 1) {
-        data[1] = formattedTime;
-      } else {
-        data[2] = formattedTime;
-      }
     } else {
       print("Time is not selected");
     }
   }
 
-  addMedicine() async {
+  addMedicineData() async {
     log.log('DATE TIMES :- $dateTimes');
     try {
-      await addMedicineViewModel.addMedicineViewModel(model: {
-        "name": "${medicines[medicineSelected]}",
-        "strength": int.parse("${strength[strengthSelected]}"),
-        "days": int.parse("${days[daysSelected]}"),
-        "appearance": "${appearance[appearanceSelected]}",
-        "frequency": "${frequency[frequencySelected]}",
-        "totalTimes": timeSelected + 1,
-        "shceduleTime": dateTimes
-      });
-
-      if (addMedicineViewModel.addMedicineApiResponse.status ==
-          Status.COMPLETE) {
-        Get.back();
-        userDataViewModel.userDataViewModel();
-
-        CommonWidget.getSnackBar(
-            title: "Added!",
-            message: 'Your medicine has been added successfully.',
-            color: CommonColor.greenColor,
-            colorText: Colors.white);
-      }
-      if (addMedicineViewModel.addMedicineApiResponse.status == Status.ERROR) {
+      if (dateTimes.contains('select1') ||
+          dateTimes.contains('select2') ||
+          dateTimes.contains('select3')) {
         CommonWidget.getSnackBar(
           message: '',
-          title: 'Failed',
+          title: 'Select Time Slot',
           duration: 2,
           color: Colors.red,
         );
+      } else {
+        log.log('TOTAL DATE :- ${dateTimes}');
+
+        await addMedicineViewModel.addMedicineViewModel(model: {
+          "name": "${medicines[medicineSelected]}",
+          "strength": int.parse("${strength[strengthSelected]}"),
+          "days": int.parse("${days[daysSelected]}"),
+          "appearance": "${appearance[appearanceSelected]}",
+          "frequency": "${frequency[frequencySelected]}",
+          "totalTimes": timeSelected + 1,
+          "shceduleTime": dateTimes
+        });
+
+        if (addMedicineViewModel.addMedicineApiResponse.status ==
+            Status.COMPLETE) {
+          Get.back();
+          userDataViewModel.userDataViewModel();
+
+          CommonWidget.getSnackBar(
+              title: "Added!",
+              message: 'Your medicine has been added successfully.',
+              color: CommonColor.greenColor,
+              colorText: Colors.white);
+        }
+        if (addMedicineViewModel.addMedicineApiResponse.status ==
+            Status.ERROR) {
+          CommonWidget.getSnackBar(
+            message: '',
+            title: 'Failed',
+            duration: 2,
+            color: Colors.red,
+          );
+        }
       }
     } catch (e) {
       CommonWidget.getSnackBar(
