@@ -1,10 +1,15 @@
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
+import 'package:expert_parrot_app/Models/responseModel/get_comment_res_model.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_post_res_model.dart';
+import 'package:expert_parrot_app/components/community_shimmer.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/controller/handle_float_controller.dart';
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:expert_parrot_app/view/login_screen.dart';
+import 'package:expert_parrot_app/viewModel/add_comment_view_model.dart';
+import 'package:expert_parrot_app/viewModel/get_comment_view_model.dart';
 import 'package:expert_parrot_app/viewModel/get_post_view_model.dart';
+import 'package:expert_parrot_app/viewModel/like_unlike_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -81,97 +86,99 @@ class _CommunityScreenState extends State<CommunityScreen> {
                             '================== > ${response.data![0].title}');
 
                         return ListView.separated(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: response.data!.length,
-                            separatorBuilder: (_, index) {
-                              return SizedBox(
-                                height: 20,
-                              );
-                            },
-                            itemBuilder: (_, index) {
-                              return Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 15),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Image.asset(
-                                          'assets/png/person1.png',
-                                          height: 40.sp,
-                                          width: 40.sp,
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            CommonText.textBoldWight500(
-                                                text: "Vill Parmar",
-                                                fontSize: 12.sp),
-                                            CommonText.textBoldWight400(
-                                                text: "ON, Canada",
-                                                color: Color(0xffa1a1a1),
-                                                fontSize: 10.sp),
-                                          ],
-                                        ),
-                                        Spacer(),
-                                        CommonText.textBoldWight400(
-                                            text:
-                                                "${DateFormat.yMMMEd().format(DateTime.parse("${response.data![index].createdAt!}"))}",
-                                            color: Color(0xffa1a1a1),
-                                            fontSize: 10.sp),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 13,
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        CommonText.textBoldWight400(
-                                            text:
-                                                "${response.data![index].title}",
-                                            color: Color(0xffa1a1a1),
-                                            fontSize: 11.sp),
-                                        SizedBox(
-                                          height: 20,
-                                        ),
-                                        CommonText.textBoldWight400(
-                                            text:
-                                                "${response.data![index].description}",
-                                            color: Color(0xffa1a1a1),
-                                            fontSize: 11.sp),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 13,
-                                    ),
-                                    Divider(
-                                      thickness: 1.2,
-                                      color: Color(0xffE0E1E2),
-                                    ),
-                                    SizedBox(
-                                      height: 13,
-                                    ),
-                                    LikeAndCommentWidget(
-                                        likeCount: response.data![index].likes,
-                                        commentCount: response
-                                            .data![index].comments!.length,
-                                        isLiked:
-                                            response.data![index].isLiked!),
-                                  ],
-                                ),
-                              );
-                            });
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: response.data!.length,
+                          separatorBuilder: (_, index) {
+                            return SizedBox(
+                              height: 20,
+                            );
+                          },
+                          itemBuilder: (_, index) {
+                            return Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 15),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Image.asset(
+                                        'assets/png/person1.png',
+                                        height: 40.sp,
+                                        width: 40.sp,
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          CommonText.textBoldWight500(
+                                              text: "Vill Parmar",
+                                              fontSize: 12.sp),
+                                          CommonText.textBoldWight400(
+                                              text: "ON, Canada",
+                                              color: Color(0xffa1a1a1),
+                                              fontSize: 10.sp),
+                                        ],
+                                      ),
+                                      Spacer(),
+                                      CommonText.textBoldWight400(
+                                          text:
+                                              "${DateFormat.yMMMEd().format(DateTime.parse("${response.data![index].createdAt!}"))}",
+                                          color: Color(0xffa1a1a1),
+                                          fontSize: 10.sp),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 13,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      CommonText.textBoldWight400(
+                                          text:
+                                              "${response.data![index].title}",
+                                          color: Color(0xffa1a1a1),
+                                          fontSize: 11.sp),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      CommonText.textBoldWight400(
+                                          text:
+                                              "${response.data![index].description}",
+                                          color: Color(0xffa1a1a1),
+                                          fontSize: 11.sp),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 13,
+                                  ),
+                                  Divider(
+                                    thickness: 1.2,
+                                    color: Color(0xffE0E1E2),
+                                  ),
+                                  SizedBox(
+                                    height: 13,
+                                  ),
+                                  LikeAndCommentWidget(
+                                    postId: response.data![index].id,
+                                    likeCount: response.data![index].likes,
+                                    commentCount:
+                                        response.data![index].comments!.length,
+                                    isLiked: response.data![index].isLiked!,
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
                       }
                       return SizedBox();
                     }),
@@ -475,11 +482,12 @@ class LikeAndCommentWidget extends StatefulWidget {
   int? likeCount;
   int? commentCount;
   bool isLiked;
-
+  String? postId;
   LikeAndCommentWidget(
       {required this.likeCount,
       required this.commentCount,
       required this.isLiked,
+      required this.postId,
       Key? key})
       : super(key: key);
 
@@ -491,8 +499,15 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
   bool isCommentOpened = false;
 
   final commentController = TextEditingController();
-
+  AddCommentViewModel addCommentViewModel = Get.put(AddCommentViewModel());
+  GetCommentViewModel getCommentViewModel = Get.put(GetCommentViewModel());
+  LikeUnLikeViewModel likeUnLikeViewModel = Get.put(LikeUnLikeViewModel());
   HandleFloatController controller = Get.find();
+  @override
+  void initState() {
+    // likeUnLikeViewModel.updateLike(widget.isLiked);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -504,7 +519,7 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
             InkWell(
               onTap: () {
                 setState(() {
-                  widget.isLiked = !widget.isLiked!;
+                  widget.isLiked = !widget.isLiked;
                 });
               },
               child: Row(
@@ -528,10 +543,22 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
               width: 15,
             ),
             InkWell(
-              onTap: () {
+              onTap: () async {
                 setState(() {
                   isCommentOpened = !isCommentOpened;
                 });
+
+                try {
+                  await getCommentViewModel.getCommentViewModel(
+                      id: widget.postId);
+                } catch (e) {
+                  CommonWidget.getSnackBar(
+                      color: Colors.red,
+                      duration: 2,
+                      colorText: Colors.white,
+                      title: "Something went wrong",
+                      message: 'Try Again.');
+                }
               },
               child: Row(
                 children: [
@@ -602,11 +629,42 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                           height: 10,
                         ),
                         InkWell(
-                          onTap: () {
+                          onTap: () async {
                             if (commentController.text.isNotEmpty) {
                               setState(
                                 () {},
                               );
+
+                              try {
+                                await addCommentViewModel.addCommentViewModel(
+                                    model: {
+                                      "postId": "${widget.postId}",
+                                      "text": commentController.text.trim()
+                                    });
+                                if (addCommentViewModel
+                                        .addCommentApiResponse.status ==
+                                    Status.COMPLETE) {
+                                  await getCommentViewModel.getCommentViewModel(
+                                      id: widget.postId);
+                                }
+                                if (addCommentViewModel
+                                        .addCommentApiResponse.status ==
+                                    Status.ERROR) {
+                                  CommonWidget.getSnackBar(
+                                      title: "Something went wrong",
+                                      duration: 2,
+                                      message: "try Again...",
+                                      color: Colors.red,
+                                      colorText: Colors.white);
+                                }
+                              } catch (e) {
+                                CommonWidget.getSnackBar(
+                                    title: "Something went wrong",
+                                    duration: 2,
+                                    message: "try Again...",
+                                    color: Colors.red,
+                                    colorText: Colors.white);
+                              }
                               isCommentOpened = false;
                               commentController.clear();
                               controller.changeVisibility(false);
@@ -641,65 +699,62 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                   )
                 ],
               ),
-              SizedBox(
-                height: 15,
-              ),
-              Row(
-                children: [
-                  Image.asset(
-                    'assets/png/person2.png',
-                    height: 40.sp,
-                    width: 40.sp,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CommonText.textBoldWight500(
-                          text: "Courtney Henry", fontSize: 12.sp),
-                      SizedBox(
-                        height: 3,
-                      ),
-                      CommonText.textBoldWight400(
-                          text:
-                              "Ultricies ultricies interdum sodales.\nVitae feugiat vitae quis id",
-                          color: Color(0xffa1a1a1),
-                          fontSize: 10.sp),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Row(
-                children: [
-                  Image.asset(
-                    'assets/png/person1.png',
-                    height: 40.sp,
-                    width: 40.sp,
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CommonText.textBoldWight500(
-                          text: "Robert Albert", fontSize: 12.sp),
-                      SizedBox(
-                        height: 3,
-                      ),
-                      CommonText.textBoldWight400(
-                          text:
-                              "Vitae feugiat vitae quis id Ultricies\n ultricies interdum sodales.",
-                          color: Color(0xffa1a1a1),
-                          fontSize: 10.sp),
-                    ],
-                  ),
-                ],
+              GetBuilder<GetCommentViewModel>(
+                builder: (getController) {
+                  if (getController.getCommentApiResponse.status ==
+                      Status.LOADING) {
+                    return CommentShimmer();
+                  }
+
+                  if (getController.getCommentApiResponse.status ==
+                      Status.COMPLETE) {
+                    GetCommentResponseModel getComment =
+                        getController.getCommentApiResponse.data;
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: getComment.data!.length,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          children: [
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Row(
+                              children: [
+                                Image.asset(
+                                  'assets/png/person2.png',
+                                  height: 40.sp,
+                                  width: 40.sp,
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    CommonText.textBoldWight500(
+                                        text:
+                                            "${getComment.data![index].userId!.name}",
+                                        fontSize: 12.sp),
+                                    SizedBox(
+                                      height: 3,
+                                    ),
+                                    CommonText.textBoldWight400(
+                                        text: "${getComment.data![index].text}",
+                                        color: Color(0xffa1a1a1),
+                                        fontSize: 10.sp),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                  return SizedBox();
+                },
               ),
             ],
           ),
@@ -708,3 +763,57 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
     );
   }
 }
+
+// if (getController.getCommentApiResponse.status ==
+// Status.LOADING) {
+// return CircularProgressIndicator();
+// }
+//
+// if (getController.getCommentApiResponse.status ==
+// Status.COMPLETE) {
+// GetCommentResponseModel getComment =
+// getController.getCommentApiResponse.data;
+// return ListView.builder(
+// shrinkWrap: true,
+// physics: NeverScrollableScrollPhysics(),
+// itemCount: getComment.data!.length,
+// itemBuilder: (context, index) {
+// return Column(
+// children: [
+// SizedBox(
+// height: 15,
+// ),
+// Row(
+// children: [
+// Image.asset(
+// 'assets/png/person2.png',
+// height: 40.sp,
+// width: 40.sp,
+// ),
+// SizedBox(
+// width: 10,
+// ),
+// Column(
+// crossAxisAlignment: CrossAxisAlignment.start,
+// children: [
+// CommonText.textBoldWight500(
+// text:
+// "${getComment.data![index].userId!.name}",
+// fontSize: 12.sp),
+// SizedBox(
+// height: 3,
+// ),
+// CommonText.textBoldWight400(
+// text: "${getComment.data![index].text}",
+// color: Color(0xffa1a1a1),
+// fontSize: 10.sp),
+// ],
+// ),
+// ],
+// ),
+// ],
+// );
+// },
+// );
+// }
+// return SizedBox();

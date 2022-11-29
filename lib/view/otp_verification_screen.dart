@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/responseModel/log_in_res_model.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
@@ -69,7 +71,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         Get.offAll(() => BottomNavScreen());
         GetStorageServices.setUserLoggedIn();
         GetStorageServices.setBarrierToken(responseModel.token);
-
+        log('BARRIER TOKEN :- ${GetStorageServices.getBarrierToken()}');
         progress.dismiss();
       }
       if (logInViewModel.logInApiResponse.status.toString() ==
