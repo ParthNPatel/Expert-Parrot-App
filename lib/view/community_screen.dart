@@ -610,7 +610,6 @@ class _CommunityScreenState extends State<CommunityScreen> {
                             radius: 10,
                             onTap: () async {
                               if (_queryController.text.isNotEmpty) {
-
                                 log('ADD MESSAGE :- ${image!.path}');
                                 var _req = {
                                   "title":
@@ -708,11 +707,24 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
           children: [
             InkWell(
               onTap: () async {
-                await likeUnLikeViewModel.likeViewModel(
-                    model: {"type": "like", "postId": "${widget.postId}"});
-                if (likeUnLikeViewModel.likeApiResponse.status ==
-                    Status.COMPLETE) {
-                  getPostViewModel.getPostViewModel(isLoading: false);
+                if (widget.isLiked == false) {
+                  await likeUnLikeViewModel.likeViewModel(
+                      model: {"type": "like", "postId": "${widget.postId}"});
+                  if (likeUnLikeViewModel.likeApiResponse.status ==
+                      Status.COMPLETE) {
+                    getPostViewModel.getPostViewModel(isLoading: false);
+                  }
+                  if (likeUnLikeViewModel.likeApiResponse.status ==
+                      Status.ERROR) {
+                    CommonWidget.getSnackBar(
+                        color: Colors.red,
+                        duration: 2,
+                        colorText: Colors.white,
+                        title: "Something went wrong",
+                        message: 'Try Again.');
+                  }
+                } else {
+                  widget.isLiked = false;
                 }
               },
               child: Row(

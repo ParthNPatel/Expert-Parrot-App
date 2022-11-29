@@ -4,18 +4,6 @@ import 'package:expert_parrot_app/Models/responseModel/like_res_model.dart';
 import 'package:get/get.dart';
 
 class LikeUnLikeViewModel extends GetxController {
-  bool isLike = false;
-
-  valueLike(bool like) {
-    isLike = like;
-    update();
-  }
-
-  updateLike() {
-    isLike = !isLike;
-    update();
-  }
-
   /// LIKE API
   ApiResponse _likeApiResponse = ApiResponse.initial(message: 'Initialization');
 

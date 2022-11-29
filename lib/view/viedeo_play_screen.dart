@@ -119,6 +119,8 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                             "videoId": "${widget.id}"
                           });
 
+                          widget.likeValue != true;
+
                           // getVideoViewModel.likeUnlike(true);
                           try {
                             if (getVideoViewModel.videoLikeApiResponse.status ==

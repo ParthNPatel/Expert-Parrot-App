@@ -30,6 +30,8 @@ class _VideoScreenState extends State<VideoScreen> {
     ImageConst.video1Image,
     ImageConst.video2Image,
     ImageConst.video3Image,
+    ImageConst.video3Image,
+    ImageConst.video3Image,
   ];
 
   GetVideoViewModel getVideoViewModel = Get.put(GetVideoViewModel());
@@ -173,6 +175,8 @@ class _VideoScreenState extends State<VideoScreen> {
                                                 color: Colors.red,
                                               );
                                             }
+                                            response.data![index].isLiked =
+                                                true;
 
                                             try {
                                               if (getVideoViewModel
@@ -182,15 +186,6 @@ class _VideoScreenState extends State<VideoScreen> {
                                                 getVideoViewModel
                                                     .getVideoViewModel(
                                                         isLoading: false);
-                                                if (getVideoViewModel
-                                                        .getVideoApiResponse
-                                                        .status ==
-                                                    Status.COMPLETE) {
-                                                  GetVideoResponseModel
-                                                      getVideoModel = controller
-                                                          .getVideoApiResponse
-                                                          .data;
-                                                }
                                               } else if (getVideoViewModel
                                                       .videoLikeApiResponse
                                                       .status ==
@@ -214,6 +209,9 @@ class _VideoScreenState extends State<VideoScreen> {
                                                   .data![index].isLiked ==
                                               true) {
                                             /// CALL UNLIKE API
+                                            ///
+                                            response.data![index].isLiked =
+                                                false;
 
                                             CommonWidget.getSnackBar(
                                               message: 'Like Error',
