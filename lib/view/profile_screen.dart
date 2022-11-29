@@ -2,6 +2,7 @@ import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:expert_parrot_app/view/depandent_screen.dart';
 import 'package:expert_parrot_app/view/edit_profile_screen.dart';
+import 'package:expert_parrot_app/view/faq_screen.dart';
 import 'package:expert_parrot_app/view/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -512,7 +513,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               height: 15,
             ),
             CommonListTile(
-              onTap: () {},
+              onTap: () {
+                Get.to(() => FAQScreen());
+              },
               image: 'assets/svg/contact.svg',
               text: 'Contact Us',
             ),

@@ -39,4 +39,8 @@ class ImageConst {
   static const String checkbox = 'assets/png/checkbox.png';
   static const String verticalGraph = 'assets/png/vertical_graph.png';
   static const String verified = 'assets/svg/Verified.svg';
+  static const String faq = 'assets/svg/faq.svg';
+  static const String search = 'assets/svg/search.svg';
+  static const String filter = 'assets/svg/Filter.svg';
+  static const String arrow = 'assets/svg/arrow.svg';
 }

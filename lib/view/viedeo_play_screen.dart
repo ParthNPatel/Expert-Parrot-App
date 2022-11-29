@@ -1,6 +1,8 @@
 import 'package:expert_parrot_app/constant/image_const.dart';
+import 'package:expert_parrot_app/viewModel/get_video_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:sizer/sizer.dart';
 import 'package:video_player/video_player.dart';
 
@@ -14,13 +16,15 @@ class VideoPlayScreen extends StatefulWidget {
   final String title;
   final String description;
   final String likes;
+  final bool? likeValue;
 
   const VideoPlayScreen(
       {Key? key,
       required this.videoLink,
       required this.title,
       required this.description,
-      required this.likes})
+      required this.likes,
+      this.likeValue})
       : super(key: key);
 
   @override
@@ -29,8 +33,12 @@ class VideoPlayScreen extends StatefulWidget {
 
 class _VideoPlayScreenState extends State<VideoPlayScreen> {
   late VideoPlayerController _controller;
+  GetVideoViewModel likeUnlikeViewModel = Get.put(GetVideoViewModel());
+
   @override
   void initState() {
+    likeUnlikeViewModel.like = widget.likeValue!;
+
     super.initState();
     _controller = VideoPlayerController.network('${widget.videoLink}')
       ..initialize().then((_) {
@@ -117,6 +125,8 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                     InkWell(
                         onTap: () {
                           print('on tap in share');
+
+                          Share.share('${widget.videoLink}', subject: '');
                         },
                         child: Column(
                           children: [

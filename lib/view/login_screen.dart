@@ -253,8 +253,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   CommonWidget.commonSizedBox(height: 28),
                   isChecked == true
                       ? CommonWidget.textFormField(
-                          controller: _emailController, hintText: 'Enter Email')
+                          borderColor: Colors.grey.withOpacity(0.3),
+                          controller: _emailController,
+                          hintText: 'Enter Email')
                       : CommonWidget.textFormField(
+                          borderColor: Colors.grey.withOpacity(0.3),
                           prefix: SizedBox(
                             width: 60.sp,
                             child: InkWell(
@@ -391,11 +394,12 @@ class _LoginScreenState extends State<LoginScreen> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(10)),
         child: InkWell(
-            onTap: onTap,
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: SvgPicture.asset(image, fit: BoxFit.contain),
-            ),),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: SvgPicture.asset(image, fit: BoxFit.contain),
+          ),
+        ),
       ),
     );
   }

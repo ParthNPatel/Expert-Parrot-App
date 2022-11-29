@@ -33,6 +33,7 @@ class TextConst {
   static String canNotWaterBeEmpty = 'Email or Password can not be empty';
   static String enterValidEmail = 'Please enter valid email';
   static String failed = 'Failed';
+  static String faq = 'FAQ';
   static String verification = 'Verification';
   static String optSentSuccessfully = 'OTP Sent Successfully ';
   static String changeMobile = 'Change Mobile/Email?';
