@@ -18,7 +18,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
-
 import '../controller/handle_float_controller.dart';
 import 'medicine_graph_screen.dart';
 
@@ -141,6 +140,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   List dateTimes = ['select1'];
   int select = 1;
   List LastData = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
