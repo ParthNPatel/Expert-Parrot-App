@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_comment_res_model.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_post_res_model.dart';
@@ -7,11 +9,13 @@ import 'package:expert_parrot_app/controller/handle_float_controller.dart';
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:expert_parrot_app/view/login_screen.dart';
 import 'package:expert_parrot_app/viewModel/add_comment_view_model.dart';
+import 'package:expert_parrot_app/viewModel/add_post_view_model.dart';
 import 'package:expert_parrot_app/viewModel/get_comment_view_model.dart';
 import 'package:expert_parrot_app/viewModel/get_post_view_model.dart';
 import 'package:expert_parrot_app/viewModel/like_unlike_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 
@@ -30,12 +34,15 @@ class _CommunityScreenState extends State<CommunityScreen> {
   TextEditingController _queryController = TextEditingController();
 
   GetPostViewModel getPostViewModel = Get.put(GetPostViewModel());
+  AddPostViewModel addPostViewModel = Get.put(AddPostViewModel());
+
+  File? image;
 
   @override
   void initState() {
     super.initState();
 
-    getPostViewModel.getPostViewModel();
+    getPostViewModel.getPostViewModel(isLoading: true);
   }
 
   @override
@@ -95,95 +102,192 @@ class _CommunityScreenState extends State<CommunityScreen> {
                             );
                           },
                           itemBuilder: (_, index) {
-                            return Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 15),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Image.asset(
-                                        'assets/png/person1.png',
-                                        height: 40.sp,
-                                        width: 40.sp,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          CommonText.textBoldWight500(
-                                              text: "Vill Parmar",
-                                              fontSize: 12.sp),
-                                          CommonText.textBoldWight400(
-                                              text: "ON, Canada",
-                                              color: Color(0xffa1a1a1),
-                                              fontSize: 10.sp),
-                                        ],
-                                      ),
-                                      Spacer(),
-                                      CommonText.textBoldWight400(
-                                          text:
-                                              "${DateFormat.yMMMEd().format(DateTime.parse("${response.data![index].createdAt!}"))}",
-                                          color: Color(0xffa1a1a1),
-                                          fontSize: 10.sp),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 13,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      CommonText.textBoldWight400(
-                                          text:
-                                              "${response.data![index].title}",
-                                          color: Color(0xffa1a1a1),
-                                          fontSize: 11.sp),
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                      CommonText.textBoldWight400(
-                                          text:
-                                              "${response.data![index].description}",
-                                          color: Color(0xffa1a1a1),
-                                          fontSize: 11.sp),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 13,
-                                  ),
-                                  Divider(
-                                    thickness: 1.2,
-                                    color: Color(0xffE0E1E2),
-                                  ),
-                                  SizedBox(
-                                    height: 13,
-                                  ),
-                                  LikeAndCommentWidget(
-                                    postId: response.data![index].id,
-                                    likeCount: response.data![index].likes,
-                                    commentCount:
-                                        response.data![index].comments!.length,
-                                    isLiked: response.data![index].isLiked!,
-                                  ),
-                                ],
-                              ),
-                            );
+                            return response.data![index].image == null ||
+                                    response.data![index].image == ""
+                                ? Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 15),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Image.asset(
+                                              'assets/png/person1.png',
+                                              height: 40.sp,
+                                              width: 40.sp,
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                CommonText.textBoldWight500(
+                                                    text: "Vill Parmar",
+                                                    fontSize: 12.sp),
+                                                CommonText.textBoldWight400(
+                                                    text: "ON, Canada",
+                                                    color: Color(0xffa1a1a1),
+                                                    fontSize: 10.sp),
+                                              ],
+                                            ),
+                                            Spacer(),
+                                            CommonText.textBoldWight400(
+                                                text:
+                                                    "${DateFormat.yMMMEd().format(DateTime.parse("${response.data![index].createdAt!}"))}",
+                                                color: Color(0xffa1a1a1),
+                                                fontSize: 10.sp),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 13,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            CommonText.textBoldWight400(
+                                                text:
+                                                    "${response.data![index].title}",
+                                                color: Color(0xffa1a1a1),
+                                                fontSize: 11.sp),
+                                            SizedBox(
+                                              height: 20,
+                                            ),
+                                            CommonText.textBoldWight400(
+                                                text:
+                                                    "${response.data![index].description}",
+                                                color: Color(0xffa1a1a1),
+                                                fontSize: 11.sp),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 13,
+                                        ),
+                                        Divider(
+                                          thickness: 1.2,
+                                          color: Color(0xffE0E1E2),
+                                        ),
+                                        SizedBox(
+                                          height: 13,
+                                        ),
+                                        LikeAndCommentWidget(
+                                          postId: response.data![index].id,
+                                          likeCount:
+                                              response.data![index].likes,
+                                          commentCount: response
+                                              .data![index].comments!.length,
+                                          isLiked:
+                                              response.data![index].isLiked!,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 15),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Image.asset(
+                                              'assets/png/person1.png',
+                                              height: 40.sp,
+                                              width: 40.sp,
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                CommonText.textBoldWight500(
+                                                    text: "Adam LR",
+                                                    fontSize: 12.sp),
+                                                CommonText.textBoldWight400(
+                                                    text: "QR, Canada",
+                                                    color: Color(0xffa1a1a1),
+                                                    fontSize: 10.sp),
+                                              ],
+                                            ),
+                                            Spacer(),
+                                            CommonText.textBoldWight400(
+                                                text: "2 hour ago",
+                                                color: Color(0xffa1a1a1),
+                                                fontSize: 10.sp),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 13,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            CommonText.textBoldWight400(
+                                                text:
+                                                    "${response.data![index].title}",
+                                                color: Color(0xffa1a1a1),
+                                                fontSize: 11.sp),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Container(
+                                              height: 130.sp,
+                                              width: double.infinity,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                image: DecorationImage(
+                                                    image: NetworkImage(
+                                                      "https://health-app-test.s3.ap-south-1.amazonaws.com/post/" +
+                                                          "${response.data![index].image}",
+                                                    ),
+                                                    fit: BoxFit.cover),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 8,
+                                        ),
+                                        Divider(
+                                          thickness: 1.2,
+                                          color: Color(0xffE0E1E2),
+                                        ),
+                                        SizedBox(
+                                          height: 13,
+                                        ),
+                                        LikeAndCommentWidget(
+                                          postId: response.data![index].id,
+                                          likeCount:
+                                              response.data![index].likes,
+                                          commentCount: response
+                                              .data![index].comments!.length,
+                                          isLiked:
+                                              response.data![index].isLiked!,
+                                        ),
+                                      ],
+                                    ),
+                                  );
                           },
                         );
                       }
                       return SizedBox();
                     }),
                     // Container(
-                    //   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    //   padding:
+                    //       EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     //   decoration: BoxDecoration(
                     //     color: Colors.white,
                     //     borderRadius: BorderRadius.circular(20),
@@ -255,7 +359,11 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     //       SizedBox(
                     //         height: 13,
                     //       ),
-                    //       // LikeAndCommentWidget(),
+                    //       LikeAndCommentWidget(
+                    //           commentCount: 5,
+                    //           likeCount: 5,
+                    //           isLiked: true,
+                    //           postId: "fsdfsfsd"),
                     //     ],
                     //   ),
                     // ),
@@ -270,7 +378,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     //   height: 13,
                     // ),
                     // Container(
-                    //   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    //   padding:
+                    //       EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     //   decoration: BoxDecoration(
                     //     color: Colors.white,
                     //     borderRadius: BorderRadius.circular(20),
@@ -350,6 +459,15 @@ class _CommunityScreenState extends State<CommunityScreen> {
     );
   }
 
+  getImage(ImageSource imageSource) async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? pickImage = await _picker.pickImage(source: imageSource);
+    image = File(pickImage!.path);
+    print('Image ================ > ${image}');
+
+    setState(() {});
+  }
+
   Row header() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -380,100 +498,164 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
   Future<StatefulBuilder> askYourQuestion() async {
     return StatefulBuilder(
-      builder: (context, setState) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Container(
-          width: 300.sp,
-          decoration: BoxDecoration(
-            color: Colors.white,
+      builder: (context, setState) =>
+          GetBuilder<AddPostViewModel>(builder: (controller) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CommonText.textBoldWight500(
-                        text: "Ask Your Query",
-                        fontSize: 17.sp,
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Get.back();
-                        },
-                        child: CommonWidget.commonSvgPitcher(
-                          image: ImageConst.close,
+          child: Container(
+            width: 300.sp,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CommonText.textBoldWight500(
+                          text: "Ask Your Query",
+                          fontSize: 17.sp,
                         ),
-                      )
-                    ],
-                  ),
-                ),
-                CommonWidget.dottedLineWidget(),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CommonText.textBoldWight400(
-                        text: "please enter your medicine related query",
-                        fontSize: 11.sp,
-                        color: Color(0xff9B9B9B),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      TextFormField(
-                        controller: _queryController,
-                        decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Color(0xffF8F8F6),
-                            hintText: "Enter your query",
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius: BorderRadius.circular(20),
-                            )),
-                      ),
-                      SizedBox(height: 23),
-                      CommonWidget.commonButton(
-                          color: CommonColor.greenColor,
-                          radius: 10,
-                          onTap: () async {
-                            if (_queryController.text.isNotEmpty) {
-                              Get.back();
-
-                              CommonWidget.getSnackBar(
-                                  duration: 2,
-                                  color: CommonColor.greenColor,
-                                  colorText: Colors.white,
-                                  title: "Submitted",
-                                  message:
-                                      'Your query has been submitted successfully.');
-                            } else {
-                              CommonWidget.getSnackBar(
-                                  color: Colors.red,
-                                  duration: 2,
-                                  colorText: Colors.white,
-                                  title: "Required",
-                                  message: 'Please enter your query.');
-                            }
+                        InkWell(
+                          onTap: () {
+                            Get.back();
                           },
-                          text: "Submit")
-                    ],
+                          child: CommonWidget.commonSvgPitcher(
+                            image: ImageConst.close,
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  CommonWidget.dottedLineWidget(),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CommonText.textBoldWight400(
+                          text: "please enter your medicine related query",
+                          fontSize: 11.sp,
+                          color: Color(0xff9B9B9B),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        TextFormField(
+                          controller: _queryController,
+                          decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Color(0xffF8F8F6),
+                              hintText: "Enter your query",
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                                borderRadius: BorderRadius.circular(20),
+                              )),
+                        ),
+                        SizedBox(height: 23),
+                        CommonWidget.commonButton(
+                            color: CommonColor.greenColor,
+                            radius: 10,
+                            onTap: () async {
+                              Get.dialog(AlertDialog(
+                                  content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  MaterialButton(
+                                      color: CommonColor.greenColor,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8)),
+                                      onPressed: () {
+                                        getImage(ImageSource.camera);
+                                        Get.back();
+                                      },
+                                      child: Text("Camera",
+                                          style:
+                                              TextStyle(color: Colors.white))),
+                                  MaterialButton(
+                                      color: CommonColor.greenColor,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8)),
+                                      onPressed: () {
+                                        getImage(ImageSource.gallery);
+                                        Get.back();
+                                      },
+                                      child: Text(
+                                        "Gallery",
+                                        style: TextStyle(color: Colors.white),
+                                      ))
+                                ],
+                              )));
+                            },
+                            text: "Select Image"),
+                        SizedBox(height: 15),
+                        CommonWidget.commonButton(
+                            color: CommonColor.greenColor,
+                            radius: 10,
+                            onTap: () async {
+                              if (_queryController.text.isNotEmpty) {
+                                var _req = {
+                                  "title":
+                                      "${_queryController.text.substring(0, 7)}",
+                                  "description": "${_queryController.text}",
+                                  "image": image!.path
+                                };
+
+                                controller.addPostViewModel(model: _req);
+
+                                if (controller.addPostApiResponse.status ==
+                                    Status.COMPLETE) {
+                                  getPostViewModel.getPostViewModel(
+                                      isLoading: true);
+                                  CommonWidget.getSnackBar(
+                                      duration: 2,
+                                      color: CommonColor.greenColor,
+                                      colorText: Colors.white,
+                                      title: "Submitted",
+                                      message:
+                                          'Your query has been submitted successfully.');
+                                }
+                                if (controller.addPostApiResponse.status ==
+                                    Status.ERROR) {
+                                  CommonWidget.getSnackBar(
+                                      duration: 2,
+                                      color: Colors.red.shade300,
+                                      colorText: Colors.white,
+                                      title: "Error",
+                                      message: 'Something went wrong!');
+                                }
+
+                                Get.back();
+                              } else {
+                                CommonWidget.getSnackBar(
+                                    color: Colors.red,
+                                    duration: 2,
+                                    colorText: Colors.white,
+                                    title: "Required",
+                                    message: 'Please enter your query.');
+                              }
+                            },
+                            text: "Submit")
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 }
@@ -502,6 +684,7 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
   AddCommentViewModel addCommentViewModel = Get.put(AddCommentViewModel());
   GetCommentViewModel getCommentViewModel = Get.put(GetCommentViewModel());
   LikeUnLikeViewModel likeUnLikeViewModel = Get.put(LikeUnLikeViewModel());
+  GetPostViewModel getPostViewModel = Get.put(GetPostViewModel());
   HandleFloatController controller = Get.find();
   @override
   void initState() {
@@ -521,6 +704,7 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                 setState(() {
                   widget.isLiked = !widget.isLiked;
                 });
+                getPostViewModel.getPostViewModel(isLoading: false);
               },
               child: Row(
                 children: [

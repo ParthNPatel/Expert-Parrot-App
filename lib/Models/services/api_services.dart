@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 
 import 'app_exception.dart';
 
-enum APIType { aPost, aGet }
+enum APIType { aPost, aGet, aPut }
 
 class APIService {
   var response;
@@ -33,11 +33,20 @@ class APIService {
         response = returnResponse(result.statusCode, result.body);
         log("RES status code ${result.statusCode}");
         log("res${result.body}");
-      } else {
+      } else if (apitype == APIType.aPost) {
         print("REQUEST PARAMETER url  $url");
         print("REQUEST PARAMETER $body");
 
         final result = await http.post(Uri.parse(baseUrl + url),
+            body: json.encode(body), headers: headers);
+        print("resp${result.body}");
+        response = returnResponse(result.statusCode, result.body);
+        print(result.statusCode);
+      } else {
+        print("REQUEST PARAMETER url  $url");
+        print("REQUEST PARAMETER $body");
+
+        final result = await http.put(Uri.parse(baseUrl + url),
             body: json.encode(body), headers: headers);
         print("resp${result.body}");
         response = returnResponse(result.statusCode, result.body);

@@ -3,13 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:video_player/video_player.dart';
+
 import '../components/common_widget.dart';
 import '../constant/color_const.dart';
 import '../constant/text_const.dart';
 import '../constant/text_styel.dart';
 
 class VideoPlayScreen extends StatefulWidget {
-  const VideoPlayScreen({Key? key}) : super(key: key);
+  final String videoLink;
+  final String title;
+  final String description;
+  final String likes;
+
+  const VideoPlayScreen(
+      {Key? key,
+      required this.videoLink,
+      required this.title,
+      required this.description,
+      required this.likes})
+      : super(key: key);
 
   @override
   State<VideoPlayScreen> createState() => _VideoPlayScreenState();
@@ -20,8 +32,7 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(
-        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4')
+    _controller = VideoPlayerController.network('${widget.videoLink}')
       ..initialize().then((_) {
         setState(() {});
       });
@@ -96,7 +107,7 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                               image: ImageConst.hartBorderIcon,
                               color: Colors.white),
                           CommonText.textBoldWight400(
-                              text: '143K',
+                              text: '${widget.likes}',
                               fontSize: 13.sp,
                               color: Colors.white),
                         ],
@@ -120,7 +131,7 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                     Align(
                       alignment: Alignment.centerLeft,
                       child: CommonText.textBoldWight500(
-                          text: 'Video Body',
+                          text: '${widget.title}',
                           fontSize: 13.sp,
                           color: Colors.white),
                     ),
@@ -129,8 +140,7 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                       alignment: Alignment.centerLeft,
                       child: CommonText.textBoldWight300(
                           color: CommonColor.whiteColorEDEDED,
-                          text:
-                              'Reference site about Lorem Ipsum, giving information \non its origins, as well as a random Lipsum More',
+                          text: '${widget.description}',
                           fontSize: 9.sp),
                     ),
                     CommonWidget.commonSizedBox(height: 20)

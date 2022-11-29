@@ -1,28 +1,28 @@
 // To parse this JSON data, do
 //
-//     final getPostResponseModel = getPostResponseModelFromJson(jsonString);
+//     final getVideoResponseModel = getVideoResponseModelFromJson(jsonString);
 
 import 'dart:convert';
 
-GetPostResponseModel getPostResponseModelFromJson(String str) =>
-    GetPostResponseModel.fromJson(json.decode(str));
+GetVideoResponseModel getVideoResponseModelFromJson(String str) =>
+    GetVideoResponseModel.fromJson(json.decode(str));
 
-String getPostResponseModelToJson(GetPostResponseModel data) =>
+String getVideoResponseModelToJson(GetVideoResponseModel data) =>
     json.encode(data.toJson());
 
-class GetPostResponseModel {
-  GetPostResponseModel({
+class GetVideoResponseModel {
+  GetVideoResponseModel({
     this.flag,
     this.data,
   });
 
   bool? flag;
-  List<AllPost>? data;
+  List<Video>? data;
 
-  factory GetPostResponseModel.fromJson(Map<String, dynamic> json) =>
-      GetPostResponseModel(
+  factory GetVideoResponseModel.fromJson(Map<String, dynamic> json) =>
+      GetVideoResponseModel(
         flag: json["flag"],
-        data: List<AllPost>.from(json["data"].map((x) => AllPost.fromJson(x))),
+        data: List<Video>.from(json["data"].map((x) => Video.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -31,15 +31,13 @@ class GetPostResponseModel {
       };
 }
 
-class AllPost {
-  AllPost({
+class Video {
+  Video({
     this.id,
     this.title,
     this.description,
-    this.image,
+    this.video,
     this.likes,
-    this.userId,
-    this.comments,
     this.createdAt,
     this.updatedAt,
     this.isLiked,
@@ -48,22 +46,18 @@ class AllPost {
   String? id;
   String? title;
   String? description;
-  String? image;
+  String? video;
   int? likes;
-  String? userId;
-  List<dynamic>? comments;
   DateTime? createdAt;
   DateTime? updatedAt;
   bool? isLiked;
 
-  factory AllPost.fromJson(Map<String, dynamic> json) => AllPost(
+  factory Video.fromJson(Map<String, dynamic> json) => Video(
         id: json["_id"],
         title: json["title"],
         description: json["description"],
-        image: json["image"],
+        video: json["video"],
         likes: json["likes"],
-        userId: json["userId"],
-        comments: List<dynamic>.from(json["comments"].map((x) => x)),
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
         isLiked: json["isLiked"],
@@ -73,10 +67,8 @@ class AllPost {
         "_id": id,
         "title": title,
         "description": description,
-        "image": image,
+        "video": video,
         "likes": likes,
-        "userId": userId,
-        "comments": List<dynamic>.from(comments!.map((x) => x)),
         "createdAt": createdAt!.toIso8601String(),
         "updatedAt": updatedAt!.toIso8601String(),
         "isLiked": isLiked,

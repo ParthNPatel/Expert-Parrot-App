@@ -8,4 +8,5 @@ class APIConst {
   static String addComment = "/post/comment";
   static String getComment = "/post/comment/";
   static String postLike = "/post/like";
+  static String video = "/video";
 }
