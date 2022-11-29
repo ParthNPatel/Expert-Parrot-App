@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
@@ -81,7 +82,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     GetBuilder<GetPostViewModel>(builder: (controller) {
                       if (controller.getPostApiResponse.status ==
                           Status.LOADING) {
-                        return CircularProgressIndicator();
+                        return PostShimmer();
                       }
 
                       if (controller.getPostApiResponse.status ==
@@ -609,6 +610,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
                             radius: 10,
                             onTap: () async {
                               if (_queryController.text.isNotEmpty) {
+
+                                log('ADD MESSAGE :- ${image!.path}');
                                 var _req = {
                                   "title":
                                       "${_queryController.text.substring(0, 7)}",

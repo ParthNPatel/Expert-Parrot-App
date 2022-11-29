@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_video_res_model.dart';
+import 'package:expert_parrot_app/components/video_shimmer.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_const.dart';
@@ -55,7 +56,7 @@ class _VideoScreenState extends State<VideoScreen> {
               child: SingleChildScrollView(
                 child: GetBuilder<GetVideoViewModel>(builder: (controller) {
                   if (controller.getVideoApiResponse.status == Status.LOADING) {
-                    return CircularProgressIndicator();
+                    return VideoShimmer();
                   }
 
                   if (controller.getVideoApiResponse.status ==
@@ -86,6 +87,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                       likes: response.data![index].likes
                                           .toString(),
                                       likeValue: response.data![index].isLiked,
+                                      id: response.data![index].id,
                                     ),
                                   );
                                 },

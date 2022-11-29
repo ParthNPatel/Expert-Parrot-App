@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dotted_line/dotted_line.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
@@ -130,9 +132,16 @@ class _FAQScreenState extends State<FAQScreen> {
                             collapsedTextColor: CommonColor.blackColor0D0D0D,
                             iconColor: Colors.white,
                             onExpansionChanged: (val) {
-                              value = val;
+                              setState(() {
+                                value = val;
+                              });
+                              log('VALUE $value');
                             },
-                            trailing: SvgPicture.asset(ImageConst.arrow),
+                            trailing: value == false
+                                ? Transform.rotate(
+                                    angle: 3.1,
+                                    child: SvgPicture.asset(ImageConst.arrow))
+                                : SvgPicture.asset(ImageConst.arrow),
                             collapsedIconColor: Colors.white,
                             childrenPadding: EdgeInsets.only(
                                 left: 10.sp, right: 10.sp, bottom: 10.sp),

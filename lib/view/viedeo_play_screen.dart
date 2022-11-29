@@ -1,3 +1,4 @@
+import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/viewModel/get_video_view_model.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ class VideoPlayScreen extends StatefulWidget {
   final String description;
   final String likes;
   final bool? likeValue;
+  final String? id;
 
   const VideoPlayScreen(
       {Key? key,
@@ -24,7 +26,8 @@ class VideoPlayScreen extends StatefulWidget {
       required this.title,
       required this.description,
       required this.likes,
-      this.likeValue})
+      this.likeValue,
+      this.id})
       : super(key: key);
 
   @override
@@ -33,11 +36,11 @@ class VideoPlayScreen extends StatefulWidget {
 
 class _VideoPlayScreenState extends State<VideoPlayScreen> {
   late VideoPlayerController _controller;
-  GetVideoViewModel likeUnlikeViewModel = Get.put(GetVideoViewModel());
+  GetVideoViewModel getVideoViewModel = Get.put(GetVideoViewModel());
 
   @override
   void initState() {
-    likeUnlikeViewModel.like = widget.likeValue!;
+    getVideoViewModel.like = widget.likeValue!;
 
     super.initState();
     _controller = VideoPlayerController.network('${widget.videoLink}')
@@ -105,15 +108,56 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     InkWell(
-                      onTap: () {
+                      onTap: () async {
                         print('on like tap');
+                        if (widget.likeValue == true) {
+                          /// UNLIKE API
+
+                        } else if (widget.likeValue == false) {
+                          await getVideoViewModel.videoLikeViewModel(model: {
+                            "type": "like",
+                            "videoId": "${widget.id}"
+                          });
+
+                          // getVideoViewModel.likeUnlike(true);
+                          try {
+                            if (getVideoViewModel.videoLikeApiResponse.status ==
+                                Status.COMPLETE) {
+                              getVideoViewModel.getVideoViewModel(
+                                  isLoading: false);
+                            } else if (getVideoViewModel
+                                    .videoLikeApiResponse.status ==
+                                Status.ERROR) {
+                              CommonWidget.getSnackBar(
+                                message: '',
+                                title: 'Failed',
+                                duration: 2,
+                                color: Colors.red,
+                              );
+                            }
+                          } catch (e) {
+                            CommonWidget.getSnackBar(
+                              message: 'Like Error',
+                              title: 'Failed',
+                              duration: 2,
+                              color: Colors.red,
+                            );
+                          }
+                        }
                       },
                       child: Column(
                         children: [
-                          CommonWidget.commonSvgPitcher(
-                              height: 20,
-                              image: ImageConst.hartBorderIcon,
-                              color: Colors.white),
+                          widget.likeValue == true
+                              ? Icon(
+                                  Icons.favorite,
+                                  size: 20,
+                                  color: Colors.red,
+                                )
+                              : CommonWidget.commonSvgPitcher(
+                                  height: 20,
+                                  image: ImageConst.hartBorderIcon,
+                                  color: CommonColor.gery636363,
+                                ),
                           CommonText.textBoldWight400(
                               text: '${widget.likes}',
                               fontSize: 13.sp,
