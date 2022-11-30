@@ -147,6 +147,12 @@ class _LoginScreenState extends State<LoginScreen> {
         Get.offAll(() => BottomNavScreen());
         GetStorageServices.setUserLoggedIn();
         GetStorageServices.setBarrierToken(responseModel.token);
+        GetStorageServices.setUserName(responseModel.data!.name!);
+        GetStorageServices.setUserHeight(responseModel.data!.height!);
+        GetStorageServices.setUserWeight(responseModel.data!.weight!);
+        GetStorageServices.setAge(responseModel.data!.age!);
+        GetStorageServices.setUserImage(responseModel.data!.userImage!);
+        GetStorageServices.setUserProfileSet(responseModel.data!.profileSet!);
 
         progress.dismiss();
       }
@@ -206,6 +212,12 @@ class _LoginScreenState extends State<LoginScreen> {
           Get.offAll(() => BottomNavScreen());
           GetStorageServices.setUserLoggedIn();
           GetStorageServices.setBarrierToken(responseModel.token);
+          GetStorageServices.setUserName(responseModel.data!.name!);
+          GetStorageServices.setUserHeight(responseModel.data!.height!);
+          GetStorageServices.setUserWeight(responseModel.data!.weight!);
+          GetStorageServices.setAge(responseModel.data!.age!);
+          GetStorageServices.setUserImage(responseModel.data!.userImage!);
+          GetStorageServices.setUserProfileSet(responseModel.data!.profileSet!);
 
           progress.dismiss();
         }

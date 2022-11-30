@@ -9,7 +9,7 @@ class GetVideoRepo extends BaseService {
   static Future<GetVideoResponseModel> getVideoRepo() async {
     var response = await APIService()
         .getResponse(url: APIConst.video, apitype: APIType.aGet);
-    print('EditProfile response===>>>  $response');
+    print('GetVideo response===>>>  $response');
     GetVideoResponseModel getVideoResponseModel =
         GetVideoResponseModel.fromJson(response);
     return getVideoResponseModel;

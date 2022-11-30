@@ -52,8 +52,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Row(
                         children: [
                           CircleAvatar(
-                            backgroundImage:
-                                AssetImage('assets/png/person.png'),
+                            backgroundImage: NetworkImage(
+                                'https://health-app-test.s3.ap-south-1.amazonaws.com/user/' +
+                                    '${GetStorageServices.getUserImage()}'),
                             radius: 23.sp,
                           ),
                           SizedBox(
@@ -77,9 +78,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Spacer(),
                           InkWell(
                             onTap: () {
-                              GetStorageServices.setUserBMI("15");
-                              GetStorageServices.setUserHeight(height: "156");
-                              GetStorageServices.setUserWeight("60");
+                              // GetStorageServices.setUserBMI("15");
+                              // GetStorageServices.setUserHeight(height: "156");
+                              // GetStorageServices.setUserWeight("60");
 
                               Get.to(EditProfileScreen());
                               // Get.dialog(AlertDialog(

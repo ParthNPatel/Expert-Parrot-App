@@ -3,7 +3,7 @@ import 'package:get_storage/get_storage.dart';
 class GetStorageServices {
   static GetStorage getStorage = GetStorage();
 
-  static setUserHeight({required String height}) {
+  static setUserHeight(int height) {
     getStorage.write('height', height);
   }
 
@@ -27,7 +27,7 @@ class GetStorageServices {
     return getStorage.read('fcm');
   }
 
-  static setUserWeight(String weight) {
+  static setUserWeight(int weight) {
     getStorage.write('weight', weight);
   }
 
@@ -51,8 +51,42 @@ class GetStorageServices {
     return getStorage.read('isUserLoggedIn');
   }
 
+  static setUserName(String userName) {
+    getStorage.write('userName', userName);
+  }
+
+  static getUserName() {
+    return getStorage.read('userName');
+  }
+
+  static setAge(int age) {
+    getStorage.write('age', age);
+  }
+
+  static getAge() {
+    return getStorage.read('age');
+  }
+
+  static setUserImage(String userImage) {
+    getStorage.write('userImage', userImage);
+  }
+
+  static getUserImage() {
+    return getStorage.read('userImage');
+  }
+
+  static setUserProfileSet(bool profileSet) {
+    getStorage.write('profileSet', profileSet);
+  }
+
+  static getUserProfileSet() {
+    return getStorage.read('profileSet');
+  }
+
   static logOut() {
     getStorage.remove("height");
+    getStorage.remove("userName");
+    getStorage.remove("profileSet");
     getStorage.remove("weight");
     getStorage.remove("bmi");
     getStorage.remove("isUserLoggedIn");

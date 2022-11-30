@@ -41,6 +41,7 @@ class Data {
     this.loginId,
     this.loginType,
     this.bmi,
+    this.height,
     this.createdAt,
     this.dependents,
     this.fcmToken,
@@ -52,16 +53,20 @@ class Data {
     this.posts,
     this.requests,
     this.timeOffset,
+    this.userImage,
     this.updatedAt,
     this.userTime,
     this.water,
     this.weight,
+    this.age,
+    this.profileSet,
   });
 
   String? id;
   String? loginId;
   String? loginType;
   double? bmi;
+  int? height;
   DateTime? createdAt;
   List<dynamic>? dependents;
   String? fcmToken;
@@ -73,16 +78,20 @@ class Data {
   List<dynamic>? posts;
   List<dynamic>? requests;
   String? timeOffset;
+  String? userImage;
   DateTime? updatedAt;
   DateTime? userTime;
   int? water;
   int? weight;
+  int? age;
+  bool? profileSet;
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
         id: json["_id"],
         loginId: json["loginId"],
         loginType: json["loginType"],
         bmi: json["bmi"].toDouble(),
+        height: json["height"],
         createdAt: DateTime.parse(json["createdAt"]),
         dependents: List<dynamic>.from(json["dependents"].map((x) => x)),
         fcmToken: json["fcm_token"],
@@ -94,10 +103,13 @@ class Data {
         posts: List<dynamic>.from(json["posts"].map((x) => x)),
         requests: List<dynamic>.from(json["requests"].map((x) => x)),
         timeOffset: json["timeOffset"],
+        userImage: json["userImage"],
         updatedAt: DateTime.parse(json["updatedAt"]),
         userTime: DateTime.parse(json["userTime"]),
         water: json["water"],
         weight: json["weight"],
+        age: json["age"],
+        profileSet: json["profileSet"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -105,6 +117,7 @@ class Data {
         "loginId": loginId,
         "loginType": loginType,
         "bmi": bmi,
+        "height": height,
         "createdAt": createdAt!.toIso8601String(),
         "dependents": List<dynamic>.from(dependents!.map((x) => x)),
         "fcm_token": fcmToken,
@@ -116,9 +129,12 @@ class Data {
         "posts": List<dynamic>.from(posts!.map((x) => x)),
         "requests": List<dynamic>.from(requests!.map((x) => x)),
         "timeOffset": timeOffset,
+        "userImage": userImage,
         "updatedAt": updatedAt!.toIso8601String(),
         "userTime": userTime!.toIso8601String(),
         "water": water,
         "weight": weight,
+        "age": age,
+        "profileSet": profileSet,
       };
 }

@@ -58,6 +58,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         "loginId": "${widget.logInId}",
         "water": 3,
         "weight": 65,
+        // "height": 165,
+        // "age": 25,
         "heartRate": 98,
         "bmi": 21.1,
         "fcm_token": "${GetStorageServices.getFcm()}",
@@ -68,9 +70,18 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           Status.COMPLETE.toString()) {
         LogInResponseModel responseModel = logInViewModel.logInApiResponse.data;
 
+        print(
+            'response weight ============== > ${responseModel.data!.userImage}');
+
         Get.offAll(() => BottomNavScreen());
         GetStorageServices.setUserLoggedIn();
         GetStorageServices.setBarrierToken(responseModel.token);
+        GetStorageServices.setUserName(responseModel.data!.name!);
+        GetStorageServices.setUserHeight(responseModel.data!.height!);
+        GetStorageServices.setUserWeight(responseModel.data!.weight!);
+        GetStorageServices.setAge(responseModel.data!.age!);
+        GetStorageServices.setUserImage(responseModel.data!.userImage!);
+        GetStorageServices.setUserProfileSet(responseModel.data!.profileSet!);
         log('BARRIER TOKEN :- ${GetStorageServices.getBarrierToken()}');
         progress.dismiss();
       }

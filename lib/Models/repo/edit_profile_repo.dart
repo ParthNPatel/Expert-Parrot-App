@@ -7,11 +7,12 @@ import '../services/base_service.dart';
 class EditProfileRepo extends BaseService {
   static Future<EditProfileResponseModel> editProfileRepo(
       {required Map<String, dynamic> model}) async {
-    var response = await APIService().getResponse(
+    var response = await APIService().getPutResponse(
         url: APIConst.userData, apitype: APIType.aPut, body: model);
     print('EditProfile response===>>>  $response');
     EditProfileResponseModel editProfileResponseModel =
         EditProfileResponseModel.fromJson(response);
+
     return editProfileResponseModel;
   }
 }

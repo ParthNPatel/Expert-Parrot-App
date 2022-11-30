@@ -15,11 +15,10 @@ class EditProfileViewModel extends GetxController {
     try {
       EditProfileResponseModel response =
           await EditProfileRepo.editProfileRepo(model: model!);
-      print("LogInResponseModel=response==>$response");
-
+      print("EditProfileResponseModel=response==>$response");
       _editProfileApiResponse = ApiResponse.complete(response);
     } catch (e) {
-      print("LogInResponseModel=e==>$e");
+      print("EditProfileResponseModel=e==>$e");
       _editProfileApiResponse = ApiResponse.error(message: 'error');
     }
     update();
