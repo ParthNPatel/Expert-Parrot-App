@@ -4,11 +4,11 @@ import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
+import 'package:expert_parrot_app/view/demo/search_user.dart';
 import 'package:expert_parrot_app/view/dependent_water_graph.dart';
 import 'package:expert_parrot_app/view/medical_report_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 
 class DependentScreen extends StatefulWidget {
@@ -88,7 +88,9 @@ class _DependentScreenState extends State<DependentScreen> {
                 backOnTap: () {
                   Get.back();
                 },
-                addOnTap: () {},
+                addOnTap: () {
+                  Get.to(() => SearchPage());
+                },
                 titleText: TextConst.dependentView),
             CommonWidget.commonSizedBox(height: 13),
             DottedLine(

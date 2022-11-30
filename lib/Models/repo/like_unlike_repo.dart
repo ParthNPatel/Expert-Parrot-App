@@ -1,4 +1,5 @@
 import 'package:expert_parrot_app/Models/responseModel/like_res_model.dart';
+import 'package:expert_parrot_app/Models/responseModel/unlike_post_res_model.dart';
 import 'package:expert_parrot_app/constant/api_const.dart';
 
 import '../services/api_services.dart';
@@ -12,5 +13,16 @@ class LikeUnLikeRepo extends BaseService {
     print('LikeResponseModel response===>>>  $response');
     LikeResponseModel likeResponseModel = LikeResponseModel.fromJson(response);
     return likeResponseModel;
+  }
+
+  /// UnLike
+  static Future<UnLikePostResponseModel> removeLikeRepo(
+      {required Map<String, dynamic> model}) async {
+    var response = await APIService().getResponse(
+        url: APIConst.postLike, apitype: APIType.aPost, body: model);
+    print('UnLikePostResponseModel response===>>>  $response');
+    UnLikePostResponseModel unLikePostResponseModel =
+        UnLikePostResponseModel.fromJson(response);
+    return unLikePostResponseModel;
   }
 }

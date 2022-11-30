@@ -244,41 +244,43 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               reverse: true,
                               physics: NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
-                              itemCount:
-                                  userResponse.data!.medicines!.length > 3
-                                      ? LastData.length
-                                      : userResponse.data!.medicines!.length,
+                              itemCount: lenght > 3
+                                  ? LastData.length
+                                  : userResponse.data!.medicines!.length,
                               itemBuilder: (context, index) {
-                                var LastEqual = LastData[index]['ap'];
                                 var UserEqual = userResponse
                                     .data!.medicines![index].appearance;
-                                return userResponse.data!.medicines!.length > 3
+                                return lenght > 3
                                     ? medDetailsWidget(
-                                        image: LastEqual == 'Pills'
+                                        image: LastData[index]['ap'] == 'Pills'
                                             ? ImageConst.med3Icon
-                                            : LastEqual == 'Gel'
+                                            : LastData[index]['ap'] == 'Gel'
                                                 ? ImageConst.med1Icon
-                                                : LastEqual == 'Syrup'
+                                                : LastData[index]['ap'] ==
+                                                        'Syrup'
                                                     ? ImageConst.med2Icon
                                                     : ImageConst.med2Icon,
                                         medName:
                                             '${LastData[index]['medName']}',
                                         medGm: '${LastData[index]['medGm']}',
-                                        iconColor: LastEqual == 'Pills'
-                                            ? Color(0xff21D200)
-                                            : LastEqual == 'Gel'
-                                                ? Color(0xffFFDD2C)
-                                                : LastEqual == 'Syrup'
-                                                    ? Color(0xff9255E5)
-                                                    : Color(0xff9255E5),
+                                        iconColor:
+                                            LastData[index]['ap'] == 'Pills'
+                                                ? Color(0xff21D200)
+                                                : LastData[index]['ap'] == 'Gel'
+                                                    ? Color(0xffFFDD2C)
+                                                    : LastData[index]['ap'] ==
+                                                            'Syrup'
+                                                        ? Color(0xff9255E5)
+                                                        : Color(0xff9255E5),
                                         timeOfDay:
                                             '${LastData[index]['timeOfDay']}',
-                                        color: LastEqual == 'Pills'
+                                        color: LastData[index]['ap'] == 'Pills'
                                             ? Color.fromRGBO(69, 196, 44, 0.13)
-                                            : LastEqual == 'Gel'
+                                            : LastData[index]['ap'] == 'Gel'
                                                 ? Color.fromRGBO(
                                                     193, 196, 44, 0.13)
-                                                : LastEqual == 'Syrup'
+                                                : LastData[index]['ap'] ==
+                                                        'Syrup'
                                                     ? Color.fromRGBO(
                                                         111, 44, 196, 0.13)
                                                     : Color.fromRGBO(

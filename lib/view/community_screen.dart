@@ -19,6 +19,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
+
 import '../components/common_widget.dart';
 import '../constant/image_const.dart';
 import '../constant/text_styel.dart';
@@ -722,8 +723,22 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                         title: "Something went wrong",
                         message: 'Try Again.');
                   }
-                } else {
-                  widget.isLiked = false;
+                } else if (widget.isLiked == true) {
+                  await likeUnLikeViewModel.unlikeViewModel(
+                      model: {"type": "unlike", "postId": "${widget.postId}"});
+                  if (likeUnLikeViewModel.unlikeApiResponse.status ==
+                      Status.COMPLETE) {
+                    getPostViewModel.getPostViewModel(isLoading: false);
+                  }
+                  if (likeUnLikeViewModel.unlikeApiResponse.status ==
+                      Status.ERROR) {
+                    CommonWidget.getSnackBar(
+                        color: Colors.red,
+                        duration: 2,
+                        colorText: Colors.white,
+                        title: "Something went wrong",
+                        message: 'Try Again.');
+                  }
                 }
               },
               child: Row(

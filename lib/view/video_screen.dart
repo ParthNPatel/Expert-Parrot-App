@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_video_res_model.dart';
 import 'package:expert_parrot_app/components/video_shimmer.dart';
@@ -10,6 +8,7 @@ import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:expert_parrot_app/constant/url.dart';
 import 'package:expert_parrot_app/view/viedeo_play_screen.dart';
 import 'package:expert_parrot_app/viewModel/get_video_view_model.dart';
+import 'package:expert_parrot_app/viewModel/like_unlike_video_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -35,6 +34,8 @@ class _VideoScreenState extends State<VideoScreen> {
   ];
 
   GetVideoViewModel getVideoViewModel = Get.put(GetVideoViewModel());
+  LikeUnLikeVideoViewModel likeUnLikeVideoViewModel =
+      Get.put(LikeUnLikeVideoViewModel());
 
   @override
   void initState() {
@@ -78,6 +79,11 @@ class _VideoScreenState extends State<VideoScreen> {
                             children: [
                               GestureDetector(
                                 onTap: () {
+                                  likeUnLikeVideoViewModel.updateLike(
+                                      response.data![index].isLiked!);
+                                  likeUnLikeVideoViewModel
+                                      .enterValue(response.data![index].likes!);
+
                                   Get.to(
                                     () => VideoPlayScreen(
                                       videoLink:
@@ -86,9 +92,6 @@ class _VideoScreenState extends State<VideoScreen> {
                                       title: response.data![index].title!,
                                       description:
                                           response.data![index].description!,
-                                      likes: response.data![index].likes
-                                          .toString(),
-                                      likeValue: response.data![index].isLiked,
                                       id: response.data![index].id,
                                     ),
                                   );
@@ -154,72 +157,65 @@ class _VideoScreenState extends State<VideoScreen> {
                                     Column(children: [
                                       InkResponse(
                                         onTap: () async {
-                                          controller.likeUnlike(
-                                              response.data![index].isLiked!);
-                                          log('VIDEO STATUS :- ${controller.like}');
-
                                           if (response.data![index].isLiked ==
                                               false) {
-                                            try {
-                                              await getVideoViewModel
-                                                  .videoLikeViewModel(model: {
-                                                "type": "like",
-                                                "videoId":
-                                                    "${response.data![index].id}"
-                                              });
-                                            } catch (e) {
-                                              CommonWidget.getSnackBar(
-                                                message: 'Body Error',
-                                                title: 'Failed',
-                                                duration: 2,
-                                                color: Colors.red,
-                                              );
-                                            }
-                                            response.data![index].isLiked =
-                                                true;
+                                            await likeUnLikeVideoViewModel
+                                                .videoLikeViewModel(model: {
+                                              "type": "like",
+                                              "videoId":
+                                                  "${response.data![index].id}"
+                                            });
 
-                                            try {
-                                              if (getVideoViewModel
-                                                      .videoLikeApiResponse
-                                                      .status ==
-                                                  Status.COMPLETE) {
-                                                getVideoViewModel
-                                                    .getVideoViewModel(
-                                                        isLoading: false);
-                                              } else if (getVideoViewModel
-                                                      .videoLikeApiResponse
-                                                      .status ==
-                                                  Status.ERROR) {
-                                                CommonWidget.getSnackBar(
-                                                  message: '',
-                                                  title: 'Failed',
-                                                  duration: 2,
-                                                  color: Colors.red,
-                                                );
-                                              }
-                                            } catch (e) {
+                                            if (likeUnLikeVideoViewModel
+                                                    .videoLikeApiResponse
+                                                    .status ==
+                                                Status.COMPLETE) {
+                                              // getVideoViewModel
+                                              //     .getVideoViewModel(
+                                              //         isLoading: false);
+                                            }
+                                            if (likeUnLikeVideoViewModel
+                                                    .videoLikeApiResponse
+                                                    .status ==
+                                                Status.ERROR) {
                                               CommonWidget.getSnackBar(
-                                                message: 'Like Error',
-                                                title: 'Failed',
-                                                duration: 2,
-                                                color: Colors.red,
-                                              );
+                                                  color: Colors.red,
+                                                  duration: 2,
+                                                  colorText: Colors.white,
+                                                  title: "Something went wrong",
+                                                  message: 'Try Again.');
                                             }
                                           } else if (response
                                                   .data![index].isLiked ==
                                               true) {
-                                            /// CALL UNLIKE API
-                                            ///
-                                            response.data![index].isLiked =
-                                                false;
-
-                                            CommonWidget.getSnackBar(
-                                              message: 'Like Error',
-                                              title: 'Failed',
-                                              duration: 2,
-                                              color: Colors.red,
-                                            );
+                                            await likeUnLikeVideoViewModel
+                                                .videoUnLikeViewModel(model: {
+                                              "type": "unlike",
+                                              "videoId":
+                                                  "${response.data![index].id}"
+                                            });
+                                            if (likeUnLikeVideoViewModel
+                                                    .videoUnLikeApiResponse
+                                                    .status ==
+                                                Status.COMPLETE) {
+                                              getVideoViewModel
+                                                  .getVideoViewModel(
+                                                      isLoading: false);
+                                            }
+                                            if (likeUnLikeVideoViewModel
+                                                    .videoUnLikeApiResponse
+                                                    .status ==
+                                                Status.ERROR) {
+                                              CommonWidget.getSnackBar(
+                                                  color: Colors.red,
+                                                  duration: 2,
+                                                  colorText: Colors.white,
+                                                  title: "Something went wrong",
+                                                  message: 'Try Again.');
+                                            }
                                           }
+                                          getVideoViewModel.getVideoViewModel(
+                                              isLoading: false);
                                         },
                                         child: response.data![index].isLiked ==
                                                 true

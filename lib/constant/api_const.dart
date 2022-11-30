@@ -10,4 +10,9 @@ class APIConst {
   static String postLike = "/post/like";
   static String video = "/video";
   static String videoLike = "/video/like";
+  static String searchUser = "/user/search?text=";
+  static String sendRequest = "/user/send-request";
+  static String getReqUser = "/user/my-requests";
+  static String rejectRequest = "/user/reject-request";
+  static String acceptRequest = "/user/accept-request";
 }

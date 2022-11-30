@@ -1,0 +1,157 @@
+import 'package:expert_parrot_app/Models/apis/api_response.dart';
+import 'package:expert_parrot_app/Models/responseModel/get_req_user_res_model.dart';
+import 'package:expert_parrot_app/components/common_widget.dart';
+import 'package:expert_parrot_app/viewModel/accept_req_view_model.dart';
+import 'package:expert_parrot_app/viewModel/get_req_user_view_model.dart';
+import 'package:expert_parrot_app/viewModel/reject_req_view_model.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
+
+class RequestUserScreen extends StatefulWidget {
+  const RequestUserScreen({Key? key}) : super(key: key);
+
+  @override
+  State<RequestUserScreen> createState() => _RequestUserScreenState();
+}
+
+class _RequestUserScreenState extends State<RequestUserScreen> {
+  GetRequestUserViewModel getRequestUserViewModel =
+      Get.put(GetRequestUserViewModel());
+
+  AcceptRequestViewModel acceptRequestViewModel =
+      Get.put(AcceptRequestViewModel());
+  RejectRequestViewModel rejectRequestViewModel =
+      Get.put(RejectRequestViewModel());
+  @override
+  void initState() {
+    getRequestUserViewModel.getRequestUserViewModel(isLoading: true);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Request'),
+      ),
+      body: GetBuilder<GetRequestUserViewModel>(
+        builder: (controller) {
+          if (controller.getReqUserResponse.status == Status.LOADING) {
+            return CircularProgressIndicator();
+          }
+          if (controller.getReqUserResponse.status == Status.COMPLETE) {
+            GetReqResponseModel getReq = controller.getReqUserResponse.data;
+            return ListView.builder(
+              padding: EdgeInsets.symmetric(horizontal: 15),
+              physics: BouncingScrollPhysics(),
+              itemCount: getReq.data!.length,
+              itemBuilder: (context, index) {
+                return Column(
+                  children: [
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 20,
+                          backgroundImage: NetworkImage(
+                              'https://wallpapercave.com/dwp1x/wp4376818.jpg'),
+                        ),
+                        SizedBox(
+                          width: 15.sp,
+                        ),
+                        Text('${getReq.data![index].requestor!.name}'),
+                        Spacer(),
+                        ElevatedButton(
+                          onPressed: () async {
+                            await acceptRequestViewModel
+                                .acceptRequestViewModel(model: {
+                              "userId": "${getReq.data![index].requestor!.id}"
+                            });
+                            if (acceptRequestViewModel
+                                    .acceptReqUserResponse.status ==
+                                Status.COMPLETE) {
+                              CommonWidget.getSnackBar(
+                                message: '',
+                                title: 'Accept',
+                                duration: 2,
+                                color: Colors.green,
+                              );
+                            }
+                            if (acceptRequestViewModel
+                                    .acceptReqUserResponse.status ==
+                                Status.ERROR) {
+                              CommonWidget.getSnackBar(
+                                message: 'Try Again...',
+                                title: 'Failed',
+                                duration: 2,
+                                color: Colors.red,
+                              );
+                            }
+                            await getRequestUserViewModel
+                                .getRequestUserViewModel(isLoading: false);
+                          },
+                          child: Text('Accept'),
+                        ),
+                        SizedBox(
+                          width: 15.sp,
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(primary: Colors.red),
+                          onPressed: () async {
+                            await rejectRequestViewModel
+                                .rejectRequestViewModel(model: {
+                              "userId": "${getReq.data![index].requestor!.id}"
+                            });
+                            if (rejectRequestViewModel
+                                    .rejectReqUserResponse.status ==
+                                Status.COMPLETE) {
+                              CommonWidget.getSnackBar(
+                                message: '',
+                                title: 'Reject',
+                                duration: 2,
+                                color: Colors.red,
+                              );
+                            }
+                            if (rejectRequestViewModel
+                                    .rejectReqUserResponse.status ==
+                                Status.ERROR) {
+                              CommonWidget.getSnackBar(
+                                message: 'Try Again...',
+                                title: 'Failed',
+                                duration: 2,
+                                color: Colors.red,
+                              );
+                            }
+                            await getRequestUserViewModel
+                                .getRequestUserViewModel(isLoading: false);
+                          },
+                          child: Text('Reject'),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 10,
+                    )
+                  ],
+                );
+                // ListTile(
+                // leading: CircleAvatar(
+                //   radius: 20,
+                //   backgroundImage:
+                //       NetworkImage('https://wallpapercave.com/dwp1x/wp4376818.jpg'),
+                // ),
+                // title: Text('}'),
+                // trailing: ElevatedButton(
+                //   onPressed: () {},
+                //   child: Text('Accept'),
+                // ),
+                // );
+              },
+            );
+          }
+          return SizedBox();
+        },
+      ),
+    );
+  }
+}

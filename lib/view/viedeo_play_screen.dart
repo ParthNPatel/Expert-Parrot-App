@@ -1,6 +1,7 @@
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/viewModel/get_video_view_model.dart';
+import 'package:expert_parrot_app/viewModel/like_unlike_video_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
@@ -16,8 +17,8 @@ class VideoPlayScreen extends StatefulWidget {
   final String videoLink;
   final String title;
   final String description;
-  final String likes;
-  final bool? likeValue;
+  // final String likes;
+  // final bool? likeValue;
   final String? id;
 
   const VideoPlayScreen(
@@ -25,8 +26,8 @@ class VideoPlayScreen extends StatefulWidget {
       required this.videoLink,
       required this.title,
       required this.description,
-      required this.likes,
-      this.likeValue,
+      // required this.likes,
+      // this.likeValue,
       this.id})
       : super(key: key);
 
@@ -37,11 +38,11 @@ class VideoPlayScreen extends StatefulWidget {
 class _VideoPlayScreenState extends State<VideoPlayScreen> {
   late VideoPlayerController _controller;
   GetVideoViewModel getVideoViewModel = Get.put(GetVideoViewModel());
+  LikeUnLikeVideoViewModel likeUnLikeVideoViewModel =
+      Get.put(LikeUnLikeVideoViewModel());
 
   @override
   void initState() {
-    getVideoViewModel.like = widget.likeValue!;
-
     super.initState();
     _controller = VideoPlayerController.network('${widget.videoLink}')
       ..initialize().then((_) {
@@ -107,64 +108,148 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    InkWell(
+                    // InkWell(
+                    //   onTap: () async {
+                    //     // getVideoViewModel.likeUnlike(widget.likeValue!);
+                    //     //
+                    //     // print('on like tap');
+                    //     // if (widget.likeValue == true) {
+                    //     //   /// UNLIKE API
+                    //     //
+                    //     // } else if (widget.likeValue == false) {
+                    //     //   await getVideoViewModel.videoLikeViewModel(model: {
+                    //     //     "type": "like",
+                    //     //     "videoId": "${widget.id}"
+                    //     //   });
+                    //     //
+                    //     //   widget.likeValue != true;
+                    //     //
+                    //     //   // getVideoViewModel.likeUnlike(true);
+                    //     //   try {
+                    //     //     if (getVideoViewModel.videoLikeApiResponse.status ==
+                    //     //         Status.COMPLETE) {
+                    //     //       getVideoViewModel.getVideoViewModel(
+                    //     //           isLoading: false);
+                    //     //     } else if (getVideoViewModel
+                    //     //             .videoLikeApiResponse.status ==
+                    //     //         Status.ERROR) {
+                    //     //       CommonWidget.getSnackBar(
+                    //     //         message: '',
+                    //     //         title: 'Failed',
+                    //     //         duration: 2,
+                    //     //         color: Colors.red,
+                    //     //       );
+                    //     //     }
+                    //     //   } catch (e) {
+                    //     //     CommonWidget.getSnackBar(
+                    //     //       message: 'Like Error',
+                    //     //       title: 'Failed',
+                    //     //       duration: 2,
+                    //     //       color: Colors.red,
+                    //     //     );
+                    //     //   }
+                    //     // }
+                    //
+                    //     // await likeUnLikeVideoViewModel.videoLikeViewModel(model: {
+                    //     //
+                    //     // })
+                    //   },
+                    //   child: Column(
+                    //     children: [
+                    //       widget.likeValue == true
+                    //           ? Icon(
+                    //               Icons.favorite,
+                    //               size: 20,
+                    //               color: Colors.red,
+                    //             )
+                    //           : CommonWidget.commonSvgPitcher(
+                    //               height: 20,
+                    //               image: ImageConst.hartBorderIcon,
+                    //               color: CommonColor.gery636363,
+                    //             ),
+                    //       CommonText.textBoldWight400(
+                    //           text: '${widget.likes}',
+                    //           fontSize: 13.sp,
+                    //           color: Colors.white),
+                    //     ],
+                    //   ),
+                    // ),
+                    InkResponse(
                       onTap: () async {
-                        print('on like tap');
-                        if (widget.likeValue == true) {
-                          /// UNLIKE API
-
-                        } else if (widget.likeValue == false) {
-                          await getVideoViewModel.videoLikeViewModel(model: {
-                            "type": "like",
-                            "videoId": "${widget.id}"
-                          });
-
-                          widget.likeValue != true;
-
-                          // getVideoViewModel.likeUnlike(true);
-                          try {
-                            if (getVideoViewModel.videoLikeApiResponse.status ==
-                                Status.COMPLETE) {
-                              getVideoViewModel.getVideoViewModel(
-                                  isLoading: false);
-                            } else if (getVideoViewModel
-                                    .videoLikeApiResponse.status ==
-                                Status.ERROR) {
-                              CommonWidget.getSnackBar(
-                                message: '',
-                                title: 'Failed',
-                                duration: 2,
-                                color: Colors.red,
-                              );
-                            }
-                          } catch (e) {
+                        if (likeUnLikeVideoViewModel.isLike == false) {
+                          await likeUnLikeVideoViewModel.videoLikeViewModel(
+                              model: {
+                                "type": "like",
+                                "videoId": "${widget.id}"
+                              });
+                          likeUnLikeVideoViewModel.updateLike(true);
+                          if (likeUnLikeVideoViewModel
+                                  .videoLikeApiResponse.status ==
+                              Status.COMPLETE) {
+                            likeUnLikeVideoViewModel.incriment();
+                          }
+                          if (likeUnLikeVideoViewModel
+                                  .videoLikeApiResponse.status ==
+                              Status.ERROR) {
                             CommonWidget.getSnackBar(
-                              message: 'Like Error',
-                              title: 'Failed',
-                              duration: 2,
-                              color: Colors.red,
-                            );
+                                color: Colors.red,
+                                duration: 2,
+                                colorText: Colors.white,
+                                title: "Something went wrong",
+                                message: 'Try Again.');
+                            likeUnLikeVideoViewModel.updateLike(false);
+
+                            likeUnLikeVideoViewModel.dicriment();
+                          }
+                        } else if (likeUnLikeVideoViewModel.isLike == true) {
+                          await likeUnLikeVideoViewModel.videoUnLikeViewModel(
+                              model: {
+                                "type": "unlike",
+                                "videoId": "${widget.id}"
+                              });
+                          likeUnLikeVideoViewModel.updateLike(false);
+                          if (likeUnLikeVideoViewModel
+                                  .videoUnLikeApiResponse.status ==
+                              Status.COMPLETE) {
+                            likeUnLikeVideoViewModel.dicriment();
+                          }
+                          if (likeUnLikeVideoViewModel
+                                  .videoUnLikeApiResponse.status ==
+                              Status.ERROR) {
+                            CommonWidget.getSnackBar(
+                                color: Colors.red,
+                                duration: 2,
+                                colorText: Colors.white,
+                                title: "Something went wrong",
+                                message: 'Try Again.');
+                            likeUnLikeVideoViewModel.updateLike(true);
+                            likeUnLikeVideoViewModel.incriment();
                           }
                         }
+                        getVideoViewModel.getVideoViewModel(isLoading: false);
                       },
-                      child: Column(
-                        children: [
-                          widget.likeValue == true
-                              ? Icon(
-                                  Icons.favorite,
-                                  size: 20,
-                                  color: Colors.red,
-                                )
-                              : CommonWidget.commonSvgPitcher(
-                                  height: 20,
-                                  image: ImageConst.hartBorderIcon,
-                                  color: CommonColor.gery636363,
-                                ),
-                          CommonText.textBoldWight400(
-                              text: '${widget.likes}',
-                              fontSize: 13.sp,
-                              color: Colors.white),
-                        ],
+                      child: GetBuilder<LikeUnLikeVideoViewModel>(
+                        builder: (controller) {
+                          return Column(
+                            children: [
+                              controller.isLike == true
+                                  ? Icon(
+                                      Icons.favorite,
+                                      size: 20,
+                                      color: Colors.red,
+                                    )
+                                  : CommonWidget.commonSvgPitcher(
+                                      height: 20,
+                                      image: ImageConst.hartBorderIcon,
+                                      color: CommonColor.gery636363,
+                                    ),
+                              CommonText.textBoldWight400(
+                                  text: '${controller.likeCount}',
+                                  fontSize: 13.sp,
+                                  color: Colors.white),
+                            ],
+                          );
+                        },
                       ),
                     ),
                     CommonWidget.commonSizedBox(height: 20),
