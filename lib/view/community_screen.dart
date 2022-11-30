@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
@@ -80,7 +81,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     GetBuilder<GetPostViewModel>(builder: (controller) {
                       if (controller.getPostApiResponse.status ==
                           Status.LOADING) {
-                        return CircularProgressIndicator();
+                        return PostShimmer();
                       }
 
                       if (controller.getPostApiResponse.status ==
@@ -565,37 +566,41 @@ class _CommunityScreenState extends State<CommunityScreen> {
                             color: CommonColor.greenColor,
                             radius: 10,
                             onTap: () async {
-                              Get.dialog(AlertDialog(
+                              Get.dialog(
+                                AlertDialog(
                                   content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  MaterialButton(
-                                      color: CommonColor.greenColor,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8)),
-                                      onPressed: () {
-                                        getImage(ImageSource.camera);
-                                        Get.back();
-                                      },
-                                      child: Text("Camera",
-                                          style:
-                                              TextStyle(color: Colors.white))),
-                                  MaterialButton(
-                                      color: CommonColor.greenColor,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8)),
-                                      onPressed: () {
-                                        getImage(ImageSource.gallery);
-                                        Get.back();
-                                      },
-                                      child: Text(
-                                        "Gallery",
-                                        style: TextStyle(color: Colors.white),
-                                      ))
-                                ],
-                              )));
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      MaterialButton(
+                                          color: CommonColor.greenColor,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8)),
+                                          onPressed: () {
+                                            getImage(ImageSource.camera);
+                                            Get.back();
+                                          },
+                                          child: Text("Camera",
+                                              style: TextStyle(
+                                                  color: Colors.white))),
+                                      MaterialButton(
+                                        color: CommonColor.greenColor,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8)),
+                                        onPressed: () {
+                                          getImage(ImageSource.gallery);
+                                          Get.back();
+                                        },
+                                        child: Text(
+                                          "Gallery",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
                             },
                             text: "Select Image"),
                         SizedBox(height: 15),
@@ -604,6 +609,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                             radius: 10,
                             onTap: () async {
                               if (_queryController.text.isNotEmpty) {
+                                log('ADD MESSAGE :- ${image!.path}');
                                 var _req = {
                                   "title":
                                       "${_queryController.text.substring(0, 7)}",
@@ -699,11 +705,26 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
         Row(
           children: [
             InkWell(
-              onTap: () {
-                setState(() {
-                  widget.isLiked = !widget.isLiked;
-                });
-                getPostViewModel.getPostViewModel(isLoading: false);
+              onTap: () async {
+                if (widget.isLiked == false) {
+                  await likeUnLikeViewModel.likeViewModel(
+                      model: {"type": "like", "postId": "${widget.postId}"});
+                  if (likeUnLikeViewModel.likeApiResponse.status ==
+                      Status.COMPLETE) {
+                    getPostViewModel.getPostViewModel(isLoading: false);
+                  }
+                  if (likeUnLikeViewModel.likeApiResponse.status ==
+                      Status.ERROR) {
+                    CommonWidget.getSnackBar(
+                        color: Colors.red,
+                        duration: 2,
+                        colorText: Colors.white,
+                        title: "Something went wrong",
+                        message: 'Try Again.');
+                  }
+                } else {
+                  widget.isLiked = false;
+                }
               },
               child: Row(
                 children: [
@@ -829,6 +850,9 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                                     Status.COMPLETE) {
                                   await getCommentViewModel.getCommentViewModel(
                                       id: widget.postId);
+
+                                  getPostViewModel.getPostViewModel(
+                                      isLoading: false);
                                 }
                                 if (addCommentViewModel
                                         .addCommentApiResponse.status ==

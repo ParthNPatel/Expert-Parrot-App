@@ -1,3 +1,4 @@
+import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/services/app_notification.dart';
 import 'package:expert_parrot_app/view/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -60,6 +61,10 @@ class MyApp extends StatelessWidget {
       builder: (context, orientation, deviceType) => GetMaterialApp(
         initialBinding: BaseBindings(),
         title: 'Expert Parrot',
+        theme: ThemeData(
+          primaryColor: CommonColor.greenColor,
+          colorScheme: ColorScheme.light(primary: CommonColor.greenColor),
+        ),
         home: const SplashScreen(),
         // home: const VideoScreen(),
         // home: VideoPlayScreen(),

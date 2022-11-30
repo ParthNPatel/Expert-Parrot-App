@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
+
 import '../constant/color_const.dart';
 import '../constant/image_const.dart';
 import '../constant/text_const.dart';
@@ -24,6 +24,25 @@ class CommonWidget {
         CommonText.textBoldWight500(text: titleText, fontSize: 16.sp),
         CommonWidget.commonBackButton(
           image: ImageConst.add,
+          onTap: addOnTap,
+        ),
+      ],
+    );
+  }
+
+  static Widget faqHeader(
+      {required final backOnTap,
+      required String titleText,
+      required final addOnTap}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        CommonWidget.commonBackButton(
+          onTap: backOnTap,
+        ),
+        CommonText.textBoldWight500(text: titleText, fontSize: 16.sp),
+        CommonWidget.commonBackButton(
+          image: ImageConst.faq,
           onTap: addOnTap,
         ),
       ],
@@ -74,6 +93,7 @@ class CommonWidget {
     bool isObscured = false,
     Widget? suffix,
     Widget? prefix,
+    borderColor,
   }) {
     return SizedBox(
       height: 43.sp,
@@ -100,10 +120,10 @@ class CommonWidget {
                 fontWeight: FontWeight.w400,
                 color: CommonColor.hintTextColor8391A1),
             focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+                borderSide: BorderSide(color: borderColor),
                 borderRadius: BorderRadius.circular(10)),
             enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+                borderSide: BorderSide(color: borderColor),
                 borderRadius: BorderRadius.circular(10))),
       ),
     );

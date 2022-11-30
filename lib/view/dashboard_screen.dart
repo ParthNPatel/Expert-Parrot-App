@@ -18,6 +18,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
+
 import '../controller/handle_float_controller.dart';
 import 'medicine_graph_screen.dart';
 
@@ -140,9 +141,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   List dateTimes = ['select1'];
   int select = 1;
   List LastData = [];
-
   @override
   Widget build(BuildContext context) {
+    log.log('BARRIER TOKEN :- ${GetStorageServices.getBarrierToken()}');
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: CommonWidget.commonBackGround(
@@ -256,40 +257,40 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                         image: LastEqual == 'Pills'
                                             ? ImageConst.med3Icon
                                             : LastEqual == 'Gel'
-                                                ? ImageConst.med2Icon
+                                                ? ImageConst.med1Icon
                                                 : LastEqual == 'Syrup'
-                                                    ? ImageConst.med1Icon
-                                                    : ImageConst.med1Icon,
+                                                    ? ImageConst.med2Icon
+                                                    : ImageConst.med2Icon,
                                         medName:
                                             '${LastData[index]['medName']}',
                                         medGm: '${LastData[index]['medGm']}',
                                         iconColor: LastEqual == 'Pills'
                                             ? Color(0xff21D200)
                                             : LastEqual == 'Gel'
-                                                ? Color(0xff9255E5)
+                                                ? Color(0xffFFDD2C)
                                                 : LastEqual == 'Syrup'
-                                                    ? Color(0xffFFDD2C)
-                                                    : Color(0xffFFDD2C),
+                                                    ? Color(0xff9255E5)
+                                                    : Color(0xff9255E5),
                                         timeOfDay:
                                             '${LastData[index]['timeOfDay']}',
                                         color: LastEqual == 'Pills'
                                             ? Color.fromRGBO(69, 196, 44, 0.13)
                                             : LastEqual == 'Gel'
                                                 ? Color.fromRGBO(
-                                                    111, 44, 196, 0.13)
+                                                    193, 196, 44, 0.13)
                                                 : LastEqual == 'Syrup'
                                                     ? Color.fromRGBO(
-                                                        193, 196, 44, 0.13)
+                                                        111, 44, 196, 0.13)
                                                     : Color.fromRGBO(
-                                                        193, 196, 44, 0.13))
+                                                        111, 44, 196, 0.13))
                                     : medDetailsWidget(
                                         image: UserEqual == 'Pills'
                                             ? ImageConst.med3Icon
                                             : UserEqual == 'Gel'
-                                                ? ImageConst.med2Icon
+                                                ? ImageConst.med1Icon
                                                 : UserEqual == 'Syrup'
-                                                    ? ImageConst.med1Icon
-                                                    : ImageConst.med1Icon,
+                                                    ? ImageConst.med2Icon
+                                                    : ImageConst.med2Icon,
                                         medName:
                                             '${userResponse.data!.medicines![index].name!} , ${userResponse.data!.medicines![index].appearance}',
                                         medGm:
@@ -297,24 +298,24 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                         iconColor: UserEqual == 'Pills'
                                             ? Color(0xff21D200)
                                             : UserEqual == 'Gel'
-                                                ? Color(0xff9255E5)
+                                                ? Color(0xffFFDD2C)
                                                 : UserEqual == 'Syrup'
-                                                    ? Color(0xffFFDD2C)
-                                                    : Color(0xffFFDD2C),
+                                                    ? Color(0xff9255E5)
+                                                    : Color(0xff9255E5),
                                         timeOfDay:
                                             '${userResponse.data!.medicines![index].totalTimes} pills ${userResponse.data!.medicines![index].frequency}',
                                         color: UserEqual == 'Pills'
                                             ? Color.fromRGBO(69, 196, 44, 0.13)
                                             : UserEqual == 'Gel'
                                                 ? Color.fromRGBO(
-                                                    111, 44, 196, 0.13)
+                                                    193, 196, 44, 0.13)
                                                 : UserEqual == 'Syrup'
                                                     ? Color.fromRGBO(
-                                                        193, 196, 44, 0.13)
+                                                        111, 44, 196, 0.13)
                                                     : Color.fromRGBO(
-                                                        193,
-                                                        196,
+                                                        111,
                                                         44,
+                                                        196,
                                                         0.13,
                                                       ),
                                       );
@@ -1047,6 +1048,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                 InkWell(
                                                   onTap: () {
                                                     Get.back();
+                                                    clearMedicineData();
                                                   },
                                                   child: CommonWidget
                                                       .commonSvgPitcher(
@@ -1537,6 +1539,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
               message: 'Your medicine has been added successfully.',
               color: CommonColor.greenColor,
               colorText: Colors.white);
+          clearMedicineData();
         }
         if (addMedicineViewModel.addMedicineApiResponse.status ==
             Status.ERROR) {
@@ -1556,6 +1559,19 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
         color: Colors.red,
       );
     }
+  }
+
+  clearMedicineData() {
+    setState(() {
+      dateTimes = ['select1'];
+      select = 1;
+      medicineSelected = 0;
+      strengthSelected = 0;
+      daysSelected = 0;
+      appearanceSelected = 0;
+      frequencySelected = 0;
+      timeSelected = 0;
+    });
   }
 
   Dialog bmiDialog() {

@@ -53,3 +53,32 @@ Widget CommentShimmer() {
     ),
   );
 }
+
+Widget PostShimmer() {
+  return Shimmer.fromColors(
+    baseColor: Colors.grey.shade300,
+    highlightColor: Colors.grey.shade200,
+    child: Column(
+      children: [
+        ...List.generate(
+          5,
+          (index) => Column(
+            children: [
+              Container(
+                height: 220,
+                width: Get.width,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.grey.shade100,
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              )
+            ],
+          ),
+        )
+      ],
+    ),
+  );
+}
