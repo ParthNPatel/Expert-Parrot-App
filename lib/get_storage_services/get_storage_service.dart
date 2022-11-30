@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:get_storage/get_storage.dart';
 
 class GetStorageServices {
@@ -73,6 +75,14 @@ class GetStorageServices {
 
   static getUserImage() {
     return getStorage.read('userImage');
+  }
+
+  static setLocalImage(File localImage) {
+    getStorage.write('localImage', localImage);
+  }
+
+  static getLocalImage() {
+    return getStorage.read('localImage');
   }
 
   static setUserProfileSet(bool profileSet) {

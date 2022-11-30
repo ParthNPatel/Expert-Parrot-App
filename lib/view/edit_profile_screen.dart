@@ -235,6 +235,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               onTap: () async {
                 print('Enter The Screen');
 
+                // GetStorageServices.setLocalImage(
+                //     GetStorageServices.getLocalImage());
+
                 var _req = {
                   "name": nameController!.text.isNotEmpty
                       ? "${nameController!.text}"
@@ -244,7 +247,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       : "0",
                   "userImage": image != null && image != ""
                       ? "${image!.path}"
-                      : "${GetStorageServices.getUserImage()}",
+                      : "${GetStorageServices.getLocalImage()}",
                   "age": ageController!.text.isNotEmpty
                       ? "${ageController!.text.trim()}"
                       : "0",
@@ -333,6 +336,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final XFile? pickImage = await _picker.pickImage(source: imageSource);
     image = File(pickImage!.path);
     print('Image ================ > ${image}');
+
+    // image == null
+    //     ? GetStorageServices.setLocalImage(GetStorageServices.getLocalImage())
+    //     : GetStorageServices.setLocalImage(image!);
 
     setState(() {});
   }
