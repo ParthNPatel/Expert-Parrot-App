@@ -461,7 +461,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
               }
             } catch (e) {
               return Center(
-                child: Text('Something went wrong'),
+                child: Text('Something went wrong !!!!!!'),
               );
             }
           },

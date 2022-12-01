@@ -24,6 +24,7 @@ class TextConst {
   static String water = 'Water';
   static String medicineReport = 'Medicine Report';
   static String dependentView = 'Dependent View';
+  static String dependentSearch = 'Dependent Search';
   static String signIn = 'Sign In';
   static String reset = 'Reset';
   static String signUp = 'Sign Up';

@@ -7,7 +7,7 @@ import '../services/base_service.dart';
 class AddPostRepo extends BaseService {
   static Future<AddPostResponseModel> addPostRepo(
       {required Map<String, dynamic> model}) async {
-    var response = await APIService().getResponse(
+    var response = await APIService().getPostResponse(
         url: APIConst.getPosts, apitype: APIType.aPost, body: model);
     print('AddPost response===>>>  $response');
     AddPostResponseModel addPostResponseModel =

@@ -59,7 +59,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           body: GetBuilder<EditProfileViewModel>(builder: (controller) {
         return Column(
           mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             header(),
@@ -85,6 +84,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               'https://health-app-test.s3.ap-south-1.amazonaws.com/user/' +
                                   '${GetStorageServices.getUserImage()}'),
                           fit: BoxFit.cover)),
+                  child: showImageWidget(),
                 ),
                 Positioned(
                   //bottom: 20,
@@ -292,7 +292,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               child: Container(
                 height: 40,
                 decoration: BoxDecoration(
-                    color: CommonColor.themColor35C2C1,
+                    color: CommonColor.greenColor,
                     borderRadius: BorderRadius.circular(10)),
                 margin: const EdgeInsets.all(10.0),
                 child: Center(
@@ -342,5 +342,35 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     //     : GetStorageServices.setLocalImage(image!);
 
     setState(() {});
+  }
+
+  showImageWidget() {
+    try {
+      return image == null
+          ? ClipRRect(
+              borderRadius: BorderRadius.circular(500),
+              child: Image.network(
+                'https://health-app-test.s3.ap-south-1.amazonaws.com/user/' +
+                    '${GetStorageServices.getUserImage()}',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Icon(
+                  color: Colors.grey,
+                  Icons.person,
+                  size: 60,
+                ),
+              ))
+          : ClipRRect(
+              borderRadius: BorderRadius.circular(500),
+              child: Image.file(
+                image!,
+                fit: BoxFit.cover,
+              ));
+    } catch (e) {
+      return Icon(
+        color: Colors.grey,
+        Icons.person,
+        size: 120,
+      );
+    }
   }
 }

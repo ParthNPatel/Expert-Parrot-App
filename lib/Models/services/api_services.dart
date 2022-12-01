@@ -118,6 +118,47 @@ class APIService {
     return response;
   }
 
+  Future getPostResponse(
+      {required String url,
+      required APIType apitype,
+      Map<String, dynamic>? body,
+      Map<String, String>? header,
+      bool fileUpload = false}) async {
+    Map<String, String> headers = GetStorageServices.getBarrierToken() != null
+        ? {
+            'Authorization': 'Bearer ${GetStorageServices.getBarrierToken()}',
+            'Content-Type': 'application/json'
+          }
+        : {'Content-Type': 'application/json'};
+    try {
+      print("REQUEST PARAMETER url  $url");
+      print("REQUEST PARAMETER $body");
+
+      final request =
+          await http.MultipartRequest("POST", Uri.parse(baseUrl + url));
+
+      request.headers.addAll(headers);
+
+      request.fields["title"] = body!["title"];
+      request.fields["description"] = body["description"];
+      request.files.add(await http.MultipartFile.fromPath(
+          "image", body["image"],
+          contentType: MediaType('image', 'jpg')));
+
+      var result = await request.send();
+      String res = await result.stream.transform(utf8.decoder).join();
+
+      // print("resp${result.body}");
+      response = returnResponse(result.statusCode, res);
+      // print(result.statusCode);
+
+    } on SocketException {
+      throw FetchDataException('No Internet access');
+    }
+
+    return response;
+  }
+
   returnResponse(int status, String result) {
     switch (status) {
       case 200:

@@ -1,7 +1,7 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
+import 'package:expert_parrot_app/Models/responseModel/add_post_res_model.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_comment_res_model.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_post_res_model.dart';
 import 'package:expert_parrot_app/components/community_shimmer.dart';
@@ -460,15 +460,6 @@ class _CommunityScreenState extends State<CommunityScreen> {
     );
   }
 
-  getImage(ImageSource imageSource) async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? pickImage = await _picker.pickImage(source: imageSource);
-    image = File(pickImage!.path);
-    print('Image ================ > ${image}');
-
-    setState(() {});
-  }
-
   Row header() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -495,6 +486,46 @@ class _CommunityScreenState extends State<CommunityScreen> {
         )
       ],
     );
+  }
+
+  getImage(ImageSource imageSource) async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? pickImage = await _picker.pickImage(source: imageSource);
+    image = File(pickImage!.path);
+    print('Image ================ > ${image}');
+
+    setState(() {});
+  }
+
+  showImageWidget() {
+    try {
+      return image == null
+          ? ClipRRect(
+              borderRadius: BorderRadius.circular(18),
+              child: Image.network(
+                'https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Icon(
+                  color: Colors.grey,
+                  Icons.person,
+                  size: 60,
+                ),
+              ),
+            )
+          : ClipRRect(
+              borderRadius: BorderRadius.circular(18),
+              child: Image.file(
+                image!,
+                fit: BoxFit.cover,
+              ),
+            );
+    } catch (e) {
+      return Icon(
+        color: Colors.grey,
+        Icons.person,
+        size: 120,
+      );
+    }
   }
 
   Future<StatefulBuilder> askYourQuestion() async {
@@ -551,8 +582,39 @@ class _CommunityScreenState extends State<CommunityScreen> {
                         SizedBox(
                           height: 10,
                         ),
+                        Container(
+                            height: 150.sp,
+                            width: 100.w,
+                            decoration: BoxDecoration(
+                                color: Colors.grey.withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(18)),
+                            child:
+                                showImageWidget() /* image == null
+                              ? Image.network(
+                                  'https://health-app-test.s3.ap-south-1.amazonaws.com/user/' +
+                                      '${GetStorageServices.getUserImage()}',
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      Icon(
+                                    color: Colors.grey,
+                                    Icons.person,
+                                    size: 60,
+                                  ),
+                                )
+                              : Image.file(
+                                  image!,
+                                  fit: BoxFit.cover,
+                                ),*/
+                            ),
+                        SizedBox(height: 20),
                         TextFormField(
                           controller: _queryController,
+                          onTap: () {
+                            setState(() {});
+                          },
+                          onChanged: (value) {
+                            setState(() {});
+                          },
                           decoration: InputDecoration(
                               filled: true,
                               fillColor: Color(0xffF8F8F6),
@@ -609,20 +671,30 @@ class _CommunityScreenState extends State<CommunityScreen> {
                             color: CommonColor.greenColor,
                             radius: 10,
                             onTap: () async {
-                              if (_queryController.text.isNotEmpty) {
-                                log('ADD MESSAGE :- ${image!.path}');
+                              if (_queryController.text.isNotEmpty &&
+                                  image != null) {
                                 var _req = {
-                                  "title":
-                                      "${_queryController.text.substring(0, 7)}",
+                                  "title": _queryController.text.length <= 8
+                                      ? _queryController.text
+                                      : "${_queryController.text.substring(0, 7)}",
                                   "description": "${_queryController.text}",
-                                  "image": image!.path
+                                  "image": image!.path,
                                 };
 
-                                controller.addPostViewModel(model: _req);
+                                print('================= > $_req');
+
+                                await controller.addPostViewModel(model: _req);
 
                                 if (controller.addPostApiResponse.status ==
                                     Status.COMPLETE) {
-                                  getPostViewModel.getPostViewModel(
+                                  AddPostResponseModel resp =
+                                      controller.addPostApiResponse.data;
+
+                                  print(
+                                      'image from response ======================== > ${resp.data!.image}');
+                                  Get.back();
+
+                                  await getPostViewModel.getPostViewModel(
                                       isLoading: true);
                                   CommonWidget.getSnackBar(
                                       duration: 2,
@@ -634,6 +706,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                 }
                                 if (controller.addPostApiResponse.status ==
                                     Status.ERROR) {
+                                  Get.back();
+
                                   CommonWidget.getSnackBar(
                                       duration: 2,
                                       color: Colors.red.shade300,
@@ -641,15 +715,15 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                       title: "Error",
                                       message: 'Something went wrong!');
                                 }
-
-                                Get.back();
                               } else {
                                 CommonWidget.getSnackBar(
-                                    color: Colors.red,
+                                    color: Colors.red.shade300,
                                     duration: 2,
                                     colorText: Colors.white,
                                     title: "Required",
-                                    message: 'Please enter your query.');
+                                    message: _queryController.text.isEmpty
+                                        ? 'Please enter your query.'
+                                        : "Please Select One Picture");
                               }
                             },
                             text: "Submit")

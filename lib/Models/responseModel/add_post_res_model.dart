@@ -35,6 +35,7 @@ class Data {
   Data({
     this.title,
     this.description,
+    this.image,
     this.likes,
     this.userId,
     this.comments,
@@ -45,6 +46,7 @@ class Data {
 
   String? title;
   String? description;
+  String? image;
   int? likes;
   String? userId;
   List<dynamic>? comments;
@@ -55,6 +57,7 @@ class Data {
   factory Data.fromJson(Map<String, dynamic> json) => Data(
         title: json["title"],
         description: json["description"],
+        image: json["image"],
         likes: json["likes"],
         userId: json["userId"],
         comments: List<dynamic>.from(json["comments"].map((x) => x)),
@@ -66,6 +69,7 @@ class Data {
   Map<String, dynamic> toJson() => {
         "title": title,
         "description": description,
+    "image" : image,
         "likes": likes,
         "userId": userId,
         "comments": List<dynamic>.from(comments!.map((x) => x)),

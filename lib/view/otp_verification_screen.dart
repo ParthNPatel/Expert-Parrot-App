@@ -7,7 +7,9 @@ import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:expert_parrot_app/view/bottom_nav_screen.dart';
+import 'package:expert_parrot_app/view/set_profile_screen.dart';
 import 'package:expert_parrot_app/viewModel/log_in_view_model.dart';
+import 'package:expert_parrot_app/viewModel/user_data_view_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_progress_hud/flutter_progress_hud.dart';
@@ -40,6 +42,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   LogInViewModel logInViewModel = Get.put(LogInViewModel());
+  UserDataViewModel userDataViewModel = Get.put(UserDataViewModel());
 
   Future enterOtp(final progress) async {
     try {
@@ -53,37 +56,67 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       }
       // if (firebaseAuth.currentUser!.uid.isNotEmpty) {
       await logInViewModel.logInViewModel(model: {
-        "name": "Helo",
+        "name": "test",
         "loginType": "mobile",
         "loginId": "${widget.logInId}",
-        "water": 3,
-        "weight": 65,
-        // "height": 165,
-        // "age": 25,
-        "heartRate": 98,
-        "bmi": 21.1,
+        // "water": userResponseModel.data!.water!,
+        // "weight": userResponseModel.data!.weight!,
+        // "height": userResponseModel.data!.height!,
+        // "age": userResponseModel.data!.age!,
+        // "heartRate": userResponseModel.data!.heartRate!,
+        // "bmi": userResponseModel.data!.bmi!,
         "fcm_token": "${GetStorageServices.getFcm()}",
         "userTime": "${DateTime.now()}"
       });
 
       if (logInViewModel.logInApiResponse.status.toString() ==
           Status.COMPLETE.toString()) {
-        LogInResponseModel responseModel = logInViewModel.logInApiResponse.data;
+        LogInResponseModel logInResponseModel =
+            logInViewModel.logInApiResponse.data;
 
-        // print(
-        //     'response weight ============== > ${responseModel.data!.userImage}');
+        print(
+            'logInResponseModel.data!.profileSet! =============== > ${logInResponseModel.data!.profileSet!}');
 
-        Get.offAll(() => BottomNavScreen());
-        GetStorageServices.setUserLoggedIn();
-        GetStorageServices.setBarrierToken(responseModel.token);
-        GetStorageServices.setUserName(responseModel.data!.name!);
-        // GetStorageServices.setUserHeight(responseModel.data!.height!);
-        GetStorageServices.setUserWeight(responseModel.data!.weight!);
-        // GetStorageServices.setAge(responseModel.data!.age!);
-        // GetStorageServices.setUserImage(responseModel.data!.userImage!);
-        GetStorageServices.setUserProfileSet(responseModel.data!.profileSet!);
-        log('BARRIER TOKEN :- ${GetStorageServices.getBarrierToken()}');
-        progress.dismiss();
+        if (!logInResponseModel.data!.profileSet!) {
+          Get.offAll(() => SetProfileScreen(
+                loginType: "mobile",
+                logInId: widget.logInId,
+              ));
+          progress.dismiss();
+        } else {
+          if (logInViewModel.logInApiResponse.status.toString() ==
+              Status.COMPLETE.toString()) {
+            LogInResponseModel responseModel =
+                logInViewModel.logInApiResponse.data;
+
+            // print(
+            //     'response weight ============== > ${responseModel.data!.userImage}');
+
+            Get.offAll(() => BottomNavScreen());
+            GetStorageServices.setUserLoggedIn();
+            GetStorageServices.setBarrierToken(responseModel.token);
+            GetStorageServices.setUserName(responseModel.data!.name!);
+            GetStorageServices.setUserHeight(responseModel.data!.height!);
+            GetStorageServices.setUserWeight(responseModel.data!.weight!);
+            GetStorageServices.setAge(responseModel.data!.age!);
+            GetStorageServices.setUserImage(responseModel.data!.userImage!);
+            GetStorageServices.setUserProfileSet(
+                responseModel.data!.profileSet!);
+            log('BARRIER TOKEN :- ${GetStorageServices.getBarrierToken()}');
+            progress.dismiss();
+          }
+          if (logInViewModel.logInApiResponse.status.toString() ==
+              Status.ERROR.toString()) {
+            CommonWidget.getSnackBar(
+              message: '',
+              title: 'Failed',
+              duration: 2,
+              color: Colors.red,
+            );
+            progress.dismiss();
+          }
+          progress.dismiss();
+        }
       }
       if (logInViewModel.logInApiResponse.status.toString() ==
           Status.ERROR.toString()) {
@@ -95,8 +128,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         );
         progress.dismiss();
       }
-      progress.dismiss();
-      // }
     } catch (e) {
       progress.dismiss();
       CommonWidget.getSnackBar(
