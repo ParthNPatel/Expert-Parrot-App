@@ -5,6 +5,7 @@ import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+
 import '../components/common_widget.dart';
 import '../constant/color_const.dart';
 
@@ -143,27 +144,221 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
         ));
   }
 
+  int? index;
+
   Padding waterBottleWidget() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          bottleWidget(
+        padding: const EdgeInsets.symmetric(horizontal: 30),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  index = 0;
+                });
+
+                showDialog(
+                  context: context,
+                  builder: (context) => Dialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: SizedBox(
+                      height: 175.sp,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 15),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  CommonText.textBoldWight500(
+                                    text: "Enter Glasses",
+                                    fontSize: 17.sp,
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      Get.back();
+                                    },
+                                    child: CommonWidget.commonSvgPitcher(
+                                      image: ImageConst.close,
+                                    ),
+                                  )
+                                ],
+                              ),
+                              CommonWidget.dottedLineWidget(),
+                              SizedBox(height: 20),
+                              // TextField(
+                              //   controller: relation,
+                              //   decoration: InputDecoration(
+                              //     border: OutlineInputBorder(),
+                              //     focusedBorder: OutlineInputBorder(),
+                              //     enabledBorder: OutlineInputBorder(),
+                              //     hintText: 'Relation',
+                              //   ),
+                              // ),
+                              SizedBox(height: 20.sp),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  SizedBox(width: 20.sp),
+                                  SizedBox(
+                                    height: 6.5.h,
+                                    width: 25.w,
+                                    child: CommonWidget.commonButton(
+                                        color: CommonColor.greenColor,
+                                        radius: 10,
+                                        onTap: () {},
+                                        // onTap: () async {
+                                        //   await sendReqViewModel
+                                        //       .sendReqViewModel(model: {
+                                        //     "userId":
+                                        //         "${getSearchRes.data![index].id}",
+                                        //     "relation":
+                                        //         "${relation.text.trim()}"
+                                        //   });
+                                        //   relation.clear();
+                                        //
+                                        //   if (sendReqViewModel
+                                        //           .sendReqApiResponse.status ==
+                                        //       Status.COMPLETE) {
+                                        //     Get.back();
+                                        //     CommonWidget.getSnackBar(
+                                        //       message:
+                                        //           'Request send successfully',
+                                        //       title: 'Successfully',
+                                        //       duration: 2,
+                                        //       color: Colors.green,
+                                        //     );
+                                        //   }
+                                        //   if (sendReqViewModel
+                                        //           .sendReqApiResponse.status ==
+                                        //       Status.ERROR) {
+                                        //     Get.back();
+                                        //     CommonWidget.getSnackBar(
+                                        //       message: 'Try Again...',
+                                        //       title: 'Failed',
+                                        //       duration: 2,
+                                        //       color: Colors.red,
+                                        //     );
+                                        //   }
+                                        // },
+                                        text: "Send"),
+                                  ),
+                                  SizedBox(
+                                    height: 6.5.h,
+                                    width: 25.w,
+                                    child: CommonWidget.commonButton(
+                                        color: CommonColor.greenColor,
+                                        radius: 10,
+                                        onTap: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        text: "Back"),
+                                  )
+                                ],
+                              ),
+                            ]),
+                      ),
+                    ),
+                  ),
+                );
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                        color: index == 0
+                            ? CommonColor.greenColor
+                            : Colors.transparent)),
+                child: bottleWidget(
+                    oz: '(8 fl oz)',
+                    image: ImageConst.glassOfWater,
+                    typeOfBottle: '1 Glass'),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  index = 1;
+                });
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                        color: index == 1
+                            ? CommonColor.greenColor
+                            : Colors.transparent)),
+                child: bottleWidget(
+                    oz: '(8 fl oz)',
+                    image: ImageConst.plasticBottle,
+                    typeOfBottle: '1 Glass'),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  index = 2;
+                });
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                        color: index == 2
+                            ? CommonColor.greenColor
+                            : Colors.transparent)),
+                child: bottleWidget(
+                    oz: '(8 fl oz)',
+                    image: ImageConst.water1Icon,
+                    typeOfBottle: '1 Glass'),
+              ),
+            ),
+            // bottleWidget(
+            //     oz: '(8 fl oz)',
+            //     image: ImageConst.plasticBottle,
+            //     typeOfBottle: '1 Glass'),
+            // bottleWidget(
+            //     oz: '(8 fl oz)',
+            //     image: ImageConst.water1Icon,
+            //     typeOfBottle: '1 Glass'),
+          ],
+        )
+
+        /*ListView.separated(
+        itemCount: 3,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        separatorBuilder: (context, index) {
+          return SizedBox(width: 10);
+        },
+        itemBuilder: (context, index) {
+          return bottleWidget(
               oz: '(8 fl oz)',
-              image: ImageConst.glassOfWater,
-              typeOfBottle: '1 Glass'),
-          bottleWidget(
-              oz: '(8 fl oz)',
-              image: ImageConst.plasticBottle,
-              typeOfBottle: '1 Glass'),
-          bottleWidget(
-              oz: '(8 fl oz)',
-              image: ImageConst.water1Icon,
-              typeOfBottle: '1 Glass'),
-        ],
-      ),
-    );
+              image: index == 0
+                  ? ImageConst.glassOfWater
+                  : index == 1
+                      ? ImageConst.plasticBottle
+                      : ImageConst.water1Icon,
+              typeOfBottle: '1 Glass');
+          // bottleWidget(
+          //     oz: '(8 fl oz)',
+          //     image: ImageConst.plasticBottle,
+          //     typeOfBottle: '1 Glass'),
+          // bottleWidget(
+          //     oz: '(8 fl oz)',
+          //     image: ImageConst.water1Icon,
+          //     typeOfBottle: '1 Glass'),
+        },
+      ),*/
+        );
   }
 
   Container bottleWidget(

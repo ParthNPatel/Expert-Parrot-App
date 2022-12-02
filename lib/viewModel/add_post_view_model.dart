@@ -1,9 +1,18 @@
+import 'dart:io';
+
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/repo/add_post_repo.dart';
 import 'package:expert_parrot_app/Models/responseModel/add_post_res_model.dart';
 import 'package:get/get.dart';
 
 class AddPostViewModel extends GetxController {
+  File? image;
+
+  setImage(File img) {
+    image = img;
+    update();
+  }
+
   ApiResponse _addPostApiResponse =
       ApiResponse.initial(message: 'Initialization');
 

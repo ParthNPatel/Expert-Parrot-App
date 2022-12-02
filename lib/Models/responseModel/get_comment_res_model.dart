@@ -71,18 +71,22 @@ class UserId {
   UserId({
     this.id,
     this.name,
+    this.userImage,
   });
 
   String? id;
   String? name;
+  String? userImage;
 
   factory UserId.fromJson(Map<String, dynamic> json) => UserId(
         id: json["_id"],
         name: json["name"],
+        userImage: json["userImage"],
       );
 
   Map<String, dynamic> toJson() => {
         "_id": id,
         "name": name,
+        "userImage": userImage,
       };
 }

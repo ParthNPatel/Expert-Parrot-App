@@ -32,18 +32,20 @@ class CommunityScreen extends StatefulWidget {
 }
 
 class _CommunityScreenState extends State<CommunityScreen> {
-  TextEditingController _queryController = TextEditingController();
+  TextEditingController _queryTitleController = TextEditingController();
+  TextEditingController _queryDescriptionController = TextEditingController();
 
   GetPostViewModel getPostViewModel = Get.put(GetPostViewModel());
   AddPostViewModel addPostViewModel = Get.put(AddPostViewModel());
-
-  File? image;
 
   @override
   void initState() {
     super.initState();
 
     getPostViewModel.getPostViewModel(isLoading: true);
+
+    print(
+        '============================== > ${GetStorageServices.getBarrierToken()}');
   }
 
   @override
@@ -200,10 +202,44 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                       children: [
                                         Row(
                                           children: [
-                                            Image.asset(
-                                              'assets/png/person1.png',
-                                              height: 40.sp,
-                                              width: 40.sp,
+                                            /*GetStorageServices.getUserImage()
+                                                    .toString()
+                                                    .isNotEmpty
+                                                ? Container(
+                                                    height: 50.sp,
+                                                    width: 50.sp,
+                                                    decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        border: Border.all(
+                                                            color:
+                                                                Colors.black),
+                                                        image: DecorationImage(
+                                                          image: NetworkImage(
+                                                              'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${GetStorageServices.getUserImage()}'),
+                                                          onError: (error,
+                                                                  stackTrace) =>
+                                                              Icon(
+                                                            color: Colors.grey,
+                                                            Icons.person,
+                                                            size: 60,
+                                                          ),
+                                                        )),
+                                                  )
+                                                :*/
+                                            Container(
+                                              height: 50.sp,
+                                              width: 50.sp,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: Colors.grey.shade300,
+                                                border: Border.all(
+                                                    color: Colors.black),
+                                              ),
+                                              child: Icon(
+                                                color: Colors.grey,
+                                                Icons.person,
+                                                size: 35,
+                                              ),
                                             ),
                                             SizedBox(
                                               width: 10,
@@ -223,7 +259,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                             ),
                                             Spacer(),
                                             CommonText.textBoldWight400(
-                                                text: "2 hour ago",
+                                                text:
+                                                    "${DateFormat.yMMMEd().format(DateTime.parse("${response.data![index].createdAt!}"))}",
                                                 color: Color(0xffa1a1a1),
                                                 fontSize: 10.sp),
                                           ],
@@ -238,6 +275,14 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                             CommonText.textBoldWight400(
                                                 text:
                                                     "${response.data![index].title}",
+                                                color: Color(0xffa1a1a1),
+                                                fontSize: 11.sp),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            CommonText.textBoldWight400(
+                                                text:
+                                                    "${response.data![index].description}",
                                                 color: Color(0xffa1a1a1),
                                                 fontSize: 11.sp),
                                             SizedBox(
@@ -491,42 +536,32 @@ class _CommunityScreenState extends State<CommunityScreen> {
   getImage(ImageSource imageSource) async {
     final ImagePicker _picker = ImagePicker();
     final XFile? pickImage = await _picker.pickImage(source: imageSource);
-    image = File(pickImage!.path);
-    print('Image ================ > ${image}');
+    addPostViewModel.setImage(File(pickImage!.path));
+
+    print('Image ================ > ${addPostViewModel.image}');
 
     setState(() {});
   }
 
-  showImageWidget() {
-    try {
-      return image == null
-          ? ClipRRect(
-              borderRadius: BorderRadius.circular(18),
-              child: Image.network(
-                'https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png',
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Icon(
-                  color: Colors.grey,
-                  Icons.person,
-                  size: 60,
-                ),
-              ),
-            )
-          : ClipRRect(
-              borderRadius: BorderRadius.circular(18),
-              child: Image.file(
-                image!,
-                fit: BoxFit.cover,
-              ),
-            );
-    } catch (e) {
-      return Icon(
-        color: Colors.grey,
-        Icons.person,
-        size: 120,
-      );
-    }
-  }
+  // showImageWidget() {
+  //   try {
+  //     return image == null
+  //         ? SizedBox()
+  //         : ClipRRect(
+  //             borderRadius: BorderRadius.circular(18),
+  //             child: Image.file(
+  //               image!,
+  //               fit: BoxFit.cover,
+  //             ),
+  //           );
+  //   } catch (e) {
+  //     return Icon(
+  //       color: Colors.grey,
+  //       Icons.person,
+  //       size: 120,
+  //     );
+  //   }
+  // }
 
   Future<StatefulBuilder> askYourQuestion() async {
     return StatefulBuilder(
@@ -559,6 +594,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
                         ),
                         InkWell(
                           onTap: () {
+                            _queryTitleController.clear();
+                            _queryDescriptionController.clear();
+                            controller.image = null;
                             Get.back();
                           },
                           child: CommonWidget.commonSvgPitcher(
@@ -588,145 +626,200 @@ class _CommunityScreenState extends State<CommunityScreen> {
                             decoration: BoxDecoration(
                                 color: Colors.grey.withOpacity(0.5),
                                 borderRadius: BorderRadius.circular(18)),
-                            child:
-                                showImageWidget() /* image == null
-                              ? Image.network(
-                                  'https://health-app-test.s3.ap-south-1.amazonaws.com/user/' +
-                                      '${GetStorageServices.getUserImage()}',
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      Icon(
-                                    color: Colors.grey,
+                            child: controller.image == null
+                                ? Icon(
                                     Icons.person,
-                                    size: 60,
-                                  ),
-                                )
-                              : Image.file(
-                                  image!,
-                                  fit: BoxFit.cover,
-                                ),*/
-                            ),
+                                    color: Colors.grey,
+                                    size: 100.sp,
+                                  )
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(18),
+                                    child: Image.file(
+                                      controller.image!,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )),
                         SizedBox(height: 20),
                         TextFormField(
-                          controller: _queryController,
-                          onTap: () {
-                            setState(() {});
-                          },
-                          onChanged: (value) {
-                            setState(() {});
-                          },
+                          controller: _queryTitleController,
                           decoration: InputDecoration(
                               filled: true,
                               fillColor: Color(0xffF8F8F6),
-                              hintText: "Enter your query",
+                              hintText: "Enter your query title",
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                                borderRadius: BorderRadius.circular(20),
+                              )),
+                        ),
+                        SizedBox(height: 15),
+                        TextFormField(
+                          controller: _queryDescriptionController,
+                          decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Color(0xffF8F8F6),
+                              hintText: "Enter your query description",
                               border: OutlineInputBorder(
                                 borderSide: BorderSide.none,
                                 borderRadius: BorderRadius.circular(20),
                               )),
                         ),
                         SizedBox(height: 23),
-                        CommonWidget.commonButton(
-                            color: CommonColor.greenColor,
-                            radius: 10,
-                            onTap: () async {
-                              Get.dialog(
-                                AlertDialog(
-                                  content: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      MaterialButton(
-                                          color: CommonColor.greenColor,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8)),
-                                          onPressed: () {
-                                            getImage(ImageSource.camera);
-                                            Get.back();
-                                          },
-                                          child: Text("Camera",
-                                              style: TextStyle(
-                                                  color: Colors.white))),
-                                      MaterialButton(
-                                        color: CommonColor.greenColor,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                                width: 31.w,
+                                child: MaterialButton(
+                                  onPressed: () async {
+                                    Get.dialog(
+                                      AlertDialog(
                                         shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8)),
-                                        onPressed: () {
-                                          getImage(ImageSource.gallery);
-                                          Get.back();
-                                        },
-                                        child: Text(
-                                          "Gallery",
-                                          style: TextStyle(color: Colors.white),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
                                         ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                            text: "Select Image"),
-                        SizedBox(height: 15),
-                        CommonWidget.commonButton(
-                            color: CommonColor.greenColor,
-                            radius: 10,
-                            onTap: () async {
-                              if (_queryController.text.isNotEmpty &&
-                                  image != null) {
-                                var _req = {
-                                  "title": _queryController.text.length <= 8
-                                      ? _queryController.text
-                                      : "${_queryController.text.substring(0, 7)}",
-                                  "description": "${_queryController.text}",
-                                  "image": image!.path,
-                                };
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            MaterialButton(
+                                                color: CommonColor.greenColor,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8)),
+                                                onPressed: () {
+                                                  getImage(ImageSource.camera);
+                                                  Get.back();
+                                                },
+                                                child: Text("Camera",
+                                                    style: TextStyle(
+                                                        color: Colors.white))),
+                                            MaterialButton(
+                                              color: CommonColor.greenColor,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8)),
+                                              onPressed: () {
+                                                getImage(ImageSource.gallery);
+                                                Get.back();
+                                              },
+                                              child: Text(
+                                                "Gallery",
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  padding: EdgeInsets.zero,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  color: CommonColor.greenColor,
+                                  height: 35.sp,
+                                  child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        CommonText.textBoldWight600(
+                                            text: "Select Image",
+                                            color: Colors.white,
+                                            fontSize: 10.sp)
+                                      ]),
+                                )),
+                            SizedBox(width: 10.sp),
+                            SizedBox(
+                                width: 31.w,
+                                child: MaterialButton(
+                                  onPressed: () async {
+                                    if (_queryTitleController.text.isNotEmpty &&
+                                        _queryDescriptionController
+                                            .text.isNotEmpty) {
+                                      var _req = controller.image != null
+                                          ? {
+                                              "title":
+                                                  "${_queryTitleController.text}",
+                                              "description":
+                                                  "${_queryDescriptionController.text}",
+                                              "image": controller.image!.path,
+                                            }
+                                          : {
+                                              "title":
+                                                  "${_queryTitleController.text}",
+                                              "description":
+                                                  "${_queryDescriptionController.text}"
+                                            };
 
-                                print('================= > $_req');
+                                      print('================= > $_req');
 
-                                await controller.addPostViewModel(model: _req);
+                                      await controller.addPostViewModel(
+                                          model: _req);
 
-                                if (controller.addPostApiResponse.status ==
-                                    Status.COMPLETE) {
-                                  AddPostResponseModel resp =
-                                      controller.addPostApiResponse.data;
+                                      if (controller
+                                              .addPostApiResponse.status ==
+                                          Status.COMPLETE) {
+                                        AddPostResponseModel resp =
+                                            controller.addPostApiResponse.data;
 
-                                  print(
-                                      'image from response ======================== > ${resp.data!.image}');
-                                  Get.back();
+                                        print(
+                                            'image from response ======================== > ${resp.data!.image}');
+                                        controller.image = null;
+                                        _queryTitleController.clear();
+                                        _queryDescriptionController.clear();
+                                        Get.back();
 
-                                  await getPostViewModel.getPostViewModel(
-                                      isLoading: true);
-                                  CommonWidget.getSnackBar(
-                                      duration: 2,
-                                      color: CommonColor.greenColor,
-                                      colorText: Colors.white,
-                                      title: "Submitted",
-                                      message:
-                                          'Your query has been submitted successfully.');
-                                }
-                                if (controller.addPostApiResponse.status ==
-                                    Status.ERROR) {
-                                  Get.back();
+                                        await getPostViewModel.getPostViewModel(
+                                            isLoading: true);
+                                        CommonWidget.getSnackBar(
+                                            duration: 2,
+                                            color: CommonColor.greenColor,
+                                            colorText: Colors.white,
+                                            title: "Submitted",
+                                            message:
+                                                'Your query has been submitted successfully.');
+                                      }
+                                      if (controller
+                                              .addPostApiResponse.status ==
+                                          Status.ERROR) {
+                                        Get.back();
 
-                                  CommonWidget.getSnackBar(
-                                      duration: 2,
-                                      color: Colors.red.shade300,
-                                      colorText: Colors.white,
-                                      title: "Error",
-                                      message: 'Something went wrong!');
-                                }
-                              } else {
-                                CommonWidget.getSnackBar(
-                                    color: Colors.red.shade300,
-                                    duration: 2,
-                                    colorText: Colors.white,
-                                    title: "Required",
-                                    message: _queryController.text.isEmpty
-                                        ? 'Please enter your query.'
-                                        : "Please Select One Picture");
-                              }
-                            },
-                            text: "Submit")
+                                        CommonWidget.getSnackBar(
+                                            duration: 2,
+                                            color: Colors.red.shade300,
+                                            colorText: Colors.white,
+                                            title: "Error",
+                                            message: 'Something went wrong!');
+                                      }
+                                    } else {
+                                      CommonWidget.getSnackBar(
+                                          color: Colors.red.shade300,
+                                          duration: 2,
+                                          colorText: Colors.white,
+                                          title: "Required",
+                                          message: _queryTitleController
+                                                  .text.isEmpty
+                                              ? 'Please enter your query title'
+                                              : "Please enter your query description");
+                                    }
+                                  },
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  color: CommonColor.greenColor,
+                                  padding: EdgeInsets.zero,
+                                  height: 35.sp,
+                                  child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        CommonText.textBoldWight600(
+                                            text: "Submit",
+                                            color: Colors.white,
+                                            fontSize: 10.sp)
+                                      ]),
+                                )),
+                          ],
+                        )
                       ],
                     ),
                   ),
@@ -881,10 +974,29 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image.asset(
-                    'assets/png/person1.png',
+                  Container(
                     height: 40.sp,
                     width: 40.sp,
+                    decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: NetworkImage(
+                            'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${GetStorageServices.getUserImage()}',
+                            scale: 5,
+                          ),
+                          fit: BoxFit.cover,
+                          onError: (error, stackTrace) {
+                            // Icon(
+                            //   color: Colors.grey,
+                            //   Icons.person,
+                            //   size: 20,
+                            // );
+
+                            Image.network(
+                                "https://en.wikipedia.org/wiki/Image#/media/File:Image_created_with_a_mobile_phone.png");
+                          },
+                        )),
                   ),
                   SizedBox(
                     width: 10,
@@ -1006,6 +1118,7 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                       Status.COMPLETE) {
                     GetCommentResponseModel getComment =
                         getController.getCommentApiResponse.data;
+
                     return ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
@@ -1018,10 +1131,29 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                             ),
                             Row(
                               children: [
-                                Image.asset(
-                                  'assets/png/person2.png',
+                                Container(
                                   height: 40.sp,
                                   width: 40.sp,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey.shade300,
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                        image: NetworkImage(
+                                          'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${getComment.data![index].userId!.userImage}',
+                                          scale: 5,
+                                        ),
+                                        fit: BoxFit.cover,
+                                        onError: (error, stackTrace) {
+                                          // Icon(
+                                          //   color: Colors.grey,
+                                          //   Icons.person,
+                                          //   size: 20,
+                                          // );
+
+                                          Image.network(
+                                              "https://en.wikipedia.org/wiki/Image#/media/File:Image_created_with_a_mobile_phone.png");
+                                        },
+                                      )),
                                 ),
                                 SizedBox(
                                   width: 10,

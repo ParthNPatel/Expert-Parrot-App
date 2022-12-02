@@ -8,8 +8,11 @@ import 'package:expert_parrot_app/viewModel/accept_req_view_model.dart';
 import 'package:expert_parrot_app/viewModel/get_req_user_view_model.dart';
 import 'package:expert_parrot_app/viewModel/reject_req_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+
+import '../../constant/image_const.dart';
 
 class RequestUserScreen extends StatefulWidget {
   const RequestUserScreen({Key? key}) : super(key: key);
@@ -64,137 +67,159 @@ class _RequestUserScreenState extends State<RequestUserScreen> {
                   return getReq.data!.length == 0
                       ? CommonText.textBoldWight500(
                           text: "No pending requests", fontSize: 12.sp)
-                      : ListView.builder(
-                          padding: EdgeInsets.symmetric(horizontal: 15),
+                      : ListView.separated(
                           physics: BouncingScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: getReq.data!.length,
+                          separatorBuilder: (context, index) =>
+                              SizedBox(height: 10),
                           itemBuilder: (context, index) {
-                            return Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 20,
-                                      backgroundImage: NetworkImage(
-                                          'https://wallpapercave.com/dwp1x/wp4376818.jpg'),
-                                    ),
-                                    SizedBox(
-                                      width: 15.sp,
-                                    ),
-                                    Text(
-                                        '${getReq.data![index].requestor!.name}'),
-                                    Spacer(),
-                                    SizedBox(
-                                      height: 6.h,
-                                      child: MaterialButton(
-                                          color: CommonColor.greenColor,
-                                          shape: RoundedRectangleBorder(
+                            return Container(
+                              padding: EdgeInsets.symmetric(horizontal: 13.sp),
+                              height: 45.sp,
+                              decoration: BoxDecoration(
+                                  color:
+                                      CommonColor.greenColor.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(18)),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 20,
+                                        backgroundImage: NetworkImage(
+                                            'https://wallpapercave.com/dwp1x/wp4376818.jpg'),
+                                      ),
+                                      SizedBox(width: 10.sp),
+                                      Text(
+                                        '${getReq.data![index].requestor!.name}',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Container(
+                                          height: 23.sp,
+                                          width: 23.sp,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                color: Colors.grey
+                                                    .withOpacity(0.3),
+                                              ),
+                                              color: CommonColor.greenColor
+                                                  .withOpacity(0.35),
                                               borderRadius:
                                                   BorderRadius.circular(10)),
-                                          onPressed: () async {
-                                            await acceptRequestViewModel
-                                                .acceptRequestViewModel(model: {
-                                              "userId":
-                                                  "${getReq.data![index].requestor!.id}"
-                                            });
-                                            if (acceptRequestViewModel
-                                                    .acceptReqUserResponse
-                                                    .status ==
-                                                Status.COMPLETE) {
-                                              CommonWidget.getSnackBar(
-                                                message: '',
-                                                title: 'Accept',
-                                                duration: 2,
-                                                color: Colors.green,
-                                              );
-                                            }
-                                            if (acceptRequestViewModel
-                                                    .acceptReqUserResponse
-                                                    .status ==
-                                                Status.ERROR) {
-                                              CommonWidget.getSnackBar(
-                                                message: 'Try Again...',
-                                                title: 'Failed',
-                                                duration: 2,
-                                                color: Colors.red,
-                                              );
-                                            }
-                                            await getRequestUserViewModel
-                                                .getRequestUserViewModel(
-                                                    isLoading: false);
-                                          },
-                                          child: CommonText.textBoldWight600(
-                                              text: "Accept",
-                                              color: Colors.white,
-                                              fontSize: 12.sp)),
-                                    ),
-                                    SizedBox(
-                                      width: 8,
-                                    ),
-                                    SizedBox(
-                                      height: 6.h,
-                                      child: MaterialButton(
-                                          color: Colors.red,
-                                          shape: RoundedRectangleBorder(
+                                          child: IconButton(
+                                            icon: SvgPicture.asset(
+                                                ImageConst.add,
+                                                color: Colors.white),
+                                            onPressed: () async {
+                                              await acceptRequestViewModel
+                                                  .acceptRequestViewModel(
+                                                      model: {
+                                                    "userId":
+                                                        "${getReq.data![index].requestor!.id}"
+                                                  });
+                                              if (acceptRequestViewModel
+                                                      .acceptReqUserResponse
+                                                      .status ==
+                                                  Status.COMPLETE) {
+                                                CommonWidget.getSnackBar(
+                                                  message:
+                                                      'Request accepted successfully!',
+                                                  title: 'Accept',
+                                                  duration: 2,
+                                                  color: Colors.green,
+                                                );
+                                              }
+                                              if (acceptRequestViewModel
+                                                      .acceptReqUserResponse
+                                                      .status ==
+                                                  Status.ERROR) {
+                                                CommonWidget.getSnackBar(
+                                                  message: 'Try Again...',
+                                                  title: 'Failed',
+                                                  duration: 2,
+                                                  color: Colors.red,
+                                                );
+                                              }
+                                              await getRequestUserViewModel
+                                                  .getRequestUserViewModel(
+                                                      isLoading: false);
+                                            },
+                                          )),
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+                                      Container(
+                                          height: 23.sp,
+                                          width: 23.sp,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                color: Colors.grey
+                                                    .withOpacity(0.3),
+                                              ),
+                                              color:
+                                                  Colors.red.withOpacity(0.7),
                                               borderRadius:
                                                   BorderRadius.circular(10)),
-                                          onPressed: () async {
-                                            await rejectRequestViewModel
-                                                .rejectRequestViewModel(model: {
-                                              "userId":
-                                                  "${getReq.data![index].requestor!.id}"
-                                            });
-                                            if (rejectRequestViewModel
-                                                    .rejectReqUserResponse
-                                                    .status ==
-                                                Status.COMPLETE) {
-                                              CommonWidget.getSnackBar(
-                                                message: '',
-                                                title: 'Reject',
-                                                duration: 2,
-                                                color: Colors.red,
-                                              );
-                                            }
-                                            if (rejectRequestViewModel
-                                                    .rejectReqUserResponse
-                                                    .status ==
-                                                Status.ERROR) {
-                                              CommonWidget.getSnackBar(
-                                                message: 'Try Again...',
-                                                title: 'Failed',
-                                                duration: 2,
-                                                color: Colors.red,
-                                              );
-                                            }
-                                            await getRequestUserViewModel
-                                                .getRequestUserViewModel(
-                                                    isLoading: false);
-                                          },
-                                          child: CommonText.textBoldWight600(
-                                              text: "Reject",
-                                              color: Colors.white,
-                                              fontSize: 12.sp)),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                )
-                              ],
+                                          child: IconButton(
+                                            icon: Transform(
+                                              alignment:
+                                                  FractionalOffset.center,
+                                              transform: Matrix4.identity()
+                                                ..rotateZ(45 * 3.1415927 / 180),
+                                              child: SvgPicture.asset(
+                                                ImageConst.add,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            onPressed: () async {
+                                              await rejectRequestViewModel
+                                                  .rejectRequestViewModel(
+                                                      model: {
+                                                    "userId":
+                                                        "${getReq.data![index].requestor!.id}"
+                                                  });
+                                              if (rejectRequestViewModel
+                                                      .rejectReqUserResponse
+                                                      .status ==
+                                                  Status.COMPLETE) {
+                                                CommonWidget.getSnackBar(
+                                                  message:
+                                                      'Request rejected successfully!',
+                                                  title: 'Reject',
+                                                  duration: 2,
+                                                  color: Colors.red,
+                                                );
+                                              }
+                                              if (rejectRequestViewModel
+                                                      .rejectReqUserResponse
+                                                      .status ==
+                                                  Status.ERROR) {
+                                                CommonWidget.getSnackBar(
+                                                  message: 'Try Again...',
+                                                  title: 'Failed',
+                                                  duration: 2,
+                                                  color: Colors.red,
+                                                );
+                                              }
+                                              await getRequestUserViewModel
+                                                  .getRequestUserViewModel(
+                                                      isLoading: false);
+                                            },
+                                          )),
+                                    ],
+                                  )
+                                ],
+                              ),
                             );
-                            // ListTile(
-                            // leading: CircleAvatar(
-                            //   radius: 20,
-                            //   backgroundImage:
-                            //       NetworkImage('https://wallpapercave.com/dwp1x/wp4376818.jpg'),
-                            // ),
-                            // title: Text('}'),
-                            // trailing: ElevatedButton(
-                            //   onPressed: () {},
-                            //   child: Text('Accept'),
-                            // ),
-                            // );
                           },
                         );
                 }

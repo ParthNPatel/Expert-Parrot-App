@@ -245,8 +245,8 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                       LogInResponseModel responseModel =
                           logInViewModel.logInApiResponse.data;
 
-                      // print(
-                      //     'response weight ============== > ${responseModel.data!.userImage}');
+                      print(
+                          'response weight ============== > ${responseModel.data!.posts}');
 
                       Get.offAll(() => BottomNavScreen());
                       GetStorageServices.setUserLoggedIn();

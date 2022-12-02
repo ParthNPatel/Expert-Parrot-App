@@ -15,4 +15,5 @@ class APIConst {
   static String getReqUser = "/user/my-requests";
   static String rejectRequest = "/user/reject-request";
   static String acceptRequest = "/user/accept-request";
+  static String glass = "/glass";
 }

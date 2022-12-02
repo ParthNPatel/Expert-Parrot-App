@@ -64,7 +64,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               CommonText.textBoldWight500(
-                                  text: 'Manshi Sukla', fontSize: 15.sp),
+                                  text:
+                                      '${GetStorageServices.getUserName().toString().capitalizeFirst}',
+                                  fontSize: 15.sp),
                               SizedBox(
                                 height: 5,
                               ),

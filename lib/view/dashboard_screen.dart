@@ -163,37 +163,40 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                   '${userResponse.data!.heartRate}',
                   '${userResponse.data!.bmi}'
                 ];
-                int lenght = userResponse.data!.medicines!.length;
-                if (lenght > 3) {
+                int length = userResponse.data!.medicines!.length;
+                // print('length =============== > $length');
+                // print(
+                //     'length =============== > ${GetStorageServices.getBarrierToken()}');
+                if (length > 3) {
                   LastData.insert(0, {
                     'medName':
-                        '${userResponse.data!.medicines![lenght - 3].name!}',
+                        '${userResponse.data!.medicines![length - 3]["name"]!}',
                     'medGm':
-                        '${userResponse.data!.medicines![lenght - 3].strength} gm',
+                        '${userResponse.data!.medicines![length - 3]["strength"]} gm',
                     'timeOfDay':
-                        '${userResponse.data!.medicines![lenght - 3].totalTimes} pills ${userResponse.data!.medicines![lenght - 3].frequency}',
+                        '${userResponse.data!.medicines![length - 3]["totalTimes"]} pills ${userResponse.data!.medicines![length - 3]["frequency"]}',
                     'ap':
-                        '${userResponse.data!.medicines![lenght - 3].appearance}'
+                        '${userResponse.data!.medicines![length - 3]["appearance"]}'
                   });
                   LastData.insert(1, {
                     'medName':
-                        '${userResponse.data!.medicines![lenght - 2].name!}',
+                        '${userResponse.data!.medicines![length - 2]["name"]!}',
                     'medGm':
-                        '${userResponse.data!.medicines![lenght - 2].strength} gm',
+                        '${userResponse.data!.medicines![length - 2]["strength"]} gm',
                     'timeOfDay':
-                        '${userResponse.data!.medicines![lenght - 2].totalTimes} pills ${userResponse.data!.medicines![lenght - 2].frequency}',
+                        '${userResponse.data!.medicines![length - 2]["totalTimes"]} pills ${userResponse.data!.medicines![length - 2]["frequency"]}',
                     'ap':
-                        '${userResponse.data!.medicines![lenght - 2].appearance}'
+                        '${userResponse.data!.medicines![length - 2]["appearance"]}'
                   });
                   LastData.insert(2, {
                     'medName':
-                        '${userResponse.data!.medicines![lenght - 1].name!}',
+                        '${userResponse.data!.medicines![length - 1]["name"]!}',
                     'medGm':
-                        '${userResponse.data!.medicines![lenght - 1].strength} gm',
+                        '${userResponse.data!.medicines![length - 1]["strength"]} gm',
                     'timeOfDay':
-                        '${userResponse.data!.medicines![lenght - 1].totalTimes} pills ${userResponse.data!.medicines![lenght - 1].frequency}',
+                        '${userResponse.data!.medicines![length - 1]["totalTimes"]} pills ${userResponse.data!.medicines![length - 1]["frequency"]}',
                     'ap':
-                        '${userResponse.data!.medicines![lenght - 1].appearance}'
+                        '${userResponse.data!.medicines![length - 1]["appearance"]}'
                   });
                 }
 
@@ -244,13 +247,13 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               reverse: true,
                               physics: NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
-                              itemCount: lenght > 3
+                              itemCount: length > 3
                                   ? LastData.length
                                   : userResponse.data!.medicines!.length,
                               itemBuilder: (context, index) {
                                 var UserEqual = userResponse
-                                    .data!.medicines![index].appearance;
-                                return lenght > 3
+                                    .data!.medicines![index]["appearance"];
+                                return length > 3
                                     ? medDetailsWidget(
                                         image: LastData[index]['ap'] == 'Pills'
                                             ? ImageConst.med3Icon
@@ -294,9 +297,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                     ? ImageConst.med2Icon
                                                     : ImageConst.med2Icon,
                                         medName:
-                                            '${userResponse.data!.medicines![index].name!} , ${userResponse.data!.medicines![index].appearance}',
+                                            '${userResponse.data!.medicines![index]["name"]!} , ${userResponse.data!.medicines![index]["appearance"]}',
                                         medGm:
-                                            '${userResponse.data!.medicines![index].strength} gm',
+                                            '${userResponse.data!.medicines![index]["strength"]} gm',
                                         iconColor: UserEqual == 'Pills'
                                             ? Color(0xff21D200)
                                             : UserEqual == 'Gel'
@@ -305,7 +308,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                     ? Color(0xff9255E5)
                                                     : Color(0xff9255E5),
                                         timeOfDay:
-                                            '${userResponse.data!.medicines![index].totalTimes} pills ${userResponse.data!.medicines![index].frequency}',
+                                            '${userResponse.data!.medicines![index]["totalTimes"]} pills ${userResponse.data!.medicines![index]["frequency"]}',
                                         color: UserEqual == 'Pills'
                                             ? Color.fromRGBO(69, 196, 44, 0.13)
                                             : UserEqual == 'Gel'
@@ -2026,16 +2029,38 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       children: [
         CommonText.textBoldWight400(text: 'Good Morning, ', fontSize: 16.sp),
         CommonText.textBoldWight500(
-            text: '${userResponse.data!.name}!', fontSize: 18.sp),
+            text:
+                '${userResponse.data!.name.toString().split(" ").first.capitalizeFirst}!',
+            fontSize: 18.sp),
         Spacer(),
         Image.asset(
           ImageConst.notification,
           scale: 5,
         ),
         CommonWidget.commonSizedBox(width: 6),
-        Image.asset(
-          'assets/png/face.png',
-          scale: 5,
+        Container(
+          height: 27.sp,
+          width: 27.sp,
+          decoration: BoxDecoration(
+              border: Border.all(color: CommonColor.greenColor),
+              borderRadius: BorderRadius.circular(8),
+              image: DecorationImage(
+                image: NetworkImage(
+                  'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${GetStorageServices.getUserImage()}',
+                  scale: 5,
+                ),
+                fit: BoxFit.cover,
+                onError: (error, stackTrace) {
+                  // Icon(
+                  //   color: Colors.grey,
+                  //   Icons.person,
+                  //   size: 20,
+                  // );
+
+                  Image.network(
+                      "https://en.wikipedia.org/wiki/Image#/media/File:Image_created_with_a_mobile_phone.png");
+                },
+              )),
         ),
       ],
     );

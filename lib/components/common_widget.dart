@@ -150,6 +150,14 @@ class CommonWidget {
     );
   }
 
+  static commonHalfButton(
+      {required VoidCallback onTap,
+      required String text,
+      Color color = blackButtonColor1E232C,
+      double radius = 8}) {
+    return;
+  }
+
   static getSnackBar(
       {required String title,
       required String message,
