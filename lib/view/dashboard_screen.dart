@@ -157,12 +157,12 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 UserDataResponseModel userResponse =
                     controller.userDataApiResponse.data;
                 LastData.clear();
-                List data = [
-                  '${userResponse.data!.water}',
-                  '${userResponse.data!.weight}',
-                  '${userResponse.data!.heartRate}',
-                  '${userResponse.data!.bmi}'
-                ];
+                // List data = [
+                //   '${userResponse.data!.water}',
+                //   '${userResponse.data!.weight}',
+                //   '${userResponse.data!.heartRate}',
+                //   '${userResponse.data!.bmi}'
+                // ];
                 int length = userResponse.data!.medicines!.length;
                 // print('length =============== > $length');
                 // print(
@@ -384,7 +384,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                   },
                                   name: overViewData[index]['name'],
                                   image: overViewData[index]['image'],
-                                  medGm: data[index],
+                                  medGm: '10',
+                                  // medGm: data[index],
                                   type: overViewData[index]['name_of_subject'],
                                   color: overViewData[index]['color'],
                                 );
@@ -458,9 +459,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                   ],
                 );
               } else {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
+                return HomeShimmer();
               }
             } catch (e) {
               return Center(

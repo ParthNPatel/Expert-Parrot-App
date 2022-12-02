@@ -252,13 +252,6 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                       GetStorageServices.setUserLoggedIn();
                       GetStorageServices.setBarrierToken(responseModel.token);
                       GetStorageServices.setUserName(responseModel.data!.name!);
-                      GetStorageServices.setUserHeight(
-                          responseModel.data!.height!);
-                      GetStorageServices.setUserWeight(
-                          responseModel.data!.weight!);
-                      GetStorageServices.setAge(responseModel.data!.age!);
-                      GetStorageServices.setUserImage(
-                          responseModel.data!.userImage!);
                       GetStorageServices.setUserProfileSet(
                           responseModel.data!.profileSet!);
                       print(

@@ -59,15 +59,15 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         "name": "test",
         "loginType": "mobile",
         "loginId": "${widget.logInId}",
-        // "water": userResponseModel.data!.water!,
-        // "weight": userResponseModel.data!.weight!,
-        // "height": userResponseModel.data!.height!,
-        // "age": userResponseModel.data!.age!,
-        // "heartRate": userResponseModel.data!.heartRate!,
-        // "bmi": userResponseModel.data!.bmi!,
         "fcm_token": "${GetStorageServices.getFcm()}",
         "userTime": "${DateTime.now()}"
       });
+      // "water": userResponseModel.data!.water!,
+      // "weight": userResponseModel.data!.weight!,
+      // "height": userResponseModel.data!.height!,
+      // "age": userResponseModel.data!.age!,
+      // "heartRate": userResponseModel.data!.heartRate!,
+      // "bmi": userResponseModel.data!.bmi!,
 
       if (logInViewModel.logInApiResponse.status.toString() ==
           Status.COMPLETE.toString()) {
@@ -96,10 +96,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             GetStorageServices.setUserLoggedIn();
             GetStorageServices.setBarrierToken(responseModel.token);
             GetStorageServices.setUserName(responseModel.data!.name!);
-            GetStorageServices.setUserHeight(responseModel.data!.height!);
-            GetStorageServices.setUserWeight(responseModel.data!.weight!);
-            GetStorageServices.setAge(responseModel.data!.age!);
-            GetStorageServices.setUserImage(responseModel.data!.userImage!);
             GetStorageServices.setUserProfileSet(
                 responseModel.data!.profileSet!);
             log('BARRIER TOKEN :- ${GetStorageServices.getBarrierToken()}');
