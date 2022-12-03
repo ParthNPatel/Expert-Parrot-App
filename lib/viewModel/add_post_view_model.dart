@@ -33,4 +33,20 @@ class AddPostViewModel extends GetxController {
     }
     update();
   }
+
+  Future<void> addPostWithoutImgViewModel({Map<String, dynamic>? model}) async {
+    _addPostApiResponse = ApiResponse.loading(message: 'Loading');
+    update();
+    try {
+      AddPostResponseModel response =
+          await AddPostRepo.addPostWithoutImgRepo(model: model!);
+      print("LogInResponseModel=response==>$response");
+
+      _addPostApiResponse = ApiResponse.complete(response);
+    } catch (e) {
+      print("LogInResponseModel=e==>$e");
+      _addPostApiResponse = ApiResponse.error(message: 'error');
+    }
+    update();
+  }
 }

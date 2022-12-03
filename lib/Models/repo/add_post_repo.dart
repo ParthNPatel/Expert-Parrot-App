@@ -14,4 +14,14 @@ class AddPostRepo extends BaseService {
         AddPostResponseModel.fromJson(response);
     return addPostResponseModel;
   }
+
+  static Future<AddPostResponseModel> addPostWithoutImgRepo(
+      {required Map<String, dynamic> model}) async {
+    var response = await APIService().getResponse(
+        url: APIConst.getPosts, apitype: APIType.aPost, body: model);
+    print('AddPostWithoutImg response===>>>  $response');
+    AddPostResponseModel addPostResponseModel =
+        AddPostResponseModel.fromJson(response);
+    return addPostResponseModel;
+  }
 }

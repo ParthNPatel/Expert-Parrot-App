@@ -1,5 +1,6 @@
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
+import 'package:expert_parrot_app/view/demo/get_req_user_screen.dart';
 import 'package:expert_parrot_app/view/depandent_screen.dart';
 import 'package:expert_parrot_app/view/edit_profile_screen.dart';
 import 'package:expert_parrot_app/view/faq_screen.dart';
@@ -632,9 +633,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               text: 'Achievement',
             ),
             CommonListTile(
-              onTap: () {},
+              onTap: () {
+                Get.to(() => RequestUserScreen());
+              },
               image: 'assets/svg/activity.svg',
-              text: 'Activity History',
+              text: 'My Requests',
             ),
             CommonListTile(
               onTap: () {
