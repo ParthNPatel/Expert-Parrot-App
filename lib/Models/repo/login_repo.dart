@@ -17,6 +17,7 @@ class LoginRepo extends BaseService {
       required String loginType,
       bool isNavigator = false}) async {
     try {
+      progress.show();
       var response = await APIService().getResponse(
           url: APIConst.loginUrl, apitype: APIType.aPost, body: model);
       print('Login response===>>>  $response');

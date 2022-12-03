@@ -1,4 +1,6 @@
 import 'dart:io';
+
+import 'package:expert_parrot_app/Models/repo/edit_profile_repo.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
@@ -8,11 +10,6 @@ import 'package:flutter_progress_hud/flutter_progress_hud.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sizer/sizer.dart';
-import '../Models/apis/api_response.dart';
-import '../Models/repo/login_repo.dart';
-import '../Models/responseModel/edit_profile_res_model.dart';
-import '../viewModel/edit_profile_view_model.dart';
-import 'bottom_nav_screen.dart';
 
 class SetProfileScreen extends StatefulWidget {
   final String? loginType;
@@ -33,7 +30,6 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
   TextEditingController? heightController = TextEditingController();
   TextEditingController? weightController = TextEditingController();
   TextEditingController? ageController = TextEditingController();
-  EditProfileViewModel editProfileViewModel = Get.put(EditProfileViewModel());
 
   String? liveImageURL;
 
@@ -233,45 +229,20 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                         if (nameController!.text.isNotEmpty &&
                             weightController!.text.isNotEmpty &&
                             heightController!.text.isNotEmpty &&
-                            ageController!.text.isNotEmpty) {
+                            ageController!.text.isNotEmpty &&
+                            image != null) {
                           try {
                             var _req = {
                               "name": "${nameController!.text.toString()}",
                               "height":
                                   "${heightController!.text.toString().trim()}",
-                              "userImage": image != null && image != ""
-                                  ? "${image!.path}"
-                                  : "${GetStorageServices.getLocalImage()}",
+                              "userImage": "${image!.path}",
                               "age": "${ageController!.text.toString().trim()}",
                               "weight":
                                   "${weightController!.text.toString().trim()}"
                             };
 
-                            await editProfileViewModel.editProfileViewModel(
-                                model: _req);
-                            if (editProfileViewModel
-                                    .editProfileApiResponse.status ==
-                                Status.COMPLETE) {
-                              EditProfileResponseModel _res =
-                                  editProfileViewModel
-                                      .editProfileApiResponse.data;
-                              if (_res.flag == true) {
-                                CommonWidget.updateUserDetails(
-                                    age: _res.data!.age.toString(),
-                                    weight: _res.data!.weight.toString(),
-                                    userImage: _res.data!.userImage.toString(),
-                                    name: _res.data!.name.toString(),
-                                    height: _res.data!.height.toString());
-                              }
-                              Get.offAll(BottomNavScreen());
-                            } else {
-                              CommonWidget.getSnackBar(
-                                message: '',
-                                title: 'Something went wrong',
-                                duration: 2,
-                                color: Colors.red,
-                              );
-                            }
+                            await EditProfileRepo.editProfileRepo(model: _req);
                           } catch (e) {
                             progress!.dismiss();
 

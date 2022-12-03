@@ -600,8 +600,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                   _weightController.text);
 
                               Navigator.of(context).pop(true);
-                                  _weightController.text.toString());
-
                             } else {
                               CommonWidget.getSnackBar(
                                   color: Colors.red,

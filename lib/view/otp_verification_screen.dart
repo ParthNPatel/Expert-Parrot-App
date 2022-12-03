@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
@@ -44,32 +46,42 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           await PhoneAuthProvider.credential(
               verificationId: widget.verificationId!,
               smsCode: verificationCode!);
-      if (phoneAuthProvider == null) {
-        Get.snackbar('Empty', 'Enter OTP');
-        progress.dismiss();
-      }
-      // if (firebaseAuth.currentUser!.uid.isNotEmpty) {
-      try {
-        await LoginRepo.loginUserRepo(
-            model: {
-              "loginType": "mobile",
-              "loginId": "${widget.logInId}",
-              "fcm_token": "${GetStorageServices.getFcm()}",
-              "userTime": "${DateTime.now()}"
-            },
-            loginType: "mobile",
-            logInId: "${widget.logInId}",
-            progress: progress);
-      } catch (e) {
-        progress.dismiss();
 
+      firebaseAuth.signInWithCredential(phoneAuthProvider).catchError((e) {
+        progress.dismiss();
         CommonWidget.getSnackBar(
           message: '',
-          title: 'Something went wrong',
+          title: 'Enter valid Otp',
           duration: 2,
           color: Colors.red,
         );
-      }
+      }).then((value) async {
+        if (phoneAuthProvider.verificationId!.isEmpty) {
+          log("Enter Valid OTP");
+        } else {
+          try {
+            await LoginRepo.loginUserRepo(
+                model: {
+                  "loginType": "mobile",
+                  "loginId": "${widget.logInId}",
+                  "fcm_token": "${GetStorageServices.getFcm()}",
+                  "userTime": "${DateTime.now()}"
+                },
+                loginType: "mobile",
+                logInId: "${widget.logInId}",
+                progress: progress);
+          } catch (e) {
+            progress.dismiss();
+
+            CommonWidget.getSnackBar(
+              message: '',
+              title: 'Something went wrong',
+              duration: 2,
+              color: Colors.red,
+            );
+          }
+        }
+      });
     } catch (e) {
       progress.dismiss();
       CommonWidget.getSnackBar(
