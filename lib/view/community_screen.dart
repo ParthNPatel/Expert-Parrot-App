@@ -93,7 +93,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                             controller.getPostApiResponse.data;
 
                         print(
-                            '================== > ${response.data![0].title}');
+                            'title ================== > ${response.data![0].title}');
 
                         return ListView.separated(
                           shrinkWrap: true,
@@ -202,9 +202,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                       children: [
                                         Row(
                                           children: [
-                                            /*GetStorageServices.getUserImage()
-                                                    .toString()
-                                                    .isNotEmpty
+                                            response.data![index].userId!
+                                                        .userImage !=
+                                                    null
                                                 ? Container(
                                                     height: 50.sp,
                                                     width: 50.sp,
@@ -215,7 +215,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                                                 Colors.black),
                                                         image: DecorationImage(
                                                           image: NetworkImage(
-                                                              'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${GetStorageServices.getUserImage()}'),
+                                                              'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${response.data![index].userId!.userImage}'),
                                                           onError: (error,
                                                                   stackTrace) =>
                                                               Icon(
@@ -225,22 +225,22 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                                           ),
                                                         )),
                                                   )
-                                                :*/
-                                            Container(
-                                              height: 50.sp,
-                                              width: 50.sp,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: Colors.grey.shade300,
-                                                border: Border.all(
-                                                    color: Colors.black),
-                                              ),
-                                              child: Icon(
-                                                color: Colors.grey,
-                                                Icons.person,
-                                                size: 35,
-                                              ),
-                                            ),
+                                                : Container(
+                                                    height: 50.sp,
+                                                    width: 50.sp,
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color:
+                                                          Colors.grey.shade300,
+                                                      border: Border.all(
+                                                          color: Colors.black),
+                                                    ),
+                                                    child: Icon(
+                                                      color: Colors.grey,
+                                                      Icons.person,
+                                                      size: 35,
+                                                    ),
+                                                  ),
                                             SizedBox(
                                               width: 10,
                                             ),
@@ -249,7 +249,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 CommonText.textBoldWight500(
-                                                    text: "Adam LR",
+                                                    text:
+                                                        "${response.data![index].userId!.name.toString().capitalizeFirst}",
                                                     fontSize: 12.sp),
                                                 CommonText.textBoldWight400(
                                                     text: "QR, Canada",
@@ -753,8 +754,14 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
                                       print('================= > $_req');
 
-                                      await controller.addPostViewModel(
-                                          model: _req);
+                                      if (controller.image != null) {
+                                        await controller.addPostViewModel(
+                                            model: _req);
+                                      } else {
+                                        await controller
+                                            .addPostWithoutImgViewModel(
+                                                model: _req);
+                                      }
 
                                       if (controller
                                               .addPostApiResponse.status ==
