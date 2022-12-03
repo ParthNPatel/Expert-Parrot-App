@@ -9,7 +9,8 @@ class EditProfileViewModel extends GetxController {
 
   ApiResponse get editProfileApiResponse => _editProfileApiResponse;
 
-  Future<void> editProfileViewModel({Map<String, dynamic>? model}) async {
+  Future<void> editProfileViewModel(
+      {required Map<String, dynamic> model}) async {
     _editProfileApiResponse = ApiResponse.loading(message: 'Loading');
     update();
     try {

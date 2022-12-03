@@ -240,16 +240,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
             InkWell(
               onTap: () async {
-                print('Enter The Screen');
-
-                // GetStorageServices.setLocalImage(
-                //     GetStorageServices.getLocalImage());
-
                 var _req;
                 if (nameController!.text.isNotEmpty &&
                     heightController!.text.isNotEmpty &&
                     weightController!.text.isNotEmpty &&
                     ageController!.text.isNotEmpty) {
+                  print('Enter The Screen');
+
                   if (image != null) {
                     _req = {
                       "name": "${nameController!.text.toString()}",
@@ -266,6 +263,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       "weight": weightController!.text.toString().trim(),
                     };
                   }
+                  print('eeeeee    ${_req}');
                   await controller.editProfileViewModel(model: _req);
 
                   if (controller.editProfileApiResponse.status ==

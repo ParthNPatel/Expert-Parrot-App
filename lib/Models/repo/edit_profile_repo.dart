@@ -11,9 +11,7 @@ class EditProfileRepo extends BaseService {
     print('getBarrierToken   ${GetStorageServices.getBarrierToken()}');
 
     var response = await APIService().getPutResponse(
-        url: APIConst.userData,
-        apitype: APIType.aPut,
-        body: {"name": "mm", "height": "70", "age": "22", "weight": "33"});
+        url: APIConst.userData, apitype: APIType.aPut, body: model);
     print('EditProfile response===>>>  $response');
     EditProfileResponseModel editProfileResponseModel =
         EditProfileResponseModel.fromJson(response);
