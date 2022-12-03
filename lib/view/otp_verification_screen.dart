@@ -55,8 +55,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         progress.dismiss();
       }
       // if (firebaseAuth.currentUser!.uid.isNotEmpty) {
+
+      print('widget.logInId ======================== > ${widget.logInId}');
+
       await logInViewModel.logInViewModel(model: {
-        "name": "test",
+        // "name": "test",
         "loginType": "mobile",
         "loginId": "${widget.logInId}",
         "fcm_token": "${GetStorageServices.getFcm()}",
@@ -76,6 +79,18 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
         print(
             'logInResponseModel.data!.profileSet! =============== > ${logInResponseModel.data!.profileSet!}');
+        print(
+            'logInResponseModel.data!.name! =============== > ${logInResponseModel.data!.name!}');
+        print(
+            'logInResponseModel.data!.age! =============== > ${logInResponseModel.data!.age!}');
+        print(
+            'logInResponseModel.data!.weight! =============== > ${logInResponseModel.data!.weight!}');
+        print(
+            'logInResponseModel.data!.height! =============== > ${logInResponseModel.data!.height!}');
+        print(
+            'logInResponseModel.data!.userImage! =============== > ${logInResponseModel.data!.userImage!}');
+        print(
+            'logInResponseModel.data!.loginType! =============== > ${logInResponseModel.data!.loginType}');
 
         if (!logInResponseModel.data!.profileSet!) {
           Get.offAll(() => SetProfileScreen(

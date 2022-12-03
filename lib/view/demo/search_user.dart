@@ -4,7 +4,6 @@ import 'package:expert_parrot_app/Models/responseModel/gte_search_user_res_model
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
-import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:expert_parrot_app/viewModel/get_search_user_view_model.dart';
 import 'package:expert_parrot_app/viewModel/send_request_view_model.dart';
@@ -12,8 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-
-import 'get_req_user_screen.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -71,14 +68,15 @@ class _SearchPageState extends State<SearchPage> {
         body: Column(
           children: [
             CommonWidget.commonSizedBox(height: 10),
-            CommonWidget.header(
-                backOnTap: () {
-                  Get.back();
-                },
-                addOnTap: () {
-                  Get.to(() => RequestUserScreen());
-                },
-                titleText: TextConst.dependentSearch),
+            // CommonWidget.header(
+            //     backOnTap: () {
+            //       Get.back();
+            //     },
+            //     addOnTap: () {
+            //       Get.to(() => RequestUserScreen());
+            //     },
+            //     titleText: TextConst.dependentSearch),
+            header(),
             CommonWidget.commonSizedBox(height: 13),
             DottedLine(
               lineLength: double.infinity,
@@ -554,6 +552,25 @@ class _SearchPageState extends State<SearchPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Row header() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        CommonWidget.commonBackButton(
+          onTap: () {
+            Get.back();
+          },
+        ),
+        Spacer(),
+        CommonText.textBoldWight500(text: "Dependent Search", fontSize: 18.sp),
+        SizedBox(
+          width: 11.w,
+        ),
+        Spacer(),
+      ],
     );
   }
 }

@@ -17,12 +17,12 @@ class GetPostResponseModel {
   });
 
   bool? flag;
-  List<AllPost>? data;
+  List<Datum>? data;
 
   factory GetPostResponseModel.fromJson(Map<String, dynamic> json) =>
       GetPostResponseModel(
         flag: json["flag"],
-        data: List<AllPost>.from(json["data"].map((x) => AllPost.fromJson(x))),
+        data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -31,8 +31,8 @@ class GetPostResponseModel {
       };
 }
 
-class AllPost {
-  AllPost({
+class Datum {
+  Datum({
     this.id,
     this.title,
     this.description,
@@ -50,20 +50,20 @@ class AllPost {
   String? description;
   String? image;
   int? likes;
-  String? userId;
-  List<dynamic>? comments;
+  UserId? userId;
+  List<String>? comments;
   DateTime? createdAt;
   DateTime? updatedAt;
   bool? isLiked;
 
-  factory AllPost.fromJson(Map<String, dynamic> json) => AllPost(
+  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
         id: json["_id"],
         title: json["title"],
         description: json["description"],
         image: json["image"],
         likes: json["likes"],
-        userId: json["userId"],
-        comments: List<dynamic>.from(json["comments"].map((x) => x)),
+        userId: UserId.fromJson(json["userId"]),
+        comments: List<String>.from(json["comments"].map((x) => x)),
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
         isLiked: json["isLiked"],
@@ -75,10 +75,30 @@ class AllPost {
         "description": description,
         "image": image,
         "likes": likes,
-        "userId": userId,
+        "userId": userId!.toJson(),
         "comments": List<dynamic>.from(comments!.map((x) => x)),
         "createdAt": createdAt!.toIso8601String(),
         "updatedAt": updatedAt!.toIso8601String(),
         "isLiked": isLiked,
+      };
+}
+
+class UserId {
+  UserId({
+    this.name,
+    this.userImage,
+  });
+
+  String? name;
+  String? userImage;
+
+  factory UserId.fromJson(Map<String, dynamic> json) => UserId(
+        name: json["name"],
+        userImage: json["userImage"] == null ? null : json["userImage"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "name": name,
+        "userImage": userImage == null ? null : userImage,
       };
 }
