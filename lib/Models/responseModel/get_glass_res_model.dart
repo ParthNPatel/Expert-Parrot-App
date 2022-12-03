@@ -17,23 +17,54 @@ class GetGlassResponseModel {
   });
 
   bool? flag;
-  List<GetGlassResponseModelDatum>? data;
+  Data? data;
 
   factory GetGlassResponseModel.fromJson(Map<String, dynamic> json) =>
       GetGlassResponseModel(
         flag: json["flag"],
-        data: List<GetGlassResponseModelDatum>.from(
-            json["data"].map((x) => GetGlassResponseModelDatum.fromJson(x))),
+        data: Data.fromJson(json["data"]),
       );
 
   Map<String, dynamic> toJson() => {
         "flag": flag,
-        "data": List<dynamic>.from(data!.map((x) => x.toJson())),
+        "data": data!?.toJson(),
       };
 }
 
-class GetGlassResponseModelDatum {
-  GetGlassResponseModelDatum({
+class Data {
+  Data({
+    this.docs,
+    this.total,
+    this.limit,
+    this.page,
+    this.pages,
+  });
+
+  List<Doc>? docs;
+  int? total;
+  int? limit;
+  int? page;
+  int? pages;
+
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
+        docs: List<Doc>.from(json["docs"].map((x) => Doc.fromJson(x))),
+        total: json["total"],
+        limit: json["limit"],
+        page: json["page"],
+        pages: json["pages"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "docs": List<dynamic>.from(docs!.map((x) => x.toJson())),
+        "total": total,
+        "limit": limit,
+        "page": page,
+        "pages": pages,
+      };
+}
+
+class Doc {
+  Doc({
     this.id,
     this.userId,
     this.createdAt,
@@ -45,17 +76,15 @@ class GetGlassResponseModelDatum {
   String? id;
   String? userId;
   DateTime? createdAt;
-  List<DatumDatum>? data;
+  List<Datum>? data;
   DateTime? date;
   DateTime? updatedAt;
 
-  factory GetGlassResponseModelDatum.fromJson(Map<String, dynamic> json) =>
-      GetGlassResponseModelDatum(
+  factory Doc.fromJson(Map<String, dynamic> json) => Doc(
         id: json["_id"],
         userId: json["userId"],
         createdAt: DateTime.parse(json["createdAt"]),
-        data: List<DatumDatum>.from(
-            json["data"].map((x) => DatumDatum.fromJson(x))),
+        data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
         date: DateTime.parse(json["date"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
       );
@@ -70,8 +99,8 @@ class GetGlassResponseModelDatum {
       };
 }
 
-class DatumDatum {
-  DatumDatum({
+class Datum {
+  Datum({
     this.type,
     this.quantity,
     this.id,
@@ -81,7 +110,7 @@ class DatumDatum {
   int? quantity;
   String? id;
 
-  factory DatumDatum.fromJson(Map<String, dynamic> json) => DatumDatum(
+  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
         type: json["type"],
         quantity: json["quantity"],
         id: json["_id"],
