@@ -40,6 +40,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   void initState() {
+    print('GetStorageServices.getAge()  ${GetStorageServices.getAge()}');
+    print(
+        'GetStorageServices.getUserImage()  ${GetStorageServices.getUserImage()}');
+    print(
+        'GetStorageServices.getUserHeight()  ${GetStorageServices.getUserHeight()}');
+    print(
+        'GetStorageServices.getUserWeight()  ${GetStorageServices.getUserWeight()}');
     super.initState();
     nameController =
         TextEditingController(text: GetStorageServices.getUserName());
@@ -238,51 +245,55 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 // GetStorageServices.setLocalImage(
                 //     GetStorageServices.getLocalImage());
 
-                var _req = {
-                  "name": nameController!.text.isNotEmpty
-                      ? "${nameController!.text}"
-                      : "0",
-                  "height": heightController!.text.isNotEmpty
-                      ? "${heightController!.text.trim()}"
-                      : "0",
-                  "userImage": image != null && image != ""
-                      ? "${image!.path}"
-                      : "${GetStorageServices.getLocalImage()}",
-                  "age": ageController!.text.isNotEmpty
-                      ? "${ageController!.text.trim()}"
-                      : "0",
-                  "weight": weightController!.text.isNotEmpty
-                      ? "${weightController!.text.trim()}"
-                      : "0",
-                };
+                var _req;
+                if (nameController!.text.isNotEmpty &&
+                    heightController!.text.isNotEmpty &&
+                    weightController!.text.isNotEmpty &&
+                    ageController!.text.isNotEmpty) {
+                  if (image != null) {
+                    _req = {
+                      "name": "${nameController!.text.toString()}",
+                      "height": "${heightController!.text.toString().trim()}",
+                      "userImage": "${image!.path}",
+                      "age": "${ageController!.text.toString().trim()}",
+                      "weight": "${weightController!.text.toString().trim()}",
+                    };
+                  } else {
+                    _req = {
+                      "name": nameController!.text.toString(),
+                      "height": heightController!.text.toString().trim(),
+                      "age": ageController!.text.toString().trim(),
+                      "weight": weightController!.text.toString().trim(),
+                    };
+                  }
+                  await controller.editProfileViewModel(model: _req);
 
-                await controller.editProfileViewModel(model: _req);
+                  if (controller.editProfileApiResponse.status ==
+                      Status.COMPLETE) {
+                    EditProfileResponseModel response =
+                        controller.editProfileApiResponse.data;
 
-                if (controller.editProfileApiResponse.status ==
-                    Status.COMPLETE) {
-                  EditProfileResponseModel response =
-                      controller.editProfileApiResponse.data;
+                    GetStorageServices.setUserName(response.data!.name!);
+                    GetStorageServices.setUserHeight(
+                        response.data!.height!.toString());
+                    GetStorageServices.setUserWeight(
+                        response.data!.weight!.toString());
+                    GetStorageServices.setAge(response.data!.age!.toString());
+                    GetStorageServices.setUserImage(response.data!.userImage!);
 
-                  GetStorageServices.setUserName(response.data!.name!);
-                  GetStorageServices.setUserHeight(response.data!.height!);
-                  GetStorageServices.setUserWeight(response.data!.weight!);
-                  GetStorageServices.setAge(response.data!.age!);
-                  GetStorageServices.setUserImage(response.data!.userImage!);
+                    print(
+                        '=================== > ${GetStorageServices.getUserImage()}');
 
-                  print(
-                      '=================== > ${GetStorageServices.getUserImage()}');
-
+                    CommonWidget.getSnackBar(
+                      message: "Profile edited successfully",
+                      title: 'Success',
+                      duration: 2,
+                      color: CommonColor.greenColor,
+                    );
+                  }
+                } else {
                   CommonWidget.getSnackBar(
-                    message: "Profile edited successfully",
-                    title: 'Success',
-                    duration: 2,
-                    color: CommonColor.greenColor,
-                  );
-                }
-
-                if (controller.editProfileApiResponse.status == Status.ERROR) {
-                  CommonWidget.getSnackBar(
-                    message: 'Something went wrong!',
+                    message: "Please enter all detail",
                     title: 'Failed',
                     duration: 2,
                     color: Colors.red,
@@ -350,8 +361,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ? ClipRRect(
               borderRadius: BorderRadius.circular(500),
               child: Image.network(
-                'https://health-app-test.s3.ap-south-1.amazonaws.com/user/' +
-                    '${GetStorageServices.getUserImage()}',
+                'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${GetStorageServices.getUserImage()}',
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => Icon(
                   color: Colors.grey,

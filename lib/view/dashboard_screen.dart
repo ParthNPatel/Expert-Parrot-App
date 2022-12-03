@@ -583,9 +583,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                   bmi.toStringAsFixed(1));
 
                               GetStorageServices.setUserHeight(
-                                  int.parse(_heightController.text));
+                                  _heightController.text.toString());
                               GetStorageServices.setUserWeight(
-                                  int.parse(_weightController.text));
+                                  _weightController.text.toString());
                               Get.back();
                             } else {
                               CommonWidget.getSnackBar(
