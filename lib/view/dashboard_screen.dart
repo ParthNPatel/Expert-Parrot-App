@@ -144,6 +144,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   @override
   Widget build(BuildContext context) {
     log.log('BARRIER TOKEN :- ${GetStorageServices.getBarrierToken()}');
+    log.log('BARRIER TOKEN :- ${GetStorageServices.getUserProfileSet()}');
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: CommonWidget.commonBackGround(
@@ -157,12 +158,12 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 UserDataResponseModel userResponse =
                     controller.userDataApiResponse.data;
                 LastData.clear();
-                List data = [
-                  '${userResponse.data!.water}',
-                  '${userResponse.data!.weight}',
-                  '${userResponse.data!.heartRate}',
-                  '${userResponse.data!.bmi}'
-                ];
+                // List data = [
+                //   '${userResponse.data!.water}',
+                //   '${userResponse.data!.weight}',
+                //   '${userResponse.data!.heartRate}',
+                //   '${userResponse.data!.bmi}'
+                // ];
                 int length = userResponse.data!.medicines!.length;
                 // print('length =============== > $length');
                 // print(
@@ -370,7 +371,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                           null) {
                                         Get.dialog(
                                           bmiDialog(),
-                                        );
+                                        ).whenComplete(() => setState(() {}));
                                       } else {
                                         Get.dialog(
                                           await enterHeightWwightDialog(),
@@ -384,7 +385,20 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                   },
                                   name: overViewData[index]['name'],
                                   image: overViewData[index]['image'],
-                                  medGm: data[index],
+                                  medGm: index == 0
+                                      ? GetStorageServices.getUserWater() ==
+                                              null
+                                          ? 'Not set'
+                                          : '${GetStorageServices.getUserWater()}'
+                                      : index == 1
+                                          ? '${GetStorageServices.getUserWeight()}'
+                                          : index == 2
+                                              ? '10'
+                                              : GetStorageServices
+                                                          .getUserBMI() ==
+                                                      null
+                                                  ? 'Not set'
+                                                  : '${GetStorageServices.getUserBMI()}',
                                   type: overViewData[index]['name_of_subject'],
                                   color: overViewData[index]['color'],
                                 );
@@ -458,9 +472,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                   ],
                 );
               } else {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
+                return HomeShimmer();
               }
             } catch (e) {
               return Center(
@@ -585,8 +597,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               GetStorageServices.setUserHeight(
                                   _heightController.text.toString());
                               GetStorageServices.setUserWeight(
+                                  _weightController.text);
+
+                              Navigator.of(context).pop(true);
                                   _weightController.text.toString());
-                              Get.back();
+
                             } else {
                               CommonWidget.getSnackBar(
                                   color: Colors.red,
@@ -1812,11 +1827,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             ),
           ),
           Positioned(
-              top: 45,
-              child: CommonText.textBoldWight500(
-                  text: text,
-                  fontSize: 9.sp,
-                  color: CommonColor.blackColor616161.withOpacity(0.7)))
+            top: 45,
+            child: CommonText.textBoldWight500(
+              text: text,
+              fontSize: 9.sp,
+              color: CommonColor.blackColor616161.withOpacity(
+                0.7,
+              ),
+            ),
+          )
         ],
       ),
     );
@@ -2046,7 +2065,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
               borderRadius: BorderRadius.circular(8),
               image: DecorationImage(
                 image: NetworkImage(
-                  'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${GetStorageServices.getUserImage()}',
+                  'https://health-app-test.s3.ap-south-1.amazonaws.com/user/' +
+                      '${GetStorageServices.getUserImage()}',
                   scale: 5,
                 ),
                 fit: BoxFit.cover,

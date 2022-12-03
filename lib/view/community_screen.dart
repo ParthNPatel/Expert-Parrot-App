@@ -573,7 +573,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
             borderRadius: BorderRadius.circular(20),
           ),
           child: Container(
-            width: 300.sp,
+            padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(20),
@@ -621,25 +621,22 @@ class _CommunityScreenState extends State<CommunityScreen> {
                         SizedBox(
                           height: 10,
                         ),
-                        Container(
-                            height: 150.sp,
-                            width: 100.w,
-                            decoration: BoxDecoration(
-                                color: Colors.grey.withOpacity(0.5),
-                                borderRadius: BorderRadius.circular(18)),
-                            child: controller.image == null
-                                ? Icon(
-                                    Icons.person,
-                                    color: Colors.grey,
-                                    size: 100.sp,
-                                  )
-                                : ClipRRect(
-                                    borderRadius: BorderRadius.circular(18),
-                                    child: Image.file(
-                                      controller.image!,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )),
+                        controller.image == null
+                            ? SizedBox()
+                            : Container(
+                                height: 150.sp,
+                                width: 100.w,
+                                decoration: BoxDecoration(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    borderRadius: BorderRadius.circular(18)),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(18),
+                                  child: Image.file(
+                                    controller.image!,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
                         SizedBox(height: 20),
                         TextFormField(
                           controller: _queryTitleController,
