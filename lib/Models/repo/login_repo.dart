@@ -26,13 +26,13 @@ class LoginRepo extends BaseService {
       if (response['flag'] == true) {
         GetStorageServices.setBarrierToken('${response['token']}');
 
-        if (response['data']['profileSet'] == false) {
+        if (response['data']['profileSet'] == true) {
           var dataOfApi = response['data'];
           print('weight weightweight   ${response['weight']}');
           CommonWidget.setUserDetailsAtLogin(
               height: '${dataOfApi['height']}',
               age: '${dataOfApi['age']}',
-              token: '${dataOfApi['token']}',
+              token: '${response['token']}',
               userImage: '${dataOfApi['userImage']}',
               weight: '${dataOfApi['weight']}',
               isUserProfileSet: true,
