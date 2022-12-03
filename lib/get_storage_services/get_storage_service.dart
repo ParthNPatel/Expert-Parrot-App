@@ -16,6 +16,7 @@ class GetStorageServices {
   static setBarrierToken(token) async {
     await getStorage.write('barrierToken', token);
   }
+
   static setUserWater(int height) {
     getStorage.write('water', height);
   }
@@ -23,6 +24,7 @@ class GetStorageServices {
   static getUserWater() {
     return getStorage.read('water');
   }
+
   static getBarrierToken() {
     return getStorage.read('barrierToken');
   }
