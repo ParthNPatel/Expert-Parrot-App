@@ -252,6 +252,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                       GetStorageServices.setUserLoggedIn();
                       GetStorageServices.setBarrierToken(responseModel.token);
                       GetStorageServices.setUserName(responseModel.data!.name!);
+                      GetStorageServices.setUserWeight(weightController!.text);
                       GetStorageServices.setUserProfileSet(
                           responseModel.data!.profileSet!);
                       print(
@@ -327,6 +328,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
     final XFile? pickImage = await _picker.pickImage(source: imageSource);
     image = File(pickImage!.path);
     print('Image ================ > ${image}');
+    print('Image ================ > ${image.toString().split('/').last}');
 
     // image == null
     //     ? GetStorageServices.setLocalImage(GetStorageServices.getLocalImage())

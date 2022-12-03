@@ -81,14 +81,14 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             'logInResponseModel.data!.profileSet! =============== > ${logInResponseModel.data!.profileSet!}');
         print(
             'logInResponseModel.data!.name! =============== > ${logInResponseModel.data!.name!}');
-        print(
-            'logInResponseModel.data!.age! =============== > ${logInResponseModel.data!.age!}');
-        print(
-            'logInResponseModel.data!.weight! =============== > ${logInResponseModel.data!.weight!}');
-        print(
-            'logInResponseModel.data!.height! =============== > ${logInResponseModel.data!.height!}');
-        print(
-            'logInResponseModel.data!.userImage! =============== > ${logInResponseModel.data!.userImage!}');
+        // print(
+        //     'logInResponseModel.data!.age! =============== > ${logInResponseModel.data!.age!}');
+        // print(
+        //     'logInResponseModel.data!.weight! =============== > ${logInResponseModel.data!.weight!}');
+        // print(
+        //     'logInResponseModel.data!.height! =============== > ${logInResponseModel.data!.height!}');
+        // print(
+        //     'logInResponseModel.data!.userImage! =============== > ${logInResponseModel.data!.userImage!}');
         print(
             'logInResponseModel.data!.loginType! =============== > ${logInResponseModel.data!.loginType}');
 

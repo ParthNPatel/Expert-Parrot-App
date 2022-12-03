@@ -265,7 +265,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                   GetStorageServices.setUserName(response.data!.name!);
                   GetStorageServices.setUserHeight(response.data!.height!);
-                  GetStorageServices.setUserWeight(response.data!.weight!);
+                  GetStorageServices.setUserWeight(
+                      response.data!.weight.toString());
                   GetStorageServices.setAge(response.data!.age!);
                   GetStorageServices.setUserImage(response.data!.userImage!);
 

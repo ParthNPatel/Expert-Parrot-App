@@ -13,6 +13,14 @@ class GetStorageServices {
     return getStorage.read('height');
   }
 
+  static setUserWater(int height) {
+    getStorage.write('water', height);
+  }
+
+  static getUserWater() {
+    return getStorage.read('water');
+  }
+
   static setBarrierToken(token) {
     getStorage.write('barrierToken', token);
   }
@@ -29,7 +37,7 @@ class GetStorageServices {
     return getStorage.read('fcm');
   }
 
-  static setUserWeight(int weight) {
+  static setUserWeight(String weight) {
     getStorage.write('weight', weight);
   }
 

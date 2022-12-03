@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_video_res_model.dart';
 import 'package:expert_parrot_app/components/video_shimmer.dart';
@@ -216,6 +218,13 @@ class _VideoScreenState extends State<VideoScreen> {
                                           }
                                           getVideoViewModel.getVideoViewModel(
                                               isLoading: false);
+                                          if (getVideoViewModel
+                                                  .getVideoApiResponse.status ==
+                                              Status.COMPLETE) {
+                                            log('DONE');
+                                          } else {
+                                            log('Error');
+                                          }
                                         },
                                         child: response.data![index].isLiked ==
                                                 true
