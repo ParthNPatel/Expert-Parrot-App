@@ -32,7 +32,7 @@ class LoginRepo extends BaseService {
           CommonWidget.setUserDetailsAtLogin(
               height: '${dataOfApi['height']}',
               age: '${dataOfApi['age']}',
-              token: '${response['token']}',
+              token: '${dataOfApi['token']}',
               userImage: '${dataOfApi['userImage']}',
               weight: '${dataOfApi['weight']}',
               isUserProfileSet: true,
