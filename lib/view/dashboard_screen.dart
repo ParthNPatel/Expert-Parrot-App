@@ -144,7 +144,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   @override
   Widget build(BuildContext context) {
     log.log('BARRIER TOKEN :- ${GetStorageServices.getBarrierToken()}');
-    log.log('BARRIER TOKEN :- ${GetStorageServices.getUserProfileSet()}');
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: CommonWidget.commonBackGround(

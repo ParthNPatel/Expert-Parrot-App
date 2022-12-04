@@ -1,10 +1,14 @@
-import 'package:dotted_line/dotted_line.dart';
+import 'package:expert_parrot_app/Models/apis/api_response.dart';
+import 'package:expert_parrot_app/Models/responseModel/get_reminder_res_model.dart';
+import 'package:expert_parrot_app/components/reminder_shimmer.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
+import 'package:expert_parrot_app/viewModel/get_reminder_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+
 import '../components/common_widget.dart';
 import '../constant/color_const.dart';
 
@@ -99,6 +103,12 @@ class _ReminderScreenState extends State<ReminderScreen> {
     'Twice a day',
     'Thrice a day',
   ];
+  GetReminderViewModel getReminderViewModel = Get.put(GetReminderViewModel());
+  @override
+  void initState() {
+    getReminderViewModel.getReminderViewModel();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,52 +124,86 @@ class _ReminderScreenState extends State<ReminderScreen> {
             SizedBox(
               height: 23,
             ),
-            ListView.separated(
-              padding: EdgeInsets.symmetric(horizontal: 15),
-              shrinkWrap: true,
-              itemBuilder: (context, index) => Row(
-                children: [
-                  CircleAvatar(
-                    radius: 20.sp,
-                    backgroundColor: reminders[index]['color'],
-                    child: Image.asset(
-                      reminders[index]['image'],
-                      height: 25.sp,
-                      width: 25.sp,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CommonText.textBoldWight500(
-                          text: reminders[index]['title']),
-                      SizedBox(
-                        height: 5,
+            GetBuilder<GetReminderViewModel>(
+              builder: (controller) {
+                if (controller.getReminderApiResponse.status ==
+                    Status.LOADING) {
+                  return ReminderShimmer();
+                }
+                if (controller.getReminderApiResponse.status ==
+                    Status.COMPLETE) {
+                  GetReminderResponseModel responseModel =
+                      controller.getReminderApiResponse.data;
+                  return Expanded(
+                    child: ListView.separated(
+                      physics: BouncingScrollPhysics(),
+                      itemCount: responseModel.data!.docs!.length,
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      itemBuilder: (context, index) {
+                        dynamic time1 =
+                            responseModel.data!.docs![index].updatedAt;
+                        DateTime myDateTime = time1!;
+
+                        var time2 = DateTime.now();
+                        var time3 = time2.difference(myDateTime).inSeconds > 60
+                            ? time2.difference(myDateTime).inMinutes > 60
+                                ? time2.difference(myDateTime).inHours > 24
+                                    ? 'About ${time2.difference(myDateTime).inDays} days ago'
+                                    : 'About ${time2.difference(myDateTime).inHours} hour ago'
+                                : 'About ${time2.difference(myDateTime).inMinutes} minute ago'
+                            : 'About ${time2.difference(myDateTime).inSeconds} seconds ago';
+                        return Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 20.sp,
+                              backgroundColor: reminders[0]['color'],
+                              child: Image.asset(
+                                reminders[0]['image'],
+                                height: 25.sp,
+                                width: 25.sp,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CommonText.textBoldWight500(
+                                    text: responseModel
+                                        .data!.docs![index].title!),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                CommonText.textBoldWight400(
+                                    text: time3,
+                                    fontSize: 9.sp,
+                                    color: Color(0xff7B6F72)),
+                              ],
+                            ),
+                            Spacer(),
+                            Icon(
+                              Icons.more_vert,
+                              color: Color(0xffada4a5),
+                              size: 15.sp,
+                            )
+                          ],
+                        );
+                      },
+                      separatorBuilder: (context, index) => Divider(
+                        height: 30,
+                        thickness: 1.3,
+                        color: Color(0xffDDDADA),
                       ),
-                      CommonText.textBoldWight400(
-                          text: reminders[index]['time'],
-                          fontSize: 9.sp,
-                          color: Color(0xff7B6F72)),
-                    ],
-                  ),
-                  Spacer(),
-                  Icon(
-                    Icons.more_vert,
-                    color: Color(0xffada4a5),
-                    size: 15.sp,
-                  )
-                ],
-              ),
-              separatorBuilder: (context, index) => Divider(
-                height: 30,
-                thickness: 1.3,
-                color: Color(0xffDDDADA),
-              ),
-              itemCount: reminders.length,
-            )
+                    ),
+                  );
+                }
+                return Center(
+                  child:
+                      CommonText.textBoldWight500(text: 'Something went wrong'),
+                );
+              },
+            ),
           ],
         ),
       ),
