@@ -1,11 +1,11 @@
 import 'package:expert_parrot_app/constant/api_const.dart';
+import 'package:expert_parrot_app/view/set_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../components/common_widget.dart';
 import '../../get_storage_services/get_storage_service.dart';
 import '../../view/bottom_nav_screen.dart';
-import '../../view/set_profile_screen.dart';
 import '../services/api_services.dart';
 import '../services/base_service.dart';
 
