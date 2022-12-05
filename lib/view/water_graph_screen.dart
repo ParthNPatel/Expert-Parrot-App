@@ -252,7 +252,7 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 child: CommonText.textBoldWight500(
-                    text: times!,
+                    text: times,
                     // text: resp.data![index].updatedAt.weekday,
 
                     fontSize: 12.sp,

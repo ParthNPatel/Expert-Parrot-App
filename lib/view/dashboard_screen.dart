@@ -36,8 +36,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   TextEditingController _emailOrMobileController = TextEditingController();
 
   TextEditingController _heightController = TextEditingController();
+  TextEditingController _kmController = TextEditingController();
+  TextEditingController _heartRateController = TextEditingController();
   TextEditingController _weightController = TextEditingController();
-
+  String? km, min, kal, step;
   String? verificationCode;
   DateTime dayOf = DateTime.now();
   List overViewData = [
@@ -407,6 +409,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                       }
                                     } else if (index == 0) {
                                       Get.to(() => WaterGraphScreen());
+                                    } else if (index == 2) {
+                                      Get.dialog(await enterHeartRateDialog())
+                                          .whenComplete(() => setState(() {}));
                                     }
                                   },
                                   name: overViewData[index]['name'],
@@ -419,7 +424,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                       : index == 1
                                           ? '${GetStorageServices.getUserWeight()}'
                                           : index == 2
-                                              ? '10'
+                                              ? GetStorageServices
+                                                          .getUserHeartRate() ==
+                                                      null
+                                                  ? 'Not set'
+                                                  : '${GetStorageServices.getUserHeartRate()}'
                                               : GetStorageServices
                                                           .getUserBMI() ==
                                                       null
@@ -440,54 +449,78 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                             ),
                             Align(
                               alignment: Alignment.center,
-                              child: SizedBox(
-                                height: 320,
-                                width: 400,
-                                child: Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    Image.asset('assets/png/report_circle.png',
-                                        fit: BoxFit.contain),
-                                    Positioned(
-                                        top: 70,
-                                        child: Column(
-                                          children: [
-                                            Image.asset(
-                                              'assets/png/steps_icon.png',
-                                              scale: 4,
-                                            ),
-                                            CommonText.textBoldWight500(
-                                                text: '2508',
-                                                fontSize: 18.sp,
-                                                color: CommonColor
-                                                    .blackColor434343),
-                                          ],
-                                        )),
-                                    Positioned(
-                                      top: 180,
-                                      child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            reportEventWidget(
-                                                height: 33,
-                                                padding: 10,
-                                                text: '31 kcal',
-                                                image: ImageConst.kcalIcon),
-                                            reportEventWidget(
-                                                padding: 4,
-                                                text: '50 min',
-                                                image: ImageConst.timeIcon),
-                                            reportEventWidget(
-                                                padding: 0,
-                                                height: 43,
-                                                text: '2 km ',
-                                                image: ImageConst.locationIcon),
-                                          ]),
-                                    ),
-                                  ],
+                              child: GestureDetector(
+                                onTap: () async {
+                                  Get.dialog(await getReport())
+                                      .whenComplete(() => setState(() {}));
+                                },
+                                child: SizedBox(
+                                  height: 320,
+                                  width: 400,
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Image.asset(
+                                          'assets/png/report_circle.png',
+                                          fit: BoxFit.contain),
+                                      Positioned(
+                                          top: 70,
+                                          child: Column(
+                                            children: [
+                                              Image.asset(
+                                                'assets/png/steps_icon.png',
+                                                scale: 4,
+                                              ),
+                                              CommonText.textBoldWight500(
+                                                  text: GetStorageServices
+                                                              .getUserKm() !=
+                                                          null
+                                                      ? '${(int.parse(GetStorageServices.getUserKm()) * 1408)}'
+                                                      : '0',
+                                                  fontSize: 18.sp,
+                                                  color: CommonColor
+                                                      .blackColor434343),
+                                            ],
+                                          )),
+                                      Positioned(
+                                        top: 180,
+                                        child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              reportEventWidget(
+                                                  height: 33,
+                                                  padding: 10,
+                                                  text: GetStorageServices
+                                                              .getUserKm() !=
+                                                          null
+                                                      ? '${(int.parse(GetStorageServices.getUserKm()) * 190)}Kcal'
+                                                      : '0 kcal',
+                                                  image: ImageConst.kcalIcon),
+                                              reportEventWidget(
+                                                  padding: 4,
+                                                  text: GetStorageServices
+                                                              .getUserKm() !=
+                                                          null
+                                                      ? '${(int.parse(GetStorageServices.getUserKm()) * 12)} min'
+                                                      : '0 min',
+                                                  image: ImageConst.timeIcon),
+                                              reportEventWidget(
+                                                  padding: 0,
+                                                  height: 43,
+                                                  text: GetStorageServices
+                                                              .getUserKm() !=
+                                                          null
+                                                      ? '${GetStorageServices.getUserKm()} Km'
+                                                      : 'Na',
+                                                  image:
+                                                      ImageConst.locationIcon),
+                                            ]),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             )
@@ -633,6 +666,205 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                   colorText: Colors.white,
                                   title: "Required",
                                   message: 'Please enter height and weight.');
+                            }
+                          },
+                          text: "Next")
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<StatefulBuilder> enterHeartRateDialog() async {
+    return StatefulBuilder(
+      builder: (context, setState) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Container(
+          width: 300.sp,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CommonText.textBoldWight500(
+                        text: "Calculating HeartRate",
+                        fontSize: 17.sp,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Get.back();
+                        },
+                        child: CommonWidget.commonSvgPitcher(
+                          image: ImageConst.close,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                CommonWidget.dottedLineWidget(),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CommonText.textBoldWight400(
+                        text: "please enter your Heart Rate",
+                        fontSize: 11.sp,
+                        color: Color(0xff9B9B9B),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      CommonText.textBoldWight500(
+                          text: "Heart Rate",
+                          fontSize: 13.sp,
+                          color: Colors.black),
+                      SizedBox(
+                        height: 12,
+                      ),
+                      TextFormField(
+                        controller: _heartRateController,
+                        decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Color(0xffF8F8F6),
+                            hintText: "Enter your heart rate",
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.circular(20),
+                            )),
+                      ),
+                      SizedBox(height: 23),
+                      CommonWidget.commonButton(
+                          color: CommonColor.greenColor,
+                          radius: 10,
+                          onTap: () async {
+                            if (_heartRateController.text.isNotEmpty) {
+                              GetStorageServices.setUserHeartRate(
+                                  _heartRateController.text.trim());
+                              Get.back();
+                            } else {
+                              CommonWidget.getSnackBar(
+                                  color: Colors.red,
+                                  duration: 2,
+                                  colorText: Colors.white,
+                                  title: "Required",
+                                  message: 'Please enter hear.');
+                            }
+                          },
+                          text: "Next")
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<StatefulBuilder> getReport() async {
+    return StatefulBuilder(
+      builder: (context, setState) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Container(
+          width: 300.sp,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CommonText.textBoldWight500(
+                        text: "Calculating Report",
+                        fontSize: 17.sp,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Get.back();
+                        },
+                        child: CommonWidget.commonSvgPitcher(
+                          image: ImageConst.close,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                CommonWidget.dottedLineWidget(),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CommonText.textBoldWight400(
+                        text: "please enter Km",
+                        fontSize: 11.sp,
+                        color: Color(0xff9B9B9B),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      CommonText.textBoldWight500(
+                          text: "KM", fontSize: 13.sp, color: Colors.black),
+                      SizedBox(
+                        height: 12,
+                      ),
+                      TextFormField(
+                        controller: _kmController,
+                        decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Color(0xffF8F8F6),
+                            hintText: "Enter Km",
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.circular(20),
+                            )),
+                      ),
+                      SizedBox(height: 23),
+                      CommonWidget.commonButton(
+                          color: CommonColor.greenColor,
+                          radius: 10,
+                          onTap: () async {
+                            if (_kmController.text.isNotEmpty) {
+                              GetStorageServices.setUserKm(
+                                  _kmController.text.trim());
+
+                              Get.back();
+                            } else {
+                              CommonWidget.getSnackBar(
+                                  color: Colors.red,
+                                  duration: 2,
+                                  colorText: Colors.white,
+                                  title: "Required",
+                                  message: 'Please enter hear.');
                             }
                           },
                           text: "Next")
@@ -1768,7 +2000,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                       GestureDetector(
                         onTap: () async {
                           Get.back();
-                          Get.dialog(await enterHeightWwightDialog());
+                          Get.dialog(await enterHeightWwightDialog())
+                              .then((value) {
+                            setState(() {});
+                          });
                         },
                         child: Container(
                           height: 23.sp,
