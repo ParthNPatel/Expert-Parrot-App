@@ -9,6 +9,7 @@ import '../constant/color_const.dart';
 import '../constant/image_const.dart';
 import '../constant/text_const.dart';
 import '../constant/text_styel.dart';
+import '../get_storage_services/get_storage_service.dart';
 
 class CommonWidget {
   static Widget header(
@@ -276,5 +277,44 @@ class CommonWidget {
       dashGapColor: Colors.transparent,
       dashGapRadius: 0.0,
     );
+  }
+
+  /// save all user details
+  static setUserDetailsAtLogin(
+      {String? token,
+      String? name,
+      String? height,
+      String? weight,
+      String? age,
+      String? userImage,
+      bool? isUserProfileSet}) {
+    print('tokentoken $token');
+    print('namename $name');
+    print('heightheight $height');
+    print('weightweight $weight');
+    print('ageage $age');
+    print('userImage $userImage');
+    GetStorageServices.setUserLoggedIn();
+    GetStorageServices.setBarrierToken(token);
+    GetStorageServices.setUserName(name!);
+    GetStorageServices.setUserHeight(height!);
+    GetStorageServices.setUserWeight(weight!);
+    GetStorageServices.setAge(age!);
+    GetStorageServices.setUserImage(userImage!);
+    GetStorageServices.setUserProfileSet(isUserProfileSet!);
+  }
+
+  static updateUserDetails({
+    String? name,
+    String? height,
+    String? weight,
+    String? age,
+    String? userImage,
+  }) {
+    GetStorageServices.setUserName(name!);
+    GetStorageServices.setUserHeight(height!);
+    GetStorageServices.setUserWeight(weight!);
+    GetStorageServices.setAge(age!);
+    GetStorageServices.setUserImage(userImage!);
   }
 }

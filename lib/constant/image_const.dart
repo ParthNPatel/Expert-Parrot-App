@@ -1,4 +1,9 @@
 class ImageConst {
+  static const String postUrl =
+      'https://health-app-test.s3.ap-south-1.amazonaws.com/post/';
+  static const String videoUrl =
+      'https://health-app-test.s3.ap-south-1.amazonaws.com/video/';
+
   /// Icons:
   static const String backGround = 'assets/png/background.png';
   static const String backArrow = 'assets/svg/back_arrow.svg';

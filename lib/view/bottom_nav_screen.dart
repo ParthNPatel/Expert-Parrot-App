@@ -1,10 +1,8 @@
-import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/view/dashboard_screen.dart';
 import 'package:expert_parrot_app/view/profile_screen.dart';
 import 'package:expert_parrot_app/view/reminder_screen.dart';
 import 'package:expert_parrot_app/view/video_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
@@ -74,25 +72,26 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
               children: List.generate(
                 iconList.length,
                 (index) => Padding(
-                    padding: EdgeInsets.only(
-                        right: index == 1 ? 30 : 0, left: index == 2 ? 30 : 0),
-                    child: InkResponse(
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onTap: () {
-                        setState(() {
-                          pageSelected = index;
-                        });
-                      },
-                      child: Image.asset(
-                        iconList[index],
-                        height: 20.sp,
-                        width: 20.sp,
-                        color: pageSelected == index
-                            ? Color(0xff1FAD85)
-                            : Color(0xffc2c2c2),
-                      ),
-                    )),
+                  padding: EdgeInsets.only(
+                      right: index == 1 ? 30 : 0, left: index == 2 ? 30 : 0),
+                  child: InkResponse(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onTap: () {
+                      setState(() {
+                        pageSelected = index;
+                      });
+                    },
+                    child: Image.asset(
+                      iconList[index],
+                      height: 20.sp,
+                      width: 20.sp,
+                      color: pageSelected == index
+                          ? Color(0xff1FAD85)
+                          : Color(0xffc2c2c2),
+                    ),
+                  ),
+                ),
               ),
             ),
           ],

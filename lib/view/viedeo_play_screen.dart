@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/viewModel/get_video_view_model.dart';
@@ -227,6 +229,12 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                           }
                         }
                         getVideoViewModel.getVideoViewModel(isLoading: false);
+                        if (getVideoViewModel.getVideoApiResponse.status ==
+                            Status.COMPLETE) {
+                          log('DONE');
+                        } else {
+                          log('Error');
+                        }
                       },
                       child: GetBuilder<LikeUnLikeVideoViewModel>(
                         builder: (controller) {
