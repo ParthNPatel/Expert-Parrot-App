@@ -13,6 +13,22 @@ class GetStorageServices {
     return getStorage.read('height');
   }
 
+  static Future setUserHeartRate(String heartRate) async {
+    await getStorage.write('heartRate', heartRate);
+  }
+
+  static getUserHeartRate() {
+    return getStorage.read('heartRate');
+  }
+
+  static Future setUserKm(String Km) async {
+    await getStorage.write('Km', Km);
+  }
+
+  static getUserKm() {
+    return getStorage.read('Km');
+  }
+
   static setBarrierToken(token) async {
     await getStorage.write('barrierToken', token);
   }
