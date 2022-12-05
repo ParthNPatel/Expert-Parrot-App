@@ -7,7 +7,6 @@ import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
-import 'package:expert_parrot_app/constant/url.dart';
 import 'package:expert_parrot_app/view/viedeo_play_screen.dart';
 import 'package:expert_parrot_app/viewModel/get_video_view_model.dart';
 import 'package:expert_parrot_app/viewModel/like_unlike_video_view_model.dart';
@@ -250,7 +249,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                     GestureDetector(
                                       onTap: () {
                                         Share.share(
-                                            '${videoUrlToShare}${response.data![index].video}',
+                                            '${ImageConst.videoUrl}${response.data![index].video}',
                                             subject:
                                                 '${response.data![index].description}');
                                       },

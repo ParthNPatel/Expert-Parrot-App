@@ -16,4 +16,6 @@ class APIConst {
   static String rejectRequest = "/user/reject-request";
   static String acceptRequest = "/user/accept-request";
   static String glass = "/glass";
+  static String getReminder = "/user/reminders?";
+  static String dependent = "/user/dependents";
 }

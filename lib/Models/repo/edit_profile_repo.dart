@@ -25,10 +25,8 @@ class EditProfileRepo extends BaseService {
         CommonWidget.updateUserDetails(
             height: '${dataOfApi['height']}',
             age: '${dataOfApi['age']}',
-            // token: '${response['token']}',
             userImage: '${dataOfApi['userImage']}',
             weight: '${dataOfApi['weight']}',
-            // isUserProfileSet: true,
             name: '${dataOfApi['name']}');
 
         Get.offAll(BottomNavScreen());
