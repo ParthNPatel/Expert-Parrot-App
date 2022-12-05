@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:country_picker/country_picker.dart';
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/responseModel/log_in_res_model.dart';
@@ -317,6 +318,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   CommonWidget.commonSizedBox(height: 14),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       commonBackButton(
                         image: 'assets/svg/facebook_ic.svg',
@@ -332,10 +334,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                       ),
                       CommonWidget.commonSizedBox(width: 8),
-                      commonBackButton(
-                        image: 'assets/svg/cib_apple.svg',
-                        onTap: () {},
-                      ),
+                      Platform.isIOS
+                          ? commonBackButton(
+                              image: 'assets/svg/cib_apple.svg',
+                              onTap: () {},
+                            )
+                          : SizedBox(),
                     ],
                   )
                 ],
