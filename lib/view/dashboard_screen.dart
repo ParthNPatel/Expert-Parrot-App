@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/repo/delete_medicine_repo.dart';
+import 'package:expert_parrot_app/Models/responseModel/get_all_medicine_names_model.dart';
 import 'package:expert_parrot_app/Models/responseModel/record_medicine_res_model.dart';
 import 'package:expert_parrot_app/Models/responseModel/user_data_res_model.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
@@ -22,6 +23,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 
+import '../Models/responseModel/get_all_mdeicine_names_list.dart';
 import '../controller/handle_float_controller.dart';
 import 'medicine_graph_screen.dart';
 
@@ -42,6 +44,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   String? km, min, kal, step;
   String? verificationCode;
   DateTime dayOf = DateTime.now();
+
   List overViewData = [
     {
       'name': 'Water',
@@ -82,7 +85,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   int frequencySelected = 0;
   int timeSelected = 0;
 
-  final medicineName = TextEditingController();
+  TextEditingController medicineName = TextEditingController();
 
   // List<String> medicines = [
   //   'Duloxetine',
@@ -134,11 +137,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   RecordMedicineViewModel recordMedicineViewModel =
       Get.put(RecordMedicineViewModel());
 
+  GetAllMedicineNamesList getAllMedicineNamesList =
+      Get.put(GetAllMedicineNamesList());
+
   @override
   void initState() {
     controller.isVisible = false;
 
     userDataViewModel.userDataViewModel();
+    getAllMedicineNamesList.getAllMedicineNames();
     super.initState();
   }
 
@@ -207,6 +214,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     'ap':
                         '${userResponse.data!.medicines![length - 2]["appearance"]}'
                   });
+
                   LastData.insert(2, {
                     'id':
                         '${userResponse.data!.medicines![length - 1]["_id"]!}',
@@ -961,58 +969,90 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     SizedBox(
                                       width: 18,
                                     ),
-                                    TextFormField(
-                                      controller: medicineName,
-                                      decoration: InputDecoration(
-                                          hintText: "Enter Medicine Name"),
+                                    Expanded(
+                                      child: TextFormField(
+                                        controller: medicineName,
+                                        decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: "Enter Medicine Name"),
+                                      ),
                                     ),
-                                    CommonText.textBoldWight500(
-                                        text: "${medicines[medicineSelected]}",
-                                        fontSize: 13.sp,
-                                        color: Colors.black),
+                                    // CommonText.textBoldWight500(
+                                    //     text: "${medicines[medicineSelected]}",
+                                    //     fontSize: 13.sp,
+                                    //     color: Colors.black),
                                   ],
                                 ),
                                 children: [
-                                  Container(
-                                    color: Colors.white,
-                                    child: Column(
-                                      children: List.generate(
-                                        medicines.length,
-                                        (index) => GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              medicineSelected = index;
-                                            });
-                                          },
-                                          child: Container(
-                                            color: medicineSelected == index
-                                                ? Color(0xffe1f9ea)
-                                                : Colors.white,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 10),
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.check,
-                                                  size: 17,
-                                                  color: medicineSelected ==
-                                                          index
-                                                      ? CommonColor.greenColor
-                                                      : Colors.white,
+                                  GetBuilder<GetAllMedicineNamesList>(
+                                    builder: (controller) {
+                                      if (controller.getAllMedicines.status ==
+                                          Status.LOADING) {
+                                        return SizedBox();
+                                      }
+                                      if (controller.getAllMedicines.status ==
+                                          Status.COMPLETE) {
+                                        GetAllMedicineNames responseModel =
+                                            controller.getAllMedicines.data;
+                                        return Container(
+                                          color: Colors.white,
+                                          child: Column(
+                                            children: List.generate(
+                                              responseModel.data!.length,
+                                              (index) => GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    medicineSelected = index;
+                                                  });
+
+                                                  medicineName =
+                                                      TextEditingController(
+                                                          text: responseModel
+                                                              .data![index]
+                                                              .toString());
+                                                },
+                                                child: Container(
+                                                  color:
+                                                      medicineSelected == index
+                                                          ? Color(0xffe1f9ea)
+                                                          : Colors.white,
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 10),
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.check,
+                                                        size: 17,
+                                                        color:
+                                                            medicineSelected ==
+                                                                    index
+                                                                ? CommonColor
+                                                                    .greenColor
+                                                                : Colors.white,
+                                                      ),
+                                                      SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      CommonText
+                                                          .textBoldWight500(
+                                                        text: responseModel
+                                                            .data![index],
+                                                      )
+                                                    ],
+                                                  ),
                                                 ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                CommonText.textBoldWight500(
-                                                  text: medicines[index],
-                                                )
-                                              ],
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                    ),
-                                  )
+                                        );
+                                      }
+                                      return Center(
+                                        child: CommonText.textBoldWight500(
+                                            text: 'Something went wrong'),
+                                      );
+                                    },
+                                  ),
                                 ],
                               ),
                             ),
@@ -1801,7 +1841,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
         log.log('TOTAL DATE :- ${dateTimes}');
 
         await addMedicineViewModel.addMedicineViewModel(model: {
-          "name": "${medicines[medicineSelected]}",
+          "name": "${medicineName.text.trim()}",
           "strength": int.parse("${strength[strengthSelected]}"),
           "days": int.parse("${days[daysSelected]}"),
           "appearance": "${appearance[appearanceSelected]}",
