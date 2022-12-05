@@ -59,7 +59,11 @@ class _RequestUserScreenState extends State<RequestUserScreen> {
             GetBuilder<GetRequestUserViewModel>(
               builder: (controller) {
                 if (controller.getReqUserResponse.status == Status.LOADING) {
-                  return CircularProgressIndicator();
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: CommonColor.greenColor,
+                    ),
+                  );
                 }
                 if (controller.getReqUserResponse.status == Status.COMPLETE) {
                   GetReqResponseModel getReq =

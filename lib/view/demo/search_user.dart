@@ -135,7 +135,9 @@ class _SearchPageState extends State<SearchPage> {
                 builder: (controller) {
                   if (controller.getUserResponse.status == Status.LOADING) {
                     return Center(
-                      child: CircularProgressIndicator(),
+                      child: CircularProgressIndicator(
+                        color: CommonColor.greenColor,
+                      ),
                     );
                   }
                   if (controller.getUserResponse.status == Status.COMPLETE) {

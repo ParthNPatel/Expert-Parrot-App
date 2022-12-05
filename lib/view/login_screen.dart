@@ -2,16 +2,13 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:country_picker/country_picker.dart';
-import 'package:expert_parrot_app/Models/apis/api_response.dart';
-import 'package:expert_parrot_app/Models/responseModel/log_in_res_model.dart';
+import 'package:expert_parrot_app/Models/repo/email_otp_repo.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:expert_parrot_app/services/app_notification.dart';
-import 'package:expert_parrot_app/view/bottom_nav_screen.dart';
 import 'package:expert_parrot_app/view/otp_verification_screen.dart';
-import 'package:expert_parrot_app/viewModel/log_in_view_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -83,6 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Get.to(() => OtpVerificationScreen(
                 verificationId: verificationId,
                 logInId: _mobileController.text.trim(),
+                logInType: "mobile",
               ));
         });
         progress.dismiss();
@@ -221,6 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ? CommonWidget.textFormField(
                           borderColor: Colors.grey.withOpacity(0.3),
                           controller: _emailController,
+                          keyBoardType: TextInputType.emailAddress,
                           hintText: 'Enter Email')
                       : CommonWidget.textFormField(
                           borderColor: Colors.grey.withOpacity(0.3),
@@ -301,6 +300,33 @@ class _LoginScreenState extends State<LoginScreen> {
                             await sendOtp(progress);
                           } else {
                             /// Email
+                            ///
+
+                            var resp = await EmailOTPRepo.emailOTPRepo(model: {
+                              "email": "${_emailController.text.trim()}"
+                            });
+
+                            if (resp["flag"]!) {
+                              Get.to(() => OtpVerificationScreen(
+                                    logInId: _emailController.text.trim(),
+                                    logInType: "email",
+                                  ));
+
+                              CommonWidget.getSnackBar(
+                                message: resp["message"]!,
+                                title: 'Failed',
+                                duration: 2,
+                                color: CommonColor.greenColor.withOpacity(.4),
+                              );
+                            } else {
+                              CommonWidget.getSnackBar(
+                                message:
+                                    "Something went wrong please try again",
+                                title: 'Failed',
+                                duration: 2,
+                                color: Colors.red,
+                              );
+                            }
                           }
                         } else {
                           CommonWidget.getSnackBar(

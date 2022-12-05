@@ -13,11 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
-import '../Models/apis/api_response.dart';
 import '../components/common_widget.dart';
 import '../constant/color_const.dart';
-import '../constant/image_const.dart';
-import '../constant/text_const.dart';
 
 class WaterGraphScreen extends StatefulWidget {
   const WaterGraphScreen({Key? key}) : super(key: key);
@@ -78,7 +75,9 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                 builder: (controller) {
                   if (controller.getGlassApiResponse.status == Status.LOADING) {
                     return Center(
-                      child: CircularProgressIndicator(),
+                      child: CircularProgressIndicator(
+                        color: CommonColor.greenColor,
+                      ),
                     );
                   }
                   if (controller.getGlassApiResponse.status ==
@@ -322,7 +321,6 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                   setState(() {
                     controller.index = 0;
                   });
-
                   // showDialog(
                   //   context: context,
                   //   builder: (context) => Dialog(

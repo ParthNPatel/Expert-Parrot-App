@@ -2,6 +2,8 @@ import 'dart:developer' as log;
 import 'dart:math';
 
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
+import 'package:expert_parrot_app/Models/repo/delete_medicine_repo.dart';
+import 'package:expert_parrot_app/Models/responseModel/record_medicine_res_model.dart';
 import 'package:expert_parrot_app/Models/responseModel/user_data_res_model.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/components/home_shimmer.dart';
@@ -12,6 +14,7 @@ import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:expert_parrot_app/view/water_graph_screen.dart';
 import 'package:expert_parrot_app/viewModel/add_medicine_view_model.dart';
+import 'package:expert_parrot_app/viewModel/record_medicine_view_model.dart';
 import 'package:expert_parrot_app/viewModel/user_data_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -68,6 +71,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     },
   ];
 
+  // eyJhbGciOiJIUzI1NiJ9.NjM4MzE3ZGQ3NzgzZTdlYjYxN2VhYThi.nGqylOzdvmnkHu9ZYu_fA22w-VcfeEsohOyFWJQhYyU
+
   int medicineSelected = 0;
   int strengthSelected = 0;
   int daysSelected = 0;
@@ -121,6 +126,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   HandleFloatController controller = Get.find();
   AddMedicineViewModel addMedicineViewModel = Get.put(AddMedicineViewModel());
   UserDataViewModel userDataViewModel = Get.put(UserDataViewModel());
+  RecordMedicineViewModel recordMedicineViewModel =
+      Get.put(RecordMedicineViewModel());
 
   @override
   void initState() {
@@ -166,9 +173,12 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 int length = userResponse.data!.medicines!.length;
                 // print('length =============== > $length');
                 // print(
-                //     'length =============== > ${GetStorageServices.getBarrierToken()}');
+                //     'response _id =============== > ${userResponse.data!.medicines![length - 3]["_id"]}');
                 if (length > 3) {
                   LastData.insert(0, {
+                    'id': '${userResponse.data!.medicines![length - 3]["_id"]}',
+                    'totalTimes':
+                        '${userResponse.data!.medicines![length - 3]["totalTimes"]}',
                     'medName':
                         '${userResponse.data!.medicines![length - 3]["name"]!}',
                     'medGm':
@@ -179,6 +189,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                         '${userResponse.data!.medicines![length - 3]["appearance"]}'
                   });
                   LastData.insert(1, {
+                    'id':
+                        '${userResponse.data!.medicines![length - 2]["_id"]!}',
+                    'totalTimes':
+                        '${userResponse.data!.medicines![length - 2]["totalTimes"]}',
                     'medName':
                         '${userResponse.data!.medicines![length - 2]["name"]!}',
                     'medGm':
@@ -189,6 +203,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                         '${userResponse.data!.medicines![length - 2]["appearance"]}'
                   });
                   LastData.insert(2, {
+                    'id':
+                        '${userResponse.data!.medicines![length - 1]["_id"]!}',
+                    'totalTimes':
+                        '${userResponse.data!.medicines![length - 1]["totalTimes"]}',
                     'medName':
                         '${userResponse.data!.medicines![length - 1]["name"]!}',
                     'medGm':
@@ -255,6 +273,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     .data!.medicines![index]["appearance"];
                                 return length > 3
                                     ? medDetailsWidget(
+                                        id: "${LastData[index]['id']}",
+                                        totalTimes:
+                                            "${LastData[index]['totalTimes']}",
                                         image: LastData[index]['ap'] == 'Pills'
                                             ? ImageConst.med3Icon
                                             : LastData[index]['ap'] == 'Gel'
@@ -289,6 +310,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                     : Color.fromRGBO(
                                                         111, 44, 196, 0.13))
                                     : medDetailsWidget(
+                                        id: "${LastData[index]['id']}",
+                                        totalTimes:
+                                            "${LastData[index]['totalTimes']}",
                                         image: UserEqual == 'Pills'
                                             ? ImageConst.med3Icon
                                             : UserEqual == 'Gel'
@@ -1841,10 +1865,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   Widget medDetailsWidget(
       {required String medName,
       required String medGm,
+      required String id,
+      required String totalTimes,
       required String timeOfDay,
       required Color color,
       required Color iconColor,
       required String image}) {
+    // print('med id =================== > ${id}');
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8),
       child: Container(
@@ -1892,9 +1920,90 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           itemBuilder: (context) {
                             return [
                               PopupMenuItem(
+                                onTap: () async {
+                                  List<int> doses = [];
+
+                                  for (int i = 0;
+                                      i < int.parse(totalTimes);
+                                      i++) {
+                                    doses.add(i + 1);
+                                    print('for inside doses ====== > ${doses}');
+                                  }
+
+                                  var _req = {
+                                    "medicineId": "${id}",
+                                    "doses": doses,
+                                  };
+
+                                  print('====== > ${_req}');
+
+                                  await recordMedicineViewModel
+                                      .recordMedicineViewModel(model: _req);
+
+                                  if (recordMedicineViewModel
+                                          .recordMedicineApiResponse.status ==
+                                      Status.COMPLETE) {
+                                    RecordMedicineResponseModel resp =
+                                        RecordMedicineResponseModel();
+
+                                    // print('doses ====== > ${resp.data!.id}');
+
+                                    CommonWidget.getSnackBar(
+                                        duration: 2,
+                                        color: CommonColor.greenColor
+                                            .withOpacity(.4),
+                                        colorText: Colors.white,
+                                        title: "Done!",
+                                        message: 'Record Updated!');
+                                  }
+                                  if (recordMedicineViewModel
+                                          .recordMedicineApiResponse.status ==
+                                      Status.ERROR) {
+                                    CommonWidget.getSnackBar(
+                                        duration: 2,
+                                        color: Colors.red.withOpacity(.4),
+                                        colorText: Colors.white,
+                                        title: "Failed!",
+                                        message:
+                                            'Record not updated try again!');
+                                  }
+                                },
                                 child: Text("Mark as Taken"),
                               ),
                               PopupMenuItem(
+                                onTap: () async {
+                                  if (id.isNotEmpty) {
+                                    var resp = await DeleteMedicineRepo
+                                        .deleteMedicineRepo(id: id);
+
+                                    if (resp["flag"] == true) {
+                                      await userDataViewModel
+                                          .userDataViewModel();
+
+                                      CommonWidget.getSnackBar(
+                                          duration: 2,
+                                          color: CommonColor.greenColor
+                                              .withOpacity(.4),
+                                          colorText: Colors.white,
+                                          title: "Done!",
+                                          message: '${resp["data"]}');
+                                    } else {
+                                      CommonWidget.getSnackBar(
+                                          duration: 2,
+                                          color: Colors.red.withOpacity(.4),
+                                          colorText: Colors.white,
+                                          title: "Something went wrong!",
+                                          message: '${resp["data"]}');
+                                    }
+                                  } else {
+                                    CommonWidget.getSnackBar(
+                                        duration: 2,
+                                        color: Colors.red.withOpacity(.4),
+                                        colorText: Colors.white,
+                                        title: "Something went wrong",
+                                        message: 'Please try again!');
+                                  }
+                                },
                                 child: Text("Delete"),
                               ),
                             ];
@@ -2059,24 +2168,18 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           width: 27.sp,
           decoration: BoxDecoration(
               border: Border.all(color: CommonColor.greenColor),
+              borderRadius: BorderRadius.circular(8)),
+          child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              image: DecorationImage(
-                image: NetworkImage(
-                  'https://health-app-test.s3.ap-south-1.amazonaws.com/user/' +
-                      '${GetStorageServices.getUserImage()}',
-                  scale: 5,
-                ),
+              child: Image.network(
+                'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${GetStorageServices.getUserImage()}',
+                scale: 5,
                 fit: BoxFit.cover,
-                onError: (error, stackTrace) {
-                  // Icon(
-                  //   color: Colors.grey,
-                  //   Icons.person,
-                  //   size: 20,
-                  // );
-
-                  Image.network(
-                      "https://en.wikipedia.org/wiki/Image#/media/File:Image_created_with_a_mobile_phone.png");
-                },
+                errorBuilder: (context, error, stackTrace) => Icon(
+                  color: Colors.grey,
+                  Icons.person,
+                  size: 15.sp,
+                ),
               )),
         ),
       ],
