@@ -22,6 +22,7 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sizer/sizer.dart';
 
+import '../Models/repo/login_repo.dart';
 import '../model/country_model.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -54,8 +55,6 @@ class _LoginScreenState extends State<LoginScreen> {
         .toList();
     return listData;
   }
-
-  LogInViewModel logInViewModel = Get.put(LogInViewModel());
 
   Country? selectedCountry;
   @override
@@ -128,52 +127,25 @@ class _LoginScreenState extends State<LoginScreen> {
     log('AUTH DETAILS :- ${credential}');
     progress.dismiss();
     try {
-      await logInViewModel.logInViewModel(model: {
-        "name": "Helo",
-        "loginType": "google",
-        "loginId": "${credential.signInMethod}",
-        "water": 3,
-        "weight": 65,
-        "heartRate": 98,
-        "bmi": 21.1,
-        "fcm_token": "${GetStorageServices.getFcm()}",
-        "userTime": "${DateTime.now()}"
-      });
-
-      if (logInViewModel.logInApiResponse.status.toString() ==
-          Status.COMPLETE.toString()) {
-        LogInResponseModel responseModel = logInViewModel.logInApiResponse.data;
-
-        Get.offAll(() => BottomNavScreen());
-        GetStorageServices.setUserLoggedIn();
-        GetStorageServices.setBarrierToken(responseModel.token);
-        GetStorageServices.setUserName(responseModel.data!.name!);
-        GetStorageServices.setUserHeight(responseModel.data!.height!);
-        GetStorageServices.setUserWeight(responseModel.data!.weight!);
-        GetStorageServices.setAge(responseModel.data!.age!);
-        GetStorageServices.setUserImage(responseModel.data!.userImage!);
-        GetStorageServices.setUserProfileSet(responseModel.data!.profileSet!);
-
-        progress.dismiss();
-      }
-      if (logInViewModel.logInApiResponse.status.toString() ==
-          Status.ERROR.toString()) {
-        CommonWidget.getSnackBar(
-          message: '',
-          title: 'Failed',
-          duration: 2,
-          color: Colors.red,
-        );
-        progress.dismiss();
-      }
+      await LoginRepo.loginUserRepo(
+          model: {
+            "loginType": "google",
+            "loginId": "${credential.signInMethod}",
+            "fcm_token": "${GetStorageServices.getFcm()}",
+            "userTime": "${DateTime.now()}"
+          },
+          progress: progress,
+          loginType: 'google',
+          logInId: "${credential.signInMethod}");
     } catch (e) {
+      progress.dismiss();
+
       CommonWidget.getSnackBar(
         message: '',
         title: 'Something went wrong',
         duration: 2,
         color: Colors.red,
       );
-      progress.dismiss();
     }
   }
 
@@ -192,46 +164,28 @@ class _LoginScreenState extends State<LoginScreen> {
         final userData = await FacebookAuth.instance.getUserData();
 
         log('RESPONSE2');
-        await logInViewModel.logInViewModel(model: {
-          "name": "${userData['name']}",
-          "loginType": "facebook",
-          "loginId": "${userData['id']}",
-          "water": 3,
-          "weight": 65,
-          "heartRate": 98,
-          "bmi": 21.1,
-          "fcm_token": "${GetStorageServices.getFcm()}",
-          "userTime": "${DateTime.now()}"
-        });
 
-        if (logInViewModel.logInApiResponse.status.toString() ==
-            Status.COMPLETE.toString()) {
-          LogInResponseModel responseModel =
-              logInViewModel.logInApiResponse.data;
-
-          Get.offAll(() => BottomNavScreen());
-          GetStorageServices.setUserLoggedIn();
-          GetStorageServices.setBarrierToken(responseModel.token);
-          GetStorageServices.setUserName(responseModel.data!.name!);
-          GetStorageServices.setUserHeight(responseModel.data!.height!);
-          GetStorageServices.setUserWeight(responseModel.data!.weight!);
-          GetStorageServices.setAge(responseModel.data!.age!);
-          GetStorageServices.setUserImage(responseModel.data!.userImage!);
-          GetStorageServices.setUserProfileSet(responseModel.data!.profileSet!);
-
+        try {
+          await LoginRepo.loginUserRepo(
+              model: {
+                "loginType": "facebook",
+                "loginId": "${userData['id']}",
+                "fcm_token": "${GetStorageServices.getFcm()}",
+                "userTime": "${DateTime.now()}"
+              },
+              loginType: "facebook",
+              logInId: "${userData['id']}",
+              progress: progress);
+        } catch (e) {
           progress.dismiss();
-        }
-        if (logInViewModel.logInApiResponse.status.toString() ==
-            Status.ERROR.toString()) {
+
           CommonWidget.getSnackBar(
             message: '',
-            title: 'Failed',
+            title: 'Something went wrong',
             duration: 2,
             color: Colors.red,
           );
-          progress.dismiss();
         }
-        progress.dismiss();
       }
     } catch (error) {
       progress.dismiss();
