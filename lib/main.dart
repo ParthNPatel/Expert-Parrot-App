@@ -9,7 +9,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:sizer/sizer.dart';
-
 import 'controller/handle_float_controller.dart';
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =

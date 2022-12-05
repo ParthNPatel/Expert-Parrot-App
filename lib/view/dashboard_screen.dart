@@ -80,13 +80,16 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   int frequencySelected = 0;
   int timeSelected = 0;
 
-  List<String> medicines = [
-    'Duloxetine',
-    'Disprin',
-    'Duloxetine',
-    'Dicyclomine',
-    'Desvenla',
-  ];
+  final medicineName = TextEditingController();
+
+  // List<String> medicines = [
+  //   'Duloxetine',
+  //   'Disprin',
+  //   'Duloxetine',
+  //   'Dicyclomine',
+  //   'Desvenla',
+  // ];
+
   List strength = [
     '100',
     '200',
@@ -725,6 +728,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     ),
                                     SizedBox(
                                       width: 18,
+                                    ),
+                                    TextFormField(
+                                      controller: medicineName,
+                                      decoration: InputDecoration(
+                                          hintText: "Enter Medicine Name"),
                                     ),
                                     CommonText.textBoldWight500(
                                         text: "${medicines[medicineSelected]}",
