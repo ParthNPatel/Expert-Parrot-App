@@ -79,14 +79,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 height: 100,
                 width: 100,
                 decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.grey.withOpacity(0.5),
-                    border: Border.all(color: Colors.black),
-                    image: DecorationImage(
-                        image: NetworkImage(
-                            'https://health-app-test.s3.ap-south-1.amazonaws.com/user/' +
-                                '${GetStorageServices.getUserImage()}'),
-                        fit: BoxFit.cover)),
+                  shape: BoxShape.circle,
+                  color: Colors.grey.withOpacity(0.5),
+                  border: Border.all(color: Colors.black),
+                ),
                 child: showImageWidget(),
               ),
               Positioned(

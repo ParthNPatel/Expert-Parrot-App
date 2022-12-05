@@ -75,7 +75,9 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                 builder: (controller) {
                   if (controller.getGlassApiResponse.status == Status.LOADING) {
                     return Center(
-                      child: CircularProgressIndicator(),
+                      child: CircularProgressIndicator(
+                        color: CommonColor.greenColor,
+                      ),
                     );
                   }
                   if (controller.getGlassApiResponse.status ==
@@ -319,7 +321,6 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                   setState(() {
                     controller.index = 0;
                   });
-
                   // showDialog(
                   //   context: context,
                   //   builder: (context) => Dialog(

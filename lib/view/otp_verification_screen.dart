@@ -19,7 +19,10 @@ import '../Models/repo/login_repo.dart';
 class OtpVerificationScreen extends StatefulWidget {
   final String? verificationId;
   final String? logInId;
-  const OtpVerificationScreen({Key? key, this.verificationId, this.logInId})
+  final String? logInType;
+
+  const OtpVerificationScreen(
+      {Key? key, this.verificationId, this.logInId, this.logInType})
       : super(key: key);
 
   @override
@@ -160,8 +163,22 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       if (_emailOrMobileController.text.toString().isNotEmpty ||
                           verificationCode != null) {
                         if (verificationCode.toString().length == 6) {
-                          progress!.show();
-                          await enterOtp(progress);
+                          if (widget.logInType == "mobile") {
+                            progress!.show();
+                            await enterOtp(progress);
+                          } else {
+                            await LoginRepo.loginUserRepo(
+                                model: {
+                                  "loginType": "email",
+                                  "loginId": "${widget.logInId}",
+                                  "otp": verificationCode,
+                                  "fcm_token": "${GetStorageServices.getFcm()}",
+                                  "userTime": "${DateTime.now()}"
+                                },
+                                loginType: "email",
+                                logInId: "${widget.logInId}",
+                                progress: progress);
+                          }
                         } else {
                           progress!.dismiss();
                           CommonWidget.getSnackBar(

@@ -125,7 +125,9 @@ class _DependentScreenState extends State<DependentScreen> {
                       if (controller.getDependentApiResponse.status ==
                           Status.LOADING) {
                         return Center(
-                          child: CircularProgressIndicator(),
+                          child: CircularProgressIndicator(
+                            color: CommonColor.greenColor,
+                          ),
                         );
                       }
                       if (controller.getDependentApiResponse.status ==

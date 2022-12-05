@@ -18,4 +18,9 @@ class APIConst {
   static String glass = "/glass";
   static String getReminder = "/user/reminders?";
   static String dependent = "/user/dependents";
+  static String removeMedicine = "/medicine/delete/";
+  static String recordMedicine = "/medicine/record";
+  static String allCategory = "/admin/category";
+  static String getFaq = "/admin/faq/";
+  static String emailOTP = "/auth/email-otp";
 }

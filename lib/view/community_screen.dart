@@ -118,11 +118,50 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                       children: [
                                         Row(
                                           children: [
-                                            Image.asset(
-                                              'assets/png/person1.png',
-                                              height: 40.sp,
-                                              width: 40.sp,
-                                            ),
+                                            response.data![index].userId!
+                                                        .userImage !=
+                                                    null
+                                                ? Container(
+                                                    height: 40.sp,
+                                                    width: 40.sp,
+                                                    decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        border: Border.all(
+                                                            color:
+                                                                Colors.black)),
+                                                    child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(500),
+                                                        child: Image.network(
+                                                          'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${response.data![index].userId!.userImage}',
+                                                          fit: BoxFit.cover,
+                                                          errorBuilder: (context,
+                                                                  error,
+                                                                  stackTrace) =>
+                                                              Icon(
+                                                            color: Colors.grey,
+                                                            Icons.person,
+                                                            size: 22.sp,
+                                                          ),
+                                                        )),
+                                                  )
+                                                : Container(
+                                                    height: 40.sp,
+                                                    width: 40.sp,
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color:
+                                                          Colors.grey.shade300,
+                                                      border: Border.all(
+                                                          color: Colors.black),
+                                                    ),
+                                                    child: Icon(
+                                                      color: Colors.grey,
+                                                      Icons.person,
+                                                      size: 22.sp,
+                                                    ),
+                                                  ),
                                             SizedBox(
                                               width: 10,
                                             ),
@@ -131,10 +170,11 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 CommonText.textBoldWight500(
-                                                    text: "Vill Parmar",
+                                                    text:
+                                                        "${response.data![index].userId!.name.toString().capitalizeFirst}",
                                                     fontSize: 12.sp),
                                                 CommonText.textBoldWight400(
-                                                    text: "ON, Canada",
+                                                    text: "QR, Canada",
                                                     color: Color(0xffa1a1a1),
                                                     fontSize: 10.sp),
                                               ],
@@ -206,28 +246,33 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                                         .userImage !=
                                                     null
                                                 ? Container(
-                                                    height: 50.sp,
-                                                    width: 50.sp,
+                                                    height: 40.sp,
+                                                    width: 40.sp,
                                                     decoration: BoxDecoration(
                                                         shape: BoxShape.circle,
                                                         border: Border.all(
                                                             color:
-                                                                Colors.black),
-                                                        image: DecorationImage(
-                                                          image: NetworkImage(
-                                                              'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${response.data![index].userId!.userImage}'),
-                                                          onError: (error,
+                                                                Colors.black)),
+                                                    child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(500),
+                                                        child: Image.network(
+                                                          'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${response.data![index].userId!.userImage}',
+                                                          fit: BoxFit.cover,
+                                                          errorBuilder: (context,
+                                                                  error,
                                                                   stackTrace) =>
                                                               Icon(
                                                             color: Colors.grey,
                                                             Icons.person,
-                                                            size: 60,
+                                                            size: 22.sp,
                                                           ),
                                                         )),
                                                   )
                                                 : Container(
-                                                    height: 50.sp,
-                                                    width: 50.sp,
+                                                    height: 40.sp,
+                                                    width: 40.sp,
                                                     decoration: BoxDecoration(
                                                       shape: BoxShape.circle,
                                                       color:
@@ -238,7 +283,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                                     child: Icon(
                                                       color: Colors.grey,
                                                       Icons.person,
-                                                      size: 35,
+                                                      size: 22.sp,
                                                     ),
                                                   ),
                                             SizedBox(
@@ -293,15 +338,26 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                               height: 130.sp,
                                               width: double.infinity,
                                               decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                image: DecorationImage(
-                                                    image: NetworkImage(
-                                                      "https://health-app-test.s3.ap-south-1.amazonaws.com/post/" +
-                                                          "${response.data![index].image}",
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  child: Image.network(
+                                                    "https://health-app-test.s3.ap-south-1.amazonaws.com/post/" +
+                                                        "${response.data![index].image}",
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (context,
+                                                            error,
+                                                            stackTrace) =>
+                                                        Icon(
+                                                      color: Colors.grey,
+                                                      Icons
+                                                          .image_not_supported_outlined,
+                                                      size: 60,
                                                     ),
-                                                    fit: BoxFit.cover),
-                                              ),
+                                                  )),
                                             )
                                           ],
                                         ),
@@ -982,24 +1038,17 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                     height: 40.sp,
                     width: 40.sp,
                     decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: NetworkImage(
-                            'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${GetStorageServices.getUserImage()}',
-                            scale: 5,
-                          ),
+                        color: Colors.grey.shade300, shape: BoxShape.circle),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(500),
+                        child: Image.network(
+                          'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${GetStorageServices.getUserImage()}',
                           fit: BoxFit.cover,
-                          onError: (error, stackTrace) {
-                            // Icon(
-                            //   color: Colors.grey,
-                            //   Icons.person,
-                            //   size: 20,
-                            // );
-
-                            Image.network(
-                                "https://en.wikipedia.org/wiki/Image#/media/File:Image_created_with_a_mobile_phone.png");
-                          },
+                          errorBuilder: (context, error, stackTrace) => Icon(
+                            color: Colors.grey,
+                            Icons.person,
+                            size: 22.sp,
+                          ),
                         )),
                   ),
                   SizedBox(
@@ -1140,23 +1189,19 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                                   width: 40.sp,
                                   decoration: BoxDecoration(
                                       color: Colors.grey.shade300,
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                        image: NetworkImage(
-                                          'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${getComment.data![index].userId!.userImage}',
-                                          scale: 5,
-                                        ),
+                                      shape: BoxShape.circle),
+                                  child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(500),
+                                      child: Image.network(
+                                        'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${GetStorageServices.getUserImage()}',
                                         fit: BoxFit.cover,
-                                        onError: (error, stackTrace) {
-                                          // Icon(
-                                          //   color: Colors.grey,
-                                          //   Icons.person,
-                                          //   size: 20,
-                                          // );
-
-                                          Image.network(
-                                              "https://en.wikipedia.org/wiki/Image#/media/File:Image_created_with_a_mobile_phone.png");
-                                        },
+                                        errorBuilder:
+                                            (context, error, stackTrace) =>
+                                                Icon(
+                                          color: Colors.grey,
+                                          Icons.person,
+                                          size: 22.sp,
+                                        ),
                                       )),
                                 ),
                                 SizedBox(
