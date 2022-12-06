@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:dotted_line/dotted_line.dart';
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/responseModel/all_faq_category_res_model.dart';
@@ -24,8 +23,11 @@ class FAQScreen extends StatefulWidget {
 }
 
 class _FAQScreenState extends State<FAQScreen> {
-  List<String> menu = ['General', 'Account', 'Service', 'Application'];
-  int selectMenu = 0;
+  List<String> menu = ["All", 'General', 'Account', 'Service', 'Application'];
+
+  int selectMenu = -1;
+  int isAllSelected = 0;
+
   bool value = false;
   TextEditingController search = TextEditingController();
 
@@ -75,66 +77,99 @@ class _FAQScreenState extends State<FAQScreen> {
                 dashGapRadius: 0.0,
               ),
               CommonWidget.commonSizedBox(height: 27.sp),
-              GetBuilder<AllFaqCategoryViewModel>(builder: (controller) {
-                if (controller.allFaqCategoryApiResponse.status ==
-                    Status.ERROR) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                        color: CommonColor.greenColor),
-                  );
-                }
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          isAllSelected = 0;
+                          selectMenu = -1;
+                        });
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(right: 4.w),
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 20.sp, vertical: 8.sp),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100.h),
+                          color: isAllSelected == 0
+                              ? CommonColor.greenColor
+                              : Colors.transparent,
+                          border: Border.all(
+                            color: CommonColor.greenColor,
+                          ),
+                        ),
+                        child: CommonText.textBoldWight600(
+                            text: 'All',
+                            color: isAllSelected == 0
+                                ? CommonColor.whiteColorEDEDED
+                                : CommonColor.blackColor0D0D0D),
+                      ),
+                    ),
+                    GetBuilder<AllFaqCategoryViewModel>(builder: (controller) {
+                      if (controller.allFaqCategoryApiResponse.status ==
+                          Status.ERROR) {
+                        return Center(
+                          child: CircularProgressIndicator(
+                              color: CommonColor.greenColor),
+                        );
+                      }
 
-                if (controller.allFaqCategoryApiResponse.status ==
-                    Status.COMPLETE) {
-                  AllFaqCategoryResponseModel response =
-                      controller.allFaqCategoryApiResponse.data;
+                      if (controller.allFaqCategoryApiResponse.status ==
+                          Status.COMPLETE) {
+                        AllFaqCategoryResponseModel response =
+                            controller.allFaqCategoryApiResponse.data;
 
-                  return SizedBox(
-                    height: 5.h,
-                    child: ListView.separated(
-                        physics: BouncingScrollPhysics(),
-                        itemCount: response.data!.length,
-                        scrollDirection: Axis.horizontal,
-                        separatorBuilder: (context, index) {
-                          return SizedBox(width: 5.w);
-                        },
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () async {
-                              setState(() {
-                                selectMenu = index;
-                              });
+                        return SizedBox(
+                            height: 5.h,
+                            child: Row(
+                              children: List.generate(
+                                response.data!.length,
+                                (index) => GestureDetector(
+                                  onTap: () async {
+                                    setState(() {
+                                      selectMenu = index;
+                                    });
+                                    isAllSelected = 1;
 
-                              await getFaqViewModel.getFaqViewModel(
-                                  id: response.data![index].sId!);
-                            },
-                            child: Container(
-                              alignment: Alignment.center,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 20.sp, vertical: 8.sp),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100.h),
-                                color: selectMenu == index
-                                    ? CommonColor.greenColor
-                                    : Colors.transparent,
-                                border: Border.all(
-                                  color: CommonColor.greenColor,
+                                    await getFaqViewModel.getFaqViewModel(
+                                        id: response.data![index].sId!);
+                                  },
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    margin: EdgeInsets.only(right: 4.w),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20.sp, vertical: 8.sp),
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.circular(100.h),
+                                      color: selectMenu == index
+                                          ? CommonColor.greenColor
+                                          : Colors.transparent,
+                                      border: Border.all(
+                                        color: CommonColor.greenColor,
+                                      ),
+                                    ),
+                                    child: CommonText.textBoldWight600(
+                                        text:
+                                            '${response.data![index].name.toString().capitalizeFirst}',
+                                        color: selectMenu == index
+                                            ? CommonColor.whiteColorEDEDED
+                                            : CommonColor.blackColor0D0D0D),
+                                  ),
                                 ),
                               ),
-                              child: CommonText.textBoldWight600(
-                                  text:
-                                      '${response.data![index].name.toString().capitalizeFirst}',
-                                  color: selectMenu == index
-                                      ? CommonColor.whiteColorEDEDED
-                                      : CommonColor.blackColor0D0D0D),
-                            ),
-                          );
-                        }),
-                  );
-                }
+                            ));
+                      }
 
-                return SizedBox();
-              }),
+                      return SizedBox();
+                    }),
+                  ],
+                ),
+              ),
               CommonWidget.commonSizedBox(height: 20.sp),
               CommonWidget.textFormField(
                 borderColor: Colors.transparent,
@@ -205,9 +240,14 @@ class _FAQScreenState extends State<FAQScreen> {
                                       color: Colors.grey.shade200,
                                       indent: 2.w,
                                       endIndent: 2.w),
-                                  CommonText.textBoldWight500(
-                                      text: "${response.data![index].answer}",
-                                      fontSize: 14),
+                                  Row(
+                                    children: [
+                                      CommonText.textBoldWight500(
+                                          text:
+                                              "${response.data![index].answer}",
+                                          fontSize: 14),
+                                    ],
+                                  )
                                 ],
                                 title: CommonText.textBoldWight500(
                                   text: '${response.data![index].question}',
