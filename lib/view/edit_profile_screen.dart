@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
@@ -258,7 +259,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     "weight": weightController!.text.toString().trim(),
                   };
                 }
+
                 await EditProfileRepo.editProfileRepo(model: _req);
+
+                double weight = double.parse(weightController!.text);
+                double height = double.parse(heightController!.text);
+
+                var bmi = await weight / pow((height / 100), 2);
+
+                GetStorageServices.setUserBMI(bmi.toStringAsFixed(1));
               } else {
                 CommonWidget.getSnackBar(
                   message: "Please enter all detail",

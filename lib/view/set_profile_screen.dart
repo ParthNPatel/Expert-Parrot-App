@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'dart:math';
 import 'package:expert_parrot_app/Models/repo/edit_profile_repo.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
@@ -243,6 +243,16 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                             };
 
                             await EditProfileRepo.editProfileRepo(model: _req);
+
+                            double weight =
+                                double.parse(weightController!.text);
+                            double height =
+                                double.parse(heightController!.text);
+
+                            var bmi = await weight / pow((height / 100), 2);
+
+                            GetStorageServices.setUserBMI(
+                                bmi.toStringAsFixed(1));
                           } catch (e) {
                             progress!.dismiss();
 
