@@ -10,7 +10,8 @@ import '../services/api_services.dart';
 import '../services/base_service.dart';
 
 class EditProfileRepo extends BaseService {
-  static Future editProfileRepo({required Map<String, dynamic> model}) async {
+  static Future editProfileRepo(
+      {required Map<String, dynamic> model, bool isEdit = false}) async {
     print('getBarrierToken   ${GetStorageServices.getBarrierToken()}');
 
     var response = await APIService().getPutResponse(
@@ -28,8 +29,11 @@ class EditProfileRepo extends BaseService {
             userImage: '${dataOfApi['userImage']}',
             weight: '${dataOfApi['weight']}',
             name: '${dataOfApi['name']}');
-
-        Get.offAll(BottomNavScreen());
+        if (!isEdit) {
+          Get.offAll(BottomNavScreen());
+        } else {
+          Get.back();
+        }
       }
     } else {
       CommonWidget.getSnackBar(

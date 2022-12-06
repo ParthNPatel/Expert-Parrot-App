@@ -98,9 +98,11 @@ class APIService {
 
       request.fields["name"] = body!["name"];
       request.fields["height"] = body["height"];
-      request.files.add(await http.MultipartFile.fromPath(
-          "userImage", body["userImage"],
-          contentType: MediaType('userImage', 'jpg')));
+      if (body["userImage"] != null && body["userImage"] != "") {
+        request.files.add(await http.MultipartFile.fromPath(
+            "userImage", body["userImage"],
+            contentType: MediaType('userImage', 'jpg')));
+      }
       request.fields["age"] = body["age"];
       request.fields["weight"] = body["weight"];
 

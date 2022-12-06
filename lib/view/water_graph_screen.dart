@@ -9,6 +9,7 @@ import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:expert_parrot_app/viewModel/add_glass_view_model.dart';
 import 'package:expert_parrot_app/viewModel/get_glass_view_model.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
@@ -28,6 +29,9 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
   List waterType = ["glass", 'Bottle', 'Lg Bottle'];
   int selectType = 0;
   List days = [];
+  int ozGlass = 0;
+  int ozBottle = 0;
+  int ozLgBottle = 0;
 
   AddGlassViewModel addGlassViewModel = Get.put(AddGlassViewModel());
   GetGlassViewModel getGlassViewModel = Get.put(GetGlassViewModel());
@@ -190,37 +194,78 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                           physics: NeverScrollableScrollPhysics(),
                           itemCount: response.data!.docs!.length,
                           itemBuilder: (context, index) {
-                            return ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: response.data!.docs![0].data!.length,
-                              itemBuilder: (context, index1) {
-                                String times = CommonWidget.convertDateForm(
-                                    response.data!.docs![index].date!)!;
-                                if (addGlassViewModel.index == 0 &&
-                                    response.data!.docs![index].data![index1]
-                                            .type ==
-                                        'glass') {
-                                  log('LEANGHT :- ${(response.data!.docs![index].data![index1])}');
+                            String times = CommonWidget.convertDateForm(
+                                response.data!.docs![index].date!)!;
 
-                                  return ShowData(
-                                      times, response, index, index1);
-                                } else if (addGlassViewModel.index == 1 &&
-                                    response.data!.docs![index].data![index1]
-                                            .type ==
-                                        'Bottle') {
-                                  return ShowData(
-                                      times, response, index, index1);
-                                } else if (addGlassViewModel.index == 2 &&
-                                    response.data!.docs![index].data![index1]
-                                            .type ==
-                                        'Lg Bottle') {
-                                  return ShowData(
-                                      times, response, index, index1);
-                                }
-                                return SizedBox();
-                              },
-                            );
+                            // for (int i = 0;
+                            //     i < response.data!.docs![index].data!.length;
+                            //     i++) {
+                            //   if (addGlassViewModel.index == 0 &&
+                            //       response.data!.docs![index].data![i].type ==
+                            //           'glass') {
+                            //     ozGlass += response
+                            //         .data!.docs![index].data![i].quantity!;
+                            //   } else if (addGlassViewModel.index == 1 &&
+                            //       response.data!.docs![index].data![i].type ==
+                            //           'Bottle') {
+                            //     ozBottle += response
+                            //         .data!.docs![index].data![i].quantity!;
+                            //   } else if (addGlassViewModel.index == 2 &&
+                            //       response.data!.docs![index].data![i].type ==
+                            //           'Lg Bottle') {
+                            //     ozLgBottle += response
+                            //         .data!.docs![index].data![i].quantity!;
+                            //   }
+                            // }
+                            for (int i = 0;
+                                i < response.data!.docs![index].data!.length;
+                                i++) {
+                              if (addGlassViewModel.index == 0 &&
+                                  response.data!.docs![index].data![i].type ==
+                                      'glass') {
+                                return ShowData(times, response, index, i);
+                              } else if (addGlassViewModel.index == 1 &&
+                                  response.data!.docs![index].data![i].type ==
+                                      'Bottle') {
+                                return ShowData(times, response, index, i);
+                              } else if (addGlassViewModel.index == 2 &&
+                                  response.data!.docs![index].data![i].type ==
+                                      'Lg Bottle') {
+                                return ShowData(times, response, index, i);
+                              }
+                            }
+                            return SizedBox();
+
+                            // return ListView.builder(
+                            //   shrinkWrap: true,
+                            //   physics: NeverScrollableScrollPhysics(),
+                            //   itemCount:
+                            //       response.data!.docs![index].data!.length,
+                            //   itemBuilder: (context, index1) {
+                            //     String times = CommonWidget.convertDateForm(
+                            //         response.data!.docs![index].date!)!;
+                            //     if (addGlassViewModel.index == 0 &&
+                            //         response.data!.docs![index].data![index1]
+                            //                 .type ==
+                            //             'glass') {
+                            //       return ShowData(
+                            //           times, response, index, index1);
+                            //     } else if (addGlassViewModel.index == 1 &&
+                            //         response.data!.docs![index].data![index1]
+                            //                 .type ==
+                            //             'Bottle') {
+                            //       return ShowData(
+                            //           times, response, index, index1);
+                            //     } else if (addGlassViewModel.index == 2 &&
+                            //         response.data!.docs![index].data![index1]
+                            //                 .type ==
+                            //             'Lg Bottle') {
+                            //       return ShowData(
+                            //           times, response, index, index1);
+                            //     }
+                            //     return SizedBox();
+                            //   },
+                            // );
                           },
                         ),
                         CommonWidget.commonSizedBox(height: 100),
@@ -254,7 +299,6 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                 child: CommonText.textBoldWight500(
                     text: times,
                     // text: resp.data![index].updatedAt.weekday,
-
                     fontSize: 12.sp,
                     color: CommonColor.blackColor1D253C),
               ),
@@ -293,20 +337,189 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
     }
   }
 
-  Container graphWidget() {
-    return Container(
+  SizedBox graphWidget() {
+    return SizedBox(
         width: Get.width,
         height: 210,
-        decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(12)),
-        //height: 500,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset(
-            'assets/png/fl_chart.png',
-            fit: BoxFit.contain,
-          ),
+        child: LineChart(
+          LineChartData(
+              lineTouchData: LineTouchData(enabled: true),
+              lineBarsData: [
+                LineChartBarData(
+                  spots: [
+                    FlSpot(0, 3),
+                    FlSpot(1, 1),
+                    FlSpot(2, 3),
+                    FlSpot(3, 2),
+                    FlSpot(3, 4),
+                    FlSpot(4, 1)
+                  ],
+                  isCurved: true,
+                  barWidth: 2,
+                  color: CommonColor.greenColor,
+
+                  // aboveBarData: BarAreaData(
+                  //   show: true,
+                  //   // colors: [Colors.lightGreen.withOpacity(0.5)],
+                  //   // cutOffY: cutOffYValue,
+                  //   applyCutOffY: true,
+                  // ),
+                  dotData: FlDotData(
+                    show: false,
+                  ),
+                ),
+              ],
+              borderData: FlBorderData(show: false),
+              gridData: FlGridData(show: false),
+              titlesData: FlTitlesData(
+                topTitles: AxisTitles(sideTitles: SideTitles(showTitles: true)),
+              )
+
+              // titlesData: FlTitlesData(
+              //   bottomTitles: SideTitles(
+              //       showTitles: true,
+              //       reservedSize: 5,
+              //       // textStyle: yearTextStyle,
+              //       getTitles: (value) {
+              //         switch (value.toInt()) {
+              //           case 0:
+              //             return '2016';
+              //           case 1:
+              //             return '2017';
+              //
+              //           default:
+              //             return '';
+              //         }
+              //       }),
+              //   leftTitles: SideTitles(
+              //     showTitles: true,
+              //     getTitles: (value) {
+              //       return '\$ ${value + 100}';
+              //     },
+              //   ),
+              // ),
+              // axisTitleData: FlAxisTitleData(
+              //     leftTitle: AxisTitle(
+              //         showTitle: true, titleText: 'Value', margin: 10),
+              //     bottomTitle: AxisTitle(
+              //         showTitle: true,
+              //         margin: 10,
+              //         titleText: 'Year',
+              //         textStyle: yearTextStyle,
+              //         textAlign: TextAlign.right)),
+              // gridData: FlGridData(
+              //   show: true,
+              //   checkToShowHorizontalLine: (double value) {
+              //     return value == 1 || value == 2 || value == 3 || value == 4;
+              //   },
+              // ),
+              ),
         ));
+
+    // return Container(
+    //     width: Get.width,
+    //     height: 210,
+    //     decoration: BoxDecoration(
+    //         color: Colors.white, borderRadius: BorderRadius.circular(12)),
+    //     //height: 500,
+    //     child: Padding(
+    //       padding: const EdgeInsets.all(8.0),
+    //       child: Image.asset(
+    //         'assets/png/fl_chart.png',
+    //         fit: BoxFit.contain,
+    //       ),
+    //     )),
+
+    // return LineChart(
+    //   LineChartData(
+    //     lineTouchData: LineTouchData(enabled: true),
+    //     lineBarsData: [
+    //       LineChartBarData(
+    //         spots: [
+    //           FlSpot(0, 1),
+    //           FlSpot(1, 1),
+    //           FlSpot(2, 3),
+    //           FlSpot(3, 4),
+    //           FlSpot(3, 5),
+    //           FlSpot(4, 4)
+    //         ],
+    //         isCurved: true,
+    //         barWidth: 2,
+    //         // colors: [
+    //         //   Colors.orange,
+    //         // ],
+    //         belowBarData: BarAreaData(
+    //           show: true,
+    //           // colors: [Colors.lightBlue.withOpacity(0.5)],
+    //           // cutOffY: cutOffYValue,
+    //           applyCutOffY: true,
+    //         ),
+    //         aboveBarData: BarAreaData(
+    //           show: true,
+    //           // colors: [Colors.lightGreen.withOpacity(0.5)],
+    //           // cutOffY: cutOffYValue,
+    //           applyCutOffY: true,
+    //         ),
+    //         dotData: FlDotData(
+    //           show: false,
+    //         ),
+    //       ),
+    //     ],
+    //     minY: 0,
+    //     // titlesData: FlTitlesData(
+    //     //   bottomTitles: SideTitles(
+    //     //       showTitles: true,
+    //     //       reservedSize: 5,
+    //     //       // textStyle: yearTextStyle,
+    //     //       getTitles: (value) {
+    //     //         switch (value.toInt()) {
+    //     //           case 0:
+    //     //             return '2016';
+    //     //           case 1:
+    //     //             return '2017';
+    //     //
+    //     //           default:
+    //     //             return '';
+    //     //         }
+    //     //       }),
+    //     //   leftTitles: SideTitles(
+    //     //     showTitles: true,
+    //     //     getTitles: (value) {
+    //     //       return '\$ ${value + 100}';
+    //     //     },
+    //     //   ),
+    //     // ),
+    //     // axisTitleData: FlAxisTitleData(
+    //     //     leftTitle: AxisTitle(
+    //     //         showTitle: true, titleText: 'Value', margin: 10),
+    //     //     bottomTitle: AxisTitle(
+    //     //         showTitle: true,
+    //     //         margin: 10,
+    //     //         titleText: 'Year',
+    //     //         textStyle: yearTextStyle,
+    //     //         textAlign: TextAlign.right)),
+    //     gridData: FlGridData(
+    //       show: true,
+    //       checkToShowHorizontalLine: (double value) {
+    //         return value == 1 || value == 2 || value == 3 || value == 4;
+    //       },
+    //     ),
+    //   ),
+    // );
+
+    // return Container(
+    //     width: Get.width,
+    //     height: 210,
+    //     decoration: BoxDecoration(
+    //         color: Colors.white, borderRadius: BorderRadius.circular(12)),
+    //     //height: 500,
+    //     child: Padding(
+    //       padding: const EdgeInsets.all(8.0),
+    //       child: Image.asset(
+    //         'assets/png/fl_chart.png',
+    //         fit: BoxFit.contain,
+    //       ),
+    //     ));
   }
 
   GetBuilder<AddGlassViewModel> waterBottleWidget() {
