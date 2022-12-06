@@ -1,17 +1,19 @@
 // To parse this JSON data, do
 //
-//     final recordMedicineResponseModel = recordMedicineResponseModelFromJson(jsonString);
+//     final addRecordMedicineResponseModel = addRecordMedicineResponseModelFromJson(jsonString);
 
 import 'dart:convert';
 
-RecordMedicineResponseModel recordMedicineResponseModelFromJson(String str) =>
-    RecordMedicineResponseModel.fromJson(json.decode(str));
+AddRecordMedicineResponseModel addRecordMedicineResponseModelFromJson(
+        String str) =>
+    AddRecordMedicineResponseModel.fromJson(json.decode(str));
 
-String recordMedicineResponseModelToJson(RecordMedicineResponseModel data) =>
+String addRecordMedicineResponseModelToJson(
+        AddRecordMedicineResponseModel data) =>
     json.encode(data.toJson());
 
-class RecordMedicineResponseModel {
-  RecordMedicineResponseModel({
+class AddRecordMedicineResponseModel {
+  AddRecordMedicineResponseModel({
     this.flag,
     this.data,
   });
@@ -19,8 +21,8 @@ class RecordMedicineResponseModel {
   bool? flag;
   Data? data;
 
-  factory RecordMedicineResponseModel.fromJson(Map<String, dynamic> json) =>
-      RecordMedicineResponseModel(
+  factory AddRecordMedicineResponseModel.fromJson(Map<String, dynamic> json) =>
+      AddRecordMedicineResponseModel(
         flag: json["flag"],
         data: Data.fromJson(json["data"]),
       );

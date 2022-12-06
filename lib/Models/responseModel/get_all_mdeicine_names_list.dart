@@ -1,8 +1,7 @@
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
-import 'package:expert_parrot_app/Models/repo/get_comment_repo.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_all_medicine_names_model.dart';
-import 'package:expert_parrot_app/Models/responseModel/get_comment_res_model.dart';
 import 'package:get/get.dart';
+
 import '../repo/get_all_mdicine_names.dart';
 
 class GetAllMedicineNamesList extends GetxController {

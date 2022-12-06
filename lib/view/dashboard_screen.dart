@@ -1,9 +1,9 @@
 import 'dart:developer' as log;
 import 'dart:math';
+
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/repo/delete_medicine_repo.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_all_medicine_names_model.dart';
-import 'package:expert_parrot_app/Models/responseModel/record_medicine_res_model.dart';
 import 'package:expert_parrot_app/Models/responseModel/user_data_res_model.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/components/home_shimmer.dart';
@@ -14,7 +14,7 @@ import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:expert_parrot_app/view/water_graph_screen.dart';
 import 'package:expert_parrot_app/viewModel/add_medicine_view_model.dart';
-import 'package:expert_parrot_app/viewModel/record_medicine_view_model.dart';
+import 'package:expert_parrot_app/viewModel/add_record_medicine_view_model.dart';
 import 'package:expert_parrot_app/viewModel/user_data_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -43,6 +43,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   String? km, min, kal, step;
   String? verificationCode;
   DateTime dayOf = DateTime.now();
+  List selectedDose = [];
 
   List overViewData = [
     {
@@ -133,8 +134,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   HandleFloatController controller = Get.find();
   AddMedicineViewModel addMedicineViewModel = Get.put(AddMedicineViewModel());
   UserDataViewModel userDataViewModel = Get.put(UserDataViewModel());
-  RecordMedicineViewModel recordMedicineViewModel =
-      Get.put(RecordMedicineViewModel());
+  AddRecordMedicineViewModel addRecordMedicineViewModel =
+      Get.put(AddRecordMedicineViewModel());
 
   GetAllMedicineNamesList getAllMedicineNamesList =
       Get.put(GetAllMedicineNamesList());
@@ -175,17 +176,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 UserDataResponseModel userResponse =
                     controller.userDataApiResponse.data;
                 LastData.clear();
-                // List data = [
-                //   '${userResponse.data!.water}',
-                //   '${userResponse.data!.weight}',
-                //   '${userResponse.data!.heartRate}',
-                //   '${userResponse.data!.bmi}'
-                // ];
                 int length = userResponse.data!.medicines!.length;
-                // print('length =============== > $length');
-                // print(
-                //     'response _id =============== > ${userResponse.data!.medicines![length - 3]["_id"]}');
-                if (length > 3) {
+                if (length >= 3) {
                   LastData.insert(0, {
                     'id': '${userResponse.data!.medicines![length - 3]["_id"]}',
                     'totalTimes':
@@ -285,7 +277,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     .data!.medicines![index]["appearance"];
                                 return length > 3
                                     ? medDetailsWidget(
-                                        id: "${LastData[index]['id']}",
+                                        medId: "${LastData[index]['id']}",
                                         totalTimes:
                                             "${LastData[index]['totalTimes']}",
                                         image: LastData[index]['ap'] == 'Pills'
@@ -322,7 +314,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                     : Color.fromRGBO(
                                                         111, 44, 196, 0.13))
                                     : medDetailsWidget(
-                                        id: "${LastData[index]['id']}",
+                                        medId: "${LastData[index]['id']}",
                                         totalTimes:
                                             "${LastData[index]['totalTimes']}",
                                         image: UserEqual == 'Pills'
@@ -398,7 +390,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                 // 'name_of_count': '78KG',
                                 // 'name_of_subject': 'This Week',
                                 // 'color': Color(0xffFAF0DB),
-
                                 return overViewWidget(
                                   onTap: () async {
                                     if (index == 3) {
@@ -409,7 +400,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                         ).whenComplete(() => setState(() {}));
                                       } else {
                                         Get.dialog(
-                                          await enterHeightWwightDialog(),
+                                          await enterHeightWeightDialog(),
                                         ).then((value) {
                                           setState(() {});
                                         });
@@ -551,7 +542,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     );
   }
 
-  Future<StatefulBuilder> enterHeightWwightDialog() async {
+  Future<StatefulBuilder> enterHeightWeightDialog() async {
     return StatefulBuilder(
       builder: (context, setState) => Dialog(
         shape: RoundedRectangleBorder(
@@ -2039,7 +2030,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                       GestureDetector(
                         onTap: () async {
                           Get.back();
-                          Get.dialog(await enterHeightWwightDialog())
+                          Get.dialog(await enterHeightWeightDialog())
                               .then((value) {
                             setState(() {});
                           });
@@ -2147,7 +2138,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   Widget medDetailsWidget(
       {required String medName,
       required String medGm,
-      required String id,
+      required String medId,
       required String totalTimes,
       required String timeOfDay,
       required Color color,
@@ -2194,69 +2185,279 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                             color: CommonColor.blackColor0D0D0D,
                             fontSize: 15.sp),
                         PopupMenuButton(
+                          // color: iconColor == Color(0xff21D200)
+                          //     ? Color(0xffDBF3D8)
+                          //     : iconColor == Color(0xffFFDD2C)
+                          //         ? Color(0xffEBF3D9)
+                          //         : iconColor == Color(0xff9255E5)
+                          //             ? Color(0xffE0DFED)
+                          //             : Color(0xff9255E5),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
                           padding: EdgeInsets.zero,
                           icon: Icon(
                             Icons.more_vert,
                             color: CommonColor.geryB4B4B4,
                           ),
+                          onSelected: (value) async {
+                            switch (value) {
+                              case 'mark':
+                                return Get.dialog(
+                                  StatefulBuilder(
+                                    builder: (context, setState) => Dialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Container(
+                                        height: 200.sp,
+                                        width: 300.sp,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: 20,
+                                                  top: 13,
+                                                  right: 20,
+                                                  bottom: 13),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  CommonText.textBoldWight500(
+                                                    text: "Select doses taken",
+                                                    fontSize: 17.sp,
+                                                  ),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      selectedDose.clear();
+                                                      Get.back();
+                                                    },
+                                                    child: CommonWidget
+                                                        .commonSvgPitcher(
+                                                            image: ImageConst
+                                                                .close),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            CommonWidget.dottedLineWidget(),
+                                            Expanded(
+                                              child: SingleChildScrollView(
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 20,
+                                                              vertical: 10),
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          SizedBox(
+                                                            height: 5,
+                                                          ),
+                                                          CommonText
+                                                              .textBoldWight500(
+                                                                  text: "Doses",
+                                                                  fontSize:
+                                                                      13.sp,
+                                                                  color: Colors
+                                                                      .black),
+                                                          SizedBox(
+                                                            height: 12,
+                                                          ),
+                                                          SizedBox(
+                                                            height: 40.sp,
+                                                            child: ListView
+                                                                .separated(
+                                                              shrinkWrap: true,
+                                                              scrollDirection:
+                                                                  Axis.horizontal,
+                                                              physics:
+                                                                  NeverScrollableScrollPhysics(),
+                                                              itemCount:
+                                                                  int.parse(
+                                                                      totalTimes),
+                                                              separatorBuilder:
+                                                                  (context,
+                                                                      index) {
+                                                                return SizedBox(
+                                                                  width: 16.sp,
+                                                                );
+                                                              },
+                                                              itemBuilder:
+                                                                  (context,
+                                                                      index) {
+                                                                return Column(
+                                                                  children: [
+                                                                    InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                        setState(
+                                                                            () {
+                                                                          if (selectedDose.contains(index +
+                                                                              1)) {
+                                                                            selectedDose.remove(index +
+                                                                                1);
+                                                                          } else {
+                                                                            selectedDose.add(index +
+                                                                                1);
+                                                                          }
+                                                                        });
+
+                                                                        print(
+                                                                            'selectedDoseselectedDoseselectedDoseselectedDose $selectedDose');
+                                                                      },
+                                                                      child:
+                                                                          Container(
+                                                                        height:
+                                                                            15.sp,
+                                                                        width: 15
+                                                                            .sp,
+                                                                        decoration: BoxDecoration(
+                                                                            color:
+                                                                                Colors.white,
+                                                                            shape: BoxShape.circle,
+                                                                            border: Border.all(color: CommonColor.greenColor, width: selectedDose.contains(index + 1) ? 4.sp : 1.3.sp)),
+                                                                      ),
+                                                                    ),
+                                                                    SizedBox(
+                                                                      height: 8,
+                                                                    ),
+                                                                    CommonText.textBoldWight500(
+                                                                        text: index == 0
+                                                                            ? "1st Dose"
+                                                                            : index == 1
+                                                                                ? "2nd Dose"
+                                                                                : "3rd Dose")
+                                                                  ],
+                                                                );
+                                                              },
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: 20),
+                                                          CommonWidget
+                                                              .commonButton(
+                                                                  color: CommonColor
+                                                                      .greenColor,
+                                                                  radius: 10,
+                                                                  onTap:
+                                                                      () async {
+                                                                    var _req = {
+                                                                      "medicineId":
+                                                                          "${medId}",
+                                                                      "doses":
+                                                                          selectedDose,
+                                                                    };
+
+                                                                    print(
+                                                                        '====== > ${_req}');
+
+                                                                    await addRecordMedicineViewModel
+                                                                        .addRecordMedicineViewModel(
+                                                                            model:
+                                                                                _req);
+
+                                                                    if (addRecordMedicineViewModel
+                                                                            .addRecordMedicineApiResponse
+                                                                            .status ==
+                                                                        Status
+                                                                            .COMPLETE) {
+                                                                      selectedDose
+                                                                          .clear();
+                                                                      Get.back();
+
+                                                                      AddRecordMedicineViewModel
+                                                                          resp =
+                                                                          AddRecordMedicineViewModel();
+
+                                                                      // print('doses ====== > ${resp.data!.id}');
+
+                                                                      CommonWidget.getSnackBar(
+                                                                          duration:
+                                                                              2,
+                                                                          color: CommonColor.greenColor.withOpacity(
+                                                                              .4),
+                                                                          colorText: Colors
+                                                                              .white,
+                                                                          title:
+                                                                              "Done!",
+                                                                          message:
+                                                                              'Record Updated!');
+                                                                    }
+                                                                    if (addRecordMedicineViewModel
+                                                                            .addRecordMedicineApiResponse
+                                                                            .status ==
+                                                                        Status
+                                                                            .ERROR) {
+                                                                      selectedDose
+                                                                          .clear();
+
+                                                                      Get.back();
+                                                                      CommonWidget.getSnackBar(
+                                                                          duration:
+                                                                              2,
+                                                                          color: Colors.red.withOpacity(
+                                                                              .4),
+                                                                          colorText: Colors
+                                                                              .white,
+                                                                          title:
+                                                                              "Failed!",
+                                                                          message:
+                                                                              'Record not updated try again!');
+                                                                    }
+                                                                  },
+                                                                  text: "Add")
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ).then(
+                                  (value) {
+                                    setState(
+                                      () {},
+                                    );
+                                  },
+                                );
+                              default:
+                                throw UnimplementedError();
+                            }
+                          },
                           itemBuilder: (context) {
                             return [
                               PopupMenuItem(
-                                onTap: () async {
-                                  List<int> doses = [];
-
-                                  for (int i = 0;
-                                      i < int.parse(totalTimes);
-                                      i++) {
-                                    doses.add(i + 1);
-                                    print('for inside doses ====== > ${doses}');
-                                  }
-
-                                  var _req = {
-                                    "medicineId": "${id}",
-                                    "doses": doses,
-                                  };
-
-                                  print('====== > ${_req}');
-
-                                  await recordMedicineViewModel
-                                      .recordMedicineViewModel(model: _req);
-
-                                  if (recordMedicineViewModel
-                                          .recordMedicineApiResponse.status ==
-                                      Status.COMPLETE) {
-                                    RecordMedicineResponseModel resp =
-                                        RecordMedicineResponseModel();
-
-                                    // print('doses ====== > ${resp.data!.id}');
-
-                                    CommonWidget.getSnackBar(
-                                        duration: 2,
-                                        color: CommonColor.greenColor
-                                            .withOpacity(.4),
-                                        colorText: Colors.white,
-                                        title: "Done!",
-                                        message: 'Record Updated!');
-                                  }
-                                  if (recordMedicineViewModel
-                                          .recordMedicineApiResponse.status ==
-                                      Status.ERROR) {
-                                    CommonWidget.getSnackBar(
-                                        duration: 2,
-                                        color: Colors.red.withOpacity(.4),
-                                        colorText: Colors.white,
-                                        title: "Failed!",
-                                        message:
-                                            'Record not updated try again!');
-                                  }
-                                },
+                                onTap: () async {},
                                 child: Text("Mark as Taken"),
+                                value: "mark",
                               ),
                               PopupMenuItem(
                                 onTap: () async {
-                                  if (id.isNotEmpty) {
+                                  if (medId.isNotEmpty) {
                                     var resp = await DeleteMedicineRepo
-                                        .deleteMedicineRepo(id: id);
+                                        .deleteMedicineRepo(id: medId);
 
                                     if (resp["flag"] == true) {
                                       await userDataViewModel

@@ -23,5 +23,4 @@ class APIConst {
   static String allCategory = "/admin/category";
   static String getFaq = "/admin/faq/";
   static String emailOTP = "/auth/email-otp";
-  static String getAllMedicineNames = "/medicine/";
 }
