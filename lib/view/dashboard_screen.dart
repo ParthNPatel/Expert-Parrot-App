@@ -180,11 +180,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
               if (controller.userDataApiResponse.status == Status.LOADING) {
                 return HomeShimmer();
               }
+
               if (controller.userDataApiResponse.status == Status.COMPLETE) {
                 UserDataResponseModel userResponse =
                     controller.userDataApiResponse.data;
+
                 LastData.clear();
+
                 int length = userResponse.data!.medicines!.length;
+
                 if (length >= 3) {
                   LastData.insert(0, {
                     'id': '${userResponse.data!.medicines![length - 3]["_id"]}',
