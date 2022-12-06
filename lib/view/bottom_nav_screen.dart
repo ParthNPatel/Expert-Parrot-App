@@ -18,6 +18,7 @@ class BottomNavScreen extends StatefulWidget {
 }
 
 class _BottomNavScreenState extends State<BottomNavScreen> {
+
   List<String> iconList = [
     'assets/png/home.png',
     'assets/png/notification (3).png',
