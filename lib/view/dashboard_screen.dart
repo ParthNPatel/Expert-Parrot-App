@@ -167,6 +167,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   List dateTimes = ['select1'];
   int select = 1;
   List LastData = [];
+
   @override
   Widget build(BuildContext context) {
     log.log('BARRIER TOKEN :- ${GetStorageServices.getBarrierToken()}');
@@ -873,7 +874,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CommonText.textBoldWight400(
-                        text: "please enter Km",
+                        text:
+                            "please enter Km that you have covred so far today",
                         fontSize: 11.sp,
                         color: Color(0xff9B9B9B),
                       ),
@@ -904,7 +906,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                             if (_kmController.text.isNotEmpty) {
                               GetStorageServices.setUserKm(
                                   _kmController.text.trim());
-
                               Get.back();
                             } else {
                               CommonWidget.getSnackBar(
@@ -915,7 +916,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                   message: 'Please enter hear.');
                             }
                           },
-                          text: "Next")
+                          text: "Add")
                     ],
                   ),
                 ),

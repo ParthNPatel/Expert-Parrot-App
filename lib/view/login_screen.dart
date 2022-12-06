@@ -110,6 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
         GetStorageServices.getFcm() == '') {
       await AppNotificationHandler.getFcmToken();
     }
+
     final GoogleSignIn _googleSignIn = GoogleSignIn();
 
     GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
