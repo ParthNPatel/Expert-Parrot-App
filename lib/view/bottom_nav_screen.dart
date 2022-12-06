@@ -5,12 +5,13 @@ import 'package:expert_parrot_app/view/video_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-
 import '../controller/handle_float_controller.dart';
 import 'community_screen.dart';
 
 class BottomNavScreen extends StatefulWidget {
-  const BottomNavScreen({Key? key}) : super(key: key);
+  final int? index;
+
+  const BottomNavScreen({super.key, this.index = 0});
 
   @override
   State<BottomNavScreen> createState() => _BottomNavScreenState();
@@ -23,6 +24,12 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     'assets/png/profile (2).png',
     'assets/png/chat.png'
   ];
+
+  @override
+  void initState() {
+    pageSelected = widget.index!;
+    super.initState();
+  }
 
   int pageSelected = 0;
 
@@ -74,10 +81,15 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                 (index) => Padding(
                   padding: EdgeInsets.only(
                       right: index == 1 ? 30 : 0, left: index == 2 ? 30 : 0),
-                  child: InkResponse(
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    onTap: () {
+                  child: ElevatedButton(
+                    //splashColor: Colors.transparent,
+                    // highlightColor: Colors.transparent,
+                    style: ButtonStyle(
+                      elevation: MaterialStateProperty.all(0),
+                      backgroundColor:
+                          MaterialStateProperty.all(Colors.transparent),
+                    ),
+                    onPressed: () {
                       setState(() {
                         pageSelected = index;
                       });

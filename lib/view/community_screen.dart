@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/responseModel/add_post_res_model.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_comment_res_model.dart';
@@ -19,7 +18,6 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
-
 import '../components/common_widget.dart';
 import '../constant/image_const.dart';
 import '../constant/text_styel.dart';
@@ -1099,6 +1097,7 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                                       "postId": "${widget.postId}",
                                       "text": commentController.text.trim()
                                     });
+
                                 if (addCommentViewModel
                                         .addCommentApiResponse.status ==
                                     Status.COMPLETE) {
@@ -1126,8 +1125,9 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                                     color: Colors.red,
                                     colorText: Colors.white);
                               }
-                              isCommentOpened = false;
+                              //isCommentOpened = false;
                               commentController.clear();
+
                               controller.changeVisibility(false);
                             } else {
                               controller.changeVisibility(false);

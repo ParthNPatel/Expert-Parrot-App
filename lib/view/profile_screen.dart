@@ -5,6 +5,7 @@ import 'package:expert_parrot_app/view/depandent_screen.dart';
 import 'package:expert_parrot_app/view/edit_profile_screen.dart';
 import 'package:expert_parrot_app/view/faq_screen.dart';
 import 'package:expert_parrot_app/view/login_screen.dart';
+import 'package:expert_parrot_app/view/set_profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:sizer/sizer.dart';
 
 import '../constant/color_const.dart';
 import '../constant/text_styel.dart';
+import 'medicine_graph_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -396,7 +398,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 CommonText.textBoldWight500(
-                                  text: '180cm',
+                                  text:
+                                      '${GetStorageServices.getUserHeight()}cm',
                                   color: CommonColor.greenColor,
                                 ),
                                 SizedBox(
@@ -427,7 +430,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 CommonText.textBoldWight500(
-                                  text: '65kg',
+                                  text:
+                                      '${GetStorageServices.getUserWeight()}kg',
                                   color: CommonColor.greenColor,
                                 ),
                                 SizedBox(
@@ -449,16 +453,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 borderRadius: BorderRadius.circular(15),
                                 boxShadow: [
                                   BoxShadow(
-                                      color: Colors.grey.shade100,
-                                      blurRadius: 4,
-                                      spreadRadius: 1,
-                                      offset: Offset(1, 1))
+                                    color: Colors.grey.shade100,
+                                    blurRadius: 4,
+                                    spreadRadius: 1,
+                                    offset: Offset(1, 1),
+                                  )
                                 ]),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 CommonText.textBoldWight500(
-                                  text: '22yo',
+                                  text: '${GetStorageServices.getAge()}yo',
                                   color: CommonColor.greenColor,
                                 ),
                                 SizedBox(
@@ -623,12 +628,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               height: 15,
             ),
             CommonListTile(
-              onTap: () {},
+              onTap: () {
+                Get.to(() => SetProfileScreen());
+              },
               image: 'assets/svg/personal.svg',
               text: 'Personal Data',
             ),
             CommonListTile(
-              onTap: () {},
+              onTap: () {
+                Get.to(() => MedicineGraphScreen());
+              },
               image: 'assets/svg/achievement.svg',
               text: 'Achievement',
             ),

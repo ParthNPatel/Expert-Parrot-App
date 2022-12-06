@@ -12,6 +12,7 @@ import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
+import 'package:expert_parrot_app/view/bottom_nav_screen.dart';
 import 'package:expert_parrot_app/view/water_graph_screen.dart';
 import 'package:expert_parrot_app/viewModel/add_medicine_view_model.dart';
 import 'package:expert_parrot_app/viewModel/record_medicine_view_model.dart';
@@ -2445,24 +2446,33 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           scale: 5,
         ),
         CommonWidget.commonSizedBox(width: 6),
-        Container(
-          height: 27.sp,
-          width: 27.sp,
-          decoration: BoxDecoration(
-              border: Border.all(color: CommonColor.greenColor),
-              borderRadius: BorderRadius.circular(8)),
-          child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${GetStorageServices.getUserImage()}',
-                scale: 5,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Icon(
-                  color: Colors.grey,
-                  Icons.person,
-                  size: 15.sp,
-                ),
-              )),
+        InkWell(
+          onTap: () {
+            Get.off(
+              () => BottomNavScreen(
+                index: 2,
+              ),
+            );
+          },
+          child: Container(
+            height: 27.sp,
+            width: 27.sp,
+            decoration: BoxDecoration(
+                border: Border.all(color: CommonColor.greenColor),
+                borderRadius: BorderRadius.circular(8)),
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${GetStorageServices.getUserImage()}',
+                  scale: 5,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Icon(
+                    color: Colors.grey,
+                    Icons.person,
+                    size: 15.sp,
+                  ),
+                )),
+          ),
         ),
       ],
     );
