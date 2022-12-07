@@ -301,77 +301,90 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                 },
                               );
 
-                              return ListView.builder(
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: recordLength > 3
-                                    ? LastData.length
-                                    : respGRM.data![indexPage].records!.length,
-                                itemBuilder: (context, index) {
-                                  respGRM.data!.indexWhere((element) {
-                                    if (DateTime.parse(element.date!) ==
-                                        DateTime.parse(dayOf
-                                            .toString()
-                                            .split(" ")
-                                            .first)) {
-                                      if (element.records![index].sId ==
-                                          LastData[index]["id"]) {
-                                        completedDoses =
-                                            element.records![index].doses!;
-                                      } else {
-                                        completedDoses = [];
+                              try {
+                                return ListView.builder(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: recordLength > 3
+                                      ? LastData.length
+                                      : respGRM
+                                          .data![indexPage].records!.length,
+                                  itemBuilder: (context, index) {
+                                    respGRM.data!.indexWhere((element) {
+                                      if (DateTime.parse(element.date!) ==
+                                          DateTime.parse(dayOf
+                                              .toString()
+                                              .split(" ")
+                                              .first)) {
+                                        if (element.records![index].sId ==
+                                            LastData[index]["id"]) {
+                                          completedDoses =
+                                              element.records![index].doses!;
+                                        } else {
+                                          completedDoses = [];
+                                        }
                                       }
-                                    }
-                                    return DateTime.parse(element.date!) ==
-                                        DateTime.parse(
-                                            dayOf.toString().split(" ").first);
-                                  });
-                                  // var UserEqual = userResponse.data!
-                                  //     .medicines![index]["appearance"];
-                                  return /*recordLength > 3
+                                      return DateTime.parse(element.date!) ==
+                                          DateTime.parse(dayOf
+                                              .toString()
+                                              .split(" ")
+                                              .first);
+                                    });
+                                    // var UserEqual = userResponse.data!
+                                    //     .medicines![index]["appearance"];
+                                    try {
+                                      return /*recordLength > 3
                                             ? */
-                                      medDetailsWidget(
-                                          medId: "${LastData[index]['id']}",
-                                          totalTimes:
-                                              "${LastData[index]['totalTimes']}",
-                                          takenDoses: completedDoses,
-                                          image: LastData[index]['ap'] ==
-                                                  'Pills'
-                                              ? ImageConst.med3Icon
-                                              : LastData[index]['ap'] == 'Gel'
-                                                  ? ImageConst.med1Icon
+                                          medDetailsWidget(
+                                              medId: "${LastData[index]['id']}",
+                                              totalTimes:
+                                                  "${LastData[index]['totalTimes']}",
+                                              takenDoses: completedDoses,
+                                              image: LastData[index]['ap'] ==
+                                                      'Pills'
+                                                  ? ImageConst.med3Icon
                                                   : LastData[index]['ap'] ==
-                                                          'Syrup'
-                                                      ? ImageConst.med2Icon
-                                                      : ImageConst.med2Icon,
-                                          medName:
-                                              '${LastData[index]['medName']}',
-                                          medGm: '${LastData[index]['medGm']}',
-                                          iconColor: LastData[index]['ap'] ==
-                                                  'Pills'
-                                              ? Color(0xff21D200)
-                                              : LastData[index]['ap'] == 'Gel'
-                                                  ? Color(0xffFFDD2C)
+                                                          'Gel'
+                                                      ? ImageConst.med1Icon
+                                                      : LastData[index]['ap'] ==
+                                                              'Syrup'
+                                                          ? ImageConst.med2Icon
+                                                          : ImageConst.med2Icon,
+                                              medName:
+                                                  '${LastData[index]['medName']}',
+                                              medGm:
+                                                  '${LastData[index]['medGm']}',
+                                              iconColor: LastData[index]
+                                                          ['ap'] ==
+                                                      'Pills'
+                                                  ? Color(0xff21D200)
                                                   : LastData[index]['ap'] ==
-                                                          'Syrup'
-                                                      ? Color(0xff9255E5)
-                                                      : Color(0xff9255E5),
-                                          timeOfDay:
-                                              '${LastData[index]['timeOfDay']}',
-                                          color: LastData[index]['ap'] ==
-                                                  'Pills'
-                                              ? Color.fromRGBO(
-                                                  69, 196, 44, 0.13)
-                                              : LastData[index]['ap'] == 'Gel'
+                                                          'Gel'
+                                                      ? Color(0xffFFDD2C)
+                                                      : LastData[index]['ap'] ==
+                                                              'Syrup'
+                                                          ? Color(0xff9255E5)
+                                                          : Color(0xff9255E5),
+                                              timeOfDay:
+                                                  '${LastData[index]['timeOfDay']}',
+                                              color: LastData[index]['ap'] ==
+                                                      'Pills'
                                                   ? Color.fromRGBO(
-                                                      193, 196, 44, 0.13)
+                                                      69, 196, 44, 0.13)
                                                   : LastData[index]['ap'] ==
-                                                          'Syrup'
+                                                          'Gel'
                                                       ? Color.fromRGBO(
-                                                          111, 44, 196, 0.13)
-                                                      : Color.fromRGBO(
-                                                          111, 44, 196, 0.13));
-                                  /*: medDetailsWidget(
+                                                          193, 196, 44, 0.13)
+                                                      : LastData[index]['ap'] ==
+                                                              'Syrup'
+                                                          ? Color.fromRGBO(111,
+                                                              44, 196, 0.13)
+                                                          : Color.fromRGBO(111,
+                                                              44, 196, 0.13));
+                                    } catch (e) {
+                                      return SizedBox();
+                                    }
+                                    /*: medDetailsWidget(
                                                 medId: "${LastData[index]['id']}",
                                                 totalTimes:
                                                     "${LastData[index]['totalTimes']}",
@@ -412,8 +425,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                 0.13,
                                                               ),
                                               );*/
-                                },
-                              );
+                                  },
+                                );
+                              } catch (e) {
+                                return SizedBox();
+                              }
                             },
                           ),
                         ),

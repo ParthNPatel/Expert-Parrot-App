@@ -46,7 +46,7 @@ void main() async {
     ),
   );
 
-  GetStorage.init();
+  await GetStorage.init();
 
   runApp(MyApp());
 }
