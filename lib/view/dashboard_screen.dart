@@ -1,6 +1,5 @@
 import 'dart:developer' as log;
 import 'dart:math';
-
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/repo/delete_medicine_repo.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_all_medicine_names_model.dart';
@@ -24,7 +23,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
-
 import '../Models/responseModel/get_all_mdeicine_names_list.dart';
 import '../controller/handle_float_controller.dart';
 import 'medicine_graph_screen.dart';
@@ -149,7 +147,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   @override
   void initState() {
     controller.isVisible = false;
-
     getAllMedicineNamesList.getAllMedicineNames();
     userDataViewModel.userDataViewModel();
     getRecordMedicineViewModel.getRecordMedicineViewModel();
@@ -217,7 +214,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     'ap':
                         '${userResponse.data!.medicines![length - 2]["appearance"]}'
                   });
-
                   LastData.insert(2, {
                     'id':
                         '${userResponse.data!.medicines![length - 1]["_id"]!}',

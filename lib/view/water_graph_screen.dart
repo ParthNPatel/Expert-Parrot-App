@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:dotted_line/dotted_line.dart';
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_glass_res_model.dart';
@@ -13,7 +12,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-
 import '../components/common_widget.dart';
 import '../constant/color_const.dart';
 
@@ -26,7 +24,11 @@ class WaterGraphScreen extends StatefulWidget {
 
 class _WaterGraphScreenState extends State<WaterGraphScreen> {
   List dayList = ["Sat", 'Fri', 'Thu', 'Wed', 'Tue', 'Mon'];
+
   List waterType = ["glass", 'Bottle', 'Lg Bottle'];
+
+  List waterTypeList = ["glass", 'bottle', 'large_bottle'];
+
   int selectType = 0;
   List days = [];
   int ozGlass = 0;
@@ -1369,7 +1371,7 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                                                                   .addGlassViewModel(
                                                                       model: {
                                                                     "type":
-                                                                        "${waterType[selectType]}",
+                                                                        "${waterTypeList[selectType]}",
                                                                     "quantity":
                                                                         _glassController
                                                                             .text

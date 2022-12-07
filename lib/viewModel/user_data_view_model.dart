@@ -12,6 +12,7 @@ class UserDataViewModel extends GetxController {
   Future<void> userDataViewModel() async {
     _userDataApiResponse = ApiResponse.loading(message: 'Loading');
     update();
+
     try {
       UserDataResponseModel response = await UserDataRepo.userDataRepo();
       print("UserDataResponseModel=response==>$response");
@@ -21,6 +22,7 @@ class UserDataViewModel extends GetxController {
       print("UserDataResponseModel=e==>$e");
       _userDataApiResponse = ApiResponse.error(message: 'error');
     }
+
     update();
   }
 }

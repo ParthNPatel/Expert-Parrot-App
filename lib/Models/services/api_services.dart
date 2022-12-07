@@ -28,6 +28,9 @@ class APIService {
             'Content-Type': 'application/json'
           }
         : {'Content-Type': 'application/json'};
+
+    print("Bearer ${GetStorageServices.getBarrierToken()}");
+
     try {
       if (apitype == APIType.aGet) {
         final result =
