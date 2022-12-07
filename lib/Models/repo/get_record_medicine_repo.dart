@@ -5,9 +5,10 @@ import '../services/api_services.dart';
 import '../services/base_service.dart';
 
 class GetRecordMedicineRepo extends BaseService {
-  static Future<GetRecordMedicineResponseModel> getRecordMedicineRepo() async {
+  static Future<GetRecordMedicineResponseModel> getRecordMedicineRepo(
+      {String? page}) async {
     var response = await APIService().getResponse(
-      url: APIConst.recordMedicine + "?limit=10&page=1",
+      url: APIConst.recordMedicine + "?limit=7&page=0",
       apitype: APIType.aGet,
     );
     print('GetRecordMedicineRepo response===>>>  $response');

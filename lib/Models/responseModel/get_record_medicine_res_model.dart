@@ -1,101 +1,56 @@
 class GetRecordMedicineResponseModel {
   bool? flag;
-  Data? data;
+  List<Data>? data;
 
   GetRecordMedicineResponseModel({this.flag, this.data});
 
   GetRecordMedicineResponseModel.fromJson(Map<String, dynamic> json) {
     flag = json['flag'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    if (json['data'] != null) {
+      data = <Data>[];
+      json['data'].forEach((v) {
+        data!.add(new Data.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['flag'] = this.flag;
     if (this.data != null) {
-      data['data'] = this.data!.toJson();
+      data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
 class Data {
-  List<Docs>? docs;
-  int? total;
-  String? limit;
-  String? page;
-  int? pages;
+  String? date;
+  List<Records>? records;
 
-  Data({this.docs, this.total, this.limit, this.page, this.pages});
+  Data({this.date, this.records});
 
   Data.fromJson(Map<String, dynamic> json) {
-    if (json['docs'] != null) {
-      docs = <Docs>[];
-      json['docs'].forEach((v) {
-        docs!.add(new Docs.fromJson(v));
+    date = json['date'];
+    if (json['records'] != null) {
+      records = <Records>[];
+      json['records'].forEach((v) {
+        records!.add(new Records.fromJson(v));
       });
     }
-    total = json['total'];
-    limit = json['limit'];
-    page = json['page'];
-    pages = json['pages'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.docs != null) {
-      data['docs'] = this.docs!.map((v) => v.toJson()).toList();
-    }
-    data['total'] = this.total;
-    data['limit'] = this.limit;
-    data['page'] = this.page;
-    data['pages'] = this.pages;
-    return data;
-  }
-}
-
-class Docs {
-  String? sId;
-  MedicineId? medicineId;
-  String? createdAt;
-  String? date;
-  List<int>? doses;
-  String? updatedAt;
-
-  Docs(
-      {this.sId,
-      this.medicineId,
-      this.createdAt,
-      this.date,
-      this.doses,
-      this.updatedAt});
-
-  Docs.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
-    medicineId = json['medicineId'] != null
-        ? new MedicineId.fromJson(json['medicineId'])
-        : null;
-    createdAt = json['createdAt'];
-    date = json['date'];
-    doses = json['doses'].cast<int>();
-    updatedAt = json['updatedAt'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
-    if (this.medicineId != null) {
-      data['medicineId'] = this.medicineId!.toJson();
-    }
-    data['createdAt'] = this.createdAt;
     data['date'] = this.date;
-    data['doses'] = this.doses;
-    data['updatedAt'] = this.updatedAt;
+    if (this.records != null) {
+      data['records'] = this.records!.map((v) => v.toJson()).toList();
+    }
     return data;
   }
 }
 
-class MedicineId {
+class Records {
   String? sId;
   String? name;
   int? strength;
@@ -108,8 +63,9 @@ class MedicineId {
   String? userId;
   String? createdAt;
   String? updatedAt;
+  List<int>? doses;
 
-  MedicineId(
+  Records(
       {this.sId,
       this.name,
       this.strength,
@@ -121,9 +77,10 @@ class MedicineId {
       this.utcShceduleTime,
       this.userId,
       this.createdAt,
-      this.updatedAt});
+      this.updatedAt,
+      this.doses});
 
-  MedicineId.fromJson(Map<String, dynamic> json) {
+  Records.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     name = json['name'];
     strength = json['strength'];
@@ -136,6 +93,7 @@ class MedicineId {
     userId = json['userId'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
+    doses = json['doses'].cast<int>();
   }
 
   Map<String, dynamic> toJson() {
@@ -152,6 +110,7 @@ class MedicineId {
     data['userId'] = this.userId;
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
+    data['doses'] = this.doses;
     return data;
   }
 }

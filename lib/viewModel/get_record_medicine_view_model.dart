@@ -4,19 +4,44 @@ import 'package:expert_parrot_app/Models/responseModel/get_record_medicine_res_m
 import 'package:get/get.dart';
 
 class GetRecordMedicineViewModel extends GetxController {
+  // pageCounterAdd() {
+  //   pageCounter++;
+  //   update();
+  // }
+  //
+  // pageCounterRemove(value) {
+  //   if (value > 0) {
+  //     pageCounter--;
+  //   }
+  //   update();
+  // }
+  //
+  // apiPageCounterAdd() {
+  //   apiPageCounter++;
+  //   update();
+  // }
+  //
+  // apiPageCounterRemove(value) {
+  //   if (value > 0) {
+  //     apiPageCounter--;
+  //   }
+  //   update();
+  // }
+
   ApiResponse _getRecordMedicineApiResponse =
       ApiResponse.initial(message: 'Initialization');
 
   ApiResponse get getRecordMedicineApiResponse => _getRecordMedicineApiResponse;
 
-  Future<void> getRecordMedicineViewModel({bool? isLoading = true}) async {
+  Future<void> getRecordMedicineViewModel(
+      {bool? isLoading = true, String? page}) async {
     if (isLoading!) {
       _getRecordMedicineApiResponse = ApiResponse.loading(message: 'Loading');
     }
     update();
     try {
       GetRecordMedicineResponseModel response =
-          await GetRecordMedicineRepo.getRecordMedicineRepo();
+          await GetRecordMedicineRepo.getRecordMedicineRepo(page: page);
       print("GetRecordMedicineResponseModel=response==>$response");
 
       _getRecordMedicineApiResponse = ApiResponse.complete(response);

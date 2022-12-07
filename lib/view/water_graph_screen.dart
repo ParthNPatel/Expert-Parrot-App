@@ -341,20 +341,23 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
 
   SizedBox graphWidget() {
     return SizedBox(
-        width: Get.width,
-        height: 210,
+        width: Get.width * .7,
+        height: 190,
         child: LineChart(
           LineChartData(
               lineTouchData: LineTouchData(enabled: true),
               lineBarsData: [
                 LineChartBarData(
                   spots: [
-                    FlSpot(0, 3),
-                    FlSpot(1, 1),
-                    FlSpot(2, 3),
-                    FlSpot(3, 2),
-                    FlSpot(3, 4),
-                    FlSpot(4, 1)
+                    FlSpot(1, 3),
+                    FlSpot(2, 1),
+                    FlSpot(3, 3),
+                    FlSpot(4, 2),
+                    FlSpot(4, 4),
+                    FlSpot(5, 2),
+                    FlSpot(6, 3),
+                    FlSpot(6, 4),
+                    FlSpot(7, 3),
                   ],
                   isCurved: true,
                   barWidth: 2,
@@ -374,7 +377,18 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
               borderData: FlBorderData(show: false),
               gridData: FlGridData(show: false),
               titlesData: FlTitlesData(
-                topTitles: AxisTitles(sideTitles: SideTitles(showTitles: true)),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+                rightTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+                topTitles: AxisTitles(
+                  sideTitles: leftTitles(),
+                ),
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
               )
 
               // titlesData: FlTitlesData(
@@ -522,6 +536,49 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
     //         fit: BoxFit.contain,
     //       ),
     //     ));
+  }
+
+  SideTitles leftTitles() => SideTitles(
+        getTitlesWidget: leftTitleWidgets,
+        showTitles: true,
+        interval: 1,
+        reservedSize: 40,
+      );
+
+  Widget leftTitleWidgets(double value, TitleMeta meta) {
+    const style = TextStyle(
+      color: Color(0xff75729e),
+      fontWeight: FontWeight.bold,
+      fontSize: 12,
+    );
+    String text;
+    switch (value.toInt()) {
+      case 1:
+        text = 'Sun';
+        break;
+      case 2:
+        text = 'Mon';
+        break;
+      case 3:
+        text = 'Tue';
+        break;
+      case 4:
+        text = 'Wed';
+        break;
+      case 5:
+        text = 'Thu';
+        break;
+      case 6:
+        text = 'Fri';
+        break;
+      case 7:
+        text = 'Sat';
+        break;
+      default:
+        return Container();
+    }
+
+    return Text(text, style: style, textAlign: TextAlign.center);
   }
 
   GetBuilder<AddGlassViewModel> waterBottleWidget() {
