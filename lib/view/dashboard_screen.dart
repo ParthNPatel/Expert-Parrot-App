@@ -5,7 +5,6 @@ import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/repo/delete_medicine_repo.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_all_medicine_names_model.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_record_medicine_res_model.dart';
-import 'package:expert_parrot_app/Models/responseModel/user_data_res_model.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/components/home_shimmer.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
@@ -43,11 +42,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   TextEditingController _kmController = TextEditingController();
   TextEditingController _heartRateController = TextEditingController();
   TextEditingController _weightController = TextEditingController();
+  PageController pageController = PageController();
   String? km, min, kal, step;
   String? verificationCode;
   DateTime dayOf = DateTime.now();
   List selectedDose = [];
   List completedDoses = [];
+  int recordLength = 0;
+  int pageCounter = 0;
 
   List overViewData = [
     {
@@ -172,423 +174,429 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     log.log('BARRIER TOKEN :- ${GetStorageServices.getBarrierToken()}');
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: CommonWidget.commonBackGround(
-        body: GetBuilder<UserDataViewModel>(
-          builder: (controller) {
-            try {
-              if (controller.userDataApiResponse.status == Status.LOADING) {
-                return HomeShimmer();
-              }
-              if (controller.userDataApiResponse.status == Status.COMPLETE) {
-                UserDataResponseModel userResponse =
-                    controller.userDataApiResponse.data;
-                LastData.clear();
-                int length = userResponse.data!.medicines!.length;
-                if (length >= 3) {
-                  LastData.insert(0, {
-                    'id': '${userResponse.data!.medicines![length - 3]["_id"]}',
-                    'totalTimes':
-                        '${userResponse.data!.medicines![length - 3]["totalTimes"]}',
-                    'medName':
-                        '${userResponse.data!.medicines![length - 3]["name"]!}',
-                    'medGm':
-                        '${userResponse.data!.medicines![length - 3]["strength"]} gm',
-                    'timeOfDay':
-                        '${userResponse.data!.medicines![length - 3]["totalTimes"]} pills ${userResponse.data!.medicines![length - 3]["frequency"]}',
-                    'ap':
-                        '${userResponse.data!.medicines![length - 3]["appearance"]}'
-                  });
-                  LastData.insert(1, {
-                    'id':
-                        '${userResponse.data!.medicines![length - 2]["_id"]!}',
-                    'totalTimes':
-                        '${userResponse.data!.medicines![length - 2]["totalTimes"]}',
-                    'medName':
-                        '${userResponse.data!.medicines![length - 2]["name"]!}',
-                    'medGm':
-                        '${userResponse.data!.medicines![length - 2]["strength"]} gm',
-                    'timeOfDay':
-                        '${userResponse.data!.medicines![length - 2]["totalTimes"]} pills ${userResponse.data!.medicines![length - 2]["frequency"]}',
-                    'ap':
-                        '${userResponse.data!.medicines![length - 2]["appearance"]}'
-                  });
+      body: CommonWidget.commonBackGround(body:
+          GetBuilder<GetRecordMedicineViewModel>(builder: (controllerGRM) {
+        try {
+          if (controllerGRM.getRecordMedicineApiResponse.status ==
+              Status.LOADING) {
+            return HomeShimmer();
+          }
+          if (controllerGRM.getRecordMedicineApiResponse.status ==
+              Status.COMPLETE) {
+            print('COMPLETE');
+            GetRecordMedicineResponseModel respGRM =
+                controllerGRM.getRecordMedicineApiResponse.data;
 
-                  LastData.insert(2, {
-                    'id':
-                        '${userResponse.data!.medicines![length - 1]["_id"]!}',
-                    'totalTimes':
-                        '${userResponse.data!.medicines![length - 1]["totalTimes"]}',
-                    'medName':
-                        '${userResponse.data!.medicines![length - 1]["name"]!}',
-                    'medGm':
-                        '${userResponse.data!.medicines![length - 1]["strength"]} gm',
-                    'timeOfDay':
-                        '${userResponse.data!.medicines![length - 1]["totalTimes"]} pills ${userResponse.data!.medicines![length - 1]["frequency"]}',
-                    'ap':
-                        '${userResponse.data!.medicines![length - 1]["appearance"]}'
-                  });
-                }
-
-                return GetBuilder<GetRecordMedicineViewModel>(
-                    builder: (controllerGRM) {
-                  if (controllerGRM.getRecordMedicineApiResponse.status ==
-                      Status.LOADING) {
-                    return HomeShimmer();
-                  }
-                  if (controllerGRM.getRecordMedicineApiResponse.status ==
-                      Status.COMPLETE) {
-                    GetRecordMedicineResponseModel respGRM =
-                        controllerGRM.getRecordMedicineApiResponse.data;
-
-                    return Column(
+            return Column(
+              children: [
+                userNameWidget(),
+                CommonWidget.commonSizedBox(height: 20),
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        userNameWidget(userResponse),
+                        dateShowWidget(),
                         CommonWidget.commonSizedBox(height: 20),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            physics: BouncingScrollPhysics(),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                dateShowWidet(),
-                                CommonWidget.commonSizedBox(height: 20),
-                                Row(
-                                  children: [
-                                    CommonText.textBoldWight500(
-                                        text: TextConst.medSchedule,
-                                        fontSize: 17.sp),
-                                    Spacer(),
-                                    InkWell(
-                                      onTap: () {
-                                        Get.dialog(StatefulBuilder(
-                                          builder: (context, setState) =>
-                                              addMedicineDialog(
-                                                  context, setState),
-                                        )).then((value) {
-                                          setState(() {});
-                                        });
-                                      },
-                                      child: Row(
-                                        children: [
-                                          Image.asset(
-                                            ImageConst.addIcon,
-                                            scale: 3,
-                                          ),
-                                          CommonWidget.commonSizedBox(width: 6),
-                                          CommonText.textGradient(
-                                              text: TextConst.addAMed,
-                                              fontSize: 14.sp),
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                CommonWidget.commonSizedBox(height: 8),
-                                ListView.builder(
-                                  reverse: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: length > 3
-                                      ? LastData.length
-                                      : userResponse.data!.medicines!.length,
-                                  itemBuilder: (context, index) {
-                                    respGRM.data!.docs!.indexWhere(
-                                      (element) {
-                                        if (element.medicineId!.sId ==
-                                            LastData[index]["id"]) {
-                                          completedDoses = element.doses!;
-                                        } else {
-                                          completedDoses = [];
-                                        }
-
-                                        return element.medicineId!.sId ==
-                                            LastData[index]["id"];
-                                      },
-                                    );
-
-                                    var UserEqual = userResponse
-                                        .data!.medicines![index]["appearance"];
-                                    return length > 3
-                                        ? medDetailsWidget(
-                                            medId: "${LastData[index]['id']}",
-                                            totalTimes:
-                                                "${LastData[index]['totalTimes']}",
-                                            takenDoses: completedDoses,
-                                            image: LastData[index]['ap'] ==
-                                                    'Pills'
-                                                ? ImageConst.med3Icon
-                                                : LastData[index]['ap'] == 'Gel'
-                                                    ? ImageConst.med1Icon
-                                                    : LastData[index]['ap'] ==
-                                                            'Syrup'
-                                                        ? ImageConst.med2Icon
-                                                        : ImageConst.med2Icon,
-                                            medName:
-                                                '${LastData[index]['medName']}',
-                                            medGm:
-                                                '${LastData[index]['medGm']}',
-                                            iconColor: LastData[index]['ap'] ==
-                                                    'Pills'
-                                                ? Color(0xff21D200)
-                                                : LastData[index]['ap'] == 'Gel'
-                                                    ? Color(0xffFFDD2C)
-                                                    : LastData[index]['ap'] ==
-                                                            'Syrup'
-                                                        ? Color(0xff9255E5)
-                                                        : Color(0xff9255E5),
-                                            timeOfDay:
-                                                '${LastData[index]['timeOfDay']}',
-                                            color: LastData[index]['ap'] ==
-                                                    'Pills'
-                                                ? Color.fromRGBO(
-                                                    69, 196, 44, 0.13)
-                                                : LastData[index]['ap'] == 'Gel'
-                                                    ? Color.fromRGBO(
-                                                        193, 196, 44, 0.13)
-                                                    : LastData[index]['ap'] ==
-                                                            'Syrup'
-                                                        ? Color.fromRGBO(
-                                                            111, 44, 196, 0.13)
-                                                        : Color.fromRGBO(
-                                                            111, 44, 196, 0.13))
-                                        : medDetailsWidget(
-                                            medId: "${LastData[index]['id']}",
-                                            totalTimes:
-                                                "${LastData[index]['totalTimes']}",
-                                            takenDoses: completedDoses,
-                                            image: UserEqual == 'Pills'
-                                                ? ImageConst.med3Icon
-                                                : UserEqual == 'Gel'
-                                                    ? ImageConst.med1Icon
-                                                    : UserEqual == 'Syrup'
-                                                        ? ImageConst.med2Icon
-                                                        : ImageConst.med2Icon,
-                                            medName:
-                                                '${userResponse.data!.medicines![index]["name"]!}',
-                                            medGm:
-                                                '${userResponse.data!.medicines![index]["strength"]} gm',
-                                            iconColor: UserEqual == 'Pills'
-                                                ? Color(0xff21D200)
-                                                : UserEqual == 'Gel'
-                                                    ? Color(0xffFFDD2C)
-                                                    : UserEqual == 'Syrup'
-                                                        ? Color(0xff9255E5)
-                                                        : Color(0xff9255E5),
-                                            timeOfDay:
-                                                '${userResponse.data!.medicines![index]["totalTimes"]} pills ${userResponse.data!.medicines![index]["frequency"]}',
-                                            color: UserEqual == 'Pills'
-                                                ? Color.fromRGBO(
-                                                    69, 196, 44, 0.13)
-                                                : UserEqual == 'Gel'
-                                                    ? Color.fromRGBO(
-                                                        193, 196, 44, 0.13)
-                                                    : UserEqual == 'Syrup'
-                                                        ? Color.fromRGBO(
-                                                            111, 44, 196, 0.13)
-                                                        : Color.fromRGBO(
-                                                            111,
-                                                            44,
-                                                            196,
-                                                            0.13,
-                                                          ),
-                                          );
-                                  },
-                                ),
-                                CommonWidget.commonSizedBox(height: 16),
-                                Row(
-                                  children: [
-                                    CommonText.textBoldWight500(
-                                        text: TextConst.overview,
-                                        fontSize: 17.sp,
-                                        color: CommonColor.blackColor0D0D0D),
-                                    Spacer(),
-                                    InkWell(
-                                      onTap: () {
-                                        Get.to(() => MedicineGraphScreen());
-                                      },
-                                      child: CommonText.textGradient(
-                                        text: 'My Medical Report',
-                                        fontSize: 14.sp,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                CommonWidget.commonSizedBox(height: 16),
-                                GridView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: 4,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                          mainAxisSpacing: 10,
-                                          crossAxisSpacing: 16,
-                                          crossAxisCount: 2,
-                                          childAspectRatio: 2 / 1.5),
-                                  itemBuilder: (context, index) {
-                                    // 'name': 'Weight',
-                                    // 'image': 'assets/png/glass_icon.png.png',
-                                    // 'name_of_count': '78KG',
-                                    // 'name_of_subject': 'This Week',
-                                    // 'color': Color(0xffFAF0DB),
-                                    return overViewWidget(
-                                      onTap: () async {
-                                        if (index == 3) {
-                                          if (GetStorageServices.getUserBMI() !=
-                                              null) {
-                                            Get.dialog(
-                                              bmiDialog(),
-                                            ).whenComplete(
-                                                () => setState(() {}));
-                                          } else {
-                                            Get.dialog(
-                                              await enterHeightWeightDialog(),
-                                            ).then((value) {
-                                              setState(() {});
-                                            });
-                                          }
-                                        } else if (index == 0) {
-                                          Get.to(() => WaterGraphScreen());
-                                        } else if (index == 2) {
-                                          Get.dialog(
-                                                  await enterHeartRateDialog())
-                                              .whenComplete(
-                                                  () => setState(() {}));
-                                        }
-                                      },
-                                      name: overViewData[index]['name'],
-                                      image: overViewData[index]['image'],
-                                      medGm: index == 0
-                                          ? GetStorageServices.getUserWater() ==
-                                                  null
-                                              ? 'Not set'
-                                              : '${GetStorageServices.getUserWater()}'
-                                          : index == 1
-                                              ? '${GetStorageServices.getUserWeight()}'
-                                              : index == 2
-                                                  ? GetStorageServices
-                                                              .getUserHeartRate() ==
-                                                          null
-                                                      ? 'Not set'
-                                                      : '${GetStorageServices.getUserHeartRate()}'
-                                                  : GetStorageServices
-                                                              .getUserBMI() ==
-                                                          null
-                                                      ? 'Not set'
-                                                      : '${GetStorageServices.getUserBMI()}',
-                                      type: overViewData[index]
-                                          ['name_of_subject'],
-                                      color: overViewData[index]['color'],
-                                    );
-                                  },
-                                ),
-                                CommonWidget.commonSizedBox(height: 30),
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: CommonText.textBoldWight500(
-                                      text: TextConst.dailyStepsReport,
-                                      fontSize: 18.sp,
-                                      color: CommonColor.blackColor0D0D0D),
-                                ),
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: GestureDetector(
-                                    onTap: () async {
-                                      Get.dialog(await getReport())
-                                          .whenComplete(() => setState(() {}));
-                                    },
-                                    child: SizedBox(
-                                      height: 320,
-                                      width: 400,
-                                      child: Stack(
-                                        alignment: Alignment.center,
-                                        children: [
-                                          Image.asset(
-                                              'assets/png/report_circle.png',
-                                              fit: BoxFit.contain),
-                                          Positioned(
-                                              top: 70,
-                                              child: Column(
-                                                children: [
-                                                  Image.asset(
-                                                    'assets/png/steps_icon.png',
-                                                    scale: 4,
-                                                  ),
-                                                  CommonText.textBoldWight500(
-                                                      text: GetStorageServices
-                                                                  .getUserKm() !=
-                                                              null
-                                                          ? '${(int.parse(GetStorageServices.getUserKm()) * 1408)}'
-                                                          : '0',
-                                                      fontSize: 18.sp,
-                                                      color: CommonColor
-                                                          .blackColor434343),
-                                                ],
-                                              )),
-                                          Positioned(
-                                            top: 180,
-                                            child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  reportEventWidget(
-                                                      height: 33,
-                                                      padding: 10,
-                                                      text: GetStorageServices
-                                                                  .getUserKm() !=
-                                                              null
-                                                          ? '${(int.parse(GetStorageServices.getUserKm()) * 190)}Kcal'
-                                                          : '0 kcal',
-                                                      image:
-                                                          ImageConst.kcalIcon),
-                                                  reportEventWidget(
-                                                      padding: 4,
-                                                      text: GetStorageServices
-                                                                  .getUserKm() !=
-                                                              null
-                                                          ? '${(int.parse(GetStorageServices.getUserKm()) * 12)} min'
-                                                          : '0 min',
-                                                      image:
-                                                          ImageConst.timeIcon),
-                                                  reportEventWidget(
-                                                      padding: 0,
-                                                      height: 43,
-                                                      text: GetStorageServices
-                                                                  .getUserKm() !=
-                                                              null
-                                                          ? '${GetStorageServices.getUserKm()} Km'
-                                                          : 'Na',
-                                                      image: ImageConst
-                                                          .locationIcon),
-                                                ]),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                        Row(
+                          children: [
+                            CommonText.textBoldWight500(
+                                text: TextConst.medSchedule, fontSize: 17.sp),
+                            Spacer(),
+                            InkWell(
+                              onTap: () {
+                                Get.dialog(StatefulBuilder(
+                                  builder: (context, setState) =>
+                                      addMedicineDialog(context, setState),
+                                )).then((value) {
+                                  setState(() {});
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    ImageConst.addIcon,
+                                    scale: 3,
                                   ),
-                                )
-                              ],
-                            ),
+                                  CommonWidget.commonSizedBox(width: 6),
+                                  CommonText.textGradient(
+                                      text: TextConst.addAMed, fontSize: 14.sp),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                        CommonWidget.commonSizedBox(height: 8),
+                        SizedBox(
+                          height: LastData.length == 3
+                              ? 63.5.h
+                              : LastData.length == 2
+                                  ? 42.h
+                                  : LastData.length == 0
+                                      ? 21.h
+                                      : 0,
+                          child: PageView.builder(
+                            reverse: true,
+                            controller: pageController,
+                            itemCount: respGRM.data!.length,
+                            onPageChanged: (val) {
+                              setState(() {
+                                pageCounter = val;
+                              });
+                              print('============ > ${pageCounter}');
+                            },
+                            physics: BouncingScrollPhysics(),
+                            itemBuilder: (context, indexPage) {
+                              print('indexPage ============ > ${indexPage}');
+                              LastData.clear();
+
+                              respGRM.data!.indexWhere(
+                                (element) {
+                                  print(
+                                      '${DateTime.parse(element.date!) == DateTime.parse(dayOf.toString().split(" ").first)} ======== dayOf ${DateTime.parse(dayOf.toString().split(" ").first)} ======= element.date ${DateTime.parse(element.date!)}');
+
+                                  if (DateTime.parse(element.date!) ==
+                                      DateTime.parse(
+                                          dayOf.toString().split(" ").first)) {
+                                    recordLength = element.records!.length;
+                                    print(
+                                        'indexPage ============ > ${element.date!}');
+
+                                    if (recordLength > 3) {
+                                      for (int i = 0; i < 3; i++) {
+                                        LastData.insert(i, {
+                                          'id': '${element.records![i].sId}',
+                                          'totalTimes':
+                                              '${element.records![i].totalTimes}',
+                                          'medName':
+                                              '${element.records![i].name}',
+                                          'medGm':
+                                              '${element.records![i].strength} gm',
+                                          'timeOfDay':
+                                              '${element.records![i].totalTimes} pills ${element.records![i].frequency}',
+                                          'ap':
+                                              '${element.records![i].appearance}'
+                                        });
+                                      }
+                                    } else {
+                                      for (int i = 0; i < recordLength; i++) {
+                                        LastData.insert(i, {
+                                          'id': '${element.records![i].sId}',
+                                          'totalTimes':
+                                              '${element.records![i].totalTimes}',
+                                          'medName':
+                                              '${element.records![i].name}',
+                                          'medGm':
+                                              '${element.records![i].strength} gm',
+                                          'timeOfDay':
+                                              '${element.records![i].totalTimes} pills ${element.records![i].frequency}',
+                                          'ap':
+                                              '${element.records![i].appearance}'
+                                        });
+                                      }
+                                    }
+                                  }
+                                  return DateTime.parse(element.date!) ==
+                                      DateTime.parse(
+                                          dayOf.toString().split(" ").first);
+                                },
+                              );
+
+                              return ListView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: recordLength > 3
+                                    ? LastData.length
+                                    : respGRM.data![indexPage].records!.length,
+                                itemBuilder: (context, index) {
+                                  respGRM.data!.indexWhere((element) {
+                                    if (DateTime.parse(element.date!) ==
+                                        DateTime.parse(dayOf
+                                            .toString()
+                                            .split(" ")
+                                            .first)) {
+                                      if (element.records![index].sId ==
+                                          LastData[index]["id"]) {
+                                        completedDoses =
+                                            element.records![index].doses!;
+                                      } else {
+                                        completedDoses = [];
+                                      }
+                                    }
+                                    return DateTime.parse(element.date!) ==
+                                        DateTime.parse(
+                                            dayOf.toString().split(" ").first);
+                                  });
+                                  // var UserEqual = userResponse.data!
+                                  //     .medicines![index]["appearance"];
+                                  return /*recordLength > 3
+                                            ? */
+                                      medDetailsWidget(
+                                          medId: "${LastData[index]['id']}",
+                                          totalTimes:
+                                              "${LastData[index]['totalTimes']}",
+                                          takenDoses: completedDoses,
+                                          image: LastData[index]['ap'] ==
+                                                  'Pills'
+                                              ? ImageConst.med3Icon
+                                              : LastData[index]['ap'] == 'Gel'
+                                                  ? ImageConst.med1Icon
+                                                  : LastData[index]['ap'] ==
+                                                          'Syrup'
+                                                      ? ImageConst.med2Icon
+                                                      : ImageConst.med2Icon,
+                                          medName:
+                                              '${LastData[index]['medName']}',
+                                          medGm: '${LastData[index]['medGm']}',
+                                          iconColor: LastData[index]['ap'] ==
+                                                  'Pills'
+                                              ? Color(0xff21D200)
+                                              : LastData[index]['ap'] == 'Gel'
+                                                  ? Color(0xffFFDD2C)
+                                                  : LastData[index]['ap'] ==
+                                                          'Syrup'
+                                                      ? Color(0xff9255E5)
+                                                      : Color(0xff9255E5),
+                                          timeOfDay:
+                                              '${LastData[index]['timeOfDay']}',
+                                          color: LastData[index]['ap'] ==
+                                                  'Pills'
+                                              ? Color.fromRGBO(
+                                                  69, 196, 44, 0.13)
+                                              : LastData[index]['ap'] == 'Gel'
+                                                  ? Color.fromRGBO(
+                                                      193, 196, 44, 0.13)
+                                                  : LastData[index]['ap'] ==
+                                                          'Syrup'
+                                                      ? Color.fromRGBO(
+                                                          111, 44, 196, 0.13)
+                                                      : Color.fromRGBO(
+                                                          111, 44, 196, 0.13));
+                                  /*: medDetailsWidget(
+                                                medId: "${LastData[index]['id']}",
+                                                totalTimes:
+                                                    "${LastData[index]['totalTimes']}",
+                                                takenDoses: completedDoses,
+                                                image: UserEqual == 'Pills'
+                                                    ? ImageConst.med3Icon
+                                                    : UserEqual == 'Gel'
+                                                        ? ImageConst.med1Icon
+                                                        : UserEqual == 'Syrup'
+                                                            ? ImageConst.med2Icon
+                                                            : ImageConst.med2Icon,
+                                                medName:
+                                                    '${userResponse.data!.medicines![index]["name"]!}',
+                                                medGm:
+                                                    '${userResponse.data!.medicines![index]["strength"]} gm',
+                                                iconColor: UserEqual == 'Pills'
+                                                    ? Color(0xff21D200)
+                                                    : UserEqual == 'Gel'
+                                                        ? Color(0xffFFDD2C)
+                                                        : UserEqual == 'Syrup'
+                                                            ? Color(0xff9255E5)
+                                                            : Color(0xff9255E5),
+                                                timeOfDay:
+                                                    '${userResponse.data!.medicines![index]["totalTimes"]} pills ${userResponse.data!.medicines![index]["frequency"]}',
+                                                color: UserEqual == 'Pills'
+                                                    ? Color.fromRGBO(
+                                                        69, 196, 44, 0.13)
+                                                    : UserEqual == 'Gel'
+                                                        ? Color.fromRGBO(
+                                                            193, 196, 44, 0.13)
+                                                        : UserEqual == 'Syrup'
+                                                            ? Color.fromRGBO(111,
+                                                                44, 196, 0.13)
+                                                            : Color.fromRGBO(
+                                                                111,
+                                                                44,
+                                                                196,
+                                                                0.13,
+                                                              ),
+                                              );*/
+                                },
+                              );
+                            },
                           ),
                         ),
+                        CommonWidget.commonSizedBox(height: 16),
+                        Row(
+                          children: [
+                            CommonText.textBoldWight500(
+                                text: TextConst.overview,
+                                fontSize: 17.sp,
+                                color: CommonColor.blackColor0D0D0D),
+                            Spacer(),
+                            InkWell(
+                              onTap: () {
+                                Get.to(() => MedicineGraphScreen());
+                              },
+                              child: CommonText.textGradient(
+                                text: 'My Medical Report',
+                                fontSize: 14.sp,
+                              ),
+                            )
+                          ],
+                        ),
+                        CommonWidget.commonSizedBox(height: 16),
+                        GridView.builder(
+                          shrinkWrap: true,
+                          itemCount: 4,
+                          physics: NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  mainAxisSpacing: 10,
+                                  crossAxisSpacing: 16,
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 2 / 1.5),
+                          itemBuilder: (context, index) {
+                            // 'name': 'Weight',
+                            // 'image': 'assets/png/glass_icon.png.png',
+                            // 'name_of_count': '78KG',
+                            // 'name_of_subject': 'This Week',
+                            // 'color': Color(0xffFAF0DB),
+                            return overViewWidget(
+                              onTap: () async {
+                                if (index == 3) {
+                                  if (GetStorageServices.getUserBMI() != null) {
+                                    Get.dialog(
+                                      bmiDialog(),
+                                    ).whenComplete(() => setState(() {}));
+                                  } else {
+                                    Get.dialog(
+                                      await enterHeightWeightDialog(),
+                                    ).then((value) {
+                                      setState(() {});
+                                    });
+                                  }
+                                } else if (index == 0) {
+                                  Get.to(() => WaterGraphScreen());
+                                } else if (index == 2) {
+                                  Get.dialog(await enterHeartRateDialog())
+                                      .whenComplete(() => setState(() {}));
+                                }
+                              },
+                              name: overViewData[index]['name'],
+                              image: overViewData[index]['image'],
+                              medGm: index == 0
+                                  ? GetStorageServices.getUserWater() == null
+                                      ? 'Not set'
+                                      : '${GetStorageServices.getUserWater()}'
+                                  : index == 1
+                                      ? '${GetStorageServices.getUserWeight()}'
+                                      : index == 2
+                                          ? GetStorageServices
+                                                      .getUserHeartRate() ==
+                                                  null
+                                              ? 'Not set'
+                                              : '${GetStorageServices.getUserHeartRate()}'
+                                          : GetStorageServices.getUserBMI() ==
+                                                  null
+                                              ? 'Not set'
+                                              : '${GetStorageServices.getUserBMI()}',
+                              type: overViewData[index]['name_of_subject'],
+                              color: overViewData[index]['color'],
+                            );
+                          },
+                        ),
+                        CommonWidget.commonSizedBox(height: 30),
+                        Align(
+                          alignment: Alignment.center,
+                          child: CommonText.textBoldWight500(
+                              text: TextConst.dailyStepsReport,
+                              fontSize: 18.sp,
+                              color: CommonColor.blackColor0D0D0D),
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: GestureDetector(
+                            onTap: () async {
+                              Get.dialog(await getReport())
+                                  .whenComplete(() => setState(() {}));
+                            },
+                            child: SizedBox(
+                              height: 320,
+                              width: 400,
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Image.asset('assets/png/report_circle.png',
+                                      fit: BoxFit.contain),
+                                  Positioned(
+                                      top: 70,
+                                      child: Column(
+                                        children: [
+                                          Image.asset(
+                                            'assets/png/steps_icon.png',
+                                            scale: 4,
+                                          ),
+                                          CommonText.textBoldWight500(
+                                              text: GetStorageServices
+                                                          .getUserKm() !=
+                                                      null
+                                                  ? '${(int.parse(GetStorageServices.getUserKm()) * 1408)}'
+                                                  : '0',
+                                              fontSize: 18.sp,
+                                              color:
+                                                  CommonColor.blackColor434343),
+                                        ],
+                                      )),
+                                  Positioned(
+                                    top: 180,
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          reportEventWidget(
+                                              height: 33,
+                                              padding: 10,
+                                              text: GetStorageServices
+                                                          .getUserKm() !=
+                                                      null
+                                                  ? '${(int.parse(GetStorageServices.getUserKm()) * 190)}Kcal'
+                                                  : '0 kcal',
+                                              image: ImageConst.kcalIcon),
+                                          reportEventWidget(
+                                              padding: 4,
+                                              text: GetStorageServices
+                                                          .getUserKm() !=
+                                                      null
+                                                  ? '${(int.parse(GetStorageServices.getUserKm()) * 12)} min'
+                                                  : '0 min',
+                                              image: ImageConst.timeIcon),
+                                          reportEventWidget(
+                                              padding: 0,
+                                              height: 43,
+                                              text: GetStorageServices
+                                                          .getUserKm() !=
+                                                      null
+                                                  ? '${GetStorageServices.getUserKm()} Km'
+                                                  : 'Na',
+                                              image: ImageConst.locationIcon),
+                                        ]),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
                       ],
-                    );
-                  } else {
-                    return HomeShimmer();
-                  }
-                });
-              } else {
-                return HomeShimmer();
-              }
-            } catch (e) {
-              return Center(
-                child: Text('Something went wrong !!!!!!'),
-              );
-            }
-          },
-        ),
-      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return HomeShimmer();
+          }
+        } catch (e) {
+          return Center(
+            child: Text('Something went wrong !!!!!!'),
+          );
+        }
+      })),
     );
   }
 
@@ -2374,7 +2382,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           borderRadius: BorderRadius.circular(20),
         ),
         child: Container(
-          height: 200.sp,
+          height: 210.sp,
           width: 300.sp,
           decoration: BoxDecoration(
             color: Colors.white,
@@ -2429,7 +2437,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               height: 12,
                             ),
                             SizedBox(
-                              height: 40.sp,
+                              height: 50.sp,
                               child: ListView.separated(
                                 shrinkWrap: true,
                                 scrollDirection: Axis.horizontal,
@@ -2457,20 +2465,28 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                             }
                                           });
                                         },
-                                        child: Container(
-                                          height: 15.sp,
-                                          width: 15.sp,
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              shape: BoxShape.circle,
-                                              border: Border.all(
-                                                  color: CommonColor.greenColor,
-                                                  width: selectedDose.contains(
-                                                              index + 1) ||
-                                                          takenDoses!.contains(
-                                                              index + 1)
-                                                      ? 4.sp
-                                                      : 1.3.sp)),
+                                        child: SizedBox(
+                                          height: 20.sp,
+                                          width: 20.sp,
+                                          child: Container(
+                                            height: 15.sp,
+                                            width: 15.sp,
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                    color:
+                                                        CommonColor.greenColor,
+                                                    width: selectedDose
+                                                                .contains(
+                                                                    index +
+                                                                        1) ||
+                                                            takenDoses!
+                                                                .contains(
+                                                                    index + 1)
+                                                        ? 5.sp
+                                                        : 1.5.sp)),
+                                          ),
                                         ),
                                       ),
                                       SizedBox(
@@ -2606,7 +2622,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     );
   }
 
-  Row dateShowWidet() {
+  Row dateShowWidget() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -2616,6 +2632,24 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             dayOf.month,
             dayOf.day - 1,
           );
+
+          // controller.pageCounterAdd();
+          pageCounter++;
+          pageController.jumpToPage(pageCounter);
+
+          print('============ > ${pageCounter}');
+
+          // if (controller.pageCounter % 7 == 0) {
+          //   controller.apiPageCounterAdd();
+          //   print('apiPageCounter ============ > ${controller.apiPageCounter}');
+
+          // await getRecordMedicineViewModel.getRecordMedicineViewModel(
+          //     isLoading: false,
+          //     page: pageCounter % 7 == 0
+          //         ? (apiPageCounter++).toString()
+          //         : apiPageCounter.toString());
+          // }
+
           setState(() {});
         }),
         CommonWidget.commonSizedBox(width: 26),
@@ -2639,6 +2673,26 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 dayOf.month,
                 dayOf.day + 1,
               );
+              // controller.pageCounterRemove(controller.pageCounter);
+              pageCounter--;
+              pageController.jumpToPage(pageCounter);
+              print('============ > ${pageCounter}');
+
+              // if (controller.pageCounter % 7 == 0) {
+              //   controller.apiPageCounterRemove(controller.apiPageCounter);
+              //   print(
+              //       'apiPageCounter ============ > ${controller.apiPageCounter}');
+
+              // await getRecordMedicineViewModel.getRecordMedicineViewModel(
+              //     isLoading: false,
+              //     page: pageCounter % 7 == 0
+              //         ? apiPageCounter > 0
+              //             ? (apiPageCounter--).toString()
+              //             : apiPageCounter.toString()
+              //         : apiPageCounter.toString());
+              // }
+
+              // print('pageCounter ============ > ${controller.pageCounter}');
             }
             print(difference);
             setState(() {});
@@ -2648,13 +2702,13 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     );
   }
 
-  Row userNameWidget(UserDataResponseModel userResponse) {
+  Row userNameWidget() {
     return Row(
       children: [
         CommonText.textBoldWight400(text: 'Good Morning, ', fontSize: 16.sp),
         CommonText.textBoldWight500(
             text:
-                '${userResponse.data!.name.toString().split(" ").first.capitalizeFirst}!',
+                '${GetStorageServices.getUserName().toString().split(" ").first}!',
             fontSize: 18.sp),
         Spacer(),
         Image.asset(

@@ -60,7 +60,9 @@ Widget HomeShimmer() {
                       width: 100,
                       color: Colors.grey.shade200,
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(
+                      height: 10,
+                    ),
                     Container(
                       height: 23,
                       width: 80,
@@ -87,12 +89,12 @@ Widget HomeShimmer() {
               children: [
                 Container(
                   height: 30,
-                  width: 150,
+                  width: 140,
                   color: Colors.grey.shade200,
                 ),
                 Container(
                   height: 30,
-                  width: 150,
+                  width: 140,
                   color: Colors.grey.shade200,
                 ),
               ],
