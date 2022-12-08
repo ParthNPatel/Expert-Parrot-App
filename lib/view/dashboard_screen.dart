@@ -266,6 +266,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                         ListView.builder(
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
+                          reverse: true,
                           itemCount: LastData.length,
                           itemBuilder: (context, index) {
                             // respDMR.data!.indexWhere((element) {
@@ -2065,6 +2066,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
         if (addMedicineViewModel.addMedicineApiResponse.status ==
             Status.COMPLETE) {
           Get.back();
+          dateMedicineRecordViewModel.dateMedicineRecordViewModel(
+              isLoading: false, model: {"date": "${DateTime.now()}"});
           userDataViewModel.userDataViewModel();
 
           CommonWidget.getSnackBar(
@@ -2462,7 +2465,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                       if (resp["flag"] == true) {
                                         await userDataViewModel
                                             .userDataViewModel();
-
+                                        dateMedicineRecordViewModel
+                                            .dateMedicineRecordViewModel(
+                                                isLoading: false,
+                                                model: {"date": "${dayOf}"});
                                         CommonWidget.getSnackBar(
                                             duration: 2,
                                             color: CommonColor.greenColor
@@ -2487,7 +2493,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                           message: 'Please try again!');
                                     }
                                   },
-                                  child: Text("Delete"),
+                                  child: Text("Skipped"),
                                 ),
                               ];
                             } else {
@@ -2501,7 +2507,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                       if (resp["flag"] == true) {
                                         await userDataViewModel
                                             .userDataViewModel();
-
+                                        dateMedicineRecordViewModel
+                                            .dateMedicineRecordViewModel(
+                                                isLoading: false,
+                                                model: {"date": "${dayOf}"});
                                         CommonWidget.getSnackBar(
                                             duration: 2,
                                             color: CommonColor.greenColor
@@ -2526,7 +2535,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                           message: 'Please try again!');
                                     }
                                   },
-                                  child: Text("Delete"),
+                                  child: Text("Skipped"),
                                 ),
                               ];
                             }
@@ -2728,6 +2737,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                           .addRecordMedicineApiResponse
                                           .status ==
                                       Status.COMPLETE) {
+                                    dateMedicineRecordViewModel
+                                        .dateMedicineRecordViewModel(
+                                            isLoading: false,
+                                            model: {"date": "${dayOf}"});
                                     selectedDose.clear();
                                     Get.back();
                                     userDataViewModel.userDataViewModel();

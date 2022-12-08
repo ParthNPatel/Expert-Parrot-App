@@ -234,7 +234,8 @@ class CommonWidget {
     if (difference.compareTo(Duration(minutes: 1)) < 1) {
       return 'Today';
     } else if (difference.compareTo(Duration(hours: 1)) < 1) {
-      return '${difference.inMinutes} minute';
+      return 'Today';
+      // return '${difference.inMinutes} minute';
       // return '${DateFormat.jm().format(tm)}';
     } else if (difference.compareTo(oneDay) < 1) {
       return 'Today';
