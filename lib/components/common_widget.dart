@@ -241,7 +241,7 @@ class CommonWidget {
       // return '${DateFormat.jm().format(tm)}';
       // return '${difference.inHours} hours';
     } else if (difference.compareTo(twoDay) < 1) {
-      return "yesterday";
+      return "Yesterday";
     } else if (difference.compareTo(oneWeek) < 1) {
       switch (tm.weekday) {
         case 1:
