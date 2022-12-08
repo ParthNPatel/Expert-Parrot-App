@@ -138,7 +138,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
                     child: ListView.separated(
                       physics: BouncingScrollPhysics(),
                       itemCount: responseModel.data!.docs!.length,
-                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      padding: EdgeInsets.symmetric(horizontal: 10),
                       itemBuilder: (context, index) {
                         dynamic time1 =
                             responseModel.data!.docs![index].updatedAt;
@@ -155,12 +155,12 @@ class _ReminderScreenState extends State<ReminderScreen> {
                         return Row(
                           children: [
                             CircleAvatar(
-                              radius: 20.sp,
+                              radius: 17.sp,
                               backgroundColor: reminders[0]['color'],
                               child: Image.asset(
                                 reminders[0]['image'],
-                                height: 25.sp,
-                                width: 25.sp,
+                                height: 17.sp,
+                                width: 17.sp,
                               ),
                             ),
                             SizedBox(

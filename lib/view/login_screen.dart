@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:country_picker/country_picker.dart';
 import 'package:expert_parrot_app/Models/repo/email_otp_repo.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
@@ -242,27 +243,26 @@ class _LoginScreenState extends State<LoginScreen> {
                                 );
                               },
                               child: Container(
-                                margin: const EdgeInsets.fromLTRB(
-                                    0.0, 0.0, 0.0, 0.0),
-                                alignment: Alignment.center,
-                                height: 50.0,
-                                width: 100,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Text(
-                                      selectedCountry != null
-                                          ? "+ ${selectedCountry!.phoneCode}"
-                                          : "+91",
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
+                                  margin: const EdgeInsets.fromLTRB(
+                                      0.0, 0.0, 0.0, 0.0),
+                                  alignment: Alignment.center,
+                                  height: 50.0,
+                                  width: 100,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Text(
+                                        selectedCountry != null
+                                            ? "+ ${selectedCountry!.phoneCode}"
+                                            : "+91",
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                        ),
+                                      )
+                                    ],
+                                  )),
                             ),
                           ),
                           keyBoardType: TextInputType.number,
@@ -345,6 +345,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   CommonWidget.commonSizedBox(height: 14),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       commonBackButton(
                         image: 'assets/svg/facebook_ic.svg',
@@ -360,10 +361,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                       ),
                       CommonWidget.commonSizedBox(width: 8),
-                      commonBackButton(
-                        image: 'assets/svg/cib_apple.svg',
-                        onTap: () {},
-                      ),
+                      Platform.isIOS
+                          ? commonBackButton(
+                              image: 'assets/svg/cib_apple.svg',
+                              onTap: () {},
+                            )
+                          : SizedBox(),
                     ],
                   )
                 ],

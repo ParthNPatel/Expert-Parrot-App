@@ -1,9 +1,10 @@
 import 'dart:developer' as log;
 import 'dart:math';
+
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/repo/delete_medicine_repo.dart';
+import 'package:expert_parrot_app/Models/responseModel/date_record_medicine_res_model.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_all_medicine_names_model.dart';
-import 'package:expert_parrot_app/Models/responseModel/get_record_medicine_res_model.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/components/home_shimmer.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
@@ -12,16 +13,18 @@ import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:expert_parrot_app/view/bottom_nav_screen.dart';
+import 'package:expert_parrot_app/view/view_all_med_schedule_screen.dart';
 import 'package:expert_parrot_app/view/water_graph_screen.dart';
 import 'package:expert_parrot_app/viewModel/add_medicine_view_model.dart';
 import 'package:expert_parrot_app/viewModel/add_record_medicine_view_model.dart';
-import 'package:expert_parrot_app/viewModel/get_record_medicine_view_model.dart';
+import 'package:expert_parrot_app/viewModel/date_medicine_record_view_model.dart';
 import 'package:expert_parrot_app/viewModel/user_data_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
+
 import '../Models/responseModel/get_all_mdeicine_names_list.dart';
 import '../controller/handle_float_controller.dart';
 import 'medicine_graph_screen.dart';
@@ -48,7 +51,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
   List selectedDose = [];
   List completedDoses = [];
-  int recordLength = 0;
+
   int pageCounter = 0;
 
   List overViewData = [
@@ -142,11 +145,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   UserDataViewModel userDataViewModel = Get.put(UserDataViewModel());
   AddRecordMedicineViewModel addRecordMedicineViewModel =
       Get.put(AddRecordMedicineViewModel());
+  DateMedicineRecordViewModel dateMedicineRecordViewModel =
+      Get.put(DateMedicineRecordViewModel());
 
   GetAllMedicineNamesList getAllMedicineNamesList =
       Get.put(GetAllMedicineNamesList());
-  GetRecordMedicineViewModel getRecordMedicineViewModel =
-      Get.put(GetRecordMedicineViewModel());
 
   @override
   void initState() {
@@ -154,7 +157,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
     getAllMedicineNamesList.getAllMedicineNames();
     userDataViewModel.userDataViewModel();
-    getRecordMedicineViewModel.getRecordMedicineViewModel();
+    dateMedicineRecordViewModel.dateMedicineRecordViewModel(
+        isLoading: true, model: {"date": "${DateTime.now()}"});
     super.initState();
   }
 
@@ -176,17 +180,47 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: CommonWidget.commonBackGround(body:
-          GetBuilder<GetRecordMedicineViewModel>(builder: (controllerGRM) {
+          GetBuilder<DateMedicineRecordViewModel>(builder: (controllerDMR) {
         try {
-          if (controllerGRM.getRecordMedicineApiResponse.status ==
+          if (controllerDMR.dateMedicineRecordApiResponse.status ==
               Status.LOADING) {
             return HomeShimmer();
           }
-          if (controllerGRM.getRecordMedicineApiResponse.status ==
+          if (controllerDMR.dateMedicineRecordApiResponse.status ==
               Status.COMPLETE) {
             print('COMPLETE');
-            GetRecordMedicineResponseModel respGRM =
-                controllerGRM.getRecordMedicineApiResponse.data;
+            DateMedicineRecordResponseModel respDMR =
+                controllerDMR.dateMedicineRecordApiResponse.data;
+
+            LastData.clear();
+
+            if (respDMR.data!.length > 3) {
+              for (int i = 0; i < 3; i++) {
+                LastData.insert(i, {
+                  'id': '${respDMR.data![i].sId}',
+                  'totalTimes': '${respDMR.data![i].totalTimes}',
+                  'medName': '${respDMR.data![i].name}',
+                  'medGm': '${respDMR.data![i].strength} gm',
+                  'timeOfDay':
+                      '${respDMR.data![i].totalTimes} pills ${respDMR.data![i].frequency}',
+                  'ap': '${respDMR.data![i].appearance}',
+                  'doses': respDMR.data![i].doses
+                });
+              }
+            } else {
+              for (int i = 0; i < respDMR.data!.length; i++) {
+                LastData.insert(i, {
+                  'id': '${respDMR.data![i].sId}',
+                  'totalTimes': '${respDMR.data![i].totalTimes}',
+                  'medName': '${respDMR.data![i].name}',
+                  'medGm': '${respDMR.data![i].strength} gm',
+                  'timeOfDay':
+                      '${respDMR.data![i].totalTimes} pills ${respDMR.data![i].frequency}',
+                  'ap': '${respDMR.data![i].appearance}',
+                  'doses': respDMR.data![i].doses
+                });
+              }
+            }
 
             return Column(
               children: [
@@ -229,7 +263,106 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           ],
                         ),
                         CommonWidget.commonSizedBox(height: 8),
-                        SizedBox(
+                        ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: LastData.length,
+                          itemBuilder: (context, index) {
+                            // respDMR.data!.indexWhere((element) {
+                            //   if (element.sId == LastData[index]["id"]) {
+                            //     completedDoses = element.doses!;
+                            //   } else {
+                            //     completedDoses = [];
+                            //   }
+                            //   return element.sId == LastData[index]["id"];
+                            // });
+                            // var UserEqual = userResponse.data!
+                            //     .medicines![index]["appearance"];
+
+                            try {
+                              return /*recordLength > 3
+                                            ? */
+                                  medDetailsWidget(
+                                      medId: "${LastData[index]['id']}",
+                                      totalTimes:
+                                          "${LastData[index]['totalTimes']}",
+                                      takenDoses: LastData[index]['doses'],
+                                      image: LastData[index]['ap'] == 'Pills'
+                                          ? ImageConst.med3Icon
+                                          : LastData[index]['ap'] == 'Gel'
+                                              ? ImageConst.med1Icon
+                                              : LastData[index]['ap'] == 'Syrup'
+                                                  ? ImageConst.med2Icon
+                                                  : ImageConst.med2Icon,
+                                      medName: '${LastData[index]['medName']}',
+                                      medGm: '${LastData[index]['medGm']}',
+                                      iconColor: LastData[index]['ap'] ==
+                                              'Pills'
+                                          ? Color(0xff21D200)
+                                          : LastData[index]['ap'] == 'Gel'
+                                              ? Color(0xffFFDD2C)
+                                              : LastData[index]['ap'] == 'Syrup'
+                                                  ? Color(0xff9255E5)
+                                                  : Color(0xff9255E5),
+                                      timeOfDay:
+                                          '${LastData[index]['timeOfDay']}',
+                                      color: LastData[index]['ap'] == 'Pills'
+                                          ? Color.fromRGBO(69, 196, 44, 0.13)
+                                          : LastData[index]['ap'] == 'Gel'
+                                              ? Color.fromRGBO(
+                                                  193, 196, 44, 0.13)
+                                              : LastData[index]['ap'] == 'Syrup'
+                                                  ? Color.fromRGBO(
+                                                      111, 44, 196, 0.13)
+                                                  : Color.fromRGBO(
+                                                      111, 44, 196, 0.13));
+                            } catch (e) {
+                              return SizedBox();
+                            }
+                            /*: medDetailsWidget(
+                                                medId: "${LastData[index]['id']}",
+                                                totalTimes:
+                                                    "${LastData[index]['totalTimes']}",
+                                                takenDoses: completedDoses,
+                                                image: UserEqual == 'Pills'
+                                                    ? ImageConst.med3Icon
+                                                    : UserEqual == 'Gel'
+                                                        ? ImageConst.med1Icon
+                                                        : UserEqual == 'Syrup'
+                                                            ? ImageConst.med2Icon
+                                                            : ImageConst.med2Icon,
+                                                medName:
+                                                    '${userResponse.data!.medicines![index]["name"]!}',
+                                                medGm:
+                                                    '${userResponse.data!.medicines![index]["strength"]} gm',
+                                                iconColor: UserEqual == 'Pills'
+                                                    ? Color(0xff21D200)
+                                                    : UserEqual == 'Gel'
+                                                        ? Color(0xffFFDD2C)
+                                                        : UserEqual == 'Syrup'
+                                                            ? Color(0xff9255E5)
+                                                            : Color(0xff9255E5),
+                                                timeOfDay:
+                                                    '${userResponse.data!.medicines![index]["totalTimes"]} pills ${userResponse.data!.medicines![index]["frequency"]}',
+                                                color: UserEqual == 'Pills'
+                                                    ? Color.fromRGBO(
+                                                        69, 196, 44, 0.13)
+                                                    : UserEqual == 'Gel'
+                                                        ? Color.fromRGBO(
+                                                            193, 196, 44, 0.13)
+                                                        : UserEqual == 'Syrup'
+                                                            ? Color.fromRGBO(111,
+                                                                44, 196, 0.13)
+                                                            : Color.fromRGBO(
+                                                                111,
+                                                                44,
+                                                                196,
+                                                                0.13,
+                                                              ),
+                                              );*/
+                          },
+                        ),
+                        /*SizedBox(
                           height: LastData.length == 3
                               ? 63.5.h
                               : LastData.length == 2
@@ -240,7 +373,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           child: PageView.builder(
                             reverse: true,
                             controller: pageController,
-                            itemCount: respGRM.data!.length,
+                            itemCount: respDMR.data!.length,
                             onPageChanged: (val) {
                               setState(() {
                                 pageCounter = val;
@@ -304,77 +437,90 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                 },
                               );
 
-                              return ListView.builder(
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: recordLength > 3
-                                    ? LastData.length
-                                    : respGRM.data![indexPage].records!.length,
-                                itemBuilder: (context, index) {
-                                  respGRM.data!.indexWhere((element) {
-                                    if (DateTime.parse(element.date!) ==
-                                        DateTime.parse(dayOf
-                                            .toString()
-                                            .split(" ")
-                                            .first)) {
-                                      if (element.records![index].sId ==
-                                          LastData[index]["id"]) {
-                                        completedDoses =
-                                            element.records![index].doses!;
-                                      } else {
-                                        completedDoses = [];
+                              try {
+                                return ListView.builder(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: recordLength > 3
+                                      ? LastData.length
+                                      : respGRM
+                                          .data![indexPage].records!.length,
+                                  itemBuilder: (context, index) {
+                                    respGRM.data!.indexWhere((element) {
+                                      if (DateTime.parse(element.date!) ==
+                                          DateTime.parse(dayOf
+                                              .toString()
+                                              .split(" ")
+                                              .first)) {
+                                        if (element.records![index].sId ==
+                                            LastData[index]["id"]) {
+                                          completedDoses =
+                                              element.records![index].doses!;
+                                        } else {
+                                          completedDoses = [];
+                                        }
                                       }
-                                    }
-                                    return DateTime.parse(element.date!) ==
-                                        DateTime.parse(
-                                            dayOf.toString().split(" ").first);
-                                  });
-                                  // var UserEqual = userResponse.data!
-                                  //     .medicines![index]["appearance"];
-                                  return /*recordLength > 3
-                                            ? */
-                                      medDetailsWidget(
-                                          medId: "${LastData[index]['id']}",
-                                          totalTimes:
-                                              "${LastData[index]['totalTimes']}",
-                                          takenDoses: completedDoses,
-                                          image: LastData[index]['ap'] ==
-                                                  'Pills'
-                                              ? ImageConst.med3Icon
-                                              : LastData[index]['ap'] == 'Gel'
-                                                  ? ImageConst.med1Icon
+                                      return DateTime.parse(element.date!) ==
+                                          DateTime.parse(dayOf
+                                              .toString()
+                                              .split(" ")
+                                              .first);
+                                    });
+                                    // var UserEqual = userResponse.data!
+                                    //     .medicines![index]["appearance"];
+                                    try {
+                                      return */ /*recordLength > 3
+                                            ? */ /*
+                                          medDetailsWidget(
+                                              medId: "${LastData[index]['id']}",
+                                              totalTimes:
+                                                  "${LastData[index]['totalTimes']}",
+                                              takenDoses: completedDoses,
+                                              image: LastData[index]['ap'] ==
+                                                      'Pills'
+                                                  ? ImageConst.med3Icon
                                                   : LastData[index]['ap'] ==
-                                                          'Syrup'
-                                                      ? ImageConst.med2Icon
-                                                      : ImageConst.med2Icon,
-                                          medName:
-                                              '${LastData[index]['medName']}',
-                                          medGm: '${LastData[index]['medGm']}',
-                                          iconColor: LastData[index]['ap'] ==
-                                                  'Pills'
-                                              ? Color(0xff21D200)
-                                              : LastData[index]['ap'] == 'Gel'
-                                                  ? Color(0xffFFDD2C)
+                                                          'Gel'
+                                                      ? ImageConst.med1Icon
+                                                      : LastData[index]['ap'] ==
+                                                              'Syrup'
+                                                          ? ImageConst.med2Icon
+                                                          : ImageConst.med2Icon,
+                                              medName:
+                                                  '${LastData[index]['medName']}',
+                                              medGm:
+                                                  '${LastData[index]['medGm']}',
+                                              iconColor: LastData[index]
+                                                          ['ap'] ==
+                                                      'Pills'
+                                                  ? Color(0xff21D200)
                                                   : LastData[index]['ap'] ==
-                                                          'Syrup'
-                                                      ? Color(0xff9255E5)
-                                                      : Color(0xff9255E5),
-                                          timeOfDay:
-                                              '${LastData[index]['timeOfDay']}',
-                                          color: LastData[index]['ap'] ==
-                                                  'Pills'
-                                              ? Color.fromRGBO(
-                                                  69, 196, 44, 0.13)
-                                              : LastData[index]['ap'] == 'Gel'
+                                                          'Gel'
+                                                      ? Color(0xffFFDD2C)
+                                                      : LastData[index]['ap'] ==
+                                                              'Syrup'
+                                                          ? Color(0xff9255E5)
+                                                          : Color(0xff9255E5),
+                                              timeOfDay:
+                                                  '${LastData[index]['timeOfDay']}',
+                                              color: LastData[index]['ap'] ==
+                                                      'Pills'
                                                   ? Color.fromRGBO(
-                                                      193, 196, 44, 0.13)
+                                                      69, 196, 44, 0.13)
                                                   : LastData[index]['ap'] ==
-                                                          'Syrup'
+                                                          'Gel'
                                                       ? Color.fromRGBO(
-                                                          111, 44, 196, 0.13)
-                                                      : Color.fromRGBO(
-                                                          111, 44, 196, 0.13));
-                                  /*: medDetailsWidget(
+                                                          193, 196, 44, 0.13)
+                                                      : LastData[index]['ap'] ==
+                                                              'Syrup'
+                                                          ? Color.fromRGBO(111,
+                                                              44, 196, 0.13)
+                                                          : Color.fromRGBO(111,
+                                                              44, 196, 0.13));
+                                    } catch (e) {
+                                      return SizedBox();
+                                    }
+                                    */ /*: medDetailsWidget(
                                                 medId: "${LastData[index]['id']}",
                                                 totalTimes:
                                                     "${LastData[index]['totalTimes']}",
@@ -414,10 +560,26 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                 196,
                                                                 0.13,
                                                               ),
-                                              );*/
-                                },
-                              );
+                                              );*/ /*
+                                  },
+                                );
+                              } catch (e) {
+                                return SizedBox();
+                              }
                             },
+                          ),
+                        ),*/
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: InkWell(
+                            onTap: () {
+                              Get.to(
+                                  () => ViewAllMedScheduleScreen(date: dayOf));
+                            },
+                            child: CommonText.textGradient(
+                              text: 'View All',
+                              fontSize: 11.sp,
+                            ),
                           ),
                         ),
                         CommonWidget.commonSizedBox(height: 16),
@@ -2283,49 +2445,91 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                             }
                           },
                           itemBuilder: (context) {
-                            return [
-                              PopupMenuItem(
-                                onTap: () async {},
-                                child: Text("Mark as Taken"),
-                                value: "mark",
-                              ),
-                              PopupMenuItem(
-                                onTap: () async {
-                                  if (medId.isNotEmpty) {
-                                    var resp = await DeleteMedicineRepo
-                                        .deleteMedicineRepo(id: medId);
+                            if (dayOf.toString().split(" ").first ==
+                                DateTime.now().toString().split(" ").first) {
+                              return [
+                                PopupMenuItem(
+                                  onTap: () async {},
+                                  child: Text("Mark as Taken"),
+                                  value: "mark",
+                                ),
+                                PopupMenuItem(
+                                  onTap: () async {
+                                    if (medId.isNotEmpty) {
+                                      var resp = await DeleteMedicineRepo
+                                          .deleteMedicineRepo(id: medId);
 
-                                    if (resp["flag"] == true) {
-                                      await userDataViewModel
-                                          .userDataViewModel();
+                                      if (resp["flag"] == true) {
+                                        await userDataViewModel
+                                            .userDataViewModel();
 
-                                      CommonWidget.getSnackBar(
-                                          duration: 2,
-                                          color: CommonColor.greenColor
-                                              .withOpacity(.4),
-                                          colorText: Colors.white,
-                                          title: "Done!",
-                                          message: '${resp["data"]}');
+                                        CommonWidget.getSnackBar(
+                                            duration: 2,
+                                            color: CommonColor.greenColor
+                                                .withOpacity(.4),
+                                            colorText: Colors.white,
+                                            title: "Done!",
+                                            message: '${resp["data"]}');
+                                      } else {
+                                        CommonWidget.getSnackBar(
+                                            duration: 2,
+                                            color: Colors.red.withOpacity(.4),
+                                            colorText: Colors.white,
+                                            title: "Something went wrong!",
+                                            message: '${resp["data"]}');
+                                      }
                                     } else {
                                       CommonWidget.getSnackBar(
                                           duration: 2,
                                           color: Colors.red.withOpacity(.4),
                                           colorText: Colors.white,
-                                          title: "Something went wrong!",
-                                          message: '${resp["data"]}');
+                                          title: "Something went wrong",
+                                          message: 'Please try again!');
                                     }
-                                  } else {
-                                    CommonWidget.getSnackBar(
-                                        duration: 2,
-                                        color: Colors.red.withOpacity(.4),
-                                        colorText: Colors.white,
-                                        title: "Something went wrong",
-                                        message: 'Please try again!');
-                                  }
-                                },
-                                child: Text("Delete"),
-                              ),
-                            ];
+                                  },
+                                  child: Text("Delete"),
+                                ),
+                              ];
+                            } else {
+                              return [
+                                PopupMenuItem(
+                                  onTap: () async {
+                                    if (medId.isNotEmpty) {
+                                      var resp = await DeleteMedicineRepo
+                                          .deleteMedicineRepo(id: medId);
+
+                                      if (resp["flag"] == true) {
+                                        await userDataViewModel
+                                            .userDataViewModel();
+
+                                        CommonWidget.getSnackBar(
+                                            duration: 2,
+                                            color: CommonColor.greenColor
+                                                .withOpacity(.4),
+                                            colorText: Colors.white,
+                                            title: "Done!",
+                                            message: '${resp["data"]}');
+                                      } else {
+                                        CommonWidget.getSnackBar(
+                                            duration: 2,
+                                            color: Colors.red.withOpacity(.4),
+                                            colorText: Colors.white,
+                                            title: "Something went wrong!",
+                                            message: '${resp["data"]}');
+                                      }
+                                    } else {
+                                      CommonWidget.getSnackBar(
+                                          duration: 2,
+                                          color: Colors.red.withOpacity(.4),
+                                          colorText: Colors.white,
+                                          title: "Something went wrong",
+                                          message: 'Please try again!');
+                                    }
+                                  },
+                                  child: Text("Delete"),
+                                ),
+                              ];
+                            }
                           },
                         )
                       ]),
@@ -2527,8 +2731,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     selectedDose.clear();
                                     Get.back();
                                     userDataViewModel.userDataViewModel();
-                                    getRecordMedicineViewModel
-                                        .getRecordMedicineViewModel();
+                                    dateMedicineRecordViewModel
+                                        .dateMedicineRecordViewModel(
+                                            model: {"date": "${dayOf}"});
                                     CommonWidget.getSnackBar(
                                         duration: 2,
                                         color: CommonColor.greenColor
@@ -2635,22 +2840,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             dayOf.day - 1,
           );
 
-          // controller.pageCounterAdd();
-          pageCounter++;
-          pageController.jumpToPage(pageCounter);
-
-          print('============ > ${pageCounter}');
-
-          // if (controller.pageCounter % 7 == 0) {
-          //   controller.apiPageCounterAdd();
-          //   print('apiPageCounter ============ > ${controller.apiPageCounter}');
-
-          // await getRecordMedicineViewModel.getRecordMedicineViewModel(
-          //     isLoading: false,
-          //     page: pageCounter % 7 == 0
-          //         ? (apiPageCounter++).toString()
-          //         : apiPageCounter.toString());
-          // }
+          dateMedicineRecordViewModel
+              .dateMedicineRecordViewModel(model: {"date": "${dayOf}"});
 
           setState(() {});
         }),
@@ -2675,26 +2866,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 dayOf.month,
                 dayOf.day + 1,
               );
-              // controller.pageCounterRemove(controller.pageCounter);
-              pageCounter--;
-              pageController.jumpToPage(pageCounter);
-              print('============ > ${pageCounter}');
 
-              // if (controller.pageCounter % 7 == 0) {
-              //   controller.apiPageCounterRemove(controller.apiPageCounter);
-              //   print(
-              //       'apiPageCounter ============ > ${controller.apiPageCounter}');
-
-              // await getRecordMedicineViewModel.getRecordMedicineViewModel(
-              //     isLoading: false,
-              //     page: pageCounter % 7 == 0
-              //         ? apiPageCounter > 0
-              //             ? (apiPageCounter--).toString()
-              //             : apiPageCounter.toString()
-              //         : apiPageCounter.toString());
-              // }
-
-              // print('pageCounter ============ > ${controller.pageCounter}');
+              dateMedicineRecordViewModel
+                  .dateMedicineRecordViewModel(model: {"date": "${dayOf}"});
             }
             print(difference);
             setState(() {});

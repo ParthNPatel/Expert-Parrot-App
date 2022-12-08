@@ -27,7 +27,7 @@ class GetGlassResponseModel {
 
   Map<String, dynamic> toJson() => {
         "flag": flag,
-        "data": data!?.toJson(),
+        "data": data!.toJson(),
       };
 }
 
@@ -67,58 +67,42 @@ class Doc {
   Doc({
     this.id,
     this.userId,
+    this.bottle,
     this.createdAt,
-    this.data,
     this.date,
+    this.glass,
+    this.largeBottle,
     this.updatedAt,
   });
 
   String? id;
   String? userId;
+  int? bottle;
   DateTime? createdAt;
-  List<Datum>? data;
   DateTime? date;
+  int? glass;
+  int? largeBottle;
   DateTime? updatedAt;
 
   factory Doc.fromJson(Map<String, dynamic> json) => Doc(
         id: json["_id"],
         userId: json["userId"],
+        bottle: json["bottle"],
         createdAt: DateTime.parse(json["createdAt"]),
-        data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
         date: DateTime.parse(json["date"]),
+        glass: json["glass"],
+        largeBottle: json["large_bottle"],
         updatedAt: DateTime.parse(json["updatedAt"]),
       );
 
   Map<String, dynamic> toJson() => {
         "_id": id,
         "userId": userId,
+        "bottle": bottle,
         "createdAt": createdAt!.toIso8601String(),
-        "data": List<dynamic>.from(data!.map((x) => x.toJson())),
         "date": date!.toIso8601String(),
+        "glass": glass,
+        "large_bottle": largeBottle,
         "updatedAt": updatedAt!.toIso8601String(),
-      };
-}
-
-class Datum {
-  Datum({
-    this.type,
-    this.quantity,
-    this.id,
-  });
-
-  String? type;
-  int? quantity;
-  String? id;
-
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-        type: json["type"],
-        quantity: json["quantity"],
-        id: json["_id"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "type": type,
-        "quantity": quantity,
-        "_id": id,
       };
 }

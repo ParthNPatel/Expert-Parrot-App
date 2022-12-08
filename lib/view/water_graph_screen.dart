@@ -1,17 +1,19 @@
 import 'dart:developer';
+
 import 'package:dotted_line/dotted_line.dart';
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
+import 'package:expert_parrot_app/Models/repo/add_glass_repo.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_glass_res_model.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
-import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:expert_parrot_app/viewModel/add_glass_view_model.dart';
 import 'package:expert_parrot_app/viewModel/get_glass_view_model.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+
 import '../components/common_widget.dart';
 import '../constant/color_const.dart';
 
@@ -29,7 +31,41 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
 
   List waterTypeList = ["glass", 'bottle', 'large_bottle'];
 
+  List testGlass = [
+    {
+      "_id": "63918eb5b855ba832133d745",
+      "userId": "63877256f5c54cd8e6790c12",
+      "bottle": 6,
+      "createdAt": "2022-12-08T07:13:57.707Z",
+      "date": "2022-12-08T14:40:42.000Z",
+      "glass": 2,
+      "large_bottle": 6,
+      "updatedAt": "2022-12-08T09:11:42.733Z"
+    },
+    {
+      "_id": "63918eb5b855ba832133d745",
+      "userId": "63877256f5c54cd8e6790c12",
+      "bottle": 5,
+      "createdAt": "2022-12-08T07:13:57.707Z",
+      "date": "2022-12-07T14:40:42.000Z",
+      "glass": 6,
+      "large_bottle": 2,
+      "updatedAt": "2022-12-08T09:11:42.733Z"
+    },
+    {
+      "_id": "63918eb5b855ba832133d745",
+      "userId": "63877256f5c54cd8e6790c12",
+      "bottle": 7,
+      "createdAt": "2022-12-08T07:13:57.707Z",
+      "date": "2022-12-06T14:40:42.000Z",
+      "glass": 2,
+      "large_bottle": 4,
+      "updatedAt": "2022-12-08T09:11:42.733Z"
+    }
+  ];
+
   int selectType = 0;
+  int selectedIndex = 0;
   List days = [];
   int ozGlass = 0;
   int ozBottle = 0;
@@ -52,6 +88,7 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
     return Scaffold(
       body: CommonWidget.commonBackGround(
         body: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
           child: Column(
             children: [
               CommonWidget.commonSizedBox(height: 10),
@@ -68,15 +105,6 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                 dashGapRadius: 0.0,
               ),
               CommonWidget.commonSizedBox(height: 23),
-              graphWidget(),
-              Padding(
-                padding: EdgeInsets.only(top: 20, bottom: 10),
-                child: CommonText.textBoldWight500(
-                    text: TextConst.quickAddForToady,
-                    fontSize: 18.sp,
-                    color: CommonColor.blackColor0D0D0D),
-              ),
-              waterBottleWidget(),
               GetBuilder<GetGlassViewModel>(
                 builder: (controller) {
                   if (controller.getGlassApiResponse.status == Status.LOADING) {
@@ -99,6 +127,15 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
 
                     return Column(
                       children: [
+                        graphWidget(response),
+                        Padding(
+                          padding: EdgeInsets.only(top: 20, bottom: 10),
+                          child: CommonText.textBoldWight500(
+                              text: TextConst.quickAddForToady,
+                              fontSize: 18.sp,
+                              color: CommonColor.blackColor0D0D0D),
+                        ),
+                        waterBottleWidget(),
                         CommonWidget.commonSizedBox(height: 20),
                         Align(
                             alignment: Alignment.centerLeft,
@@ -114,7 +151,8 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                               scale: 4.5,
                             ),
                             CommonText.textBoldWight600(
-                                text: ' 0',
+                                text:
+                                    ' ${(response.data!.docs!.first.glass! * 8) + (response.data!.docs!.first.bottle! * 16) + (response.data!.docs!.first.largeBottle! * 16)}',
                                 fontSize: 20.sp,
                                 color: CommonColor.blackColor1D253C),
                             CommonText.textBoldWight400(
@@ -219,24 +257,24 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                             //         .data!.docs![index].data![i].quantity!;
                             //   }
                             // }
-                            for (int i = 0;
-                                i < response.data!.docs![index].data!.length;
-                                i++) {
-                              if (addGlassViewModel.index == 0 &&
-                                  response.data!.docs![index].data![i].type ==
-                                      'glass') {
-                                return ShowData(times, response, index, i);
-                              } else if (addGlassViewModel.index == 1 &&
-                                  response.data!.docs![index].data![i].type ==
-                                      'Bottle') {
-                                return ShowData(times, response, index, i);
-                              } else if (addGlassViewModel.index == 2 &&
-                                  response.data!.docs![index].data![i].type ==
-                                      'Lg Bottle') {
-                                return ShowData(times, response, index, i);
-                              }
-                            }
-                            return SizedBox();
+                            // for (int i = 0;
+                            //     i < response.data!.docs![index].data!.length;
+                            //     i++) {
+                            //   if (addGlassViewModel.index == 0 &&
+                            //       response.data!.docs![index].data![i].type ==
+                            //           'glass') {
+                            //     return ShowData(times, response, index, i);
+                            //   } else if (addGlassViewModel.index == 1 &&
+                            //       response.data!.docs![index].data![i].type ==
+                            //           'Bottle') {
+                            //     return ShowData(times, response, index, i);
+                            //   } else if (addGlassViewModel.index == 2 &&
+                            //       response.data!.docs![index].data![i].type ==
+                            //           'Lg Bottle') {
+                            //     return ShowData(times, response, index, i);
+                            //   }
+                            // }
+                            return ShowData(times, response, index);
 
                             // return ListView.builder(
                             //   shrinkWrap: true,
@@ -274,7 +312,10 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                       ],
                     );
                   }
-                  return SizedBox();
+                  return Padding(
+                    padding: EdgeInsets.only(top: 100.sp),
+                    child: Text('Something went wrong'),
+                  );
                 },
               )
             ],
@@ -285,7 +326,10 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
   }
 
   Column ShowData(
-      String times, GetGlassResponseModel response, int index, int index1) {
+    String times,
+    GetGlassResponseModel response,
+    int index,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -307,7 +351,11 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
             ),
             CommonWidget.commonSizedBox(width: 20),
             CommonText.textBoldWight500(
-                text: '${response.data!.docs![index].data![index1].quantity} ',
+                text: selectedIndex == 0
+                    ? '${(response.data!.docs![index].glass! * 8)}'
+                    : selectedIndex == 1
+                        ? '${(response.data!.docs![index].bottle! * 16)}'
+                        : '${(response.data!.docs![index].largeBottle! * 16)}',
                 fontSize: 14.sp,
                 color: CommonColor.blackColor1D253C),
             CommonText.textBoldWight500(
@@ -321,881 +369,334 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
     );
   }
 
-  String weekDayGetter({int? weekDay}) {
-    if (weekDay == 1) {
-      return "Mon";
-    } else if (weekDay == 2) {
-      return "Tue";
-    } else if (weekDay == 3) {
-      return "Wed";
-    } else if (weekDay == 4) {
-      return "Thu";
-    } else if (weekDay == 5) {
-      return "Fri";
-    } else if (weekDay == 6) {
-      return "Sat";
-    } else {
-      return "Sun";
-    }
-  }
+  Container graphWidget(GetGlassResponseModel response) {
+    return Container(
+        padding: EdgeInsets.symmetric(vertical: 10.sp),
+        width: 90.w,
+        height: 220.sp,
+        decoration: BoxDecoration(
+            color: Colors.white, borderRadius: BorderRadius.circular(16)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
+              width: 90.w,
+              height: 180.sp,
+              child: Padding(
+                padding:
+                    EdgeInsets.symmetric(horizontal: 18.sp, vertical: 10.sp),
+                child: LineChart(
+                  LineChartData(
+                    lineTouchData: LineTouchData(enabled: true),
+                    lineBarsData: [
+                      LineChartBarData(
+                        spots: List<FlSpot>.generate(
+                            response.data!.docs!.length, (int index) {
+                          return FlSpot(
+                              response.data!.docs![index].date!.weekday
+                                  .toDouble(),
+                              selectedIndex == 0
+                                  ? (response.data!.docs![index].glass! * 8)
+                                  : selectedIndex == 1
+                                      ? (response.data!.docs![index].bottle! *
+                                          16)
+                                      : (response
+                                              .data!.docs![index].largeBottle! *
+                                          16));
+                        }),
 
-  SizedBox graphWidget() {
-    return SizedBox(
-        width: Get.width * .7,
-        height: 190,
-        child: LineChart(
-          LineChartData(
-              lineTouchData: LineTouchData(enabled: true),
-              lineBarsData: [
-                LineChartBarData(
-                  spots: [
-                    FlSpot(1, 3),
-                    FlSpot(2, 1),
-                    FlSpot(3, 3),
-                    FlSpot(4, 2),
-                    FlSpot(4, 4),
-                    FlSpot(5, 2),
-                    FlSpot(6, 3),
-                    FlSpot(6, 4),
-                    FlSpot(7, 3),
-                  ],
-                  isCurved: true,
-                  barWidth: 2,
-                  color: CommonColor.greenColor,
+                        /*   spots: List<FlSpot>.generate(7, (int index) {
+                          return FlSpot(
+                              index + 1,
+                              index % 2 == 0
+                                  ? 4 + index.toDouble()
+                                  : 4 - index.toDouble());
+                        }),*/
+                        // spots: [
+                        //   FlSpot(4, 2),
+                        //   FlSpot(5, 2),
+                        //   FlSpot(6, 3),
+                        //   FlSpot(7, 3),
+                        //   FlSpot(1, 3),
+                        //   FlSpot(2, 1),
+                        //   FlSpot(3, 3),
+                        // ],
 
-                  // aboveBarData: BarAreaData(
-                  //   show: true,
-                  //   // colors: [Colors.lightGreen.withOpacity(0.5)],
-                  //   // cutOffY: cutOffYValue,
-                  //   applyCutOffY: true,
-                  // ),
-                  dotData: FlDotData(
-                    show: false,
+                        isCurved: true,
+                        barWidth: 2,
+                        color: CommonColor.greenColor,
+                        dotData: FlDotData(
+                          show: false,
+                        ),
+                      ),
+                    ],
+                    borderData: FlBorderData(show: false),
+                    gridData: FlGridData(show: false),
+                    titlesData: FlTitlesData(
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      rightTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                      topTitles: AxisTitles(
+                        sideTitles: topTitles(response: response.data!.docs!),
+                      ),
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
+                    ),
+                    // titlesData: FlTitlesData(
+                    //   bottomTitles: SideTitles(
+                    //       showTitles: true,
+                    //       reservedSize: 5,
+                    //       // textStyle: yearTextStyle,
+                    //       getTitles: (value) {
+                    //         switch (value.toInt()) {
+                    //           case 0:
+                    //             return '2016';
+                    //           case 1:
+                    //             return '2017';
+                    //
+                    //           default:
+                    //             return '';
+                    //         }
+                    //       }),
+                    //   leftTitles: SideTitles(
+                    //     showTitles: true,
+                    //     getTitles: (value) {
+                    //       return '\$ ${value + 100}';
+                    //     },
+                    //   ),
+                    // ),
+                    // axisTitleData: FlAxisTitleData(
+                    //     leftTitle: AxisTitle(
+                    //         showTitle: true, titleText: 'Value', margin: 10),
+                    //     bottomTitle: AxisTitle(
+                    //         showTitle: true,
+                    //         margin: 10,
+                    //         titleText: 'Year',
+                    //         textStyle: yearTextStyle,
+                    //         textAlign: TextAlign.right)),
+                    // gridData: FlGridData(
+                    //   show: true,
+                    //   checkToShowHorizontalLine: (double value) {
+                    //     return value == 1 || value == 2 || value == 3 || value == 4;
+                    //   },
+                    // ),
                   ),
                 ),
-              ],
-              borderData: FlBorderData(show: false),
-              gridData: FlGridData(show: false),
-              titlesData: FlTitlesData(
-                bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                rightTitles: AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                topTitles: AxisTitles(
-                  sideTitles: leftTitles(),
-                ),
-                leftTitles: AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-              )
-
-              // titlesData: FlTitlesData(
-              //   bottomTitles: SideTitles(
-              //       showTitles: true,
-              //       reservedSize: 5,
-              //       // textStyle: yearTextStyle,
-              //       getTitles: (value) {
-              //         switch (value.toInt()) {
-              //           case 0:
-              //             return '2016';
-              //           case 1:
-              //             return '2017';
-              //
-              //           default:
-              //             return '';
-              //         }
-              //       }),
-              //   leftTitles: SideTitles(
-              //     showTitles: true,
-              //     getTitles: (value) {
-              //       return '\$ ${value + 100}';
-              //     },
-              //   ),
-              // ),
-              // axisTitleData: FlAxisTitleData(
-              //     leftTitle: AxisTitle(
-              //         showTitle: true, titleText: 'Value', margin: 10),
-              //     bottomTitle: AxisTitle(
-              //         showTitle: true,
-              //         margin: 10,
-              //         titleText: 'Year',
-              //         textStyle: yearTextStyle,
-              //         textAlign: TextAlign.right)),
-              // gridData: FlGridData(
-              //   show: true,
-              //   checkToShowHorizontalLine: (double value) {
-              //     return value == 1 || value == 2 || value == 3 || value == 4;
-              //   },
-              // ),
               ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                    height: 12.sp,
+                    width: 12.sp,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle, color: CommonColor.greenColor)),
+                SizedBox(width: 5.sp),
+                CommonText.textBoldWight500(
+                    text: "Achieved",
+                    fontSize: 13.sp,
+                    color: CommonColor.blackColor0D0D0D),
+              ],
+            )
+          ],
         ));
-
-    // return Container(
-    //     width: Get.width,
-    //     height: 210,
-    //     decoration: BoxDecoration(
-    //         color: Colors.white, borderRadius: BorderRadius.circular(12)),
-    //     //height: 500,
-    //     child: Padding(
-    //       padding: const EdgeInsets.all(8.0),
-    //       child: Image.asset(
-    //         'assets/png/fl_chart.png',
-    //         fit: BoxFit.contain,
-    //       ),
-    //     )),
-
-    // return LineChart(
-    //   LineChartData(
-    //     lineTouchData: LineTouchData(enabled: true),
-    //     lineBarsData: [
-    //       LineChartBarData(
-    //         spots: [
-    //           FlSpot(0, 1),
-    //           FlSpot(1, 1),
-    //           FlSpot(2, 3),
-    //           FlSpot(3, 4),
-    //           FlSpot(3, 5),
-    //           FlSpot(4, 4)
-    //         ],
-    //         isCurved: true,
-    //         barWidth: 2,
-    //         // colors: [
-    //         //   Colors.orange,
-    //         // ],
-    //         belowBarData: BarAreaData(
-    //           show: true,
-    //           // colors: [Colors.lightBlue.withOpacity(0.5)],
-    //           // cutOffY: cutOffYValue,
-    //           applyCutOffY: true,
-    //         ),
-    //         aboveBarData: BarAreaData(
-    //           show: true,
-    //           // colors: [Colors.lightGreen.withOpacity(0.5)],
-    //           // cutOffY: cutOffYValue,
-    //           applyCutOffY: true,
-    //         ),
-    //         dotData: FlDotData(
-    //           show: false,
-    //         ),
-    //       ),
-    //     ],
-    //     minY: 0,
-    //     // titlesData: FlTitlesData(
-    //     //   bottomTitles: SideTitles(
-    //     //       showTitles: true,
-    //     //       reservedSize: 5,
-    //     //       // textStyle: yearTextStyle,
-    //     //       getTitles: (value) {
-    //     //         switch (value.toInt()) {
-    //     //           case 0:
-    //     //             return '2016';
-    //     //           case 1:
-    //     //             return '2017';
-    //     //
-    //     //           default:
-    //     //             return '';
-    //     //         }
-    //     //       }),
-    //     //   leftTitles: SideTitles(
-    //     //     showTitles: true,
-    //     //     getTitles: (value) {
-    //     //       return '\$ ${value + 100}';
-    //     //     },
-    //     //   ),
-    //     // ),
-    //     // axisTitleData: FlAxisTitleData(
-    //     //     leftTitle: AxisTitle(
-    //     //         showTitle: true, titleText: 'Value', margin: 10),
-    //     //     bottomTitle: AxisTitle(
-    //     //         showTitle: true,
-    //     //         margin: 10,
-    //     //         titleText: 'Year',
-    //     //         textStyle: yearTextStyle,
-    //     //         textAlign: TextAlign.right)),
-    //     gridData: FlGridData(
-    //       show: true,
-    //       checkToShowHorizontalLine: (double value) {
-    //         return value == 1 || value == 2 || value == 3 || value == 4;
-    //       },
-    //     ),
-    //   ),
-    // );
-
-    // return Container(
-    //     width: Get.width,
-    //     height: 210,
-    //     decoration: BoxDecoration(
-    //         color: Colors.white, borderRadius: BorderRadius.circular(12)),
-    //     //height: 500,
-    //     child: Padding(
-    //       padding: const EdgeInsets.all(8.0),
-    //       child: Image.asset(
-    //         'assets/png/fl_chart.png',
-    //         fit: BoxFit.contain,
-    //       ),
-    //     ));
   }
 
-  SideTitles leftTitles() => SideTitles(
-        getTitlesWidget: leftTitleWidgets,
+  SideTitles topTitles({required List<Doc> response}) => SideTitles(
+        getTitlesWidget: (
+          double value,
+          TitleMeta meta,
+        ) {
+          var style = DateTime.now().weekday == value
+              ? TextStyle(
+                  color: CommonColor.greenColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                )
+              : TextStyle(
+                  color: Color(0xff75729e),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                );
+          String text;
+
+          // if (response[value.toInt() - 1].date!.weekday == 1) {
+          //   text = 'Sun';
+          // } else if (response[value.toInt() - 1].date!.weekday == 2) {
+          //   text = 'Mon';
+          // } else if (response[value.toInt() - 1].date!.weekday == 3) {
+          //   text = 'Tue';
+          // } else if (response[value.toInt() - 1].date!.weekday == 4) {
+          //   text = 'Wed';
+          // } else if (response[value.toInt() - 1].date!.weekday == 5) {
+          //   text = 'Thu';
+          // } else if (response[value.toInt() - 1].date!.weekday == 6) {
+          //   text = 'Fri';
+          // } else {
+          //   text = 'Sat';
+          // }
+
+          switch (value.toInt()) {
+            case 1:
+              text = 'Sun';
+
+              break;
+            case 2:
+              text = 'Mon';
+
+              break;
+            case 3:
+              text = 'Tue';
+
+              break;
+            case 4:
+              text = 'Wed';
+
+              break;
+            case 5:
+              text = 'Thu';
+
+              break;
+            case 6:
+              text = 'Fri';
+
+              break;
+            case 7:
+              text = 'Sat';
+
+              break;
+            default:
+              return Container();
+          }
+
+          return Text(text, style: style, textAlign: TextAlign.center);
+        },
         showTitles: true,
         interval: 1,
         reservedSize: 40,
       );
 
-  Widget leftTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Color(0xff75729e),
-      fontWeight: FontWeight.bold,
-      fontSize: 12,
-    );
-    String text;
-    switch (value.toInt()) {
-      case 1:
-        text = 'Sun';
-        break;
-      case 2:
-        text = 'Mon';
-        break;
-      case 3:
-        text = 'Tue';
-        break;
-      case 4:
-        text = 'Wed';
-        break;
-      case 5:
-        text = 'Thu';
-        break;
-      case 6:
-        text = 'Fri';
-        break;
-      case 7:
-        text = 'Sat';
-        break;
-      default:
-        return Container();
-    }
-
-    return Text(text, style: style, textAlign: TextAlign.center);
-  }
-
-  GetBuilder<AddGlassViewModel> waterBottleWidget() {
-    return GetBuilder<AddGlassViewModel>(builder: (controller) {
-      return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    controller.index = 0;
-                  });
-                  // showDialog(
-                  //   context: context,
-                  //   builder: (context) => Dialog(
-                  //     shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(20),
-                  //     ),
-                  //     child: SizedBox(
-                  //       height: 175.sp,
-                  //       child: Padding(
-                  //         padding: const EdgeInsets.symmetric(
-                  //             horizontal: 20, vertical: 15),
-                  //         child: Column(
-                  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //             mainAxisSize: MainAxisSize.min,
-                  //             children: [
-                  //               Row(
-                  //                 mainAxisAlignment:
-                  //                     MainAxisAlignment.spaceBetween,
-                  //                 children: [
-                  //                   CommonText.textBoldWight500(
-                  //                     text: "Enter Glasses",
-                  //                     fontSize: 17.sp,
-                  //                   ),
-                  //                   InkWell(
-                  //                     onTap: () {
-                  //                       _glassController.clear();
-                  //                       Get.back();
-                  //                     },
-                  //                     child: CommonWidget.commonSvgPitcher(
-                  //                       image: ImageConst.close,
-                  //                     ),
-                  //                   )
-                  //                 ],
-                  //               ),
-                  //               CommonWidget.dottedLineWidget(),
-                  //               SizedBox(height: 20),
-                  //               // TextField(
-                  //               //   controller: relation,
-                  //               //   decoration: InputDecoration(
-                  //               //     border: OutlineInputBorder(),
-                  //               //     focusedBorder: OutlineInputBorder(),
-                  //               //     enabledBorder: OutlineInputBorder(),
-                  //               //     hintText: 'Relation',
-                  //               //   ),
-                  //               // ),
-                  //
-                  //               // Container(
-                  //               //   height: 30.sp,
-                  //               //   width: 100.sp,
-                  //               //   color: Colors.grey.shade50,
-                  //               //   child: Row(
-                  //               //       mainAxisAlignment:
-                  //               //           MainAxisAlignment.spaceBetween,
-                  //               //       children: [
-                  //               //         Container(
-                  //               //           height: 30.sp,
-                  //               //           width: 30.sp,
-                  //               //           decoration: BoxDecoration(
-                  //               //               border: Border.all(
-                  //               //                 color: Colors.grey
-                  //               //                     .withOpacity(0.3),
-                  //               //               ),
-                  //               //               boxShadow: [
-                  //               //                 BoxShadow(
-                  //               //                     color: Colors.black26,
-                  //               //                     spreadRadius: 1,
-                  //               //                     blurRadius: 1,
-                  //               //                     offset: Offset(.25, .5))
-                  //               //               ],
-                  //               //               color: Colors.white,
-                  //               //               borderRadius:
-                  //               //                   BorderRadius.circular(10)),
-                  //               //           child: IconButton(
-                  //               //             icon:
-                  //               //                 Icon(Icons.remove, size: 15.sp),
-                  //               //             onPressed: () {
-                  //               //               controller.glassCounter(
-                  //               //                   isAdding: false);
-                  //               //             },
-                  //               //           ),
-                  //               //         ),
-                  //               //         CommonText.textBoldWight500(
-                  //               //             text: "${controller.glass}"),
-                  //               //         Container(
-                  //               //           height: 30.sp,
-                  //               //           width: 30.sp,
-                  //               //           decoration: BoxDecoration(
-                  //               //               border: Border.all(
-                  //               //                 color: Colors.grey
-                  //               //                     .withOpacity(0.3),
-                  //               //               ),
-                  //               //               boxShadow: [
-                  //               //                 BoxShadow(
-                  //               //                     color: Colors.black26,
-                  //               //                     spreadRadius: 1,
-                  //               //                     blurRadius: 1,
-                  //               //                     offset: Offset(.5, .25))
-                  //               //               ],
-                  //               //               color: Colors.white,
-                  //               //               borderRadius:
-                  //               //                   BorderRadius.circular(10)),
-                  //               //           child: IconButton(
-                  //               //             icon: Icon(Icons.add, size: 15.sp),
-                  //               //             onPressed: () {
-                  //               //               controller.glassCounter(
-                  //               //                   isAdding: true);
-                  //               //             },
-                  //               //           ),
-                  //               //         )
-                  //               //       ]),
-                  //               // ),
-                  //
-                  //               TextFormField(
-                  //                 controller: _glassController,
-                  //                 keyboardType: TextInputType.number,
-                  //                 decoration: InputDecoration(
-                  //                     filled: true,
-                  //                     fillColor: Color(0xffF8F8F6),
-                  //                     hintText: "Enter count of glasses",
-                  //                     border: OutlineInputBorder(
-                  //                       borderSide: BorderSide.none,
-                  //                       borderRadius: BorderRadius.circular(20),
-                  //                     )),
-                  //               ),
-                  //
-                  //               SizedBox(height: 20.sp),
-                  //               Row(
-                  //                 mainAxisAlignment:
-                  //                     MainAxisAlignment.spaceBetween,
-                  //                 children: [
-                  //                   SizedBox(width: 20.sp),
-                  //                   SizedBox(
-                  //                     height: 6.5.h,
-                  //                     width: 25.w,
-                  //                     child: CommonWidget.commonButton(
-                  //                         color: CommonColor.greenColor,
-                  //                         radius: 10,
-                  //                         onTap: () async {
-                  //                           if (_glassController
-                  //                               .text.isNotEmpty) {
-                  //                             await controller
-                  //                                 .addGlassViewModel(model: {
-                  //                               "type": "glass",
-                  //                               "quantity":
-                  //                                   _glassController.text.trim()
-                  //                             });
-                  //
-                  //                             if (controller.addGlassApiResponse
-                  //                                     .status ==
-                  //                                 Status.COMPLETE) {
-                  //                               _glassController.clear();
-                  //                               Get.back();
-                  //
-                  //                               CommonWidget.getSnackBar(
-                  //                                   duration: 2,
-                  //                                   color: CommonColor
-                  //                                       .greenColor
-                  //                                       .withOpacity(.4),
-                  //                                   colorText: Colors.white,
-                  //                                   title: "Done!",
-                  //                                   message:
-                  //                                       'Glass added successfully!');
-                  //                             }
-                  //                             if (controller.addGlassApiResponse
-                  //                                     .status ==
-                  //                                 Status.ERROR) {
-                  //                               _glassController.clear();
-                  //                               Get.back();
-                  //
-                  //                               CommonWidget.getSnackBar(
-                  //                                   duration: 2,
-                  //                                   color: Colors.red.shade300,
-                  //                                   colorText: Colors.white,
-                  //                                   title: "Oops!",
-                  //                                   message:
-                  //                                       'Something goes wrong please enter glass again!');
-                  //                             }
-                  //                           } else {
-                  //                             CommonWidget.getSnackBar(
-                  //                                 duration: 2,
-                  //                                 color: Colors.red.shade300,
-                  //                                 colorText: Colors.white,
-                  //                                 title: "Oops!",
-                  //                                 message:
-                  //                                     'Please enter proper amount of glass!');
-                  //                           }
-                  //                         },
-                  //                         // onTap: () async {
-                  //                         //   await sendReqViewModel
-                  //                         //       .sendReqViewModel(model: {
-                  //                         //     "userId":
-                  //                         //         "${getSearchRes.data![index].id}",
-                  //                         //     "relation":
-                  //                         //         "${relation.text.trim()}"
-                  //                         //   });
-                  //                         //   relation.clear();
-                  //                         //
-                  //                         //   if (sendReqViewModel
-                  //                         //           .sendReqApiResponse.status ==
-                  //                         //       Status.COMPLETE) {
-                  //                         //     Get.back();
-                  //                         //     CommonWidget.getSnackBar(
-                  //                         //       message:
-                  //                         //           'Request send successfully',
-                  //                         //       title: 'Successfully',
-                  //                         //       duration: 2,
-                  //                         //       color: Colors.green,
-                  //                         //     );
-                  //                         //   }
-                  //                         //   if (sendReqViewModel
-                  //                         //           .sendReqApiResponse.status ==
-                  //                         //       Status.ERROR) {
-                  //                         //     Get.back();
-                  //                         //     CommonWidget.getSnackBar(
-                  //                         //       message: 'Try Again...',
-                  //                         //       title: 'Failed',
-                  //                         //       duration: 2,
-                  //                         //       color: Colors.red,
-                  //                         //     );
-                  //                         //   }
-                  //                         // },
-                  //                         text: "Send"),
-                  //                   ),
-                  //                   SizedBox(
-                  //                     height: 6.5.h,
-                  //                     width: 25.w,
-                  //                     child: CommonWidget.commonButton(
-                  //                         color: CommonColor.greenColor,
-                  //                         radius: 10,
-                  //                         onTap: () {
-                  //                           Navigator.of(context).pop();
-                  //                         },
-                  //                         text: "Back"),
-                  //                   )
-                  //                 ],
-                  //               ),
-                  //             ]),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // );
-                },
-                child: Container(
+  Widget waterBottleWidget() {
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 0),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  selectedIndex = 0;
+                });
+              },
+              child: Container(
+                  width: 28.w,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: selectedIndex == 0
+                          ? CommonColor.greenColor
+                          : Colors.transparent,
+                    ),
+                  ),
+                  child: GetBuilder<GetGlassViewModel>(
+                    builder: (controller) {
+                      if (controller.getGlassApiResponse.status ==
+                          Status.COMPLETE) {
+                        GetGlassResponseModel response =
+                            controller.getGlassApiResponse.data;
+                        return bottleWidget(
+                            oz: '(8 fl oz)',
+                            image: ImageConst.glassOfWater,
+                            typeOfBottle:
+                                '${response.data!.docs!.first.glass} Glass');
+                      }
+                      return SizedBox();
+                    },
+                  )),
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  selectedIndex = 1;
+                });
+              },
+              child: Container(
+                  width: 28.w,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                          color: controller.index == 0
+                          color: selectedIndex == 1
                               ? CommonColor.greenColor
                               : Colors.transparent)),
-                  child: bottleWidget(
-                      oz: '(8 fl oz)',
-                      image: ImageConst.glassOfWater,
-                      typeOfBottle: '1 Glass'),
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    controller.index = 1;
-                  });
-
-                  // showDialog(
-                  //   context: context,
-                  //   builder: (context) => Dialog(
-                  //     shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(20),
-                  //     ),
-                  //     child: SizedBox(
-                  //       height: 175.sp,
-                  //       child: Padding(
-                  //         padding: const EdgeInsets.symmetric(
-                  //             horizontal: 20, vertical: 15),
-                  //         child: Column(
-                  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //             mainAxisSize: MainAxisSize.min,
-                  //             children: [
-                  //               Row(
-                  //                 mainAxisAlignment:
-                  //                     MainAxisAlignment.spaceBetween,
-                  //                 children: [
-                  //                   CommonText.textBoldWight500(
-                  //                     text: "Enter Bottle",
-                  //                     fontSize: 17.sp,
-                  //                   ),
-                  //                   InkWell(
-                  //                     onTap: () {
-                  //                       _glassController.clear();
-                  //                       Get.back();
-                  //                     },
-                  //                     child: CommonWidget.commonSvgPitcher(
-                  //                       image: ImageConst.close,
-                  //                     ),
-                  //                   )
-                  //                 ],
-                  //               ),
-                  //               CommonWidget.dottedLineWidget(),
-                  //               SizedBox(height: 20),
-                  //               TextFormField(
-                  //                 controller: _glassController,
-                  //                 keyboardType: TextInputType.number,
-                  //                 decoration: InputDecoration(
-                  //                     filled: true,
-                  //                     fillColor: Color(0xffF8F8F6),
-                  //                     hintText: "Enter count of bottles",
-                  //                     border: OutlineInputBorder(
-                  //                       borderSide: BorderSide.none,
-                  //                       borderRadius: BorderRadius.circular(20),
-                  //                     )),
-                  //               ),
-                  //               SizedBox(height: 20.sp),
-                  //               Row(
-                  //                 mainAxisAlignment:
-                  //                     MainAxisAlignment.spaceBetween,
-                  //                 children: [
-                  //                   SizedBox(width: 20.sp),
-                  //                   SizedBox(
-                  //                     height: 6.5.h,
-                  //                     width: 25.w,
-                  //                     child: CommonWidget.commonButton(
-                  //                         color: CommonColor.greenColor,
-                  //                         radius: 10,
-                  //                         onTap: () async {
-                  //                           if (_glassController
-                  //                               .text.isNotEmpty) {
-                  //                             await controller
-                  //                                 .addGlassViewModel(model: {
-                  //                               "type": "Bottle",
-                  //                               "quantity":
-                  //                                   _glassController.text.trim()
-                  //                             });
-                  //
-                  //                             if (controller.addGlassApiResponse
-                  //                                     .status ==
-                  //                                 Status.COMPLETE) {
-                  //                               _glassController.clear();
-                  //                               Get.back();
-                  //
-                  //                               CommonWidget.getSnackBar(
-                  //                                   duration: 2,
-                  //                                   color: CommonColor
-                  //                                       .greenColor
-                  //                                       .withOpacity(.4),
-                  //                                   colorText: Colors.white,
-                  //                                   title: "Done!",
-                  //                                   message:
-                  //                                       'Bottle added successfully!');
-                  //                             }
-                  //                             if (controller.addGlassApiResponse
-                  //                                     .status ==
-                  //                                 Status.ERROR) {
-                  //                               _glassController.clear();
-                  //                               Get.back();
-                  //
-                  //                               CommonWidget.getSnackBar(
-                  //                                   duration: 2,
-                  //                                   color: Colors.red.shade300,
-                  //                                   colorText: Colors.white,
-                  //                                   title: "Oops!",
-                  //                                   message:
-                  //                                       'Something goes wrong please enter bottle again!');
-                  //                             }
-                  //                           } else {
-                  //                             CommonWidget.getSnackBar(
-                  //                                 duration: 2,
-                  //                                 color: Colors.red.shade300,
-                  //                                 colorText: Colors.white,
-                  //                                 title: "Oops!",
-                  //                                 message:
-                  //                                     'Please enter proper amount of bottle!');
-                  //                           }
-                  //                         },
-                  //                         text: "Send"),
-                  //                   ),
-                  //                   SizedBox(
-                  //                     height: 6.5.h,
-                  //                     width: 25.w,
-                  //                     child: CommonWidget.commonButton(
-                  //                         color: CommonColor.greenColor,
-                  //                         radius: 10,
-                  //                         onTap: () {
-                  //                           Navigator.of(context).pop();
-                  //                         },
-                  //                         text: "Back"),
-                  //                   )
-                  //                 ],
-                  //               ),
-                  //             ]),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // );
-                },
-                child: Container(
+                  child: GetBuilder<GetGlassViewModel>(
+                    builder: (controller) {
+                      if (controller.getGlassApiResponse.status ==
+                          Status.COMPLETE) {
+                        GetGlassResponseModel response =
+                            controller.getGlassApiResponse.data;
+                        return bottleWidget(
+                            oz: '(16 fl oz)',
+                            image: ImageConst.water1Icon,
+                            typeOfBottle:
+                                '${response.data!.docs!.first.bottle} Bottle');
+                      }
+                      return SizedBox();
+                    },
+                  )),
+            ),
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  selectedIndex = 2;
+                });
+              },
+              child: Container(
+                  width: 28.w,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                          color: controller.index == 1
+                          color: selectedIndex == 2
                               ? CommonColor.greenColor
                               : Colors.transparent)),
-                  child: bottleWidget(
-                      oz: '(16 fl oz)',
-                      image: ImageConst.water1Icon,
-                      typeOfBottle: '1 Bottle'),
-                ),
-              ),
+                  child: GetBuilder<GetGlassViewModel>(
+                    builder: (controller) {
+                      if (controller.getGlassApiResponse.status ==
+                          Status.LOADING) {
+                        return SizedBox();
+                      }
+                      if (controller.getGlassApiResponse.status ==
+                          Status.COMPLETE) {
+                        GetGlassResponseModel response =
+                            controller.getGlassApiResponse.data;
+                        return bottleWidget(
+                            oz: '(16 fl oz)',
+                            image: ImageConst.plasticBottle,
+                            typeOfBottle:
+                                '${response.data!.docs!.first.largeBottle} Lg Bottle');
+                      }
+                      return SizedBox();
+                    },
+                  )),
+            ),
 
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    controller.index = 2;
-                  });
+            // bottleWidget(
+            //     oz: '(8 fl oz)',
+            //     image: ImageConst.plasticBottle,
+            //     typeOfBottle: '1 Glass'),
+            // bottleWidget(
+            //     oz: '(8 fl oz)',
+            //     image: ImageConst.water1Icon,
+            //     typeOfBottle: '1 Glass'),
+          ],
+        )
 
-                  // showDialog(
-                  //   context: context,
-                  //   builder: (context) => Dialog(
-                  //     shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(20),
-                  //     ),
-                  //     child: SizedBox(
-                  //       height: 175.sp,
-                  //       child: Padding(
-                  //         padding: const EdgeInsets.symmetric(
-                  //             horizontal: 20, vertical: 15),
-                  //         child: Column(
-                  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //             mainAxisSize: MainAxisSize.min,
-                  //             children: [
-                  //               Row(
-                  //                 mainAxisAlignment:
-                  //                     MainAxisAlignment.spaceBetween,
-                  //                 children: [
-                  //                   CommonText.textBoldWight500(
-                  //                     text: "Enter Lg Bottle",
-                  //                     fontSize: 17.sp,
-                  //                   ),
-                  //                   InkWell(
-                  //                     onTap: () {
-                  //                       _glassController.clear();
-                  //                       Get.back();
-                  //                     },
-                  //                     child: CommonWidget.commonSvgPitcher(
-                  //                       image: ImageConst.close,
-                  //                     ),
-                  //                   )
-                  //                 ],
-                  //               ),
-                  //               CommonWidget.dottedLineWidget(),
-                  //               SizedBox(height: 20),
-                  //               TextFormField(
-                  //                 controller: _glassController,
-                  //                 keyboardType: TextInputType.number,
-                  //                 decoration: InputDecoration(
-                  //                     filled: true,
-                  //                     fillColor: Color(0xffF8F8F6),
-                  //                     hintText: "Enter count of glasses",
-                  //                     border: OutlineInputBorder(
-                  //                       borderSide: BorderSide.none,
-                  //                       borderRadius: BorderRadius.circular(20),
-                  //                     )),
-                  //               ),
-                  //               SizedBox(height: 20.sp),
-                  //               Row(
-                  //                 mainAxisAlignment:
-                  //                     MainAxisAlignment.spaceBetween,
-                  //                 children: [
-                  //                   SizedBox(width: 20.sp),
-                  //                   SizedBox(
-                  //                     height: 6.5.h,
-                  //                     width: 25.w,
-                  //                     child: CommonWidget.commonButton(
-                  //                         color: CommonColor.greenColor,
-                  //                         radius: 10,
-                  //                         onTap: () async {
-                  //                           if (_glassController
-                  //                               .text.isNotEmpty) {
-                  //                             await controller
-                  //                                 .addGlassViewModel(model: {
-                  //                               "type": "Lg Bottle",
-                  //                               "quantity":
-                  //                                   _glassController.text.trim()
-                  //                             });
-                  //
-                  //                             if (controller.addGlassApiResponse
-                  //                                     .status ==
-                  //                                 Status.COMPLETE) {
-                  //                               _glassController.clear();
-                  //                               Get.back();
-                  //
-                  //                               CommonWidget.getSnackBar(
-                  //                                   duration: 2,
-                  //                                   color: CommonColor
-                  //                                       .greenColor
-                  //                                       .withOpacity(.4),
-                  //                                   colorText: Colors.white,
-                  //                                   title: "Done!",
-                  //                                   message:
-                  //                                       'Lg Bottle added successfully!');
-                  //                             }
-                  //                             if (controller.addGlassApiResponse
-                  //                                     .status ==
-                  //                                 Status.ERROR) {
-                  //                               _glassController.clear();
-                  //                               Get.back();
-                  //
-                  //                               CommonWidget.getSnackBar(
-                  //                                   duration: 2,
-                  //                                   color: Colors.red.shade300,
-                  //                                   colorText: Colors.white,
-                  //                                   title: "Oops!",
-                  //                                   message:
-                  //                                       'Something goes wrong please enter Lg Bottle again!');
-                  //                             }
-                  //                           } else {
-                  //                             CommonWidget.getSnackBar(
-                  //                                 duration: 2,
-                  //                                 color: Colors.red.shade300,
-                  //                                 colorText: Colors.white,
-                  //                                 title: "Oops!",
-                  //                                 message:
-                  //                                     'Please enter proper amount of Lg Bottle!');
-                  //                           }
-                  //                         },
-                  //                         // onTap: () async {
-                  //                         //   await sendReqViewModel
-                  //                         //       .sendReqViewModel(model: {
-                  //                         //     "userId":
-                  //                         //         "${getSearchRes.data![index].id}",
-                  //                         //     "relation":
-                  //                         //         "${relation.text.trim()}"
-                  //                         //   });
-                  //                         //   relation.clear();
-                  //                         //
-                  //                         //   if (sendReqViewModel
-                  //                         //           .sendReqApiResponse.status ==
-                  //                         //       Status.COMPLETE) {
-                  //                         //     Get.back();
-                  //                         //     CommonWidget.getSnackBar(
-                  //                         //       message:
-                  //                         //           'Request send successfully',
-                  //                         //       title: 'Successfully',
-                  //                         //       duration: 2,
-                  //                         //       color: Colors.green,
-                  //                         //     );
-                  //                         //   }
-                  //                         //   if (sendReqViewModel
-                  //                         //           .sendReqApiResponse.status ==
-                  //                         //       Status.ERROR) {
-                  //                         //     Get.back();
-                  //                         //     CommonWidget.getSnackBar(
-                  //                         //       message: 'Try Again...',
-                  //                         //       title: 'Failed',
-                  //                         //       duration: 2,
-                  //                         //       color: Colors.red,
-                  //                         //     );
-                  //                         //   }
-                  //                         // },
-                  //                         text: "Send"),
-                  //                   ),
-                  //                   SizedBox(
-                  //                     height: 6.5.h,
-                  //                     width: 25.w,
-                  //                     child: CommonWidget.commonButton(
-                  //                         color: CommonColor.greenColor,
-                  //                         radius: 10,
-                  //                         onTap: () {
-                  //                           Navigator.of(context).pop();
-                  //                         },
-                  //                         text: "Back"),
-                  //                   )
-                  //                 ],
-                  //               ),
-                  //             ]),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // );
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                          color: controller.index == 2
-                              ? CommonColor.greenColor
-                              : Colors.transparent)),
-                  child: bottleWidget(
-                      oz: '(16 fl oz)',
-                      image: ImageConst.plasticBottle,
-                      typeOfBottle: '1 Lg Bottle'),
-                ),
-              ),
-
-              // bottleWidget(
-              //     oz: '(8 fl oz)',
-              //     image: ImageConst.plasticBottle,
-              //     typeOfBottle: '1 Glass'),
-              // bottleWidget(
-              //     oz: '(8 fl oz)',
-              //     image: ImageConst.water1Icon,
-              //     typeOfBottle: '1 Glass'),
-            ],
-          )
-
-          /*ListView.separated(
+        /*ListView.separated(
             itemCount: 3,
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
@@ -1221,8 +722,7 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
               //     typeOfBottle: '1 Glass'),
             },
           ),*/
-          );
-    });
+        );
   }
 
   Container bottleWidget(
@@ -1230,22 +730,23 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
       required String typeOfBottle,
       required String oz}) {
     return Container(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12), color: Colors.white),
-        child: Column(
-          children: [
-            CommonWidget.commonSizedBox(height: 18),
-            SizedBox(height: 35, child: Image.asset(image)),
-            CommonWidget.commonSizedBox(height: 15),
-            CommonText.textBoldWight500(
-                text: typeOfBottle,
-                fontSize: 13.sp,
-                color: CommonColor.blackColor1D253C),
-            CommonText.textBoldWight400(
-                text: oz, fontSize: 11.sp, color: CommonColor.gery727272),
-          ],
-        ));
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12), color: Colors.white),
+      child: Column(
+        children: [
+          CommonWidget.commonSizedBox(height: 18),
+          SizedBox(height: 35, child: Image.asset(image)),
+          CommonWidget.commonSizedBox(height: 15),
+          CommonText.textBoldWight500(
+              text: typeOfBottle,
+              fontSize: 12.sp,
+              color: CommonColor.blackColor1D253C),
+          CommonText.textBoldWight400(
+              text: oz, fontSize: 11.sp, color: CommonColor.gery727272),
+        ],
+      ),
+    );
   }
 
   Row header() {
@@ -1302,6 +803,7 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                                     SizedBox(height: 20),
                                     Expanded(
                                       child: SingleChildScrollView(
+                                        physics: BouncingScrollPhysics(),
                                         child: Column(
                                           children: [
                                             Container(
@@ -1424,8 +926,10 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                                                             if (_glassController
                                                                 .text
                                                                 .isNotEmpty) {
-                                                              await controller
-                                                                  .addGlassViewModel(
+                                                              await AddGlassRepo1
+                                                                  .addGlassRepo(
+                                                                      addGlass:
+                                                                          _glassController,
                                                                       model: {
                                                                     "type":
                                                                         "${waterTypeList[selectType]}",
@@ -1435,52 +939,20 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                                                                             .trim()
                                                                   });
 
-                                                              if (controller
-                                                                      .addGlassApiResponse
+                                                              await getGlassViewModel
+                                                                  .getGlassViewModel(
+                                                                      isLoading:
+                                                                          false);
+                                                              if (getGlassViewModel
+                                                                      .getGlassApiResponse
                                                                       .status ==
                                                                   Status
-                                                                      .COMPLETE) {
-                                                                Get.back();
-                                                                GetStorageServices.setUserWater((GetStorageServices.getUserWater() ==
-                                                                            null
-                                                                        ? 0
-                                                                        : GetStorageServices
-                                                                            .getUserWater()) +
-                                                                    int.parse(
-                                                                        _glassController
-                                                                            .text));
-                                                                _glassController
-                                                                    .clear();
-                                                                await getGlassViewModel
-                                                                    .getGlassViewModel(
-                                                                        isLoading:
-                                                                            false);
-                                                                if (getGlassViewModel
-                                                                        .getGlassApiResponse
-                                                                        .status ==
-                                                                    Status
-                                                                        .COMPLETE) {}
-                                                                if (getGlassViewModel
-                                                                        .getGlassApiResponse
-                                                                        .status ==
-                                                                    Status
-                                                                        .ERROR) {
-                                                                  CommonWidget.getSnackBar(
-                                                                      duration:
-                                                                          2,
-                                                                      color: CommonColor
-                                                                          .greenColor
-                                                                          .withOpacity(
-                                                                              .4),
-                                                                      colorText:
-                                                                          Colors
-                                                                              .white,
-                                                                      title:
-                                                                          "Please",
-                                                                      message:
-                                                                          'Refresh Page');
-                                                                }
-
+                                                                      .COMPLETE) {}
+                                                              if (getGlassViewModel
+                                                                      .getGlassApiResponse
+                                                                      .status ==
+                                                                  Status
+                                                                      .ERROR) {
                                                                 CommonWidget.getSnackBar(
                                                                     duration: 2,
                                                                     color: CommonColor
@@ -1491,32 +963,103 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                                                                         Colors
                                                                             .white,
                                                                     title:
-                                                                        "Done!",
+                                                                        "Please",
                                                                     message:
-                                                                        'added successfully!');
+                                                                        'Refresh Page');
                                                               }
-                                                              if (controller
-                                                                      .addGlassApiResponse
-                                                                      .status ==
-                                                                  Status
-                                                                      .ERROR) {
-                                                                _glassController
-                                                                    .clear();
-                                                                Get.back();
-
-                                                                CommonWidget.getSnackBar(
-                                                                    duration: 2,
-                                                                    color: Colors
-                                                                        .red
-                                                                        .shade300,
-                                                                    colorText:
-                                                                        Colors
-                                                                            .white,
-                                                                    title:
-                                                                        "Oops!",
-                                                                    message:
-                                                                        'Something goes wrong please enter bottle again!');
-                                                              }
+                                                              // await controller
+                                                              //     .addGlassViewModel(
+                                                              //         model: {
+                                                              //       "type":
+                                                              //           "${waterTypeList[selectType]}",
+                                                              //       "quantity":
+                                                              //           _glassController
+                                                              //               .text
+                                                              //               .trim()
+                                                              //     });
+                                                              //
+                                                              // if (controller
+                                                              //         .addGlassApiResponse
+                                                              //         .status ==
+                                                              //     Status
+                                                              //         .COMPLETE) {
+                                                              //   Get.back();
+                                                              //   GetStorageServices.setUserWater((GetStorageServices.getUserWater() ==
+                                                              //               null
+                                                              //           ? 0
+                                                              //           : GetStorageServices
+                                                              //               .getUserWater()) +
+                                                              //       int.parse(
+                                                              //           _glassController
+                                                              //               .text));
+                                                              //   _glassController
+                                                              //       .clear();
+                                                              //   // await getGlassViewModel
+                                                              //   //     .getGlassViewModel(
+                                                              //   //         isLoading:
+                                                              //   //             false);
+                                                              //   // if (getGlassViewModel
+                                                              //   //         .getGlassApiResponse
+                                                              //   //         .status ==
+                                                              //   //     Status
+                                                              //   //         .COMPLETE) {}
+                                                              //   // if (getGlassViewModel
+                                                              //   //         .getGlassApiResponse
+                                                              //   //         .status ==
+                                                              //   //     Status
+                                                              //   //         .ERROR) {
+                                                              //   //   CommonWidget.getSnackBar(
+                                                              //   //       duration:
+                                                              //   //           2,
+                                                              //   //       color: CommonColor
+                                                              //   //           .greenColor
+                                                              //   //           .withOpacity(
+                                                              //   //               .4),
+                                                              //   //       colorText:
+                                                              //   //           Colors
+                                                              //   //               .white,
+                                                              //   //       title:
+                                                              //   //           "Please",
+                                                              //   //       message:
+                                                              //   //           'Refresh Page');
+                                                              //   // }
+                                                              //
+                                                              //   CommonWidget.getSnackBar(
+                                                              //       duration: 2,
+                                                              //       color: CommonColor
+                                                              //           .greenColor
+                                                              //           .withOpacity(
+                                                              //               .4),
+                                                              //       colorText:
+                                                              //           Colors
+                                                              //               .white,
+                                                              //       title:
+                                                              //           "Done!",
+                                                              //       message:
+                                                              //           'added successfully!');
+                                                              // }
+                                                              // if (controller
+                                                              //         .addGlassApiResponse
+                                                              //         .status ==
+                                                              //     Status
+                                                              //         .ERROR) {
+                                                              //   _glassController
+                                                              //       .clear();
+                                                              //   Get.back();
+                                                              //
+                                                              //   CommonWidget.getSnackBar(
+                                                              //       duration: 2,
+                                                              //       color: Colors
+                                                              //           .red
+                                                              //           .shade300,
+                                                              //       colorText:
+                                                              //           Colors
+                                                              //               .white,
+                                                              //       title:
+                                                              //           "Oops!",
+                                                              //       message:
+                                                              //           'Something goes wrong please enter bottle again!');
+                                                              // }
                                                             } else {
                                                               CommonWidget.getSnackBar(
                                                                   duration: 2,
