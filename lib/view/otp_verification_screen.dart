@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
@@ -13,7 +12,6 @@ import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:sizer/sizer.dart';
-
 import '../Models/repo/login_repo.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
@@ -104,7 +102,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         child: Builder(
           builder: (context) {
             final progress = ProgressHUD.of(context);
-
             return CommonWidget.commonBackGround(
               body: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

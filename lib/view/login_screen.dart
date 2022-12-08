@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:country_picker/country_picker.dart';
 import 'package:expert_parrot_app/Models/repo/email_otp_repo.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
@@ -18,7 +17,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sizer/sizer.dart';
-
 import '../Models/repo/login_repo.dart';
 import '../model/country_model.dart';
 
@@ -54,6 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Country? selectedCountry;
+
   @override
   void initState() {
     loadCountry();
@@ -243,26 +242,27 @@ class _LoginScreenState extends State<LoginScreen> {
                                 );
                               },
                               child: Container(
-                                  margin: const EdgeInsets.fromLTRB(
-                                      0.0, 0.0, 0.0, 0.0),
-                                  alignment: Alignment.center,
-                                  height: 50.0,
-                                  width: 100,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Text(
-                                        selectedCountry != null
-                                            ? "+ ${selectedCountry!.phoneCode}"
-                                            : "+91",
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                        ),
-                                      )
-                                    ],
-                                  )),
+                                margin: const EdgeInsets.fromLTRB(
+                                    0.0, 0.0, 0.0, 0.0),
+                                alignment: Alignment.center,
+                                height: 50.0,
+                                width: 100,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Text(
+                                      selectedCountry != null
+                                          ? "+ ${selectedCountry!.phoneCode}"
+                                          : "+91",
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                           keyBoardType: TextInputType.number,

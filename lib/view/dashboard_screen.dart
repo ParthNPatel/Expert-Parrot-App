@@ -41,9 +41,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   TextEditingController _heartRateController = TextEditingController();
   TextEditingController _weightController = TextEditingController();
   PageController pageController = PageController();
+
   String? km, min, kal, step;
   String? verificationCode;
   DateTime dayOf = DateTime.now();
+
   List selectedDose = [];
   List completedDoses = [];
   int recordLength = 0;
@@ -167,6 +169,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   List dateTimes = ['select1'];
   int select = 1;
   List LastData = [];
+
   @override
   Widget build(BuildContext context) {
     log.log('BARRIER TOKEN :- ${GetStorageServices.getBarrierToken()}');
@@ -521,24 +524,25 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                   Image.asset('assets/png/report_circle.png',
                                       fit: BoxFit.contain),
                                   Positioned(
-                                      top: 70,
-                                      child: Column(
-                                        children: [
-                                          Image.asset(
-                                            'assets/png/steps_icon.png',
-                                            scale: 4,
-                                          ),
-                                          CommonText.textBoldWight500(
-                                              text: GetStorageServices
-                                                          .getUserKm() !=
-                                                      null
-                                                  ? '${(int.parse(GetStorageServices.getUserKm()) * 1408)}'
-                                                  : '0',
-                                              fontSize: 18.sp,
-                                              color:
-                                                  CommonColor.blackColor434343),
-                                        ],
-                                      )),
+                                    top: 70,
+                                    child: Column(
+                                      children: [
+                                        Image.asset(
+                                          'assets/png/steps_icon.png',
+                                          scale: 4,
+                                        ),
+                                        CommonText.textBoldWight500(
+                                            text: GetStorageServices
+                                                        .getUserKm() !=
+                                                    null
+                                                ? '${(int.parse(GetStorageServices.getUserKm()) * 1408)}'
+                                                : '0',
+                                            fontSize: 18.sp,
+                                            color:
+                                                CommonColor.blackColor434343),
+                                      ],
+                                    ),
+                                  ),
                                   Positioned(
                                     top: 180,
                                     child: Row(
@@ -879,7 +883,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CommonText.textBoldWight400(
-                        text: "please enter Km",
+                        text: "please enter Km that you have covered so far",
                         fontSize: 11.sp,
                         color: Color(0xff9B9B9B),
                       ),
