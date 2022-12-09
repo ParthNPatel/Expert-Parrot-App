@@ -135,8 +135,11 @@ class _VideoScreenState extends State<VideoScreen> {
                                           horizontal: 10, vertical: 0),
                                       child: Row(children: [
                                         CommonText.textBoldWight500(
-                                            text:
-                                                '${response.data![index].description}',
+                                            text: response.data![index]
+                                                        .description!.length >
+                                                    45
+                                                ? '${response.data![index].description!.substring(0, 45)}'
+                                                : '${response.data![index].description!}',
                                             fontSize: 9.sp,
                                             color: CommonColor.gery787878),
                                         Spacer(),

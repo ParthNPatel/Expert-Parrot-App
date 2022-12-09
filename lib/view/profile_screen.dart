@@ -5,7 +5,6 @@ import 'package:expert_parrot_app/view/depandent_screen.dart';
 import 'package:expert_parrot_app/view/edit_profile_screen.dart';
 import 'package:expert_parrot_app/view/faq_screen.dart';
 import 'package:expert_parrot_app/view/login_screen.dart';
-import 'package:expert_parrot_app/view/set_profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -87,7 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               // GetStorageServices.setUserHeight(height: "156");
                               // GetStorageServices.setUserWeight("60");
 
-                              Get.to(EditProfileScreen());
+                              Get.to(() => EditProfileScreen());
                               // Get.dialog(AlertDialog(
                               //   content: Column(
                               //     mainAxisSize: MainAxisSize.max,
@@ -629,7 +628,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             CommonListTile(
               onTap: () {
-                Get.to(() => SetProfileScreen());
+                Get.to(() => EditProfileScreen());
               },
               image: 'assets/svg/personal.svg',
               text: 'Personal Data',

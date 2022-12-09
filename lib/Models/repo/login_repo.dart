@@ -25,6 +25,9 @@ class LoginRepo extends BaseService {
       print('${response['data']['profileSet']}');
       if (response['flag'] == true) {
         GetStorageServices.setBarrierToken('${response['token']}');
+        print('login time token  ${response['token']}');
+        print(
+            'login time token GetStorageServices  ${GetStorageServices.getBarrierToken()}');
 
         if (response['data']['profileSet'] == true) {
           var dataOfApi = response['data'];

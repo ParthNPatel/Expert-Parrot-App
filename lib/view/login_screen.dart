@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+
 import 'package:country_picker/country_picker.dart';
 import 'package:expert_parrot_app/Models/repo/email_otp_repo.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
@@ -18,6 +19,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sizer/sizer.dart';
+
 import '../Models/repo/login_repo.dart';
 import '../model/country_model.dart';
 
@@ -34,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   TextEditingController searchTextEditing = new TextEditingController();
 
-  String? countryCode = "+91";
+  String? countryCode = "91";
 
   List<CountryModel> _searchResult = [];
 
@@ -72,9 +74,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future sendOtp(final progress) async {
     progress.show();
-
+    print("county code==..${countryCode}");
     await firebaseAuth.verifyPhoneNumber(
-      phoneNumber: countryCode! + _mobileController.text,
+      phoneNumber: "+${countryCode}" + _mobileController.text,
       codeSent: (String verificationId, int? forceResendingToken) {
         setState(() {
           Get.to(() => OtpVerificationScreen(
@@ -238,6 +240,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         'Select country: ${country.displayName}');
                                     setState(() {
                                       selectedCountry = country;
+                                      countryCode = country.phoneCode;
                                     });
                                   },
                                 );

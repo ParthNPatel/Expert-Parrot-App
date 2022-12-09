@@ -29,6 +29,22 @@ class GetStorageServices {
     return getStorage.read('Km');
   }
 
+  static Future setUserSteps(String steps) async {
+    await getStorage.write('steps', steps);
+  }
+
+  static getUserSteps() {
+    return getStorage.read('steps');
+  }
+
+  static Future setUserMiles(String miles) async {
+    await getStorage.write('miles', miles);
+  }
+
+  static getUserMiles() {
+    return getStorage.read('miles');
+  }
+
   static setBarrierToken(token) async {
     await getStorage.write('barrierToken', token);
   }
@@ -119,5 +135,17 @@ class GetStorageServices {
 
   static logOut() {
     getStorage.erase();
+  }
+
+  static eraseKm() {
+    getStorage.remove('Km');
+  }
+
+  static eraseSteps() {
+    getStorage.remove('steps');
+  }
+
+  static eraseMiles() {
+    getStorage.remove('miles');
   }
 }

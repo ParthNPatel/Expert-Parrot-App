@@ -1,15 +1,19 @@
 import 'package:dotted_line/dotted_line.dart';
+import 'package:expert_parrot_app/Models/apis/api_response.dart';
+import 'package:expert_parrot_app/Models/responseModel/date_record_medicine_res_model.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
+import 'package:expert_parrot_app/viewModel/add_record_medicine_view_model.dart';
+import 'package:expert_parrot_app/viewModel/date_medicine_record_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
-import 'package:get/get.dart';
 
 class MedicineGraphScreen extends StatefulWidget {
   const MedicineGraphScreen({Key? key}) : super(key: key);
@@ -126,6 +130,27 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
     [0]
   ];
   int selectedPilesDose = 4;
+
+  DateMedicineRecordViewModel dateMedicineRecordViewModel =
+      Get.put(DateMedicineRecordViewModel());
+
+  AddRecordMedicineViewModel addRecordMedicineViewModel =
+      Get.put(AddRecordMedicineViewModel());
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    dateMedicineRecordViewModel
+        .dateMedicineRecordViewModel(model: {"date": "${dayOf}"});
+
+    // for (int i = 0; i < 50000; i++) {
+    //   if (i % 2 == 0) {
+    //     print(i);
+    //   }
+    // }
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -217,31 +242,195 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                             fontSize: 18.sp,
                             color: CommonColor.blackColor0D0D0D)),
                     CommonWidget.commonSizedBox(height: 4),
-                    ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      reverse: true,
-                      itemCount: medScheduleList.length,
-                      itemBuilder: (context, index) {
-                        print('dfgvde ${medScheduleList[index]}');
-                        return medScheduleList[index] == null
-                            ? SizedBox()
-                            : medDetailsWidget(
-                                pilesList: listOfPiles[index],
-                                image: medScheduleList[index]['image'],
-                                medName: medScheduleList[index]['medName'],
-                                medGm: medScheduleList[index]['medGm'],
-                                iconColor: medScheduleList[index]['iconColor'],
-                                dose: medScheduleList[index]['dose'],
-                                index: index);
-                      },
-                    ),
+                    GetBuilder<DateMedicineRecordViewModel>(
+                        builder: (controller) {
+                      if (controller.dateMedicineRecordApiResponse.status ==
+                          Status.LOADING) {
+                        return SizedBox();
+                      }
+                      if (controller.dateMedicineRecordApiResponse.status ==
+                          Status.COMPLETE) {
+                        print('COMPLETE');
+                        DateMedicineRecordResponseModel respDMR =
+                            controller.dateMedicineRecordApiResponse.data;
+
+                        return ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          reverse: true,
+                          itemCount: respDMR.data!.length,
+                          itemBuilder: (context, index) {
+                            print('dfgvde ${medScheduleList[index]}');
+
+                            return medScheduleList[index] == null
+                                ? SizedBox()
+                                : medDetailsWidget(
+                                    medId: respDMR.data![index].sId!,
+                                    totalTimes:
+                                        respDMR.data![index].totalTimes!,
+                                    pilesList: listOfPiles[index],
+                                    image: respDMR.data![index].appearance ==
+                                            'Pills'
+                                        ? ImageConst.med3Icon
+                                        : respDMR.data![index].appearance ==
+                                                'Gel'
+                                            ? ImageConst.med1Icon
+                                            : respDMR.data![index].appearance ==
+                                                    'Syrup'
+                                                ? ImageConst.med2Icon
+                                                : ImageConst.med2Icon,
+                                    medName: respDMR.data![index].name!,
+                                    medGm:
+                                        '${respDMR.data![index].strength} gm',
+                                    iconColor: respDMR
+                                                .data![index].appearance ==
+                                            'Pills'
+                                        ? Color(0xff21D200)
+                                        : respDMR.data![index].appearance ==
+                                                'Gel'
+                                            ? Color(0xffFFDD2C)
+                                            : respDMR.data![index].appearance ==
+                                                    'Syrup'
+                                                ? Color(0xff9255E5)
+                                                : Color(0xff9255E5),
+                                    dose: respDMR.data![index].doses!,
+                                    index: index);
+                          },
+                        );
+                      } else
+                        return SizedBox();
+                    }),
                     CommonWidget.commonSizedBox(height: 100),
                   ],
                 ),
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Future<StatefulBuilder> takeMedConfirmation(
+      {required int index, required String medId}) async {
+    return StatefulBuilder(
+      builder: (context, setState) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Container(
+          height: 160.sp,
+          width: 300.sp,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding:
+                    EdgeInsets.only(left: 20, top: 13, right: 20, bottom: 13),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CommonText.textBoldWight500(
+                      text: "Confirmation",
+                      fontSize: 17.sp,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Get.back();
+                      },
+                      child: CommonWidget.commonSvgPitcher(
+                          image: ImageConst.close),
+                    )
+                  ],
+                ),
+              ),
+              CommonWidget.dottedLineWidget(),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 5,
+                            ),
+                            CommonText.textBoldWight500(
+                                text: "Are you want to take your Dose $index ",
+                                fontSize: 13.sp,
+                                color: Colors.black),
+                            SizedBox(
+                              height: 12,
+                            ),
+                            CommonWidget.commonButton(
+                                color: CommonColor.greenColor,
+                                radius: 10,
+                                onTap: () async {
+                                  var _req = {
+                                    "medicineId": "${medId}",
+                                    "doses": [index],
+                                  };
+
+                                  print('====== > ${_req}');
+
+                                  await addRecordMedicineViewModel
+                                      .addRecordMedicineViewModel(model: _req);
+
+                                  if (addRecordMedicineViewModel
+                                          .addRecordMedicineApiResponse
+                                          .status ==
+                                      Status.COMPLETE) {
+                                    dateMedicineRecordViewModel
+                                        .dateMedicineRecordViewModel(
+                                            isLoading: false,
+                                            model: {"date": "${dayOf}"});
+
+                                    dateMedicineRecordViewModel
+                                        .dateMedicineRecordViewModel(
+                                            model: {"date": "${dayOf}"});
+                                    Get.back();
+
+                                    CommonWidget.getSnackBar(
+                                        duration: 2,
+                                        color: CommonColor.greenColor
+                                            .withOpacity(.4),
+                                        colorText: Colors.white,
+                                        title: "Done!",
+                                        message: 'Record Updated!');
+                                  }
+                                  if (addRecordMedicineViewModel
+                                          .addRecordMedicineApiResponse
+                                          .status ==
+                                      Status.ERROR) {
+                                    Get.back();
+                                    CommonWidget.getSnackBar(
+                                        duration: 2,
+                                        color: Colors.red.withOpacity(.4),
+                                        colorText: Colors.white,
+                                        title: "Failed!",
+                                        message:
+                                            'Record not updated try again!');
+                                  }
+                                },
+                                text: "Add")
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -306,12 +495,16 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
 
   Widget medDetailsWidget(
       {required String medName,
+      required String medId,
       required List pilesList,
       required String medGm,
-      required String dose,
+      required List dose,
       required Color iconColor,
+      required int totalTimes,
       required String image,
       required int index}) {
+    print('=====> $pilesList');
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8),
       child: GestureDetector(
@@ -327,14 +520,8 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: selectedPilesDose == index
-                    ? [
-                        Color(0xff32B854),
-                        Color(0xff1DAD84),
-                      ]
-                    : [
-                        Color(0xfffffff),
-                        Color(0xfffffff),
-                      ]),
+                    ? [Color(0xff32B854), Color(0xff1DAD84)]
+                    : [Color(0xfffffff), Color(0xfffffff)]),
           ),
           child: Container(
               padding: EdgeInsets.all(12),
@@ -357,7 +544,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                         shape: BoxShape.circle,
                         color: Colors.white,
                       ),
-                      child: CommonWidget.commonSvgPitcher(image: image)),
+                      child: Image.asset(image)),
                   CommonWidget.commonSizedBox(width: 10),
                   Expanded(
                     child: Column(
@@ -379,7 +566,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                               ],
                             ),
                             CommonText.textBoldWight500(
-                                text: dose,
+                                text: "${totalTimes} Dose",
                                 color: CommonColor.blackColor353535,
                                 fontSize: 13.sp),
                           ],
@@ -434,55 +621,96 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                             //     );
                             //   }),
                             // ),
-                            Container(
+                            SizedBox(
                               height: 30,
-                              //width: 100,
-                              child: ListView.builder(
+                              child: ListView.separated(
                                 shrinkWrap: true,
-                                reverse: true,
-                                itemCount: pilesList.length,
                                 scrollDirection: Axis.horizontal,
-                                itemBuilder: (context, indexPiles) {
-                                  return InkWell(
-                                    onTap: () {
-                                      if (pilesList[indexPiles] == 0) {
-                                        if (listOfPiles[index].length == 3) {
-                                          listOfPiles[index] = [1, 1, 1];
-                                        } else if (listOfPiles[index].length ==
-                                            2) {
-                                          listOfPiles[index] = [1, 1];
-                                        } else {
-                                          listOfPiles[index] = [1];
-                                        }
-                                      }
-                                      setState(() {});
-                                    },
-                                    child: Column(
-                                      children: [
-                                        pilesList[indexPiles] == 1
-                                            ? Padding(
-                                                padding:
-                                                    const EdgeInsets.all(4.0),
-                                                child: Image.asset(
-                                                  ImageConst.doubleTickIcon,
-                                                  scale: 4.5,
-                                                ),
-                                              )
-                                            : Padding(
-                                                padding:
-                                                    const EdgeInsets.all(4.0),
-                                                child: Image.asset(
-                                                    ImageConst.doubleTickIcon,
-                                                    scale: 4.5,
-                                                    color:
-                                                        CommonColor.geryD9D9D9),
-                                              )
-                                      ],
-                                    ),
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: totalTimes,
+                                separatorBuilder: (context, index) {
+                                  return SizedBox(
+                                    width: 5.sp,
                                   );
+                                },
+                                itemBuilder: (context, index) {
+                                  return dose.contains(index + 1)
+                                      ? Padding(
+                                          padding: const EdgeInsets.all(4.0),
+                                          child: Image.asset(
+                                            ImageConst.doubleTickIcon,
+                                            scale: 4.5,
+                                          ),
+                                        )
+                                      : GestureDetector(
+                                          onTap: () async {
+                                            Get.dialog(
+                                              // barrierDismissible: false,
+                                              await takeMedConfirmation(
+                                                  index: index + 1,
+                                                  medId: medId),
+                                            );
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: Image.asset(
+                                                ImageConst.doubleTickIcon,
+                                                scale: 4.5,
+                                                color: CommonColor.geryD9D9D9),
+                                          ),
+                                        );
                                 },
                               ),
                             ),
+                            // Container(
+                            //   height: 30,
+                            //   //width: 100,
+                            //   child: ListView.builder(
+                            //     shrinkWrap: true,
+                            //     reverse: true,
+                            //     itemCount: pilesList.length,
+                            //     scrollDirection: Axis.horizontal,
+                            //     itemBuilder: (context, indexPiles) {
+                            //       return InkWell(
+                            //         onTap: () {
+                            //           if (pilesList[indexPiles] == 0) {
+                            //             if (listOfPiles[index].length == 3) {
+                            //               listOfPiles[index] = [1, 1, 1];
+                            //             } else if (listOfPiles[index].length ==
+                            //                 2) {
+                            //               listOfPiles[index] = [1, 1];
+                            //             } else {
+                            //               listOfPiles[index] = [1];
+                            //             }
+                            //           }
+                            //           setState(() {});
+                            //         },
+                            //         child: Column(
+                            //           children: [
+                            //             pilesList[indexPiles] == 1
+                            //                 ? Padding(
+                            //                     padding:
+                            //                         const EdgeInsets.all(4.0),
+                            //                     child: Image.asset(
+                            //                       ImageConst.doubleTickIcon,
+                            //                       scale: 4.5,
+                            //                     ),
+                            //                   )
+                            //                 : Padding(
+                            //                     padding:
+                            //                         const EdgeInsets.all(4.0),
+                            //                     child: Image.asset(
+                            //                         ImageConst.doubleTickIcon,
+                            //                         scale: 4.5,
+                            //                         color:
+                            //                             CommonColor.geryD9D9D9),
+                            //                   )
+                            //           ],
+                            //         ),
+                            //       );
+                            //     },
+                            //   ),
+                            // ),
                             Row(
                               children: [
                                 Image.asset(ImageConst.eyesIcon, scale: 3.5),
@@ -513,6 +741,8 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
             dayOf.month,
             dayOf.day - 1,
           );
+          dateMedicineRecordViewModel
+              .dateMedicineRecordViewModel(model: {"date": "${dayOf}"});
           setState(() {});
         }),
         CommonWidget.commonSizedBox(width: 26),
@@ -536,6 +766,8 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                 dayOf.month,
                 dayOf.day + 1,
               );
+              dateMedicineRecordViewModel
+                  .dateMedicineRecordViewModel(model: {"date": "${dayOf}"});
             }
             print(difference);
             setState(() {});

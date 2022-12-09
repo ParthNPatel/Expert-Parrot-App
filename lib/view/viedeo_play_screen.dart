@@ -57,247 +57,261 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
   @override
   void dispose() {
     super.dispose();
-
     _controller.dispose();
   }
 
+  final Gradient gradient =
+      LinearGradient(colors: [Color(0xff2CB565), Color(0xff15A79D)]);
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          setState(() {
-            _controller.value.isPlaying
-                ? _controller.pause()
-                : _controller.play();
-          });
-        },
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            AbsorbPointer(
-              child: Container(
-                height: Get.height,
-                width: Get.width,
-                color: Colors.black,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: GestureDetector(
+          onTap: () {
+            setState(() {
+              _controller.value.isPlaying
+                  ? _controller.pause()
+                  : _controller.play();
+            });
+          },
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
+            children: [
+              AbsorbPointer(
                 child: _controller.value.isInitialized
-                    ? Container(
-                        height: Get.height,
-                        width: Get.width,
-                        child: AspectRatio(
-                          aspectRatio: Get.height,
-                          child: VideoPlayer(_controller),
-                        ),
+                    ? AspectRatio(
+                        aspectRatio: _controller.value.aspectRatio,
+                        child: VideoPlayer(_controller),
                       )
                     : Container(),
               ),
-            ),
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: header(),
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: header(),
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    // InkWell(
-                    //   onTap: () async {
-                    //     // getVideoViewModel.likeUnlike(widget.likeValue!);
-                    //     //
-                    //     // print('on like tap');
-                    //     // if (widget.likeValue == true) {
-                    //     //   /// UNLIKE API
-                    //     //
-                    //     // } else if (widget.likeValue == false) {
-                    //     //   await getVideoViewModel.videoLikeViewModel(model: {
-                    //     //     "type": "like",
-                    //     //     "videoId": "${widget.id}"
-                    //     //   });
-                    //     //
-                    //     //   widget.likeValue != true;
-                    //     //
-                    //     //   // getVideoViewModel.likeUnlike(true);
-                    //     //   try {
-                    //     //     if (getVideoViewModel.videoLikeApiResponse.status ==
-                    //     //         Status.COMPLETE) {
-                    //     //       getVideoViewModel.getVideoViewModel(
-                    //     //           isLoading: false);
-                    //     //     } else if (getVideoViewModel
-                    //     //             .videoLikeApiResponse.status ==
-                    //     //         Status.ERROR) {
-                    //     //       CommonWidget.getSnackBar(
-                    //     //         message: '',
-                    //     //         title: 'Failed',
-                    //     //         duration: 2,
-                    //     //         color: Colors.red,
-                    //     //       );
-                    //     //     }
-                    //     //   } catch (e) {
-                    //     //     CommonWidget.getSnackBar(
-                    //     //       message: 'Like Error',
-                    //     //       title: 'Failed',
-                    //     //       duration: 2,
-                    //     //       color: Colors.red,
-                    //     //     );
-                    //     //   }
-                    //     // }
-                    //
-                    //     // await likeUnLikeVideoViewModel.videoLikeViewModel(model: {
-                    //     //
-                    //     // })
-                    //   },
-                    //   child: Column(
-                    //     children: [
-                    //       widget.likeValue == true
-                    //           ? Icon(
-                    //               Icons.favorite,
-                    //               size: 20,
-                    //               color: Colors.red,
-                    //             )
-                    //           : CommonWidget.commonSvgPitcher(
-                    //               height: 20,
-                    //               image: ImageConst.hartBorderIcon,
-                    //               color: CommonColor.gery636363,
-                    //             ),
-                    //       CommonText.textBoldWight400(
-                    //           text: '${widget.likes}',
-                    //           fontSize: 13.sp,
-                    //           color: Colors.white),
-                    //     ],
-                    //   ),
-                    // ),
-                    InkResponse(
-                      onTap: () async {
-                        if (likeUnLikeVideoViewModel.isLike == false) {
-                          await likeUnLikeVideoViewModel.videoLikeViewModel(
-                              model: {
-                                "type": "like",
-                                "videoId": "${widget.id}"
-                              });
-                          likeUnLikeVideoViewModel.updateLike(true);
-                          if (likeUnLikeVideoViewModel
-                                  .videoLikeApiResponse.status ==
-                              Status.COMPLETE) {
-                            likeUnLikeVideoViewModel.incriment();
-                          }
-                          if (likeUnLikeVideoViewModel
-                                  .videoLikeApiResponse.status ==
-                              Status.ERROR) {
-                            CommonWidget.getSnackBar(
-                                color: Colors.red,
-                                duration: 2,
-                                colorText: Colors.white,
-                                title: "Something went wrong",
-                                message: 'Try Again.');
-                            likeUnLikeVideoViewModel.updateLike(false);
-
-                            likeUnLikeVideoViewModel.dicriment();
-                          }
-                        } else if (likeUnLikeVideoViewModel.isLike == true) {
-                          await likeUnLikeVideoViewModel.videoUnLikeViewModel(
-                              model: {
-                                "type": "unlike",
-                                "videoId": "${widget.id}"
-                              });
-                          likeUnLikeVideoViewModel.updateLike(false);
-                          if (likeUnLikeVideoViewModel
-                                  .videoUnLikeApiResponse.status ==
-                              Status.COMPLETE) {
-                            likeUnLikeVideoViewModel.dicriment();
-                          }
-                          if (likeUnLikeVideoViewModel
-                                  .videoUnLikeApiResponse.status ==
-                              Status.ERROR) {
-                            CommonWidget.getSnackBar(
-                                color: Colors.red,
-                                duration: 2,
-                                colorText: Colors.white,
-                                title: "Something went wrong",
-                                message: 'Try Again.');
-                            likeUnLikeVideoViewModel.updateLike(true);
-                            likeUnLikeVideoViewModel.incriment();
-                          }
-                        }
-                        getVideoViewModel.getVideoViewModel(isLoading: false);
-                        if (getVideoViewModel.getVideoApiResponse.status ==
-                            Status.COMPLETE) {
-                          log('DONE');
-                        } else {
-                          log('Error');
-                        }
-                      },
-                      child: GetBuilder<LikeUnLikeVideoViewModel>(
-                        builder: (controller) {
-                          return Column(
-                            children: [
-                              controller.isLike == true
-                                  ? Icon(
-                                      Icons.favorite,
-                                      size: 20,
+              ),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      // InkWell(
+                      //   onTap: () async {
+                      //     // getVideoViewModel.likeUnlike(widget.likeValue!);
+                      //     //
+                      //     // print('on like tap');
+                      //     // if (widget.likeValue == true) {
+                      //     //   /// UNLIKE API
+                      //     //
+                      //     // } else if (widget.likeValue == false) {
+                      //     //   await getVideoViewModel.videoLikeViewModel(model: {
+                      //     //     "type": "like",
+                      //     //     "videoId": "${widget.id}"
+                      //     //   });
+                      //     //
+                      //     //   widget.likeValue != true;
+                      //     //
+                      //     //   // getVideoViewModel.likeUnlike(true);
+                      //     //   try {
+                      //     //     if (getVideoViewModel.videoLikeApiResponse.status ==
+                      //     //         Status.COMPLETE) {
+                      //     //       getVideoViewModel.getVideoViewModel(
+                      //     //           isLoading: false);
+                      //     //     } else if (getVideoViewModel
+                      //     //             .videoLikeApiResponse.status ==
+                      //     //         Status.ERROR) {
+                      //     //       CommonWidget.getSnackBar(
+                      //     //         message: '',
+                      //     //         title: 'Failed',
+                      //     //         duration: 2,
+                      //     //         color: Colors.red,
+                      //     //       );
+                      //     //     }
+                      //     //   } catch (e) {
+                      //     //     CommonWidget.getSnackBar(
+                      //     //       message: 'Like Error',
+                      //     //       title: 'Failed',
+                      //     //       duration: 2,
+                      //     //       color: Colors.red,
+                      //     //     );
+                      //     //   }
+                      //     // }
+                      //
+                      //     // await likeUnLikeVideoViewModel.videoLikeViewModel(model: {
+                      //     //
+                      //     // })
+                      //   },
+                      //   child: Column(
+                      //     children: [
+                      //       widget.likeValue == true
+                      //           ? Icon(
+                      //               Icons.favorite,
+                      //               size: 20,
+                      //               color: Colors.red,
+                      //             )
+                      //           : CommonWidget.commonSvgPitcher(
+                      //               height: 20,
+                      //               image: ImageConst.hartBorderIcon,
+                      //               color: CommonColor.gery636363,
+                      //             ),
+                      //       CommonText.textBoldWight400(
+                      //           text: '${widget.likes}',
+                      //           fontSize: 13.sp,
+                      //           color: Colors.white),
+                      //     ],
+                      //   ),
+                      // ),
+                      Column(
+                        children: [
+                          InkResponse(
+                            onTap: () async {
+                              if (likeUnLikeVideoViewModel.isLike == false) {
+                                await likeUnLikeVideoViewModel
+                                    .videoLikeViewModel(model: {
+                                  "type": "like",
+                                  "videoId": "${widget.id}"
+                                });
+                                likeUnLikeVideoViewModel.updateLike(true);
+                                if (likeUnLikeVideoViewModel
+                                        .videoLikeApiResponse.status ==
+                                    Status.COMPLETE) {
+                                  likeUnLikeVideoViewModel.incriment();
+                                }
+                                if (likeUnLikeVideoViewModel
+                                        .videoLikeApiResponse.status ==
+                                    Status.ERROR) {
+                                  CommonWidget.getSnackBar(
                                       color: Colors.red,
-                                    )
-                                  : CommonWidget.commonSvgPitcher(
-                                      height: 20,
-                                      image: ImageConst.hartBorderIcon,
-                                      color: CommonColor.gery636363,
-                                    ),
-                              CommonText.textBoldWight400(
-                                  text: '${controller.likeCount}',
-                                  fontSize: 13.sp,
-                                  color: Colors.white),
-                            ],
-                          );
-                        },
-                      ),
-                    ),
-                    CommonWidget.commonSizedBox(height: 20),
-                    InkWell(
-                        onTap: () {
-                          print('on tap in share');
+                                      duration: 2,
+                                      colorText: Colors.white,
+                                      title: "Something went wrong",
+                                      message: 'Try Again.');
+                                  likeUnLikeVideoViewModel.updateLike(false);
 
-                          Share.share('${widget.videoLink}', subject: '');
-                        },
-                        child: Column(
-                          children: [
-                            Image.asset(ImageConst.shareIcon, scale: 4),
-                            CommonText.textBoldWight400(
-                                text: TextConst.share,
-                                fontSize: 13.sp,
-                                color: Colors.white),
-                          ],
-                        )),
-                    CommonWidget.commonSizedBox(height: 20),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: CommonText.textBoldWight500(
-                          text: '${widget.title}',
-                          fontSize: 13.sp,
-                          color: Colors.white),
-                    ),
-                    CommonWidget.commonSizedBox(height: 10),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: CommonText.textBoldWight300(
-                          color: CommonColor.whiteColorEDEDED,
-                          text: '${widget.description}',
-                          fontSize: 9.sp),
-                    ),
-                    CommonWidget.commonSizedBox(height: 20)
-                  ],
+                                  likeUnLikeVideoViewModel.dicriment();
+                                }
+                              } else if (likeUnLikeVideoViewModel.isLike ==
+                                  true) {
+                                await likeUnLikeVideoViewModel
+                                    .videoUnLikeViewModel(model: {
+                                  "type": "unlike",
+                                  "videoId": "${widget.id}"
+                                });
+                                likeUnLikeVideoViewModel.updateLike(false);
+                                if (likeUnLikeVideoViewModel
+                                        .videoUnLikeApiResponse.status ==
+                                    Status.COMPLETE) {
+                                  likeUnLikeVideoViewModel.dicriment();
+                                }
+                                if (likeUnLikeVideoViewModel
+                                        .videoUnLikeApiResponse.status ==
+                                    Status.ERROR) {
+                                  CommonWidget.getSnackBar(
+                                      color: Colors.red,
+                                      duration: 2,
+                                      colorText: Colors.white,
+                                      title: "Something went wrong",
+                                      message: 'Try Again.');
+                                  likeUnLikeVideoViewModel.updateLike(true);
+                                  likeUnLikeVideoViewModel.incriment();
+                                }
+                              }
+                              getVideoViewModel.getVideoViewModel(
+                                  isLoading: false);
+                              if (getVideoViewModel
+                                      .getVideoApiResponse.status ==
+                                  Status.COMPLETE) {
+                                log('DONE');
+                              } else {
+                                log('Error');
+                              }
+                            },
+                            child: GetBuilder<LikeUnLikeVideoViewModel>(
+                              builder: (controller) {
+                                return Column(
+                                  children: [
+                                    controller.isLike == true
+                                        ? Icon(
+                                            Icons.favorite,
+                                            size: 25.sp,
+                                            color: Colors.red,
+                                          )
+                                        : CommonWidget.commonSvgPitcher(
+                                            height: 25.sp,
+                                            image: ImageConst.hartBorderIcon,
+                                            color: CommonColor.gery636363,
+                                          ),
+                                    CommonText.textBoldWight400(
+                                        text: '${controller.likeCount}',
+                                        fontSize: 13.sp,
+                                        color: Colors.white),
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
+                          CommonWidget.commonSizedBox(height: 20),
+                          InkWell(
+                              onTap: () {
+                                print('on tap in share');
+
+                                Share.share('${widget.videoLink}', subject: '');
+                              },
+                              child: Column(
+                                children: [
+                                  Image.asset(ImageConst.shareIcon, scale: 4),
+                                  CommonText.textBoldWight400(
+                                      text: TextConst.share,
+                                      fontSize: 13.sp,
+                                      color: Colors.white),
+                                ],
+                              )),
+                        ],
+                      ),
+                      CommonWidget.commonSizedBox(height: 20),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: ShaderMask(
+                            blendMode: BlendMode.srcIn,
+                            shaderCallback: (bounds) => gradient.createShader(
+                                  Rect.fromLTWH(
+                                      0, 0, bounds.width, bounds.height),
+                                ),
+                            child: CommonText.textBoldWight500(
+                                color: CommonColor.whiteColorEDEDED,
+                                text: '${widget.title}',
+                                fontSize: 13.sp)),
+                      ),
+                      CommonWidget.commonSizedBox(height: 10),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: ShaderMask(
+                            blendMode: BlendMode.srcIn,
+                            shaderCallback: (bounds) => gradient.createShader(
+                                  Rect.fromLTWH(
+                                      0, 0, bounds.width, bounds.height),
+                                ),
+                            child: CommonText.textBoldWight300(
+                                color: CommonColor.whiteColorEDEDED,
+                                text: '${widget.description}',
+                                fontSize: 9.sp)),
+                      ),
+                      CommonWidget.commonSizedBox(height: 20)
+                    ],
+                  ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

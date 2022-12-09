@@ -310,7 +310,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           },
         ),
         Spacer(),
-        CommonText.textBoldWight500(text: "Profile", fontSize: 18.sp),
+        CommonText.textBoldWight500(text: "Edit Profile", fontSize: 18.sp),
         SizedBox(
           width: 11.w,
         ),

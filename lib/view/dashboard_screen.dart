@@ -51,8 +51,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
   List selectedDose = [];
   List completedDoses = [];
+  List stepCounterMethod = ["Km", "Steps", "Miles"];
 
   int pageCounter = 0;
+  int selectMethod = 0;
 
   List overViewData = [
     {
@@ -154,12 +156,17 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   @override
   void initState() {
     controller.isVisible = false;
-
     getAllMedicineNamesList.getAllMedicineNames();
     userDataViewModel.userDataViewModel();
     dateMedicineRecordViewModel.dateMedicineRecordViewModel(
         isLoading: true, model: {"date": "${DateTime.now()}"});
     super.initState();
+
+    print('getUserKm =============== > ${GetStorageServices.getUserKm()}');
+    print(
+        'getUserSteps =============== > ${GetStorageServices.getUserSteps()}');
+    print(
+        'getUserMiles =============== > ${GetStorageServices.getUserMiles()}');
   }
 
   @override
@@ -172,7 +179,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
   List dateTimes = ['select1'];
   int select = 1;
-  List LastData = [];
 
   @override
   Widget build(BuildContext context) {
@@ -191,36 +197,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             print('COMPLETE');
             DateMedicineRecordResponseModel respDMR =
                 controllerDMR.dateMedicineRecordApiResponse.data;
-
-            LastData.clear();
-
-            if (respDMR.data!.length > 3) {
-              for (int i = 0; i < 3; i++) {
-                LastData.insert(i, {
-                  'id': '${respDMR.data![i].sId}',
-                  'totalTimes': '${respDMR.data![i].totalTimes}',
-                  'medName': '${respDMR.data![i].name}',
-                  'medGm': '${respDMR.data![i].strength} gm',
-                  'timeOfDay':
-                      '${respDMR.data![i].totalTimes} pills ${respDMR.data![i].frequency}',
-                  'ap': '${respDMR.data![i].appearance}',
-                  'doses': respDMR.data![i].doses
-                });
-              }
-            } else {
-              for (int i = 0; i < respDMR.data!.length; i++) {
-                LastData.insert(i, {
-                  'id': '${respDMR.data![i].sId}',
-                  'totalTimes': '${respDMR.data![i].totalTimes}',
-                  'medName': '${respDMR.data![i].name}',
-                  'medGm': '${respDMR.data![i].strength} gm',
-                  'timeOfDay':
-                      '${respDMR.data![i].totalTimes} pills ${respDMR.data![i].frequency}',
-                  'ap': '${respDMR.data![i].appearance}',
-                  'doses': respDMR.data![i].doses
-                });
-              }
-            }
 
             return Column(
               children: [
@@ -267,7 +243,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           reverse: true,
-                          itemCount: LastData.length,
+                          itemCount: respDMR.data!.length > 3
+                              ? 3
+                              : respDMR.data!.length,
                           itemBuilder: (context, index) {
                             // respDMR.data!.indexWhere((element) {
                             //   if (element.sId == LastData[index]["id"]) {
@@ -284,35 +262,48 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               return /*recordLength > 3
                                             ? */
                                   medDetailsWidget(
-                                      medId: "${LastData[index]['id']}",
+                                      medId: "${respDMR.data![index].sId}",
                                       totalTimes:
-                                          "${LastData[index]['totalTimes']}",
-                                      takenDoses: LastData[index]['doses'],
-                                      image: LastData[index]['ap'] == 'Pills'
+                                          "${respDMR.data![index].totalTimes}",
+                                      takenDoses: respDMR.data![index].doses,
+                                      image: respDMR.data![index].appearance ==
+                                              'Pills'
                                           ? ImageConst.med3Icon
-                                          : LastData[index]['ap'] == 'Gel'
+                                          : respDMR.data![index].appearance ==
+                                                  'Gel'
                                               ? ImageConst.med1Icon
-                                              : LastData[index]['ap'] == 'Syrup'
+                                              : respDMR.data![index]
+                                                          .appearance ==
+                                                      'Syrup'
                                                   ? ImageConst.med2Icon
                                                   : ImageConst.med2Icon,
-                                      medName: '${LastData[index]['medName']}',
-                                      medGm: '${LastData[index]['medGm']}',
-                                      iconColor: LastData[index]['ap'] ==
+                                      medName: '${respDMR.data![index].name}',
+                                      medGm:
+                                          '${respDMR.data![index].strength} gm',
+                                      iconColor: respDMR
+                                                  .data![index].appearance ==
                                               'Pills'
                                           ? Color(0xff21D200)
-                                          : LastData[index]['ap'] == 'Gel'
+                                          : respDMR.data![index].appearance ==
+                                                  'Gel'
                                               ? Color(0xffFFDD2C)
-                                              : LastData[index]['ap'] == 'Syrup'
+                                              : respDMR.data![index]
+                                                          .appearance ==
+                                                      'Syrup'
                                                   ? Color(0xff9255E5)
                                                   : Color(0xff9255E5),
                                       timeOfDay:
-                                          '${LastData[index]['timeOfDay']}',
-                                      color: LastData[index]['ap'] == 'Pills'
+                                          '${respDMR.data![index].totalTimes} pills ${respDMR.data![index].frequency}',
+                                      color: respDMR.data![index].appearance ==
+                                              'Pills'
                                           ? Color.fromRGBO(69, 196, 44, 0.13)
-                                          : LastData[index]['ap'] == 'Gel'
+                                          : respDMR.data![index].appearance ==
+                                                  'Gel'
                                               ? Color.fromRGBO(
                                                   193, 196, 44, 0.13)
-                                              : LastData[index]['ap'] == 'Syrup'
+                                              : respDMR.data![index]
+                                                          .appearance ==
+                                                      'Syrup'
                                                   ? Color.fromRGBO(
                                                       111, 44, 196, 0.13)
                                                   : Color.fromRGBO(
@@ -570,19 +561,21 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                             },
                           ),
                         ),*/
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: InkWell(
-                            onTap: () {
-                              Get.to(
-                                  () => ViewAllMedScheduleScreen(date: dayOf));
-                            },
-                            child: CommonText.textGradient(
-                              text: 'View All',
-                              fontSize: 11.sp,
-                            ),
-                          ),
-                        ),
+                        respDMR.data!.length > 3
+                            ? Align(
+                                alignment: Alignment.centerRight,
+                                child: InkWell(
+                                  onTap: () {
+                                    Get.to(() =>
+                                        ViewAllMedScheduleScreen(date: dayOf));
+                                  },
+                                  child: CommonText.textGradient(
+                                    text: 'View All',
+                                    fontSize: 11.sp,
+                                  ),
+                                ),
+                              )
+                            : SizedBox(),
                         CommonWidget.commonSizedBox(height: 16),
                         Row(
                           children: [
@@ -676,7 +669,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           child: GestureDetector(
                             onTap: () async {
                               Get.dialog(await getReport())
-                                  .whenComplete(() => setState(() {}));
+                                  .whenComplete(() => setState(() {
+                                        _kmController.clear();
+                                      }));
                             },
                             child: SizedBox(
                               height: 320,
@@ -699,7 +694,15 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                         .getUserKm() !=
                                                     null
                                                 ? '${(int.parse(GetStorageServices.getUserKm()) * 1408)}'
-                                                : '0',
+                                                : GetStorageServices
+                                                            .getUserSteps() !=
+                                                        null
+                                                    ? '${(int.parse(GetStorageServices.getUserSteps()))}'
+                                                    : GetStorageServices
+                                                                .getUserMiles() !=
+                                                            null
+                                                        ? '${(int.parse(GetStorageServices.getUserMiles()) * 2112)}'
+                                                        : '0',
                                             fontSize: 18.sp,
                                             color:
                                                 CommonColor.blackColor434343),
@@ -718,27 +721,62 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                               height: 33,
                                               padding: 10,
                                               text: GetStorageServices
-                                                          .getUserKm() !=
-                                                      null
-                                                  ? '${(int.parse(GetStorageServices.getUserKm()) * 190)}Kcal'
-                                                  : '0 kcal',
+                                                              .getUserKm() !=
+                                                          null &&
+                                                      GetStorageServices
+                                                              .getUserKm() !=
+                                                          ""
+                                                  ? '${(int.parse(GetStorageServices.getUserKm()) * 136)}Kcal'
+                                                  : GetStorageServices
+                                                                  .getUserSteps() !=
+                                                              null &&
+                                                          GetStorageServices
+                                                                  .getUserSteps() !=
+                                                              ""
+                                                      ? '${((int.parse(GetStorageServices.getUserSteps()) / 1408) * 136).toPrecision(1)}Kcal'
+                                                      : GetStorageServices
+                                                                      .getUserMiles() !=
+                                                                  null &&
+                                                              GetStorageServices
+                                                                      .getUserMiles() !=
+                                                                  ""
+                                                          ? '${(int.parse(GetStorageServices.getUserMiles()) * 85)}Kcal'
+                                                          : '0 kcal',
                                               image: ImageConst.kcalIcon),
-                                          reportEventWidget(
-                                              padding: 4,
-                                              text: GetStorageServices
-                                                          .getUserKm() !=
-                                                      null
-                                                  ? '${(int.parse(GetStorageServices.getUserKm()) * 12)} min'
-                                                  : '0 min',
-                                              image: ImageConst.timeIcon),
+                                          SizedBox(width: 5),
+                                          // reportEventWidget(
+                                          //     padding: 4,
+                                          //     text: GetStorageServices
+                                          //                 .getUserKm() !=
+                                          //             null
+                                          //         ? '${(int.parse(GetStorageServices.getUserKm()) * 12)} min'
+                                          //         : '0 min',
+                                          //     image: ImageConst.timeIcon),
                                           reportEventWidget(
                                               padding: 0,
                                               height: 43,
                                               text: GetStorageServices
-                                                          .getUserKm() !=
-                                                      null
+                                                              .getUserKm() !=
+                                                          null &&
+                                                      GetStorageServices
+                                                              .getUserKm() !=
+                                                          ""
                                                   ? '${GetStorageServices.getUserKm()} Km'
-                                                  : 'Na',
+                                                  : GetStorageServices
+                                                                  .getUserSteps() !=
+                                                              null &&
+                                                          GetStorageServices
+                                                                  .getUserSteps() !=
+                                                              ""
+                                                      ? '${(int.parse(GetStorageServices.getUserSteps()) / 1408).toPrecision(2)} Km'
+                                                      : GetStorageServices
+                                                                      .getUserMiles() !=
+                                                                  null &&
+                                                              GetStorageServices
+                                                                      .getUserMiles() !=
+                                                                  ""
+                                                          ? '${(int.parse(GetStorageServices.getUserMiles()) / 1.609344).toPrecision(2)} Km'
+                                                          : 'Na',
                                               image: ImageConst.locationIcon),
                                         ]),
                                   ),
@@ -1003,6 +1041,349 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
   Future<StatefulBuilder> getReport() async {
     return StatefulBuilder(
+        builder: (context, setState) => Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: SizedBox(
+                height: 320.sp,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CommonText.textBoldWight500(
+                            text: "Enter",
+                            fontSize: 17.sp,
+                          ),
+                          InkWell(
+                            onTap: () {
+                              _kmController.clear();
+                              Get.back();
+                            },
+                            child: CommonWidget.commonSvgPitcher(
+                              image: ImageConst.close,
+                            ),
+                          )
+                        ],
+                      ),
+                      CommonWidget.dottedLineWidget(),
+                      SizedBox(height: 20),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          physics: BouncingScrollPhysics(),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CommonText.textBoldWight400(
+                                text:
+                                    "please enter ${stepCounterMethod[selectMethod]} that you have covered so far",
+                                fontSize: 11.sp,
+                                color: Color(0xff9B9B9B),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                //height: 40.sp,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: Color(0xffF8F8F6),
+                                ),
+                                child: Theme(
+                                  data: Theme.of(context).copyWith(
+                                      dividerColor: Colors.transparent),
+                                  child: ExpansionTile(
+                                    iconColor: CommonColor.greenColor,
+                                    title: Row(
+                                      children: [
+                                        CommonText.textBoldWight500(
+                                            text:
+                                                "${stepCounterMethod[selectMethod]}",
+                                            fontSize: 13.sp,
+                                            color: Colors.black),
+                                      ],
+                                    ),
+                                    children: [
+                                      Container(
+                                        color: Colors.white,
+                                        child: Column(
+                                          children: List.generate(
+                                            stepCounterMethod.length,
+                                            (index) => GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  selectMethod = index;
+                                                });
+                                                setState(() {});
+                                                print(
+                                                    "select:- ${stepCounterMethod[selectMethod]}");
+                                              },
+                                              child: Container(
+                                                color: selectMethod == index
+                                                    ? Color(0xffe1f9ea)
+                                                    : Colors.white,
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 10,
+                                                    vertical: 10),
+                                                child: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.check,
+                                                      size: 17,
+                                                      color:
+                                                          selectMethod == index
+                                                              ? CommonColor
+                                                                  .greenColor
+                                                              : Colors.white,
+                                                    ),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    CommonText.textBoldWight500(
+                                                      text: stepCounterMethod[
+                                                          index],
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 20),
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                    padding: EdgeInsets.only(left: 7.sp),
+                                    child: CommonText.textBoldWight500(
+                                        text:
+                                            "${stepCounterMethod[selectMethod]}",
+                                        fontSize: 13.sp,
+                                        color: Colors.black)),
+                              ),
+                              SizedBox(
+                                height: 12,
+                              ),
+                              TextFormField(
+                                controller: _kmController,
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: Color(0xffF8F8F6),
+                                  hintText:
+                                      "Enter ${stepCounterMethod[selectMethod]} ",
+                                  border: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 20.sp),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  SizedBox(width: 20.sp),
+                                  // SizedBox(
+                                  //   height: 6.5.h,
+                                  //   width: 25.w,
+                                  //   child: CommonWidget.commonButton(
+                                  //       color: CommonColor.greenColor,
+                                  //       radius: 10,
+                                  //       onTap: () async {
+                                  //         if (_kmController
+                                  //             .text.isNotEmpty) {
+                                  //           await AddGlassRepo1.addGlassRepo(
+                                  //               addGlass: _glassController,
+                                  //               model: {
+                                  //                 "type":
+                                  //                     "${waterTypeList[selectMethod]}",
+                                  //                 "quantity": _glassController
+                                  //                     .text
+                                  //                     .trim()
+                                  //               });
+                                  //
+                                  //           await getGlassViewModel
+                                  //               .getGlassViewModel(
+                                  //                   isLoading: false);
+                                  //           if (getGlassViewModel
+                                  //                   .getGlassApiResponse
+                                  //                   .status ==
+                                  //               Status.COMPLETE) {}
+                                  //           if (getGlassViewModel
+                                  //                   .getGlassApiResponse
+                                  //                   .status ==
+                                  //               Status.ERROR) {
+                                  //             CommonWidget.getSnackBar(
+                                  //                 duration: 2,
+                                  //                 color: CommonColor.greenColor
+                                  //                     .withOpacity(.4),
+                                  //                 colorText: Colors.white,
+                                  //                 title: "Please",
+                                  //                 message: 'Refresh Page');
+                                  //           }
+                                  //           // await controller
+                                  //           //     .addGlassViewModel(
+                                  //           //         model: {
+                                  //           //       "type":
+                                  //           //           "${waterTypeList[selectMethod]}",
+                                  //           //       "quantity":
+                                  //           //           _glassController
+                                  //           //               .text
+                                  //           //               .trim()
+                                  //           //     });
+                                  //           //
+                                  //           // if (controller
+                                  //           //         .addGlassApiResponse
+                                  //           //         .status ==
+                                  //           //     Status
+                                  //           //         .COMPLETE) {
+                                  //           //   Get.back();
+                                  //           //   GetStorageServices.setUserWater((GetStorageServices.getUserWater() ==
+                                  //           //               null
+                                  //           //           ? 0
+                                  //           //           : GetStorageServices
+                                  //           //               .getUserWater()) +
+                                  //           //       int.parse(
+                                  //           //           _glassController
+                                  //           //               .text));
+                                  //           //   _glassController
+                                  //           //       .clear();
+                                  //           //   // await getGlassViewModel
+                                  //           //   //     .getGlassViewModel(
+                                  //           //   //         isLoading:
+                                  //           //   //             false);
+                                  //           //   // if (getGlassViewModel
+                                  //           //   //         .getGlassApiResponse
+                                  //           //   //         .status ==
+                                  //           //   //     Status
+                                  //           //   //         .COMPLETE) {}
+                                  //           //   // if (getGlassViewModel
+                                  //           //   //         .getGlassApiResponse
+                                  //           //   //         .status ==
+                                  //           //   //     Status
+                                  //           //   //         .ERROR) {
+                                  //           //   //   CommonWidget.getSnackBar(
+                                  //           //   //       duration:
+                                  //           //   //           2,
+                                  //           //   //       color: CommonColor
+                                  //           //   //           .greenColor
+                                  //           //   //           .withOpacity(
+                                  //           //   //               .4),
+                                  //           //   //       colorText:
+                                  //           //   //           Colors
+                                  //           //   //               .white,
+                                  //           //   //       title:
+                                  //           //   //           "Please",
+                                  //           //   //       message:
+                                  //           //   //           'Refresh Page');
+                                  //           //   // }
+                                  //           //
+                                  //           //   CommonWidget.getSnackBar(
+                                  //           //       duration: 2,
+                                  //           //       color: CommonColor
+                                  //           //           .greenColor
+                                  //           //           .withOpacity(
+                                  //           //               .4),
+                                  //           //       colorText:
+                                  //           //           Colors
+                                  //           //               .white,
+                                  //           //       title:
+                                  //           //           "Done!",
+                                  //           //       message:
+                                  //           //           'added successfully!');
+                                  //           // }
+                                  //           // if (controller
+                                  //           //         .addGlassApiResponse
+                                  //           //         .status ==
+                                  //           //     Status
+                                  //           //         .ERROR) {
+                                  //           //   _glassController
+                                  //           //       .clear();
+                                  //           //   Get.back();
+                                  //           //
+                                  //           //   CommonWidget.getSnackBar(
+                                  //           //       duration: 2,
+                                  //           //       color: Colors
+                                  //           //           .red
+                                  //           //           .shade300,
+                                  //           //       colorText:
+                                  //           //           Colors
+                                  //           //               .white,
+                                  //           //       title:
+                                  //           //           "Oops!",
+                                  //           //       message:
+                                  //           //           'Something goes wrong please enter bottle again!');
+                                  //           // }
+                                  //         } else {
+                                  //           CommonWidget.getSnackBar(
+                                  //               duration: 2,
+                                  //               color: Colors.red.shade300,
+                                  //               colorText: Colors.white,
+                                  //               title: "Oops!",
+                                  //               message:
+                                  //                   'Please enter proper amount of bottle!');
+                                  //         }
+                                  //       },
+                                  //       text: "Add"),
+                                  // ),
+                                  CommonWidget.commonButton(
+                                      color: CommonColor.greenColor,
+                                      radius: 10,
+                                      onTap: () async {
+                                        if (_kmController.text.isNotEmpty) {
+                                          GetStorageServices.eraseKm();
+                                          GetStorageServices.eraseSteps();
+                                          GetStorageServices.eraseMiles();
+
+                                          selectMethod == 0
+                                              ? GetStorageServices.setUserKm(
+                                                  _kmController.text.trim())
+                                              : selectMethod == 1
+                                                  ? GetStorageServices
+                                                      .setUserSteps(
+                                                          _kmController.text
+                                                              .trim())
+                                                  : GetStorageServices
+                                                      .setUserMiles(
+                                                          _kmController.text
+                                                              .trim());
+
+                                          Get.back();
+                                        } else {
+                                          CommonWidget.getSnackBar(
+                                              color: Colors.red,
+                                              duration: 2,
+                                              colorText: Colors.white,
+                                              title: "Required",
+                                              message: 'Please enter hear.');
+                                        }
+                                      },
+                                      text: "Next")
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ));
+
+    /* return StatefulBuilder(
       builder: (context, setState) => Dialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
@@ -1013,40 +1394,44 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
           ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CommonText.textBoldWight500(
-                        text: "Calculating Report",
-                        fontSize: 17.sp,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CommonText.textBoldWight500(
+                      text: "Calculating Report",
+                      fontSize: 17.sp,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        _kmController.clear();
+                        Get.back();
+                      },
+                      child: CommonWidget.commonSvgPitcher(
+                        image: ImageConst.close,
                       ),
-                      InkWell(
-                        onTap: () {
-                          Get.back();
-                        },
-                        child: CommonWidget.commonSvgPitcher(
-                          image: ImageConst.close,
-                        ),
-                      )
-                    ],
-                  ),
+                    )
+                  ],
                 ),
-                CommonWidget.dottedLineWidget(),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              ),
+              CommonWidget.dottedLineWidget(),
+              SizedBox(height: 20),
+
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       CommonText.textBoldWight400(
-                        text: "please enter Km that you have covered so far",
+                        text:
+                            "please enter ${stepCounterMethod[selectMethod]} that you have covered so far",
                         fontSize: 11.sp,
                         color: Color(0xff9B9B9B),
                       ),
@@ -1058,46 +1443,310 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                       SizedBox(
                         height: 12,
                       ),
+                      Container(
+                        //height: 40.sp,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Color(0xffF8F8F6),
+                        ),
+                        child: Theme(
+                          data: Theme.of(context)
+                              .copyWith(dividerColor: Colors.transparent),
+                          child: ExpansionTile(
+                            iconColor: CommonColor.greenColor,
+                            title: Row(
+                              children: [
+                                CommonText.textBoldWight500(
+                                    text: "${stepCounterMethod[selectMethod]}",
+                                    fontSize: 13.sp,
+                                    color: Colors.black),
+                              ],
+                            ),
+                            children: [
+                              Container(
+                                color: Colors.white,
+                                child: Column(
+                                  children: List.generate(
+                                    stepCounterMethod.length,
+                                    (index) => GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          selectMethod = index;
+                                        });
+                                        setState(() {});
+                                        print(
+                                            "select:- ${stepCounterMethod[selectMethod]}");
+                                      },
+                                      child: Container(
+                                        color: selectMethod == index
+                                            ? Color(0xffe1f9ea)
+                                            : Colors.white,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 10),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.check,
+                                              size: 17,
+                                              color: selectMethod == index
+                                                  ? CommonColor.greenColor
+                                                  : Colors.white,
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            CommonText.textBoldWight500(
+                                              text: stepCounterMethod[index],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
                       TextFormField(
                         controller: _kmController,
+                        keyboardType: TextInputType.number,
                         decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Color(0xffF8F8F6),
-                            hintText: "Enter Km",
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius: BorderRadius.circular(20),
-                            )),
+                          filled: true,
+                          fillColor: Color(0xffF8F8F6),
+                          hintText: "Enter count ",
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
                       ),
-                      SizedBox(height: 23),
-                      CommonWidget.commonButton(
-                          color: CommonColor.greenColor,
-                          radius: 10,
-                          onTap: () async {
-                            if (_kmController.text.isNotEmpty) {
-                              GetStorageServices.setUserKm(
-                                  _kmController.text.trim());
-
-                              Get.back();
-                            } else {
-                              CommonWidget.getSnackBar(
-                                  color: Colors.red,
-                                  duration: 2,
-                                  colorText: Colors.white,
-                                  title: "Required",
-                                  message: 'Please enter hear.');
-                            }
-                          },
-                          text: "Next")
+                      SizedBox(height: 20.sp),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(width: 20.sp),
+                          // SizedBox(
+                          //   height: 6.5.h,
+                          //   width: 25.w,
+                          //   child: CommonWidget.commonButton(
+                          //       color: CommonColor.greenColor,
+                          //       radius: 10,
+                          //       onTap: () async {
+                          //         if (_kmController
+                          //             .text.isNotEmpty) {
+                          //           await AddGlassRepo1.addGlassRepo(
+                          //               addGlass: _glassController,
+                          //               model: {
+                          //                 "type":
+                          //                     "${waterTypeList[selectMethod]}",
+                          //                 "quantity": _glassController
+                          //                     .text
+                          //                     .trim()
+                          //               });
+                          //
+                          //           await getGlassViewModel
+                          //               .getGlassViewModel(
+                          //                   isLoading: false);
+                          //           if (getGlassViewModel
+                          //                   .getGlassApiResponse
+                          //                   .status ==
+                          //               Status.COMPLETE) {}
+                          //           if (getGlassViewModel
+                          //                   .getGlassApiResponse
+                          //                   .status ==
+                          //               Status.ERROR) {
+                          //             CommonWidget.getSnackBar(
+                          //                 duration: 2,
+                          //                 color: CommonColor.greenColor
+                          //                     .withOpacity(.4),
+                          //                 colorText: Colors.white,
+                          //                 title: "Please",
+                          //                 message: 'Refresh Page');
+                          //           }
+                          //           // await controller
+                          //           //     .addGlassViewModel(
+                          //           //         model: {
+                          //           //       "type":
+                          //           //           "${waterTypeList[selectMethod]}",
+                          //           //       "quantity":
+                          //           //           _glassController
+                          //           //               .text
+                          //           //               .trim()
+                          //           //     });
+                          //           //
+                          //           // if (controller
+                          //           //         .addGlassApiResponse
+                          //           //         .status ==
+                          //           //     Status
+                          //           //         .COMPLETE) {
+                          //           //   Get.back();
+                          //           //   GetStorageServices.setUserWater((GetStorageServices.getUserWater() ==
+                          //           //               null
+                          //           //           ? 0
+                          //           //           : GetStorageServices
+                          //           //               .getUserWater()) +
+                          //           //       int.parse(
+                          //           //           _glassController
+                          //           //               .text));
+                          //           //   _glassController
+                          //           //       .clear();
+                          //           //   // await getGlassViewModel
+                          //           //   //     .getGlassViewModel(
+                          //           //   //         isLoading:
+                          //           //   //             false);
+                          //           //   // if (getGlassViewModel
+                          //           //   //         .getGlassApiResponse
+                          //           //   //         .status ==
+                          //           //   //     Status
+                          //           //   //         .COMPLETE) {}
+                          //           //   // if (getGlassViewModel
+                          //           //   //         .getGlassApiResponse
+                          //           //   //         .status ==
+                          //           //   //     Status
+                          //           //   //         .ERROR) {
+                          //           //   //   CommonWidget.getSnackBar(
+                          //           //   //       duration:
+                          //           //   //           2,
+                          //           //   //       color: CommonColor
+                          //           //   //           .greenColor
+                          //           //   //           .withOpacity(
+                          //           //   //               .4),
+                          //           //   //       colorText:
+                          //           //   //           Colors
+                          //           //   //               .white,
+                          //           //   //       title:
+                          //           //   //           "Please",
+                          //           //   //       message:
+                          //           //   //           'Refresh Page');
+                          //           //   // }
+                          //           //
+                          //           //   CommonWidget.getSnackBar(
+                          //           //       duration: 2,
+                          //           //       color: CommonColor
+                          //           //           .greenColor
+                          //           //           .withOpacity(
+                          //           //               .4),
+                          //           //       colorText:
+                          //           //           Colors
+                          //           //               .white,
+                          //           //       title:
+                          //           //           "Done!",
+                          //           //       message:
+                          //           //           'added successfully!');
+                          //           // }
+                          //           // if (controller
+                          //           //         .addGlassApiResponse
+                          //           //         .status ==
+                          //           //     Status
+                          //           //         .ERROR) {
+                          //           //   _glassController
+                          //           //       .clear();
+                          //           //   Get.back();
+                          //           //
+                          //           //   CommonWidget.getSnackBar(
+                          //           //       duration: 2,
+                          //           //       color: Colors
+                          //           //           .red
+                          //           //           .shade300,
+                          //           //       colorText:
+                          //           //           Colors
+                          //           //               .white,
+                          //           //       title:
+                          //           //           "Oops!",
+                          //           //       message:
+                          //           //           'Something goes wrong please enter bottle again!');
+                          //           // }
+                          //         } else {
+                          //           CommonWidget.getSnackBar(
+                          //               duration: 2,
+                          //               color: Colors.red.shade300,
+                          //               colorText: Colors.white,
+                          //               title: "Oops!",
+                          //               message:
+                          //                   'Please enter proper amount of bottle!');
+                          //         }
+                          //       },
+                          //       text: "Add"),
+                          // ),
+                          SizedBox(
+                            height: 6.5.h,
+                            width: 25.w,
+                            child: CommonWidget.commonButton(
+                                color: CommonColor.greenColor,
+                                radius: 10,
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                                text: "Back"),
+                          )
+                        ],
+                      ),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CommonText.textBoldWight400(
+                      text: "please enter Km that you have covered so far",
+                      fontSize: 11.sp,
+                      color: Color(0xff9B9B9B),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    CommonText.textBoldWight500(
+                        text: "KM", fontSize: 13.sp, color: Colors.black),
+                    SizedBox(
+                      height: 12,
+                    ),
+                    TextFormField(
+                      controller: _kmController,
+                      decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Color(0xffF8F8F6),
+                          hintText: "Enter Km",
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(20),
+                          )),
+                    ),
+                    SizedBox(height: 23),
+                    CommonWidget.commonButton(
+                        color: CommonColor.greenColor,
+                        radius: 10,
+                        onTap: () async {
+                          if (_kmController.text.isNotEmpty) {
+                            GetStorageServices.setUserKm(
+                                _kmController.text.trim());
+
+                            Get.back();
+                          } else {
+                            CommonWidget.getSnackBar(
+                                color: Colors.red,
+                                duration: 2,
+                                colorText: Colors.white,
+                                title: "Required",
+                                message: 'Please enter hear.');
+                          }
+                        },
+                        text: "Next")
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
-    );
+    );*/
   }
 
   Dialog addMedicineDialog(BuildContext context, StateSetter setState) {

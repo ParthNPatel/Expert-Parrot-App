@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/responseModel/add_post_res_model.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_comment_res_model.dart';
@@ -18,6 +19,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
+
 import '../components/common_widget.dart';
 import '../constant/image_const.dart';
 import '../constant/text_styel.dart';
@@ -30,11 +32,19 @@ class CommunityScreen extends StatefulWidget {
 }
 
 class _CommunityScreenState extends State<CommunityScreen> {
-  TextEditingController _queryTitleController = TextEditingController();
+  // TextEditingController _queryTitleController = TextEditingController();
   TextEditingController _queryDescriptionController = TextEditingController();
 
   GetPostViewModel getPostViewModel = Get.put(GetPostViewModel());
   AddPostViewModel addPostViewModel = Get.put(AddPostViewModel());
+
+  int catIndex = 0;
+  List catList = [
+    "Health",
+    "Fitness",
+    "Yoga",
+    "Diet",
+  ];
 
   @override
   void initState() {
@@ -113,6 +123,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Row(
                                           children: [
@@ -194,7 +206,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                           children: [
                                             CommonText.textBoldWight400(
                                                 text:
-                                                    "${response.data![index].title}",
+                                                    "#${response.data![index].title}",
                                                 color: Color(0xffa1a1a1),
                                                 fontSize: 11.sp),
                                             SizedBox(
@@ -318,7 +330,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                           children: [
                                             CommonText.textBoldWight400(
                                                 text:
-                                                    "${response.data![index].title}",
+                                                    "#${response.data![index].title}",
                                                 color: Color(0xffa1a1a1),
                                                 fontSize: 11.sp),
                                             SizedBox(
@@ -573,7 +585,13 @@ class _CommunityScreenState extends State<CommunityScreen> {
         InkWell(
           onTap: () async {
             if (GetStorageServices.getUserLoggedInStatus() == true) {
-              Get.dialog(await askYourQuestion());
+              Get.dialog(await askYourQuestion()).then((value) {
+                setState(() {
+                  // _queryTitleController.clear();
+                  _queryDescriptionController.clear();
+                  catIndex = 0;
+                });
+              });
             } else {
               Get.off(() => LoginScreen());
             }
@@ -649,8 +667,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
                         ),
                         InkWell(
                           onTap: () {
-                            _queryTitleController.clear();
+                            // _queryTitleController.clear();
                             _queryDescriptionController.clear();
+                            catIndex = 0;
                             controller.image = null;
                             Get.back();
                           },
@@ -692,17 +711,84 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                 ),
                               ),
                         SizedBox(height: 20),
-                        TextFormField(
-                          controller: _queryTitleController,
-                          decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Color(0xffF8F8F6),
-                              hintText: "Enter your query title",
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius: BorderRadius.circular(20),
-                              )),
+                        Container(
+                          //height: 40.sp,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: Color(0xffF8F8F6),
+                          ),
+                          child: Theme(
+                            data: Theme.of(context)
+                                .copyWith(dividerColor: Colors.transparent),
+                            child: ExpansionTile(
+                              iconColor: CommonColor.greenColor,
+                              title: Row(
+                                children: [
+                                  CommonText.textBoldWight500(
+                                      text: "${catList[catIndex]}",
+                                      fontSize: 13.sp,
+                                      color: Colors.black),
+                                ],
+                              ),
+                              children: [
+                                Container(
+                                  color: Colors.white,
+                                  child: Column(
+                                    children: List.generate(
+                                      catList.length,
+                                      (index) => GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            catIndex = index;
+                                          });
+                                          setState(() {});
+                                          print(
+                                              "select:- ${catList[catIndex]}");
+                                        },
+                                        child: Container(
+                                          color: catIndex == index
+                                              ? Color(0xffe1f9ea)
+                                              : Colors.white,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 10),
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.check,
+                                                size: 17,
+                                                color: catIndex == index
+                                                    ? CommonColor.greenColor
+                                                    : Colors.white,
+                                              ),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              CommonText.textBoldWight500(
+                                                text: catList[index],
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
                         ),
+                        // TextFormField(
+                        //   controller: _queryTitleController,
+                        //   decoration: InputDecoration(
+                        //       filled: true,
+                        //       fillColor: Color(0xffF8F8F6),
+                        //       hintText: "Enter post category",
+                        //       border: OutlineInputBorder(
+                        //         borderSide: BorderSide.none,
+                        //         borderRadius: BorderRadius.circular(20),
+                        //       )),
+                        // ),
                         SizedBox(height: 15),
                         TextFormField(
                           controller: _queryDescriptionController,
@@ -720,7 +806,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             SizedBox(
-                                width: 31.w,
+                                width: 29.w,
                                 child: MaterialButton(
                                   onPressed: () async {
                                     Get.dialog(
@@ -780,25 +866,23 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                             fontSize: 10.sp)
                                       ]),
                                 )),
-                            SizedBox(width: 10.sp),
+                            SizedBox(width: 5.sp),
                             SizedBox(
-                                width: 31.w,
+                                width: 29.w,
                                 child: MaterialButton(
                                   onPressed: () async {
-                                    if (_queryTitleController.text.isNotEmpty &&
+                                    if (/*_queryTitleController.text.isNotEmpty &&*/
                                         _queryDescriptionController
                                             .text.isNotEmpty) {
                                       var _req = controller.image != null
                                           ? {
-                                              "title":
-                                                  "${_queryTitleController.text}",
+                                              "title": "${catList[catIndex]}",
                                               "description":
                                                   "${_queryDescriptionController.text}",
                                               "image": controller.image!.path,
                                             }
                                           : {
-                                              "title":
-                                                  "${_queryTitleController.text}",
+                                              "title": "${catList[catIndex]}",
                                               "description":
                                                   "${_queryDescriptionController.text}"
                                             };
@@ -823,8 +907,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                         print(
                                             'image from response ======================== > ${resp.data!.image}');
                                         controller.image = null;
-                                        _queryTitleController.clear();
+                                        // _queryTitleController.clear();
                                         _queryDescriptionController.clear();
+                                        catIndex = 0;
                                         Get.back();
 
                                         await getPostViewModel.getPostViewModel(
@@ -855,10 +940,11 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                           duration: 2,
                                           colorText: Colors.white,
                                           title: "Required",
-                                          message: _queryTitleController
+                                          message: /*_queryTitleController
                                                   .text.isEmpty
                                               ? 'Please enter your query title'
-                                              : "Please enter your query description");
+                                              : */
+                                              "Please enter your query description");
                                     }
                                   },
                                   shape: RoundedRectangleBorder(

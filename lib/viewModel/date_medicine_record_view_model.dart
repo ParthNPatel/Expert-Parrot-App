@@ -15,7 +15,7 @@ class DateMedicineRecordViewModel extends GetxController {
     if (isLoading) {
       _dateMedicineRecordApiResponse = ApiResponse.loading(message: 'Loading');
     }
-    update();
+    // update();
     try {
       DateMedicineRecordResponseModel response =
           await DateMedicineRecordRepo.dateMedicineRecordRepo(model: model!);

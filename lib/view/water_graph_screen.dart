@@ -150,11 +150,17 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                               ImageConst.glassOfWater,
                               scale: 4.5,
                             ),
-                            CommonText.textBoldWight600(
-                                text:
-                                    ' ${(response.data!.docs!.first.glass! * 8) + (response.data!.docs!.first.bottle! * 16) + (response.data!.docs!.first.largeBottle! * 16)}',
-                                fontSize: 20.sp,
-                                color: CommonColor.blackColor1D253C),
+                            response.data!.docs != null &&
+                                    response.data!.docs!.isNotEmpty
+                                ? CommonText.textBoldWight600(
+                                    text:
+                                        ' ${(response.data!.docs!.first.glass! * 8) + (response.data!.docs!.first.bottle! * 16) + (response.data!.docs!.first.largeBottle! * 16)}',
+                                    fontSize: 20.sp,
+                                    color: CommonColor.blackColor1D253C)
+                                : CommonText.textBoldWight600(
+                                    text: ' 0',
+                                    fontSize: 20.sp,
+                                    color: CommonColor.blackColor1D253C),
                             CommonText.textBoldWight400(
                                 text: ' fl oz of your ',
                                 fontSize: 13.sp,
@@ -613,8 +619,10 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                         return bottleWidget(
                             oz: '(8 fl oz)',
                             image: ImageConst.glassOfWater,
-                            typeOfBottle:
-                                '${response.data!.docs!.first.glass} Glass');
+                            typeOfBottle: response.data!.docs != null &&
+                                    response.data!.docs!.isNotEmpty
+                                ? '${response.data!.docs!.first.glass} Glass'
+                                : '0 Glass');
                       }
                       return SizedBox();
                     },
@@ -643,8 +651,10 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                         return bottleWidget(
                             oz: '(16 fl oz)',
                             image: ImageConst.water1Icon,
-                            typeOfBottle:
-                                '${response.data!.docs!.first.bottle} Bottle');
+                            typeOfBottle: response.data!.docs != null &&
+                                    response.data!.docs!.isNotEmpty
+                                ? '${response.data!.docs!.first.bottle} Bottle'
+                                : '0 Bottle');
                       }
                       return SizedBox();
                     },
@@ -677,8 +687,10 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                         return bottleWidget(
                             oz: '(16 fl oz)',
                             image: ImageConst.plasticBottle,
-                            typeOfBottle:
-                                '${response.data!.docs!.first.largeBottle} Lg Bottle');
+                            typeOfBottle: response.data!.docs != null &&
+                                    response.data!.docs!.isNotEmpty
+                                ? '${response.data!.docs!.first.largeBottle} Lg Bottle'
+                                : '0 Lg Bottle');
                       }
                       return SizedBox();
                     },
