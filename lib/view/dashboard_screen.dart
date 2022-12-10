@@ -266,48 +266,46 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                       totalTimes:
                                           "${respDMR.data![index].totalTimes}",
                                       takenDoses: respDMR.data![index].doses,
-                                      image: respDMR.data![index].appearance ==
-                                              'Pills'
+                                      image: respDMR.data![index].appearance!
+                                                  .toLowerCase() ==
+                                              'pills'
                                           ? ImageConst.med3Icon
-                                          : respDMR.data![index].appearance ==
-                                                  'Gel'
+                                          : respDMR.data![index].appearance!.toLowerCase() ==
+                                                  'gel'
                                               ? ImageConst.med1Icon
-                                              : respDMR.data![index]
-                                                          .appearance ==
-                                                      'Syrup'
+                                              : respDMR.data![index].appearance!
+                                                          .toLowerCase() ==
+                                                      'syrup'
                                                   ? ImageConst.med2Icon
                                                   : ImageConst.med2Icon,
                                       medName: '${respDMR.data![index].name}',
                                       medGm:
                                           '${respDMR.data![index].strength} gm',
                                       iconColor: respDMR
-                                                  .data![index].appearance ==
-                                              'Pills'
+                                                  .data![index].appearance!
+                                                  .toLowerCase() ==
+                                              'pills'
                                           ? Color(0xff21D200)
-                                          : respDMR.data![index].appearance ==
-                                                  'Gel'
+                                          : respDMR.data![index].appearance!
+                                                      .toLowerCase() ==
+                                                  'gel'
                                               ? Color(0xffFFDD2C)
-                                              : respDMR.data![index]
-                                                          .appearance ==
-                                                      'Syrup'
+                                              : respDMR.data![index].appearance!
+                                                          .toLowerCase() ==
+                                                      'syrup'
                                                   ? Color(0xff9255E5)
                                                   : Color(0xff9255E5),
                                       timeOfDay:
                                           '${respDMR.data![index].totalTimes} pills ${respDMR.data![index].frequency}',
-                                      color: respDMR.data![index].appearance ==
-                                              'Pills'
+                                      color: respDMR.data![index].appearance!
+                                                  .toLowerCase() ==
+                                              'pills'
                                           ? Color.fromRGBO(69, 196, 44, 0.13)
-                                          : respDMR.data![index].appearance ==
-                                                  'Gel'
-                                              ? Color.fromRGBO(
-                                                  193, 196, 44, 0.13)
-                                              : respDMR.data![index]
-                                                          .appearance ==
-                                                      'Syrup'
-                                                  ? Color.fromRGBO(
-                                                      111, 44, 196, 0.13)
-                                                  : Color.fromRGBO(
-                                                      111, 44, 196, 0.13));
+                                          : respDMR.data![index].appearance!.toLowerCase() == 'gel'
+                                              ? Color.fromRGBO(193, 196, 44, 0.13)
+                                              : respDMR.data![index].appearance!.toLowerCase() == 'syrup'
+                                                  ? Color.fromRGBO(111, 44, 196, 0.13)
+                                                  : Color.fromRGBO(111, 44, 196, 0.13));
                             } catch (e) {
                               return SizedBox();
                             }
@@ -652,7 +650,26 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                               ? 'Not set'
                                               : '${GetStorageServices.getUserBMI()}',
                               type: overViewData[index]['name_of_subject'],
-                              color: overViewData[index]['color'],
+                              color: index != 3
+                                  ? overViewData[index]['color']
+                                  : GetStorageServices.getUserBMI() != null &&
+                                          double.parse(GetStorageServices
+                                                  .getUserBMI()) >=
+                                              18 &&
+                                          double.parse(GetStorageServices
+                                                  .getUserBMI()) <=
+                                              22
+                                      ? CommonColor.greenColor.withOpacity(0.2)
+                                      : GetStorageServices.getUserBMI() !=
+                                                  null &&
+                                              double.parse(GetStorageServices
+                                                      .getUserBMI()) >=
+                                                  22 &&
+                                              double.parse(GetStorageServices
+                                                      .getUserBMI()) <=
+                                                  32
+                                          ? overViewData[3]['color']
+                                          : overViewData[0]['color'],
                             );
                           },
                         ),

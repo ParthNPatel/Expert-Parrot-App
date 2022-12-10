@@ -81,33 +81,43 @@ class _ViewAllMedScheduleScreenState extends State<ViewAllMedScheduleScreen> {
                               medId: "${response.data![index].sId}",
                               totalTimes: "${response.data![index].totalTimes}",
                               takenDoses: response.data![index].doses,
-                              image: response.data![index].appearance == 'Pills'
+                              image: response.data![index].appearance!
+                                          .toLowerCase() ==
+                                      'pills'
                                   ? ImageConst.med3Icon
-                                  : response.data![index].appearance == 'Gel'
+                                  : response.data![index].appearance!
+                                              .toLowerCase() ==
+                                          'gel'
                                       ? ImageConst.med1Icon
-                                      : response.data![index].appearance ==
-                                              'Syrup'
+                                      : response.data![index].appearance!
+                                                  .toLowerCase() ==
+                                              'syrup'
                                           ? ImageConst.med2Icon
                                           : ImageConst.med2Icon,
                               medName: '${response.data![index].name}',
                               medGm: '${response.data![index].strength}',
-                              iconColor: response.data![index].appearance ==
-                                      'Pills'
+                              iconColor: response.data![index].appearance!
+                                          .toLowerCase() ==
+                                      'pills'
                                   ? Color(0xff21D200)
-                                  : response.data![index].appearance == 'Gel'
+                                  : response.data![index].appearance!
+                                              .toLowerCase() ==
+                                          'gel'
                                       ? Color(0xffFFDD2C)
-                                      : response.data![index].appearance ==
-                                              'Syrup'
+                                      : response.data![index].appearance!
+                                                  .toLowerCase() ==
+                                              'syrup'
                                           ? Color(0xff9255E5)
                                           : Color(0xff9255E5),
                               timeOfDay:
                                   '${response.data![index].totalTimes} pills ${response.data![index].frequency}',
-                              color: response.data![index].appearance == 'Pills'
+                              color: response.data![index].appearance!
+                                          .toLowerCase() ==
+                                      'pills'
                                   ? Color.fromRGBO(69, 196, 44, 0.13)
-                                  : response.data![index].appearance == 'Gel'
+                                  : response.data![index].appearance!.toLowerCase() == 'gel'
                                       ? Color.fromRGBO(193, 196, 44, 0.13)
-                                      : response.data![index].appearance ==
-                                              'Syrup'
+                                      : response.data![index].appearance!.toLowerCase() == 'syrup'
                                           ? Color.fromRGBO(111, 44, 196, 0.13)
                                           : Color.fromRGBO(111, 44, 196, 0.13));
                     } catch (e) {
