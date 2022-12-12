@@ -13,6 +13,7 @@ import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:expert_parrot_app/view/bottom_nav_screen.dart';
+import 'package:expert_parrot_app/view/heart_rate_screen.dart';
 import 'package:expert_parrot_app/view/view_all_med_schedule_screen.dart';
 import 'package:expert_parrot_app/view/water_graph_screen.dart';
 import 'package:expert_parrot_app/viewModel/add_medicine_view_model.dart';
@@ -51,7 +52,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
   List selectedDose = [];
   List completedDoses = [];
-  List stepCounterMethod = ["Km", "Steps", "Miles"];
+  List stepCounterMethod = ["Steps", "Km", "Miles"];
 
   int pageCounter = 0;
   int selectMethod = 0;
@@ -257,7 +258,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                             // });
                             // var UserEqual = userResponse.data!
                             //     .medicines![index]["appearance"];
-
                             try {
                               return /*recordLength > 3
                                             ? */
@@ -459,8 +459,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     // var UserEqual = userResponse.data!
                                     //     .medicines![index]["appearance"];
                                     try {
-                                      return */ /*recordLength > 3
-                                            ? */ /*
+                                      return */
+                        /*recordLength > 3
+                                            ? */
+                        /*
                                           medDetailsWidget(
                                               medId: "${LastData[index]['id']}",
                                               totalTimes:
@@ -510,7 +512,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     } catch (e) {
                                       return SizedBox();
                                     }
-                                    */ /*: medDetailsWidget(
+                                    */
+                        /*: medDetailsWidget(
                                                 medId: "${LastData[index]['id']}",
                                                 totalTimes:
                                                     "${LastData[index]['totalTimes']}",
@@ -550,7 +553,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                 196,
                                                                 0.13,
                                                               ),
-                                              );*/ /*
+                                              );*/
+                        /*
                                   },
                                 );
                               } catch (e) {
@@ -627,8 +631,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                 } else if (index == 0) {
                                   Get.to(() => WaterGraphScreen());
                                 } else if (index == 2) {
-                                  Get.dialog(await enterHeartRateDialog())
-                                      .whenComplete(() => setState(() {}));
+                                  Get.to(() => HeartRateScreen());
+
+                                  // Get.dialog(await enterHeartRateDialog())
+                                  //     .whenComplete(() => setState(() {}));
                                 }
                               },
                               name: overViewData[index]['name'],
@@ -792,7 +798,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                               GetStorageServices
                                                                       .getUserMiles() !=
                                                                   ""
-                                                          ? '${(int.parse(GetStorageServices.getUserMiles()) / 1.609344).toPrecision(2)} Km'
+                                                          ? '${(int.parse(GetStorageServices.getUserMiles()) * 1.609344).toPrecision(2)} Km'
                                                           : 'Na',
                                               image: ImageConst.locationIcon),
                                         ]),
@@ -1365,13 +1371,13 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                           GetStorageServices.eraseMiles();
 
                                           selectMethod == 0
-                                              ? GetStorageServices.setUserKm(
+                                              ? GetStorageServices.setUserSteps(
                                                   _kmController.text.trim())
                                               : selectMethod == 1
                                                   ? GetStorageServices
-                                                      .setUserSteps(
-                                                          _kmController.text
-                                                              .trim())
+                                                      .setUserKm(_kmController
+                                                          .text
+                                                          .trim())
                                                   : GetStorageServices
                                                       .setUserMiles(
                                                           _kmController.text

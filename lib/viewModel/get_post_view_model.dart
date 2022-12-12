@@ -9,13 +9,14 @@ class GetPostViewModel extends GetxController {
 
   ApiResponse get getPostApiResponse => _getPostApiResponse;
 
-  Future<void> getPostViewModel({bool? isLoading = true}) async {
+  Future<void> getPostViewModel({bool? isLoading = true, String? catId}) async {
     if (isLoading!) {
       _getPostApiResponse = ApiResponse.loading(message: 'Loading');
     }
     update();
     try {
-      GetPostResponseModel response = await GetPostRepo.getPostRepo();
+      GetPostResponseModel response =
+          await GetPostRepo.getPostRepo(catId: catId);
       print("GetPostResponseModel=response==>$response");
 
       _getPostApiResponse = ApiResponse.complete(response);

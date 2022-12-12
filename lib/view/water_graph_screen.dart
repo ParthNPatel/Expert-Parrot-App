@@ -549,31 +549,31 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
 
           switch (value.toInt()) {
             case 1:
-              text = 'Sun';
-
-              break;
-            case 2:
               text = 'Mon';
 
               break;
-            case 3:
+            case 2:
               text = 'Tue';
 
               break;
-            case 4:
+            case 3:
               text = 'Wed';
 
               break;
-            case 5:
+            case 4:
               text = 'Thu';
 
               break;
-            case 6:
+            case 5:
               text = 'Fri';
 
               break;
-            case 7:
+            case 6:
               text = 'Sat';
+
+              break;
+            case 7:
+              text = 'Sun';
 
               break;
             default:

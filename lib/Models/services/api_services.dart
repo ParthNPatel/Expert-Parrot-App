@@ -149,6 +149,7 @@ class APIService {
       request.files.add(await http.MultipartFile.fromPath(
           "image", body["image"],
           contentType: MediaType('image', 'jpg')));
+      request.fields["categoryId"] = body["categoryId"];
 
       var result = await request.send();
       String res = await result.stream.transform(utf8.decoder).join();

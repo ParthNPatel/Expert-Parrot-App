@@ -5,9 +5,9 @@ import '../services/api_services.dart';
 import '../services/base_service.dart';
 
 class GetPostRepo extends BaseService {
-  static Future<GetPostResponseModel> getPostRepo() async {
+  static Future<GetPostResponseModel> getPostRepo({String? catId}) async {
     var response = await APIService().getResponse(
-      url: APIConst.getPosts + "?latest=true",
+      url: APIConst.getPosts + "?latest=true" + "&categoryId=" + catId!,
       apitype: APIType
           .aGet, /*header: {"Token": "${GetStorageServices.getBarrierToken()}"}*/
     );
