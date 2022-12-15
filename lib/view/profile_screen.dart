@@ -525,7 +525,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Get.to(() => FAQScreen());
               },
               image: 'assets/svg/contact.svg',
-              text: 'Contact Us',
+              text: 'FAQ',
             ),
             CommonListTile(
               onTap: () {},
