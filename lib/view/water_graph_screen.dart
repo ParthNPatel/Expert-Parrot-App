@@ -13,6 +13,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../components/common_widget.dart';
 import '../constant/color_const.dart';
@@ -118,16 +119,54 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                       Status.COMPLETE) {
                     GetGlassResponseModel response =
                         controller.getGlassApiResponse.data;
+
                     // for (int i = 0; i < response.data!.docs!.length; i++) {
                     //   // log('HELLO ${CommonWidget.convertDateForm(response.data!.docs![i].date!)!}');
                     //   days.add(CommonWidget.convertDateForm(
                     //       response.data!.docs![i].date!));
                     // }
                     // log('TOTAL TIME :${days}');
-
+                    final List<ChartData> chartData = List.generate(
+                        response.data!.docs!.reversed.toList().length,
+                        (index) => ChartData(
+                            '${response.data!.docs!.reversed.toList()[index].date!.weekday}',
+                            response.data!.docs!.reversed
+                                .toList()[index]
+                                .largeBottle!
+                                .toDouble())); /*[
+    ChartData(2010, 35),
+    ChartData(2011, 13),
+    ChartData(2012, 34),
+    ChartData(2013, 27),
+    ChartData(2014, 40)
+  ];*/
                     return Column(
                       children: [
-                        graphWidget(response),
+                        // graphWidget(response),
+                        SfCartesianChart(
+                          series: <ChartSeries>[
+                            SplineSeries<ChartData, String>(
+                                dataSource: chartData,
+                                xValueMapper: (ChartData data, _) => data.x,
+                                yValueMapper: (ChartData data, _) => data.y,
+                                color: CommonColor.greenColor)
+                          ],
+                          primaryXAxis: CategoryAxis(
+                              arrangeByIndex: false,
+                              opposedPosition: true,
+                              majorTickLines: MajorTickLines(size: 0),
+                              minorTickLines: MinorTickLines(size: 0),
+                              majorGridLines: MajorGridLines(width: 0),
+                              minorGridLines: MinorGridLines(width: 0),
+                              axisBorderType:
+                                  AxisBorderType.withoutTopAndBottom,
+                              labelStyle: TextStyle(
+                                  color: CommonColor.greenColor,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 10.sp)),
+                          primaryYAxis: CategoryAxis(isVisible: false),
+                        ),
+
                         Padding(
                           padding: EdgeInsets.only(top: 20, bottom: 10),
                           child: CommonText.textBoldWight500(
@@ -376,6 +415,12 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
   }
 
   Container graphWidget(GetGlassResponseModel response) {
+    print('==== > ${response.data!.docs![2].largeBottle!}');
+
+    List reverseResp = response.data!.docs!.reversed.toList();
+
+    print('==== > ${reverseResp[2].largeBottle!}');
+
     return Container(
         padding: EdgeInsets.symmetric(vertical: 10.sp),
         width: 90.w,
@@ -396,18 +441,28 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                     lineTouchData: LineTouchData(enabled: true),
                     lineBarsData: [
                       LineChartBarData(
-                        spots: List<FlSpot>.generate(
-                            response.data!.docs!.length, (int index) {
+                        spots: List<FlSpot>.generate(reverseResp.length,
+                            (int index) {
+                          print(
+                              '${reverseResp[index].date!.weekday.toDouble()}');
+                          print('${reverseResp[index].glass!.toString()}');
+
                           return FlSpot(
                               response.data!.docs![index].date!.weekday
                                   .toDouble(),
                               selectedIndex == 0
-                                  ? (response.data!.docs![index].glass! * 8)
+                                  ? (double.parse(response
+                                          .data!.docs![index].glass!
+                                          .toString()) *
+                                      8)
                                   : selectedIndex == 1
-                                      ? (response.data!.docs![index].bottle! *
+                                      ? (double.parse(response
+                                              .data!.docs![index].bottle!
+                                              .toString()) *
                                           16)
-                                      : (response
-                                              .data!.docs![index].largeBottle! *
+                                      : (double.parse(response
+                                              .data!.docs![index].largeBottle!
+                                              .toString()) *
                                           16));
                         }),
 
@@ -447,6 +502,7 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                       ),
                       topTitles: AxisTitles(
                         sideTitles: topTitles(response: response.data!.docs!),
+                        // sideTitles: SideTitles(showTitles: false),
                       ),
                       leftTitles: AxisTitles(
                         sideTitles: SideTitles(showTitles: false),
@@ -1125,4 +1181,10 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
       ],
     );
   }
+}
+
+class ChartData {
+  ChartData(this.x, this.y);
+  final String x;
+  final double? y;
 }

@@ -17,12 +17,12 @@ class GetPostResponseModel {
   });
 
   bool? flag;
-  List<Datum>? data;
+  List<Post>? data;
 
   factory GetPostResponseModel.fromJson(Map<String, dynamic> json) =>
       GetPostResponseModel(
         flag: json["flag"],
-        data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
+        data: List<Post>.from(json["data"].map((x) => Post.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -31,8 +31,8 @@ class GetPostResponseModel {
       };
 }
 
-class Datum {
-  Datum({
+class Post {
+  Post({
     this.id,
     this.title,
     this.description,
@@ -56,7 +56,7 @@ class Datum {
   DateTime? updatedAt;
   bool? isLiked;
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+  factory Post.fromJson(Map<String, dynamic> json) => Post(
         id: json["_id"],
         title: json["title"],
         description: json["description"],
