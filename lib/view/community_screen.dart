@@ -230,6 +230,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                           physics: BouncingScrollPhysics(),
                           enablePullUp: true,
                           onRefresh: () async {
+                            post.clear();
                             final result = await getPostByPage(
                                 isRefresh: true,
                                 catId: "${resp.data![selectedCat].id}");
@@ -430,6 +431,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                                         height: 13,
                                                       ),
                                                       LikeAndCommentWidget(
+                                                        post: post,
+                                                        index: index,
                                                         postId: post[index].id,
                                                         likeCount:
                                                             post[index].likes,
@@ -616,6 +619,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                                         height: 13,
                                                       ),
                                                       LikeAndCommentWidget(
+                                                        index: index,
+                                                        post: post,
                                                         postId: post[index].id,
                                                         likeCount:
                                                             post[index].likes,
@@ -1275,12 +1280,16 @@ class _CommunityScreenState extends State<CommunityScreen> {
 }
 
 class LikeAndCommentWidget extends StatefulWidget {
+  List<Post> post;
+  int? index;
   int? likeCount;
   int? commentCount;
   bool isLiked;
   String? postId;
   LikeAndCommentWidget(
       {required this.likeCount,
+      required this.index,
+      required this.post,
       required this.commentCount,
       required this.isLiked,
       required this.postId,
@@ -1321,6 +1330,18 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                   if (likeUnLikeViewModel.likeApiResponse.status ==
                       Status.COMPLETE) {
                     getPostViewModel.getPostViewModel(isLoading: false);
+
+                    widget.post[widget.index!] = Post(
+                        likes: widget.post[widget.index!].likes! + 1,
+                        id: widget.post[widget.index!].id,
+                        image: widget.post[widget.index!].image,
+                        description: widget.post[widget.index!].description,
+                        isLiked: true,
+                        title: widget.post[widget.index!].title,
+                        comments: widget.post[widget.index!].comments,
+                        updatedAt: widget.post[widget.index!].updatedAt,
+                        createdAt: widget.post[widget.index!].createdAt,
+                        userId: widget.post[widget.index!].userId);
                   }
                   if (likeUnLikeViewModel.likeApiResponse.status ==
                       Status.ERROR) {
@@ -1328,7 +1349,7 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                         color: Colors.red,
                         duration: 2,
                         colorText: Colors.white,
-                        title: "Something went wrong",
+                        title: "Something went wrong 123",
                         message: 'Try Again.');
                   }
                 } else if (widget.isLiked == true) {
@@ -1337,6 +1358,17 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                   if (likeUnLikeViewModel.unlikeApiResponse.status ==
                       Status.COMPLETE) {
                     getPostViewModel.getPostViewModel(isLoading: false);
+                    widget.post[widget.index!] = Post(
+                        likes: widget.post[widget.index!].likes! - 1,
+                        id: widget.post[widget.index!].id,
+                        image: widget.post[widget.index!].image,
+                        description: widget.post[widget.index!].description,
+                        isLiked: false,
+                        title: widget.post[widget.index!].title,
+                        comments: widget.post[widget.index!].comments,
+                        updatedAt: widget.post[widget.index!].updatedAt,
+                        createdAt: widget.post[widget.index!].createdAt,
+                        userId: widget.post[widget.index!].userId);
                   }
                   if (likeUnLikeViewModel.unlikeApiResponse.status ==
                       Status.ERROR) {

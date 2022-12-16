@@ -127,9 +127,12 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                     // }
                     // log('TOTAL TIME :${days}');
                     final List<ChartData> chartData = List.generate(
-                        response.data!.docs!.reversed.toList().length,
+                        response.data!.docs!.reversed.toList().length >= 7 ? 7 :  response.data!.docs!.reversed.toList().length,
                         (index) => ChartData(
-                            '${response.data!.docs!.reversed.toList()[index].date!.weekday}',
+                            weekDayCounter(response.data!.docs!.reversed
+                                .toList()[index]
+                                .date!
+                                .weekday),
                             response.data!.docs!.reversed
                                 .toList()[index]
                                 .largeBottle!
@@ -368,6 +371,45 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
         ),
       ),
     );
+  }
+
+  String weekDayCounter(int dayNumber) {
+    String weekDay = "Mon";
+
+    switch (dayNumber) {
+      case 1:
+        weekDay = 'Mon';
+
+        break;
+      case 2:
+        weekDay = 'Tue';
+
+        break;
+      case 3:
+        weekDay = 'Wed';
+
+        break;
+      case 4:
+        weekDay = 'Thu';
+
+        break;
+      case 5:
+        weekDay = 'Fri';
+
+        break;
+      case 6:
+        weekDay = 'Sat';
+
+        break;
+      case 7:
+        weekDay = 'Sun';
+
+        break;
+      default:
+        return weekDay;
+    }
+
+    return weekDay;
   }
 
   Column ShowData(
