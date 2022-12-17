@@ -9,7 +9,6 @@ import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:expert_parrot_app/viewModel/add_glass_view_model.dart';
 import 'package:expert_parrot_app/viewModel/get_glass_view_model.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
@@ -127,47 +126,87 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                     // }
                     // log('TOTAL TIME :${days}');
                     final List<ChartData> chartData = List.generate(
-                        response.data!.docs!.reversed.toList().length >= 7 ? 7 :  response.data!.docs!.reversed.toList().length,
+                        response.data!.docs!.reversed.toList().length >= 7
+                            ? 7
+                            : response.data!.docs!.reversed.toList().length,
                         (index) => ChartData(
                             weekDayCounter(response.data!.docs!.reversed
                                 .toList()[index]
                                 .date!
                                 .weekday),
-                            response.data!.docs!.reversed
-                                .toList()[index]
-                                .largeBottle!
-                                .toDouble())); /*[
-    ChartData(2010, 35),
-    ChartData(2011, 13),
-    ChartData(2012, 34),
-    ChartData(2013, 27),
-    ChartData(2014, 40)
-  ];*/
+                            selectedIndex == 0
+                                ? response.data!.docs!.reversed
+                                    .toList()[index]
+                                    .glass!
+                                    .toDouble()
+                                : selectedIndex == 1
+                                    ? response.data!.docs!.reversed
+                                        .toList()[index]
+                                        .bottle!
+                                        .toDouble()
+                                    : response.data!.docs!.reversed
+                                        .toList()[index]
+                                        .largeBottle!
+                                        .toDouble()));
                     return Column(
                       children: [
-                        // graphWidget(response),
-                        SfCartesianChart(
-                          series: <ChartSeries>[
-                            SplineSeries<ChartData, String>(
-                                dataSource: chartData,
-                                xValueMapper: (ChartData data, _) => data.x,
-                                yValueMapper: (ChartData data, _) => data.y,
-                                color: CommonColor.greenColor)
-                          ],
-                          primaryXAxis: CategoryAxis(
-                              arrangeByIndex: false,
-                              opposedPosition: true,
-                              majorTickLines: MajorTickLines(size: 0),
-                              minorTickLines: MinorTickLines(size: 0),
-                              majorGridLines: MajorGridLines(width: 0),
-                              minorGridLines: MinorGridLines(width: 0),
-                              axisBorderType:
-                                  AxisBorderType.withoutTopAndBottom,
-                              labelStyle: TextStyle(
-                                  color: CommonColor.greenColor,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 10.sp)),
-                          primaryYAxis: CategoryAxis(isVisible: false),
+                        Container(
+                          height: 270.sp,
+                          padding: EdgeInsets.symmetric(vertical: 20.sp),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 200.sp,
+                                child: SfCartesianChart(
+                                  series: <ChartSeries>[
+                                    SplineSeries<ChartData, String>(
+                                        dataSource: chartData,
+                                        xValueMapper: (ChartData data, _) =>
+                                            data.x,
+                                        yValueMapper: (ChartData data, _) =>
+                                            data.y,
+                                        color: CommonColor.greenColor)
+                                  ],
+                                  plotAreaBorderWidth: 0,
+                                  primaryXAxis: CategoryAxis(
+                                      arrangeByIndex: false,
+                                      opposedPosition: true,
+                                      axisLine: AxisLine(width: 0),
+                                      borderWidth: 0,
+                                      majorTickLines: MajorTickLines(size: 0),
+                                      minorTickLines: MinorTickLines(size: 0),
+                                      majorGridLines: MajorGridLines(width: 0),
+                                      minorGridLines: MinorGridLines(width: 0),
+                                      axisBorderType:
+                                          AxisBorderType.withoutTopAndBottom,
+                                      labelStyle: TextStyle(
+                                          color: CommonColor.greenColor,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 10.sp)),
+                                  primaryYAxis: CategoryAxis(isVisible: false),
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                      height: 12.sp,
+                                      width: 12.sp,
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: CommonColor.greenColor)),
+                                  SizedBox(width: 5.sp),
+                                  CommonText.textBoldWight500(
+                                      text: "Achieved",
+                                      fontSize: 13.sp,
+                                      color: CommonColor.blackColor0D0D0D),
+                                ],
+                              )
+                            ],
+                          ),
                         ),
 
                         Padding(
@@ -455,235 +494,6 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
       ],
     );
   }
-
-  Container graphWidget(GetGlassResponseModel response) {
-    print('==== > ${response.data!.docs![2].largeBottle!}');
-
-    List reverseResp = response.data!.docs!.reversed.toList();
-
-    print('==== > ${reverseResp[2].largeBottle!}');
-
-    return Container(
-        padding: EdgeInsets.symmetric(vertical: 10.sp),
-        width: 90.w,
-        height: 220.sp,
-        decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(16)),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SizedBox(
-              width: 90.w,
-              height: 180.sp,
-              child: Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 18.sp, vertical: 10.sp),
-                child: LineChart(
-                  LineChartData(
-                    lineTouchData: LineTouchData(enabled: true),
-                    lineBarsData: [
-                      LineChartBarData(
-                        spots: List<FlSpot>.generate(reverseResp.length,
-                            (int index) {
-                          print(
-                              '${reverseResp[index].date!.weekday.toDouble()}');
-                          print('${reverseResp[index].glass!.toString()}');
-
-                          return FlSpot(
-                              response.data!.docs![index].date!.weekday
-                                  .toDouble(),
-                              selectedIndex == 0
-                                  ? (double.parse(response
-                                          .data!.docs![index].glass!
-                                          .toString()) *
-                                      8)
-                                  : selectedIndex == 1
-                                      ? (double.parse(response
-                                              .data!.docs![index].bottle!
-                                              .toString()) *
-                                          16)
-                                      : (double.parse(response
-                                              .data!.docs![index].largeBottle!
-                                              .toString()) *
-                                          16));
-                        }),
-
-                        /*   spots: List<FlSpot>.generate(7, (int index) {
-                          return FlSpot(
-                              index + 1,
-                              index % 2 == 0
-                                  ? 4 + index.toDouble()
-                                  : 4 - index.toDouble());
-                        }),*/
-                        // spots: [
-                        //   FlSpot(4, 2),
-                        //   FlSpot(5, 2),
-                        //   FlSpot(6, 3),
-                        //   FlSpot(7, 3),
-                        //   FlSpot(1, 3),
-                        //   FlSpot(2, 1),
-                        //   FlSpot(3, 3),
-                        // ],
-
-                        isCurved: true,
-                        barWidth: 2,
-                        color: CommonColor.greenColor,
-                        dotData: FlDotData(
-                          show: false,
-                        ),
-                      ),
-                    ],
-                    borderData: FlBorderData(show: false),
-                    gridData: FlGridData(show: false),
-                    titlesData: FlTitlesData(
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      rightTitles: AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                      topTitles: AxisTitles(
-                        sideTitles: topTitles(response: response.data!.docs!),
-                        // sideTitles: SideTitles(showTitles: false),
-                      ),
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                    ),
-                    // titlesData: FlTitlesData(
-                    //   bottomTitles: SideTitles(
-                    //       showTitles: true,
-                    //       reservedSize: 5,
-                    //       // textStyle: yearTextStyle,
-                    //       getTitles: (value) {
-                    //         switch (value.toInt()) {
-                    //           case 0:
-                    //             return '2016';
-                    //           case 1:
-                    //             return '2017';
-                    //
-                    //           default:
-                    //             return '';
-                    //         }
-                    //       }),
-                    //   leftTitles: SideTitles(
-                    //     showTitles: true,
-                    //     getTitles: (value) {
-                    //       return '\$ ${value + 100}';
-                    //     },
-                    //   ),
-                    // ),
-                    // axisTitleData: FlAxisTitleData(
-                    //     leftTitle: AxisTitle(
-                    //         showTitle: true, titleText: 'Value', margin: 10),
-                    //     bottomTitle: AxisTitle(
-                    //         showTitle: true,
-                    //         margin: 10,
-                    //         titleText: 'Year',
-                    //         textStyle: yearTextStyle,
-                    //         textAlign: TextAlign.right)),
-                    // gridData: FlGridData(
-                    //   show: true,
-                    //   checkToShowHorizontalLine: (double value) {
-                    //     return value == 1 || value == 2 || value == 3 || value == 4;
-                    //   },
-                    // ),
-                  ),
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                    height: 12.sp,
-                    width: 12.sp,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle, color: CommonColor.greenColor)),
-                SizedBox(width: 5.sp),
-                CommonText.textBoldWight500(
-                    text: "Achieved",
-                    fontSize: 13.sp,
-                    color: CommonColor.blackColor0D0D0D),
-              ],
-            )
-          ],
-        ));
-  }
-
-  SideTitles topTitles({required List<Doc> response}) => SideTitles(
-        getTitlesWidget: (
-          double value,
-          TitleMeta meta,
-        ) {
-          var style = DateTime.now().weekday == value
-              ? TextStyle(
-                  color: CommonColor.greenColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                )
-              : TextStyle(
-                  color: Color(0xff75729e),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                );
-          String text;
-
-          // if (response[value.toInt() - 1].date!.weekday == 1) {
-          //   text = 'Sun';
-          // } else if (response[value.toInt() - 1].date!.weekday == 2) {
-          //   text = 'Mon';
-          // } else if (response[value.toInt() - 1].date!.weekday == 3) {
-          //   text = 'Tue';
-          // } else if (response[value.toInt() - 1].date!.weekday == 4) {
-          //   text = 'Wed';
-          // } else if (response[value.toInt() - 1].date!.weekday == 5) {
-          //   text = 'Thu';
-          // } else if (response[value.toInt() - 1].date!.weekday == 6) {
-          //   text = 'Fri';
-          // } else {
-          //   text = 'Sat';
-          // }
-
-          switch (value.toInt()) {
-            case 1:
-              text = 'Mon';
-
-              break;
-            case 2:
-              text = 'Tue';
-
-              break;
-            case 3:
-              text = 'Wed';
-
-              break;
-            case 4:
-              text = 'Thu';
-
-              break;
-            case 5:
-              text = 'Fri';
-
-              break;
-            case 6:
-              text = 'Sat';
-
-              break;
-            case 7:
-              text = 'Sun';
-
-              break;
-            default:
-              return Container();
-          }
-
-          return Text(text, style: style, textAlign: TextAlign.center);
-        },
-        showTitles: true,
-        interval: 1,
-        reservedSize: 40,
-      );
 
   Widget waterBottleWidget() {
     return Padding(

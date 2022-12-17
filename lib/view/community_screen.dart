@@ -222,7 +222,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                               );
                             }),
                       ),
-                      CommonWidget.commonSizedBox(height: 10),
+                      CommonWidget.commonSizedBox(height: 20.sp),
                       Expanded(
                         flex: 12,
                         child: SmartRefresher(
@@ -266,22 +266,20 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                   .first;
                               return Column(
                                 children: [
-                                  CommonText.textBoldWight500(
-                                      text: dateData == currentDate
-                                          ? 'Today'
-                                          : dateData == yesterday
-                                              ? 'Yesterday'
-                                              : '${dateData}',
-                                      color: Color(0xff939492)),
-                                  ListView.separated(
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 15.sp),
+                                    child: CommonText.textBoldWight500(
+                                        text: dateData == currentDate
+                                            ? 'Today'
+                                            : dateData == yesterday
+                                                ? 'Yesterday'
+                                                : '${dateData}',
+                                        color: Color(0xff939492)),
+                                  ),
+                                  ListView.builder(
                                     shrinkWrap: true,
                                     physics: NeverScrollableScrollPhysics(),
                                     itemCount: post.length,
-                                    separatorBuilder: (_, index) {
-                                      return SizedBox(
-                                        height: 20,
-                                      );
-                                    },
                                     itemBuilder: (_, index) {
                                       return post[index]
                                                   .createdAt
@@ -292,6 +290,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                           ? post[index].image == null ||
                                                   post[index].image == ""
                                               ? Container(
+                                                  margin: EdgeInsets.only(
+                                                      bottom: 20.sp),
                                                   padding: EdgeInsets.symmetric(
                                                       horizontal: 20,
                                                       vertical: 15),
@@ -447,6 +447,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                                   ),
                                                 )
                                               : Container(
+                                                  margin: EdgeInsets.only(
+                                                      bottom: 20.sp),
                                                   padding: EdgeInsets.symmetric(
                                                       horizontal: 20,
                                                       vertical: 15),
