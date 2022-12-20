@@ -26,14 +26,6 @@ class VideoScreen extends StatefulWidget {
 }
 
 class _VideoScreenState extends State<VideoScreen> {
-  List<String> imageList = [
-    ImageConst.video1Image,
-    ImageConst.video2Image,
-    ImageConst.video3Image,
-    ImageConst.video3Image,
-    ImageConst.video3Image,
-  ];
-
   GetVideoViewModel getVideoViewModel = Get.put(GetVideoViewModel());
   LikeUnLikeVideoViewModel likeUnLikeVideoViewModel =
       Get.put(LikeUnLikeVideoViewModel());
@@ -110,8 +102,10 @@ class _VideoScreenState extends State<VideoScreen> {
                                           borderRadius: BorderRadius.only(
                                               topLeft: Radius.circular(8),
                                               topRight: Radius.circular(8)),
-                                          child: Image.asset(
-                                            imageList[index],
+                                          child: Image.network(
+                                            "https://health-app-test.s3.ap-south-1.amazonaws.com/video/" +
+                                                response
+                                                    .data![index].thumbnail!,
                                             fit: BoxFit.cover,
                                           ),
                                         )),

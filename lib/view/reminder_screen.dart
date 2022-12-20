@@ -170,8 +170,16 @@ class _ReminderScreenState extends State<ReminderScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 CommonText.textBoldWight500(
-                                    text: responseModel
-                                        .data!.docs![index].title!),
+                                    text: responseModel.data!.docs![index].title
+                                                .toString()
+                                                .length >
+                                            29
+                                        ? responseModel
+                                                .data!.docs![index].title!
+                                                .substring(0, 29) +
+                                            ".."
+                                        : responseModel
+                                            .data!.docs![index].title!),
                                 SizedBox(
                                   height: 5,
                                 ),

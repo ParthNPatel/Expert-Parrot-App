@@ -36,6 +36,7 @@ class Video {
     this.id,
     this.title,
     this.description,
+    this.thumbnail,
     this.video,
     this.likes,
     this.createdAt,
@@ -46,6 +47,7 @@ class Video {
   String? id;
   String? title;
   String? description;
+  String? thumbnail;
   String? video;
   int? likes;
   DateTime? createdAt;
@@ -56,6 +58,7 @@ class Video {
         id: json["_id"],
         title: json["title"],
         description: json["description"],
+        thumbnail: json["thumbnail"],
         video: json["video"],
         likes: json["likes"],
         createdAt: DateTime.parse(json["createdAt"]),
@@ -67,6 +70,7 @@ class Video {
         "_id": id,
         "title": title,
         "description": description,
+        "thumbnail": thumbnail,
         "video": video,
         "likes": likes,
         "createdAt": createdAt!.toIso8601String(),

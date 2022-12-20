@@ -280,30 +280,18 @@ class _VideoPlayScreenState extends State<VideoPlayScreen> {
                       CommonWidget.commonSizedBox(height: 20),
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: ShaderMask(
-                            blendMode: BlendMode.srcIn,
-                            shaderCallback: (bounds) => gradient.createShader(
-                                  Rect.fromLTWH(
-                                      0, 0, bounds.width, bounds.height),
-                                ),
-                            child: CommonText.textBoldWight500(
-                                color: CommonColor.whiteColorEDEDED,
-                                text: '${widget.title}',
-                                fontSize: 13.sp)),
+                        child: CommonText.textBoldWight500(
+                            color: CommonColor.whiteColorEDEDED,
+                            text: '${widget.title}',
+                            fontSize: 13.sp),
                       ),
                       CommonWidget.commonSizedBox(height: 10),
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: ShaderMask(
-                            blendMode: BlendMode.srcIn,
-                            shaderCallback: (bounds) => gradient.createShader(
-                                  Rect.fromLTWH(
-                                      0, 0, bounds.width, bounds.height),
-                                ),
-                            child: CommonText.textBoldWight300(
+                        child:  CommonText.textBoldWight300(
                                 color: CommonColor.whiteColorEDEDED,
                                 text: '${widget.description}',
-                                fontSize: 9.sp)),
+                                fontSize: 9.sp),
                       ),
                       CommonWidget.commonSizedBox(height: 20)
                     ],

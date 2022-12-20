@@ -6,7 +6,6 @@ import 'package:expert_parrot_app/Models/responseModel/get_all_post_categories_r
 import 'package:expert_parrot_app/Models/responseModel/get_comment_res_model.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_post_res_model.dart';
 import 'package:expert_parrot_app/components/community_shimmer.dart';
-import 'package:expert_parrot_app/constant/api_const.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/controller/handle_float_controller.dart';
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
@@ -19,7 +18,6 @@ import 'package:expert_parrot_app/viewModel/get_post_view_model.dart';
 import 'package:expert_parrot_app/viewModel/like_unlike_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -56,66 +54,11 @@ class _CommunityScreenState extends State<CommunityScreen> {
     super.initState();
 
     // getPostViewModel.getPostViewModel(isLoading: true, catId: "");
-    getPostByPage(catId: "", isRefresh: true);
+    getPostViewModel.getPostByPage(catId: "", isRefresh: true);
     allPostCategoriesViewModel.getAllPostCategoriesViewModel(isLoading: true);
 
     print(
         '============================== > ${GetStorageServices.getBarrierToken()}');
-  }
-
-  final RefreshController refreshController =
-      RefreshController(initialRefresh: true);
-  int currentPosts = 10;
-  int currentPage = 1;
-  late int totalPost;
-  List<Post> post = [];
-  List showDate = [];
-
-  Future<bool> getPostByPage({String? catId, bool isRefresh = false}) async {
-    print("calling ${currentPage}");
-
-    if (isRefresh) {
-      currentPage = 1;
-    } else {
-      if (currentPage >= totalPost) {
-        refreshController.loadNoData();
-        return false;
-      }
-    }
-
-    final Uri uri = Uri.parse('${APIConst.baseUrl}' +
-        '${APIConst.getPosts}' +
-        "?latest=true" +
-        '?categoryId=${catId}' +
-        '&limit=${currentPosts}&page=${currentPage}');
-
-    print('selectedCatNameselectedCatName ${selectedCatName}');
-
-    print('catIdcatId ${catId}');
-
-    Map<String, String> headers = GetStorageServices.getBarrierToken() != null
-        ? {
-            'Authorization': 'Bearer ${GetStorageServices.getBarrierToken()}',
-            'Content-Type': 'application/json'
-          }
-        : {'Content-Type': 'application/json'};
-
-    final response = await http.get(uri, headers: headers);
-
-    if (response.statusCode == 200) {
-      final result = getPostResponseModelFromJson(response.body);
-
-      post.addAll(result.data!);
-
-      currentPage = currentPage + 1;
-      // currentNews = currentNews + 1;
-      totalPost = result.data!.length;
-      print(response.body);
-      setState(() {});
-      return true;
-    } else {
-      return false;
-    }
   }
 
   @override
@@ -162,491 +105,520 @@ class _CommunityScreenState extends State<CommunityScreen> {
                             id: ""));
                   }
 
-                  showDate.clear();
+                  getPostViewModel.showDate.clear();
 
-                  post.forEach(
+                  getPostViewModel.post.forEach(
                     (element) {
-                      if (showDate.contains(
+                      if (getPostViewModel.showDate.contains(
                               element.createdAt.toString().split(' ').first) ==
                           false) {
-                        showDate
+                        getPostViewModel.showDate
                             .add(element.createdAt.toString().split(' ').first);
                       }
                     },
                   );
 
-                  return Column(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: ListView.separated(
-                            shrinkWrap: true,
-                            physics: BouncingScrollPhysics(),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: resp.data!.length,
-                            separatorBuilder: (context, index) {
-                              return SizedBox(width: 10.sp);
-                            },
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                onTap: () async {
-                                  setState(() {
-                                    selectedCat = index;
-                                    selectedCatName =
-                                        "${resp.data![index].name}";
-                                  });
-                                  post.clear();
+                  return GetBuilder<GetPostViewModel>(builder: (controller) {
+                    return Column(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: ListView.separated(
+                              shrinkWrap: true,
+                              physics: BouncingScrollPhysics(),
+                              scrollDirection: Axis.horizontal,
+                              itemCount: resp.data!.length,
+                              separatorBuilder: (context, index) {
+                                return SizedBox(width: 10.sp);
+                              },
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () async {
+                                    setState(() {
+                                      selectedCat = index;
+                                      selectedCatName =
+                                          "${resp.data![index].name}";
+                                    });
+                                    controller.post.clear();
 
-                                  await getPostByPage(
-                                      isRefresh: true,
-                                      catId: "${resp.data![selectedCat].id}");
-                                },
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  width: 25.w,
-                                  decoration: BoxDecoration(
-                                      color: selectedCat == index
-                                          ? CommonColor.greenColor
-                                          : Colors.white,
-                                      borderRadius: BorderRadius.circular(25),
-                                      border: Border.all(
-                                          color: CommonColor.greenColor)),
-                                  child: CommonText.textBoldWight500(
-                                      text:
-                                          "${resp.data![index].name.toString().capitalizeFirst}",
-                                      fontSize: 12.sp,
-                                      color: selectedCat == index
-                                          ? Colors.white
-                                          : CommonColor.greenColor),
-                                ),
-                              );
-                            }),
-                      ),
-                      CommonWidget.commonSizedBox(height: 20.sp),
-                      Expanded(
-                        flex: 12,
-                        child: SmartRefresher(
-                          controller: refreshController,
-                          physics: BouncingScrollPhysics(),
-                          enablePullUp: true,
-                          onRefresh: () async {
-                            post.clear();
-                            final result = await getPostByPage(
-                                isRefresh: true,
-                                catId: "${resp.data![selectedCat].id}");
-
-                            if (result) {
-                              return refreshController.refreshCompleted();
-                            } else {
-                              return refreshController.refreshFailed();
-                            }
-                          },
-                          onLoading: () async {
-                            final result = await getPostByPage(
-                                catId: "${resp.data![selectedCat].id}");
-
-                            if (result) {
-                              return refreshController.loadComplete();
-                            } else {
-                              return refreshController.loadFailed();
-                            }
-                          },
-                          child: ListView.builder(
-                            physics: BouncingScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: showDate.length,
-                            itemBuilder: (context, index1) {
-                              var dateData = showDate[index1];
-                              var currentDate =
-                                  DateTime.now().toString().split(' ').first;
-                              var yesterday = DateTime.now()
-                                  .subtract(Duration(days: 1))
-                                  .toString()
-                                  .split(' ')
-                                  .first;
-                              return Column(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(bottom: 15.sp),
+                                    await controller.getPostByPage(
+                                        isRefresh: true,
+                                        catId: "${resp.data![selectedCat].id}");
+                                  },
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    width: 25.w,
+                                    decoration: BoxDecoration(
+                                        color: selectedCat == index
+                                            ? CommonColor.greenColor
+                                            : Colors.white,
+                                        borderRadius: BorderRadius.circular(25),
+                                        border: Border.all(
+                                            color: CommonColor.greenColor)),
                                     child: CommonText.textBoldWight500(
-                                        text: dateData == currentDate
-                                            ? 'Today'
-                                            : dateData == yesterday
-                                                ? 'Yesterday'
-                                                : '${dateData}',
-                                        color: Color(0xff939492)),
+                                        text:
+                                            "${resp.data![index].name.toString().capitalizeFirst}",
+                                        fontSize: 12.sp,
+                                        color: selectedCat == index
+                                            ? Colors.white
+                                            : CommonColor.greenColor),
                                   ),
-                                  ListView.builder(
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    itemCount: post.length,
-                                    itemBuilder: (_, index) {
-                                      return post[index]
-                                                  .createdAt
-                                                  .toString()
-                                                  .split(' ')
-                                                  .first ==
-                                              showDate[index1]
-                                          ? post[index].image == null ||
-                                                  post[index].image == ""
-                                              ? Container(
-                                                  margin: EdgeInsets.only(
-                                                      bottom: 20.sp),
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 20,
-                                                      vertical: 15),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                  ),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          post[index]
-                                                                      .userId!
-                                                                      .userImage !=
-                                                                  null
-                                                              ? Container(
-                                                                  height: 40.sp,
-                                                                  width: 40.sp,
-                                                                  decoration: BoxDecoration(
-                                                                      shape: BoxShape
-                                                                          .circle,
-                                                                      border: Border.all(
-                                                                          color:
-                                                                              Colors.black)),
-                                                                  child: ClipRRect(
-                                                                      borderRadius: BorderRadius.circular(500),
-                                                                      child: Image.network(
-                                                                        'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${post[index].userId!.userImage}',
-                                                                        fit: BoxFit
-                                                                            .cover,
-                                                                        errorBuilder: (context,
-                                                                                error,
-                                                                                stackTrace) =>
-                                                                            Icon(
-                                                                          color:
-                                                                              Colors.grey,
-                                                                          Icons
-                                                                              .person,
-                                                                          size:
-                                                                              22.sp,
-                                                                        ),
-                                                                      )),
-                                                                )
-                                                              : Container(
-                                                                  height: 40.sp,
-                                                                  width: 40.sp,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    shape: BoxShape
-                                                                        .circle,
-                                                                    color: Colors
-                                                                        .grey
-                                                                        .shade300,
-                                                                    border: Border.all(
-                                                                        color: Colors
-                                                                            .black),
-                                                                  ),
-                                                                  child: Icon(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    Icons
-                                                                        .person,
-                                                                    size: 22.sp,
-                                                                  ),
-                                                                ),
-                                                          SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                          Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              CommonText
-                                                                  .textBoldWight500(
-                                                                      text:
-                                                                          "${post[index].userId!.name.toString().capitalizeFirst}",
-                                                                      fontSize:
-                                                                          12.sp),
-                                                              CommonText.textBoldWight400(
-                                                                  text:
-                                                                      "QR, Canada",
-                                                                  color: Color(
-                                                                      0xffa1a1a1),
-                                                                  fontSize:
-                                                                      10.sp),
-                                                            ],
-                                                          ),
-                                                          Spacer(),
-                                                          CommonText.textBoldWight400(
-                                                              text:
-                                                                  "${DateFormat.yMMMEd().format(DateTime.parse("${post[index].createdAt!}"))}",
-                                                              color: Color(
-                                                                  0xffa1a1a1),
-                                                              fontSize: 10.sp),
-                                                        ],
-                                                      ),
-                                                      SizedBox(
-                                                        height: 13,
-                                                      ),
-                                                      Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          CommonText.textBoldWight400(
-                                                              text:
-                                                                  "#${post[index].title}",
-                                                              color: Color(
-                                                                  0xffa1a1a1),
-                                                              fontSize: 11.sp),
-                                                          SizedBox(
-                                                            height: 20,
-                                                          ),
-                                                          CommonText.textBoldWight400(
-                                                              text:
-                                                                  "${post[index].description}",
-                                                              color: Color(
-                                                                  0xffa1a1a1),
-                                                              fontSize: 11.sp),
-                                                        ],
-                                                      ),
-                                                      SizedBox(
-                                                        height: 13,
-                                                      ),
-                                                      Divider(
-                                                        thickness: 1.2,
-                                                        color:
-                                                            Color(0xffE0E1E2),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 13,
-                                                      ),
-                                                      LikeAndCommentWidget(
-                                                        post: post,
-                                                        index: index,
-                                                        postId: post[index].id,
-                                                        likeCount:
-                                                            post[index].likes,
-                                                        commentCount:
-                                                            post[index]
-                                                                .comments!
-                                                                .length,
-                                                        isLiked: post[index]
-                                                            .isLiked!,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                )
-                                              : Container(
-                                                  margin: EdgeInsets.only(
-                                                      bottom: 20.sp),
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 20,
-                                                      vertical: 15),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                  ),
-                                                  child: Column(
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          post[index]
-                                                                      .userId!
-                                                                      .userImage !=
-                                                                  null
-                                                              ? Container(
-                                                                  height: 40.sp,
-                                                                  width: 40.sp,
-                                                                  decoration: BoxDecoration(
-                                                                      shape: BoxShape
-                                                                          .circle,
-                                                                      border: Border.all(
-                                                                          color:
-                                                                              Colors.black)),
-                                                                  child: ClipRRect(
-                                                                      borderRadius: BorderRadius.circular(500),
-                                                                      child: Image.network(
-                                                                        'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${post[index].userId!.userImage}',
-                                                                        fit: BoxFit
-                                                                            .cover,
-                                                                        errorBuilder: (context,
-                                                                                error,
-                                                                                stackTrace) =>
-                                                                            Icon(
-                                                                          color:
-                                                                              Colors.grey,
-                                                                          Icons
-                                                                              .person,
-                                                                          size:
-                                                                              22.sp,
-                                                                        ),
-                                                                      )),
-                                                                )
-                                                              : Container(
-                                                                  height: 40.sp,
-                                                                  width: 40.sp,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    shape: BoxShape
-                                                                        .circle,
-                                                                    color: Colors
-                                                                        .grey
-                                                                        .shade300,
-                                                                    border: Border.all(
-                                                                        color: Colors
-                                                                            .black),
-                                                                  ),
-                                                                  child: Icon(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    Icons
-                                                                        .person,
-                                                                    size: 22.sp,
-                                                                  ),
-                                                                ),
-                                                          SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                          Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              CommonText
-                                                                  .textBoldWight500(
-                                                                      text:
-                                                                          "${post[index].userId!.name.toString().capitalizeFirst}",
-                                                                      fontSize:
-                                                                          12.sp),
-                                                              CommonText.textBoldWight400(
-                                                                  text:
-                                                                      "QR, Canada",
-                                                                  color: Color(
-                                                                      0xffa1a1a1),
-                                                                  fontSize:
-                                                                      10.sp),
-                                                            ],
-                                                          ),
-                                                          Spacer(),
-                                                          CommonText.textBoldWight400(
-                                                              text:
-                                                                  "${DateFormat.yMMMEd().format(DateTime.parse("${post[index].createdAt!}"))}",
-                                                              color: Color(
-                                                                  0xffa1a1a1),
-                                                              fontSize: 10.sp),
-                                                        ],
-                                                      ),
-                                                      SizedBox(
-                                                        height: 13,
-                                                      ),
-                                                      Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          CommonText.textBoldWight400(
-                                                              text:
-                                                                  "#${post[index].title}",
-                                                              color: Color(
-                                                                  0xffa1a1a1),
-                                                              fontSize: 11.sp),
-                                                          SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          CommonText.textBoldWight400(
-                                                              text:
-                                                                  "${post[index].description}",
-                                                              color: Color(
-                                                                  0xffa1a1a1),
-                                                              fontSize: 11.sp),
-                                                          SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          Container(
-                                                            height: 130.sp,
-                                                            width:
-                                                                double.infinity,
-                                                            decoration: BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10)),
-                                                            child: ClipRRect(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
-                                                                child: Image
-                                                                    .network(
-                                                                  "https://health-app-test.s3.ap-south-1.amazonaws.com/post/" +
-                                                                      "${post[index].image}",
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                  errorBuilder:
-                                                                      (context,
-                                                                              error,
-                                                                              stackTrace) =>
-                                                                          Icon(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    Icons
-                                                                        .image_not_supported_outlined,
-                                                                    size: 60,
-                                                                  ),
-                                                                )),
-                                                          )
-                                                        ],
-                                                      ),
-                                                      SizedBox(
-                                                        height: 8,
-                                                      ),
-                                                      Divider(
-                                                        thickness: 1.2,
-                                                        color:
-                                                            Color(0xffE0E1E2),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 13,
-                                                      ),
-                                                      LikeAndCommentWidget(
-                                                        index: index,
-                                                        post: post,
-                                                        postId: post[index].id,
-                                                        likeCount:
-                                                            post[index].likes,
-                                                        commentCount:
-                                                            post[index]
-                                                                .comments!
-                                                                .length,
-                                                        isLiked: post[index]
-                                                            .isLiked!,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                )
-                                          : SizedBox();
-                                    },
-                                  )
-                                ],
-                              );
+                                );
+                              }),
+                        ),
+                        CommonWidget.commonSizedBox(height: 20.sp),
+                        Expanded(
+                          flex: 12,
+                          child: SmartRefresher(
+                            controller: controller.refreshController,
+                            physics: BouncingScrollPhysics(),
+                            enablePullUp: true,
+                            onRefresh: () async {
+                              controller.post.clear();
+                              final result = await controller.getPostByPage(
+                                  isRefresh: true,
+                                  catId: "${resp.data![selectedCat].id}");
+
+                              if (result) {
+                                return controller.refreshController
+                                    .refreshCompleted();
+                              } else {
+                                return controller.refreshController
+                                    .refreshFailed();
+                              }
                             },
+                            onLoading: () async {
+                              final result = await controller.getPostByPage(
+                                  catId: "${resp.data![selectedCat].id}");
+
+                              if (result) {
+                                return controller.refreshController
+                                    .loadComplete();
+                              } else {
+                                return controller.refreshController
+                                    .loadFailed();
+                              }
+                            },
+                            child: ListView.builder(
+                              physics: BouncingScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: controller.showDate.length,
+                              itemBuilder: (context, index1) {
+                                var dateData = controller.showDate[index1];
+                                var currentDate =
+                                    DateTime.now().toString().split(' ').first;
+                                var yesterday = DateTime.now()
+                                    .subtract(Duration(days: 1))
+                                    .toString()
+                                    .split(' ')
+                                    .first;
+                                return Column(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 15.sp),
+                                      child: CommonText.textBoldWight500(
+                                          text: dateData == currentDate
+                                              ? 'Today'
+                                              : dateData == yesterday
+                                                  ? 'Yesterday'
+                                                  : '${dateData}',
+                                          color: Color(0xff939492)),
+                                    ),
+                                    ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: controller.post.length,
+                                      itemBuilder: (_, index) {
+                                        return controller.post[index].createdAt
+                                                    .toString()
+                                                    .split(' ')
+                                                    .first ==
+                                                controller.showDate[index1]
+                                            ? controller.post[index].image ==
+                                                        null ||
+                                                    controller.post[index]
+                                                            .image ==
+                                                        ""
+                                                ? Container(
+                                                    margin: EdgeInsets.only(
+                                                        bottom: 20.sp),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 20,
+                                                            vertical: 15),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            controller
+                                                                        .post[
+                                                                            index]
+                                                                        .userId!
+                                                                        .userImage !=
+                                                                    null
+                                                                ? Container(
+                                                                    height:
+                                                                        40.sp,
+                                                                    width:
+                                                                        40.sp,
+                                                                    decoration: BoxDecoration(
+                                                                        shape: BoxShape
+                                                                            .circle,
+                                                                        border: Border.all(
+                                                                            color:
+                                                                                Colors.black)),
+                                                                    child: ClipRRect(
+                                                                        borderRadius: BorderRadius.circular(500),
+                                                                        child: Image.network(
+                                                                          'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${controller.post[index].userId!.userImage}',
+                                                                          fit: BoxFit
+                                                                              .cover,
+                                                                          errorBuilder: (context, error, stackTrace) =>
+                                                                              Icon(
+                                                                            color:
+                                                                                Colors.grey,
+                                                                            Icons.person,
+                                                                            size:
+                                                                                22.sp,
+                                                                          ),
+                                                                        )),
+                                                                  )
+                                                                : Container(
+                                                                    height:
+                                                                        40.sp,
+                                                                    width:
+                                                                        40.sp,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      shape: BoxShape
+                                                                          .circle,
+                                                                      color: Colors
+                                                                          .grey
+                                                                          .shade300,
+                                                                      border: Border.all(
+                                                                          color:
+                                                                              Colors.black),
+                                                                    ),
+                                                                    child: Icon(
+                                                                      color: Colors
+                                                                          .grey,
+                                                                      Icons
+                                                                          .person,
+                                                                      size:
+                                                                          22.sp,
+                                                                    ),
+                                                                  ),
+                                                            SizedBox(
+                                                              width: 10,
+                                                            ),
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                CommonText.textBoldWight500(
+                                                                    text:
+                                                                        "${controller.post[index].userId!.name.toString().capitalizeFirst}",
+                                                                    fontSize:
+                                                                        12.sp),
+                                                                CommonText.textBoldWight400(
+                                                                    text:
+                                                                        "QR, Canada",
+                                                                    color: Color(
+                                                                        0xffa1a1a1),
+                                                                    fontSize:
+                                                                        10.sp),
+                                                              ],
+                                                            ),
+                                                            Spacer(),
+                                                            CommonText.textBoldWight400(
+                                                                text:
+                                                                    "${DateFormat.yMMMEd().format(DateTime.parse("${controller.post[index].createdAt!}"))}",
+                                                                color: Color(
+                                                                    0xffa1a1a1),
+                                                                fontSize:
+                                                                    10.sp),
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          height: 13,
+                                                        ),
+                                                        Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            CommonText.textBoldWight400(
+                                                                text:
+                                                                    "#${controller.post[index].title}",
+                                                                color: Color(
+                                                                    0xffa1a1a1),
+                                                                fontSize:
+                                                                    11.sp),
+                                                            SizedBox(
+                                                              height: 20,
+                                                            ),
+                                                            CommonText.textBoldWight400(
+                                                                text:
+                                                                    "${controller.post[index].description}",
+                                                                color: Color(
+                                                                    0xffa1a1a1),
+                                                                fontSize:
+                                                                    11.sp),
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          height: 13,
+                                                        ),
+                                                        Divider(
+                                                          thickness: 1.2,
+                                                          color:
+                                                              Color(0xffE0E1E2),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 13,
+                                                        ),
+                                                        LikeAndCommentWidget(
+                                                          post: controller.post,
+                                                          index: index,
+                                                          postId: controller
+                                                              .post[index].id,
+                                                          likeCount: controller
+                                                              .post[index]
+                                                              .likes,
+                                                          commentCount:
+                                                              controller
+                                                                  .post[index]
+                                                                  .comments!
+                                                                  .length,
+                                                          isLiked: controller
+                                                              .post[index]
+                                                              .isLiked!,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )
+                                                : Container(
+                                                    margin: EdgeInsets.only(
+                                                        bottom: 20.sp),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 20,
+                                                            vertical: 15),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20),
+                                                    ),
+                                                    child: Column(
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            controller
+                                                                        .post[
+                                                                            index]
+                                                                        .userId!
+                                                                        .userImage !=
+                                                                    null
+                                                                ? Container(
+                                                                    height:
+                                                                        40.sp,
+                                                                    width:
+                                                                        40.sp,
+                                                                    decoration: BoxDecoration(
+                                                                        shape: BoxShape
+                                                                            .circle,
+                                                                        border: Border.all(
+                                                                            color:
+                                                                                Colors.black)),
+                                                                    child: ClipRRect(
+                                                                        borderRadius: BorderRadius.circular(500),
+                                                                        child: Image.network(
+                                                                          'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${controller.post[index].userId!.userImage}',
+                                                                          fit: BoxFit
+                                                                              .cover,
+                                                                          errorBuilder: (context, error, stackTrace) =>
+                                                                              Icon(
+                                                                            color:
+                                                                                Colors.grey,
+                                                                            Icons.person,
+                                                                            size:
+                                                                                22.sp,
+                                                                          ),
+                                                                        )),
+                                                                  )
+                                                                : Container(
+                                                                    height:
+                                                                        40.sp,
+                                                                    width:
+                                                                        40.sp,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      shape: BoxShape
+                                                                          .circle,
+                                                                      color: Colors
+                                                                          .grey
+                                                                          .shade300,
+                                                                      border: Border.all(
+                                                                          color:
+                                                                              Colors.black),
+                                                                    ),
+                                                                    child: Icon(
+                                                                      color: Colors
+                                                                          .grey,
+                                                                      Icons
+                                                                          .person,
+                                                                      size:
+                                                                          22.sp,
+                                                                    ),
+                                                                  ),
+                                                            SizedBox(
+                                                              width: 10,
+                                                            ),
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                CommonText.textBoldWight500(
+                                                                    text:
+                                                                        "${controller.post[index].userId!.name.toString().capitalizeFirst}",
+                                                                    fontSize:
+                                                                        12.sp),
+                                                                CommonText.textBoldWight400(
+                                                                    text:
+                                                                        "QR, Canada",
+                                                                    color: Color(
+                                                                        0xffa1a1a1),
+                                                                    fontSize:
+                                                                        10.sp),
+                                                              ],
+                                                            ),
+                                                            Spacer(),
+                                                            CommonText.textBoldWight400(
+                                                                text:
+                                                                    "${DateFormat.yMMMEd().format(DateTime.parse("${controller.post[index].createdAt!}"))}",
+                                                                color: Color(
+                                                                    0xffa1a1a1),
+                                                                fontSize:
+                                                                    10.sp),
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          height: 13,
+                                                        ),
+                                                        Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            CommonText.textBoldWight400(
+                                                                text:
+                                                                    "#${controller.post[index].title}",
+                                                                color: Color(
+                                                                    0xffa1a1a1),
+                                                                fontSize:
+                                                                    11.sp),
+                                                            SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            CommonText.textBoldWight400(
+                                                                text:
+                                                                    "${controller.post[index].description}",
+                                                                color: Color(
+                                                                    0xffa1a1a1),
+                                                                fontSize:
+                                                                    11.sp),
+                                                            SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            Container(
+                                                              height: 130.sp,
+                                                              width: double
+                                                                  .infinity,
+                                                              decoration: BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10)),
+                                                              child: ClipRRect(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10),
+                                                                  child: Image
+                                                                      .network(
+                                                                    "https://health-app-test.s3.ap-south-1.amazonaws.com/post/" +
+                                                                        "${controller.post[index].image}",
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    errorBuilder: (context,
+                                                                            error,
+                                                                            stackTrace) =>
+                                                                        Icon(
+                                                                      color: Colors
+                                                                          .grey,
+                                                                      Icons
+                                                                          .image_not_supported_outlined,
+                                                                      size: 60,
+                                                                    ),
+                                                                  )),
+                                                            )
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          height: 8,
+                                                        ),
+                                                        Divider(
+                                                          thickness: 1.2,
+                                                          color:
+                                                              Color(0xffE0E1E2),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 13,
+                                                        ),
+                                                        LikeAndCommentWidget(
+                                                          index: index,
+                                                          post: controller.post,
+                                                          postId: controller
+                                                              .post[index].id,
+                                                          likeCount: controller
+                                                              .post[index]
+                                                              .likes,
+                                                          commentCount:
+                                                              controller
+                                                                  .post[index]
+                                                                  .comments!
+                                                                  .length,
+                                                          isLiked: controller
+                                                              .post[index]
+                                                              .isLiked!,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )
+                                            : SizedBox();
+                                      },
+                                    )
+                                  ],
+                                );
+                              },
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
+                      ],
+                    );
+                  });
                 } else
                   return SizedBox();
               }),
@@ -1310,7 +1282,8 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
   GetCommentViewModel getCommentViewModel = Get.put(GetCommentViewModel());
   LikeUnLikeViewModel likeUnLikeViewModel = Get.put(LikeUnLikeViewModel());
   GetPostViewModel getPostViewModel = Get.put(GetPostViewModel());
-  HandleFloatController controller = Get.find();
+
+  HandleFloatController controllerHFC = Get.find();
   @override
   void initState() {
     // likeUnLikeViewModel.updateLike(widget.isLiked);
@@ -1319,61 +1292,105 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            InkWell(
-              onTap: () async {
-                if (widget.isLiked == false) {
-                  await likeUnLikeViewModel.likeViewModel(
-                      model: {"type": "like", "postId": "${widget.postId}"});
-                  if (likeUnLikeViewModel.likeApiResponse.status ==
-                      Status.COMPLETE) {
-                    getPostViewModel.getPostViewModel(isLoading: false);
+    return GetBuilder<GetPostViewModel>(builder: (controller) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              InkWell(
+                onTap: () async {
+                  if (widget.isLiked == false) {
+                    await likeUnLikeViewModel.likeViewModel(
+                        model: {"type": "like", "postId": "${widget.postId}"});
+                    if (likeUnLikeViewModel.likeApiResponse.status ==
+                        Status.COMPLETE) {
+                      getPostViewModel.getPostViewModel(isLoading: false);
 
-                    widget.post[widget.index!] = Post(
-                        likes: widget.post[widget.index!].likes! + 1,
-                        id: widget.post[widget.index!].id,
-                        image: widget.post[widget.index!].image,
-                        description: widget.post[widget.index!].description,
-                        isLiked: true,
-                        title: widget.post[widget.index!].title,
-                        comments: widget.post[widget.index!].comments,
-                        updatedAt: widget.post[widget.index!].updatedAt,
-                        createdAt: widget.post[widget.index!].createdAt,
-                        userId: widget.post[widget.index!].userId);
+                      controller.post[widget.index!] = Post(
+                          likes: controller.post[widget.index!].likes! + 1,
+                          id: controller.post[widget.index!].id,
+                          image: controller.post[widget.index!].image,
+                          description:
+                              controller.post[widget.index!].description,
+                          isLiked: true,
+                          title: controller.post[widget.index!].title,
+                          comments: controller.post[widget.index!].comments,
+                          updatedAt: controller.post[widget.index!].updatedAt,
+                          createdAt: controller.post[widget.index!].createdAt,
+                          userId: controller.post[widget.index!].userId);
+                    }
+                    if (likeUnLikeViewModel.likeApiResponse.status ==
+                        Status.ERROR) {
+                      CommonWidget.getSnackBar(
+                          color: Colors.red,
+                          duration: 2,
+                          colorText: Colors.white,
+                          title: "Something went wrong 123",
+                          message: 'Try Again.');
+                    }
+                  } else if (widget.isLiked == true) {
+                    await likeUnLikeViewModel.unlikeViewModel(model: {
+                      "type": "unlike",
+                      "postId": "${widget.postId}"
+                    });
+                    if (likeUnLikeViewModel.unlikeApiResponse.status ==
+                        Status.COMPLETE) {
+                      getPostViewModel.getPostViewModel(isLoading: false);
+                      controller.post[widget.index!] = Post(
+                          likes: controller.post[widget.index!].likes! - 1,
+                          id: controller.post[widget.index!].id,
+                          image: controller.post[widget.index!].image,
+                          description:
+                              controller.post[widget.index!].description,
+                          isLiked: false,
+                          title: controller.post[widget.index!].title,
+                          comments: controller.post[widget.index!].comments,
+                          updatedAt: controller.post[widget.index!].updatedAt,
+                          createdAt: controller.post[widget.index!].createdAt,
+                          userId: controller.post[widget.index!].userId);
+                    }
+                    if (likeUnLikeViewModel.unlikeApiResponse.status ==
+                        Status.ERROR) {
+                      CommonWidget.getSnackBar(
+                          color: Colors.red,
+                          duration: 2,
+                          colorText: Colors.white,
+                          title: "Something went wrong",
+                          message: 'Try Again.');
+                    }
                   }
-                  if (likeUnLikeViewModel.likeApiResponse.status ==
-                      Status.ERROR) {
-                    CommonWidget.getSnackBar(
-                        color: Colors.red,
-                        duration: 2,
-                        colorText: Colors.white,
-                        title: "Something went wrong 123",
-                        message: 'Try Again.');
-                  }
-                } else if (widget.isLiked == true) {
-                  await likeUnLikeViewModel.unlikeViewModel(
-                      model: {"type": "unlike", "postId": "${widget.postId}"});
-                  if (likeUnLikeViewModel.unlikeApiResponse.status ==
-                      Status.COMPLETE) {
-                    getPostViewModel.getPostViewModel(isLoading: false);
-                    widget.post[widget.index!] = Post(
-                        likes: widget.post[widget.index!].likes! - 1,
-                        id: widget.post[widget.index!].id,
-                        image: widget.post[widget.index!].image,
-                        description: widget.post[widget.index!].description,
-                        isLiked: false,
-                        title: widget.post[widget.index!].title,
-                        comments: widget.post[widget.index!].comments,
-                        updatedAt: widget.post[widget.index!].updatedAt,
-                        createdAt: widget.post[widget.index!].createdAt,
-                        userId: widget.post[widget.index!].userId);
-                  }
-                  if (likeUnLikeViewModel.unlikeApiResponse.status ==
-                      Status.ERROR) {
+                },
+                child: Row(
+                  children: [
+                    Image.asset(
+                      widget.isLiked == true
+                          ? 'assets/png/like (2).png'
+                          : "assets/png/like_outlined.png",
+                      height: widget.isLiked == true ? 17.sp : 15.sp,
+                      width: widget.isLiked == true ? 17.sp : 15.sp,
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    CommonText.textBoldWight400(
+                        text: "${widget.likeCount}", fontSize: 11.sp),
+                  ],
+                ),
+              ),
+              SizedBox(
+                width: 15,
+              ),
+              InkWell(
+                onTap: () async {
+                  setState(() {
+                    isCommentOpened = !isCommentOpened;
+                  });
+
+                  try {
+                    await getCommentViewModel.getCommentViewModel(
+                        id: widget.postId);
+                  } catch (e) {
                     CommonWidget.getSnackBar(
                         color: Colors.red,
                         duration: 2,
@@ -1381,152 +1398,121 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                         title: "Something went wrong",
                         message: 'Try Again.');
                   }
-                }
-              },
-              child: Row(
-                children: [
-                  Image.asset(
-                    widget.isLiked == true
-                        ? 'assets/png/like (2).png'
-                        : "assets/png/like_outlined.png",
-                    height: widget.isLiked == true ? 17.sp : 15.sp,
-                    width: widget.isLiked == true ? 17.sp : 15.sp,
-                  ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  CommonText.textBoldWight400(
-                      text: "${widget.likeCount}", fontSize: 11.sp),
-                ],
+                },
+                child: Row(
+                  children: [
+                    Image.asset(
+                      "assets/png/comment.png",
+                      height: 17.sp,
+                      width: 17.sp,
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    CommonText.textBoldWight400(
+                        text: "${widget.commentCount}", fontSize: 11.sp),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(
-              width: 15,
-            ),
-            InkWell(
-              onTap: () async {
-                setState(() {
-                  isCommentOpened = !isCommentOpened;
-                });
-
-                try {
-                  await getCommentViewModel.getCommentViewModel(
-                      id: widget.postId);
-                } catch (e) {
-                  CommonWidget.getSnackBar(
-                      color: Colors.red,
-                      duration: 2,
-                      colorText: Colors.white,
-                      title: "Something went wrong",
-                      message: 'Try Again.');
-                }
-              },
-              child: Row(
-                children: [
-                  Image.asset(
-                    "assets/png/comment.png",
-                    height: 17.sp,
-                    width: 17.sp,
-                  ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  CommonText.textBoldWight400(
-                      text: "${widget.commentCount}", fontSize: 11.sp),
-                ],
-              ),
-            ),
-          ],
-        ),
-        Visibility(
-          visible: isCommentOpened,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 30,
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    height: 40.sp,
-                    width: 40.sp,
-                    decoration: BoxDecoration(
-                        color: Colors.grey.shade300, shape: BoxShape.circle),
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(500),
-                        child: Image.network(
-                          'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${GetStorageServices.getUserImage()}',
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Icon(
-                            color: Colors.grey,
-                            Icons.person,
-                            size: 22.sp,
-                          ),
-                        )),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextFormField(
-                          onTap: () {
-                            controller.changeVisibility(true);
-                          },
-                          controller: commentController,
-                          maxLines: 2,
-                          decoration: InputDecoration(
-                            hintText: "Add a comment...",
-                            hintStyle: TextStyle(
-                              color: Color(0xffeaebed),
+            ],
+          ),
+          Visibility(
+            visible: isCommentOpened,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 30,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 40.sp,
+                      width: 40.sp,
+                      decoration: BoxDecoration(
+                          color: Colors.grey.shade300, shape: BoxShape.circle),
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(500),
+                          child: Image.network(
+                            'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${GetStorageServices.getUserImage()}',
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Icon(
+                              color: Colors.grey,
+                              Icons.person,
+                              size: 22.sp,
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(13),
-                              borderSide: BorderSide(
+                          )),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextFormField(
+                            onTap: () {
+                              controllerHFC.changeVisibility(true);
+                            },
+                            controller: commentController,
+                            maxLines: 2,
+                            decoration: InputDecoration(
+                              hintText: "Add a comment...",
+                              hintStyle: TextStyle(
                                 color: Color(0xffeaebed),
                               ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(13),
-                              borderSide: BorderSide(
-                                color: Color(0xffeaebed),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(13),
+                                borderSide: BorderSide(
+                                  color: Color(0xffeaebed),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(13),
+                                borderSide: BorderSide(
+                                  color: Color(0xffeaebed),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        InkWell(
-                          onTap: () async {
-                            if (commentController.text.isNotEmpty) {
-                              setState(
-                                () {},
-                              );
+                          SizedBox(
+                            height: 10,
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              if (commentController.text.isNotEmpty) {
+                                setState(
+                                  () {},
+                                );
 
-                              try {
-                                await addCommentViewModel.addCommentViewModel(
-                                    model: {
-                                      "postId": "${widget.postId}",
-                                      "text": commentController.text.trim()
-                                    });
+                                try {
+                                  await addCommentViewModel.addCommentViewModel(
+                                      model: {
+                                        "postId": "${widget.postId}",
+                                        "text": commentController.text.trim()
+                                      });
 
-                                if (addCommentViewModel
-                                        .addCommentApiResponse.status ==
-                                    Status.COMPLETE) {
-                                  await getCommentViewModel.getCommentViewModel(
-                                      id: widget.postId);
+                                  if (addCommentViewModel
+                                          .addCommentApiResponse.status ==
+                                      Status.COMPLETE) {
+                                    await getCommentViewModel
+                                        .getCommentViewModel(id: widget.postId);
 
-                                  getPostViewModel.getPostViewModel(
-                                      isLoading: false);
-                                }
-                                if (addCommentViewModel
-                                        .addCommentApiResponse.status ==
-                                    Status.ERROR) {
+                                    getPostViewModel.getPostViewModel(
+                                        isLoading: false);
+                                  }
+                                  if (addCommentViewModel
+                                          .addCommentApiResponse.status ==
+                                      Status.ERROR) {
+                                    CommonWidget.getSnackBar(
+                                        title: "Something went wrong",
+                                        duration: 2,
+                                        message: "try Again...",
+                                        color: Colors.red,
+                                        colorText: Colors.white);
+                                  }
+                                } catch (e) {
                                   CommonWidget.getSnackBar(
                                       title: "Something went wrong",
                                       duration: 2,
@@ -1534,127 +1520,123 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                                       color: Colors.red,
                                       colorText: Colors.white);
                                 }
-                              } catch (e) {
+                                //isCommentOpened = false;
+                                commentController.clear();
+
+                                controllerHFC.changeVisibility(false);
+                              } else {
+                                controllerHFC.changeVisibility(false);
+
                                 CommonWidget.getSnackBar(
-                                    title: "Something went wrong",
+                                    title: "Required",
                                     duration: 2,
-                                    message: "try Again...",
+                                    message: "Please enter your comment",
                                     color: Colors.red,
                                     colorText: Colors.white);
                               }
-                              //isCommentOpened = false;
-                              commentController.clear();
-
-                              controller.changeVisibility(false);
-                            } else {
-                              controller.changeVisibility(false);
-
-                              CommonWidget.getSnackBar(
-                                  title: "Required",
-                                  duration: 2,
-                                  message: "Please enter your comment",
-                                  color: Colors.red,
-                                  colorText: Colors.white);
-                            }
-                          },
-                          child: Container(
-                            height: 28.sp,
-                            width: 65,
-                            decoration: BoxDecoration(
-                              color: CommonColor.greenColor,
-                              borderRadius: BorderRadius.circular(3),
-                            ),
-                            child: Center(
-                              child: CommonText.textBoldWight500(
-                                text: "Post",
-                                color: Colors.white,
+                            },
+                            child: Container(
+                              height: 28.sp,
+                              width: 65,
+                              decoration: BoxDecoration(
+                                color: CommonColor.greenColor,
+                                borderRadius: BorderRadius.circular(3),
+                              ),
+                              child: Center(
+                                child: CommonText.textBoldWight500(
+                                  text: "Post",
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
-              GetBuilder<GetCommentViewModel>(
-                builder: (getController) {
-                  if (getController.getCommentApiResponse.status ==
-                      Status.LOADING) {
-                    return CommentShimmer();
-                  }
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+                GetBuilder<GetCommentViewModel>(
+                  builder: (getController) {
+                    if (getController.getCommentApiResponse.status ==
+                        Status.LOADING) {
+                      return CommentShimmer();
+                    }
 
-                  if (getController.getCommentApiResponse.status ==
-                      Status.COMPLETE) {
-                    GetCommentResponseModel getComment =
-                        getController.getCommentApiResponse.data;
+                    if (getController.getCommentApiResponse.status ==
+                        Status.COMPLETE) {
+                      GetCommentResponseModel getComment =
+                          getController.getCommentApiResponse.data;
 
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: getComment.data!.length,
-                      itemBuilder: (context, index) {
-                        return Column(
-                          children: [
-                            SizedBox(
-                              height: 15,
-                            ),
-                            Row(
-                              children: [
-                                Container(
-                                  height: 40.sp,
-                                  width: 40.sp,
-                                  decoration: BoxDecoration(
-                                      color: Colors.grey.shade300,
-                                      shape: BoxShape.circle),
-                                  child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(500),
-                                      child: Image.network(
-                                        'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${GetStorageServices.getUserImage()}',
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (context, error, stackTrace) =>
-                                                Icon(
-                                          color: Colors.grey,
-                                          Icons.person,
-                                          size: 22.sp,
-                                        ),
-                                      )),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    CommonText.textBoldWight500(
-                                        text:
-                                            "${getComment.data![index].userId!.name}",
-                                        fontSize: 12.sp),
-                                    SizedBox(
-                                      height: 3,
-                                    ),
-                                    CommonText.textBoldWight400(
-                                        text: "${getComment.data![index].text}",
-                                        color: Color(0xffa1a1a1),
-                                        fontSize: 10.sp),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
-                  return SizedBox();
-                },
-              ),
-            ],
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: getComment.data!.length,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                    height: 40.sp,
+                                    width: 40.sp,
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey.shade300,
+                                        shape: BoxShape.circle),
+                                    child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(500),
+                                        child: Image.network(
+                                          'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${GetStorageServices.getUserImage()}',
+                                          fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (context, error, stackTrace) =>
+                                                  Icon(
+                                            color: Colors.grey,
+                                            Icons.person,
+                                            size: 22.sp,
+                                          ),
+                                        )),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      CommonText.textBoldWight500(
+                                          text:
+                                              "${getComment.data![index].userId!.name}",
+                                          fontSize: 12.sp),
+                                      SizedBox(
+                                        height: 3,
+                                      ),
+                                      CommonText.textBoldWight400(
+                                          text:
+                                              "${getComment.data![index].text}",
+                                          color: Color(0xffa1a1a1),
+                                          fontSize: 10.sp),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                    return SizedBox();
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 }
 
