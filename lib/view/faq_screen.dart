@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'package:dotted_line/dotted_line.dart';
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/responseModel/all_faq_category_res_model.dart';
@@ -89,6 +90,7 @@ class _FAQScreenState extends State<FAQScreen> {
                         });
                       },
                       child: Container(
+                        height: 6.5.h,
                         margin: EdgeInsets.only(right: 4.w),
                         alignment: Alignment.center,
                         padding: EdgeInsets.symmetric(
@@ -124,7 +126,7 @@ class _FAQScreenState extends State<FAQScreen> {
                             controller.allFaqCategoryApiResponse.data;
 
                         return SizedBox(
-                            height: 5.h,
+                            height: 6.5.h,
                             child: Row(
                               children: List.generate(
                                 response.data!.length,

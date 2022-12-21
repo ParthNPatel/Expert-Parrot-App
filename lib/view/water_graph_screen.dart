@@ -130,10 +130,11 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                             ? 7
                             : response.data!.docs!.reversed.toList().length,
                         (index) => ChartData(
-                            weekDayCounter(response.data!.docs!.reversed
+                             weekDayCounter(response.data!.docs!.reversed
                                 .toList()[index]
                                 .date!
-                                .weekday),
+                                .weekday)
+                            ,
                             selectedIndex == 0
                                 ? response.data!.docs!.reversed
                                     .toList()[index]
@@ -148,6 +149,7 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
                                         .toList()[index]
                                         .largeBottle!
                                         .toDouble()));
+
                     return Column(
                       children: [
                         Container(

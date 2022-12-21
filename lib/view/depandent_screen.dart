@@ -163,7 +163,13 @@ class _DependentScreenState extends State<DependentScreen> {
                               ),
                               InkWell(
                                   onTap: () {
-                                    Get.to(() => MedicalReportScreen());
+                                    Get.to(() => MedicalReportScreen(
+                                        userImg:
+                                            "https://health-app-test.s3.ap-south-1.amazonaws.com/user/${response['data']['dependents'][currentIndex]['userId']['userImage']}",
+                                        userRelation:
+                                            "${response['data']['dependents'][currentIndex]['relation']}",
+                                        userName:
+                                            "${response['data']['dependents'][currentIndex]['userId']['name']}"));
                                   },
                                   child: Image.asset(ImageConst.checkbox)),
                               CommonWidget.commonSizedBox(height: 10),
@@ -187,8 +193,12 @@ class _DependentScreenState extends State<DependentScreen> {
                                   return overViewWidget(
                                     onTap: () {
                                       if (index == 0) {
-                                        Get.to(
-                                            () => DependentWaterGraphScreen());
+                                        Get.to(() => DependentWaterGraphScreen(
+                                              userName:
+                                                  "${response['data']['dependents'][currentIndex]['userId']['name']}",
+                                              userImg:
+                                                  "https://health-app-test.s3.ap-south-1.amazonaws.com/user/${response['data']['dependents'][currentIndex]['userId']['userImage']}",
+                                            ));
                                       }
                                     },
                                     name: overViewData[index]['name'],

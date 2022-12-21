@@ -6,11 +6,12 @@ import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
+import 'package:expert_parrot_app/view/water_graph_screen.dart';
 import 'package:expert_parrot_app/viewModel/get_heart_rate_view_model.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../components/common_widget.dart';
 import '../constant/color_const.dart';
@@ -70,9 +71,81 @@ class _HeartRateScreenState extends State<HeartRateScreen> {
                       Status.COMPLETE) {
                     GetHeartRateResponseModel response =
                         controller.getHeartRateApiResponse.data;
+
+                    final List<ChartData> chartData = List.generate(
+                        response.data!.docs!.reversed.toList().length >= 7
+                            ? 7
+                            : response.data!.docs!.reversed.toList().length,
+                        (index) => ChartData(
+                            weekDayCounter(response.data!.docs!.reversed
+                                .toList()[index]
+                                .date!
+                                .weekday),
+                            response.data!.docs!.reversed
+                                .toList()[index]
+                                .rate!
+                                .toDouble()));
+
                     return Column(
                       children: [
-                        graphWidget(response),
+                        Container(
+                          height: 270.sp,
+                          padding: EdgeInsets.symmetric(vertical: 20.sp),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 200.sp,
+                                child: SfCartesianChart(
+                                  series: <ChartSeries>[
+                                    SplineSeries<ChartData, String>(
+                                        dataSource: chartData,
+                                        xValueMapper: (ChartData data, _) =>
+                                            data.x,
+                                        yValueMapper: (ChartData data, _) =>
+                                            data.y,
+                                        color: CommonColor.greenColor)
+                                  ],
+                                  plotAreaBorderWidth: 0,
+                                  primaryXAxis: CategoryAxis(
+                                      arrangeByIndex: false,
+                                      opposedPosition: true,
+                                      axisLine: AxisLine(width: 0),
+                                      borderWidth: 0,
+                                      majorTickLines: MajorTickLines(size: 0),
+                                      minorTickLines: MinorTickLines(size: 0),
+                                      majorGridLines: MajorGridLines(width: 0),
+                                      minorGridLines: MinorGridLines(width: 0),
+                                      axisBorderType:
+                                          AxisBorderType.withoutTopAndBottom,
+                                      labelStyle: TextStyle(
+                                          color: CommonColor.greenColor,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 10.sp)),
+                                  primaryYAxis: CategoryAxis(isVisible: false),
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                      height: 12.sp,
+                                      width: 12.sp,
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: CommonColor.greenColor)),
+                                  SizedBox(width: 5.sp),
+                                  CommonText.textBoldWight500(
+                                      text: "Achieved",
+                                      fontSize: 13.sp,
+                                      color: CommonColor.blackColor0D0D0D),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
                         CommonWidget.commonSizedBox(height: 20),
                         Align(
                             alignment: Alignment.centerLeft,
@@ -189,7 +262,46 @@ class _HeartRateScreenState extends State<HeartRateScreen> {
     );
   }
 
-  Container graphWidget(GetHeartRateResponseModel response) {
+  String weekDayCounter(int dayNumber) {
+    String weekDay = "Mon";
+
+    switch (dayNumber) {
+      case 1:
+        weekDay = 'Mon';
+
+        break;
+      case 2:
+        weekDay = 'Tue';
+
+        break;
+      case 3:
+        weekDay = 'Wed';
+
+        break;
+      case 4:
+        weekDay = 'Thu';
+
+        break;
+      case 5:
+        weekDay = 'Fri';
+
+        break;
+      case 6:
+        weekDay = 'Sat';
+
+        break;
+      case 7:
+        weekDay = 'Sun';
+
+        break;
+      default:
+        return weekDay;
+    }
+
+    return weekDay;
+  }
+
+/*  Container graphWidget(GetHeartRateResponseModel response) {
     return Container(
         padding: EdgeInsets.symmetric(vertical: 10.sp),
         width: 90.w,
@@ -320,7 +432,7 @@ class _HeartRateScreenState extends State<HeartRateScreen> {
         showTitles: true,
         interval: 1,
         reservedSize: 40,
-      );
+      );*/
 
   Row header() {
     return Row(

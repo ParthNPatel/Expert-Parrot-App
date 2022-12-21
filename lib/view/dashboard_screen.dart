@@ -888,6 +888,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                       ),
                       TextFormField(
                         controller: _heightController,
+                        keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                             filled: true,
                             fillColor: Color(0xffF8F8F6),
@@ -909,6 +910,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                       ),
                       TextFormField(
                         controller: _weightController,
+                        keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                             filled: true,
                             fillColor: Color(0xffF8F8F6),

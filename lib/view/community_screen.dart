@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
@@ -105,20 +106,21 @@ class _CommunityScreenState extends State<CommunityScreen> {
                             id: ""));
                   }
 
-                  getPostViewModel.showDate.clear();
-
-                  getPostViewModel.post.forEach(
-                    (element) {
-                      if (getPostViewModel.showDate.contains(
-                              element.createdAt.toString().split(' ').first) ==
-                          false) {
-                        getPostViewModel.showDate
-                            .add(element.createdAt.toString().split(' ').first);
-                      }
-                    },
-                  );
-
                   return GetBuilder<GetPostViewModel>(builder: (controller) {
+                    controller.showDate.clear();
+
+                    controller.post.forEach(
+                      (element) {
+                        if (controller.showDate.contains(element.createdAt
+                                .toString()
+                                .split(' ')
+                                .first) ==
+                            false) {
+                          controller.showDate.add(
+                              element.createdAt.toString().split(' ').first);
+                        }
+                      },
+                    );
                     return Column(
                       children: [
                         Expanded(
@@ -139,7 +141,12 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                       selectedCatName =
                                           "${resp.data![index].name}";
                                     });
+
+                                    log("post ====== > ${controller.post}");
+
                                     controller.post.clear();
+
+                                    log("post clear ====== > ${controller.post}");
 
                                     await controller.getPostByPage(
                                         isRefresh: true,
@@ -388,6 +395,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                                           height: 13,
                                                         ),
                                                         LikeAndCommentWidget(
+                                                          catId:
+                                                              "${resp.data![selectedCat].id}",
                                                           post: controller.post,
                                                           index: index,
                                                           postId: controller
@@ -588,6 +597,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                                           height: 13,
                                                         ),
                                                         LikeAndCommentWidget(
+                                                          catId:
+                                                              "${resp.data![selectedCat].id}",
                                                           index: index,
                                                           post: controller.post,
                                                           postId: controller
@@ -1182,9 +1193,10 @@ class _CommunityScreenState extends State<CommunityScreen> {
                                             catIndex = 0;
                                             Get.back();
 
-                                            await getPostViewModel
-                                                .getPostViewModel(
-                                                    isLoading: true, catId: "");
+                                            await getPostViewModel.getPostByPage(
+                                                isRefresh: true,
+                                                catId:
+                                                    "${response.data![selectedCat].id}");
                                             CommonWidget.getSnackBar(
                                                 duration: 2,
                                                 color: CommonColor.greenColor,
@@ -1260,6 +1272,7 @@ class LikeAndCommentWidget extends StatefulWidget {
   int? commentCount;
   bool isLiked;
   String? postId;
+  String? catId;
   LikeAndCommentWidget(
       {required this.likeCount,
       required this.index,
@@ -1267,6 +1280,7 @@ class LikeAndCommentWidget extends StatefulWidget {
       required this.commentCount,
       required this.isLiked,
       required this.postId,
+      required this.catId,
       Key? key})
       : super(key: key);
 
@@ -1305,7 +1319,8 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                         model: {"type": "like", "postId": "${widget.postId}"});
                     if (likeUnLikeViewModel.likeApiResponse.status ==
                         Status.COMPLETE) {
-                      getPostViewModel.getPostViewModel(isLoading: false);
+                      controller.getPostByPage(
+                          isRefresh: false, catId: "${widget.catId}");
 
                       controller.post[widget.index!] = Post(
                           likes: controller.post[widget.index!].likes! + 1,
@@ -1336,7 +1351,8 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                     });
                     if (likeUnLikeViewModel.unlikeApiResponse.status ==
                         Status.COMPLETE) {
-                      getPostViewModel.getPostViewModel(isLoading: false);
+                      controller.getPostByPage(
+                          isRefresh: false, catId: "${widget.catId}");
                       controller.post[widget.index!] = Post(
                           likes: controller.post[widget.index!].likes! - 1,
                           id: controller.post[widget.index!].id,
@@ -1444,9 +1460,7 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                             ),
                           )),
                     ),
-                    SizedBox(
-                      width: 10,
-                    ),
+                    SizedBox(width: 10),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1464,9 +1478,8 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(13),
-                                borderSide: BorderSide(
-                                  color: Color(0xffeaebed),
-                                ),
+                                borderSide:
+                                    BorderSide(color: Color(0xffeaebed)),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(13),
@@ -1482,9 +1495,7 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                           InkWell(
                             onTap: () async {
                               if (commentController.text.isNotEmpty) {
-                                setState(
-                                  () {},
-                                );
+                                setState(() {});
 
                                 try {
                                   await addCommentViewModel.addCommentViewModel(
@@ -1499,8 +1510,9 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                                     await getCommentViewModel
                                         .getCommentViewModel(id: widget.postId);
 
-                                    getPostViewModel.getPostViewModel(
-                                        isLoading: false);
+                                    controller.getPostByPage(
+                                        isRefresh: false,
+                                        catId: "${widget.catId}");
                                   }
                                   if (addCommentViewModel
                                           .addCommentApiResponse.status ==
@@ -1508,7 +1520,7 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                                     CommonWidget.getSnackBar(
                                         title: "Something went wrong",
                                         duration: 2,
-                                        message: "try Again...",
+                                        message: "Try Again...",
                                         color: Colors.red,
                                         colorText: Colors.white);
                                   }
@@ -1516,7 +1528,7 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                                   CommonWidget.getSnackBar(
                                       title: "Something went wrong",
                                       duration: 2,
-                                      message: "try Again...",
+                                      message: "Try Again...",
                                       color: Colors.red,
                                       colorText: Colors.white);
                                 }
@@ -1574,9 +1586,7 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                         itemBuilder: (context, index) {
                           return Column(
                             children: [
-                              SizedBox(
-                                height: 15,
-                              ),
+                              SizedBox(height: 15),
                               Row(
                                 children: [
                                   Container(
@@ -1611,9 +1621,7 @@ class _LikeAndCommentWidgetState extends State<LikeAndCommentWidget> {
                                           text:
                                               "${getComment.data![index].userId!.name}",
                                           fontSize: 12.sp),
-                                      SizedBox(
-                                        height: 3,
-                                      ),
+                                      SizedBox(height: 3),
                                       CommonText.textBoldWight400(
                                           text:
                                               "${getComment.data![index].text}",

@@ -10,7 +10,7 @@ class GetReminderViewModel extends GetxController {
   ApiResponse get getReminderApiResponse => _getReminderApiResponse;
 
   Future<void> getReminderViewModel(
-      {String page = '1', String limit = '10'}) async {
+      {String page = '1', String limit = '300'}) async {
     _getReminderApiResponse = ApiResponse.loading(message: 'Loading');
     update();
     try {

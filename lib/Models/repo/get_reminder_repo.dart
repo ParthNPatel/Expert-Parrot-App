@@ -8,7 +8,7 @@ class GetReminderRepo extends BaseService {
   static Future<GetReminderResponseModel> getReminderRepo(
       {String? limit, String? page}) async {
     var response = await APIService().getResponse(
-      url: '${APIConst.getReminder}' /*limit=$limit&page=$page'*/,
+      url: '${APIConst.getReminder}limit=$limit&page=$page',
       apitype: APIType.aGet,
     );
     print('getReminderResponseModel response===>>>  $response');

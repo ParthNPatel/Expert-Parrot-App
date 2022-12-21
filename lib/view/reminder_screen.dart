@@ -20,39 +20,6 @@ class ReminderScreen extends StatefulWidget {
 }
 
 class _ReminderScreenState extends State<ReminderScreen> {
-  List reminders = [
-    {
-      'image': 'assets/png/capsule.png',
-      'title': 'Hey, Take Your Med (Softgel)',
-      'time': 'About 1 minutes ago',
-      'color': Color(0xffdeeaf4)
-    },
-    {
-      'image': 'assets/png/rest.png',
-      'title': 'Take Rest',
-      'time': 'About 3 hours ago',
-      'color': Color(0xffede7ee)
-    },
-    {
-      'image': 'assets/png/seringe.png',
-      'title': 'Hey, Novolin Inj Take or not?',
-      'time': 'About 3 hours ago',
-      'color': Color(0xfff1d9d4)
-    },
-    {
-      'image': 'assets/png/foot.png',
-      'title': 'Congratulations, You have...',
-      'time': '29 May',
-      'color': Color(0xffcef7f6)
-    },
-    {
-      'image': 'assets/png/watch.png',
-      'title': 'Hey, it’s time for lunch',
-      'time': '8 April',
-      'color': Color(0xfff3e9ec)
-    },
-  ];
-
   int medicineSelected = 0;
   int strengthSelected = 0;
   int daysSelected = 0;
@@ -121,9 +88,6 @@ class _ReminderScreenState extends State<ReminderScreen> {
               height: 13,
             ),
             CommonWidget.dottedLineWidget(),
-            SizedBox(
-              height: 23,
-            ),
             GetBuilder<GetReminderViewModel>(
               builder: (controller) {
                 if (controller.getReminderApiResponse.status ==
@@ -136,9 +100,12 @@ class _ReminderScreenState extends State<ReminderScreen> {
                       controller.getReminderApiResponse.data;
                   return Expanded(
                     child: ListView.separated(
+                      reverse: true,
+                      shrinkWrap: true,
                       physics: BouncingScrollPhysics(),
                       itemCount: responseModel.data!.docs!.length,
-                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 8.sp, vertical: 16.sp),
                       itemBuilder: (context, index) {
                         dynamic time1 =
                             responseModel.data!.docs![index].updatedAt;
@@ -156,9 +123,9 @@ class _ReminderScreenState extends State<ReminderScreen> {
                           children: [
                             CircleAvatar(
                               radius: 17.sp,
-                              backgroundColor: reminders[0]['color'],
+                              backgroundColor: Color(0xffdeeaf4),
                               child: Image.asset(
-                                reminders[0]['image'],
+                                'assets/png/capsule.png',
                                 height: 17.sp,
                                 width: 17.sp,
                               ),

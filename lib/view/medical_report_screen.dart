@@ -6,10 +6,20 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
+
 import '../components/common_widget.dart';
 
 class MedicalReportScreen extends StatefulWidget {
-  const MedicalReportScreen({Key? key}) : super(key: key);
+  final String userName;
+  final String userImg;
+  final String userRelation;
+
+  MedicalReportScreen(
+      {Key? key,
+      required this.userName,
+      required this.userImg,
+      required this.userRelation})
+      : super(key: key);
 
   @override
   State<MedicalReportScreen> createState() => _MedicalReportScreenState();
@@ -1452,18 +1462,20 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
               border: Border.all(color: CommonColor.greenColor, width: 2),
               shape: BoxShape.circle),
           width: 44.sp,
-          child: Image.asset(ImageConst.profile2),
+          child: ClipRRect(
+              borderRadius: BorderRadius.circular(100.h),
+              child: Image.network(widget.userImg,fit: BoxFit.cover,)),
         ),
         CommonWidget.commonSizedBox(width: 10),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CommonText.textBoldWight500(
-                text: 'Ellaa',
+                text: '${widget.userName.capitalizeFirst}',
                 fontSize: 12.sp,
                 color: CommonColor.blackColor1B1B1B),
             CommonText.textBoldWight500(
-                text: 'Daughter',
+                text: '${widget.userRelation}',
                 fontSize: 9.sp,
                 color: CommonColor.gery72777A),
           ],
@@ -1486,7 +1498,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
         ],
       ),
       title: CommonText.textBoldWight500(
-          text: "Ella Medical Report",
+          text: "${widget.userName.capitalizeFirst}'s Medical Report",
           fontSize: 16.sp,
           color: CommonColor.blackButtonColor1E232C),
       centerTitle: true,
