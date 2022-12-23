@@ -1,6 +1,7 @@
-import 'dart:developer';
+import 'dart:math' as math;
 
 import 'package:dotted_line/dotted_line.dart';
+import 'package:expert_parrot_app/Models/responseModel/dependents_response_model.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
@@ -10,6 +11,8 @@ import 'package:expert_parrot_app/view/demo/search_user.dart';
 import 'package:expert_parrot_app/view/dependent_water_graph.dart';
 import 'package:expert_parrot_app/view/medical_report_screen.dart';
 import 'package:expert_parrot_app/viewModel/get_dependent_view_model.dart';
+import 'package:expert_parrot_app/viewModel/get_glass_view_model.dart';
+import 'package:expert_parrot_app/viewModel/get_heart_rate_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
@@ -78,6 +81,9 @@ class _DependentScreenState extends State<DependentScreen> {
 
   GetDependentViewModel getDependentViewModel =
       Get.put(GetDependentViewModel());
+  GetGlassViewModel getGlassViewModel = Get.put(GetGlassViewModel());
+  GetHeartRateViewModel getHeartRateViewModel =
+      Get.put(GetHeartRateViewModel());
   @override
   void initState() {
     getDependentViewModel.getDependentViewModel();
@@ -132,10 +138,10 @@ class _DependentScreenState extends State<DependentScreen> {
                       }
                       if (controller.getDependentApiResponse.status ==
                           Status.COMPLETE) {
-                        var response = controller.getDependentApiResponse.data;
-                        log('DAT OF API :- ${response}');
-                        if ((response['data']['dependents'] as List).length >
-                            0) {
+                        DependentsResponseModel response =
+                            controller.getDependentApiResponse.data;
+
+                        if (response.data!.dependents!.length > 0) {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -152,8 +158,7 @@ class _DependentScreenState extends State<DependentScreen> {
                                     scrollDirection: Axis.horizontal,
                                     shrinkWrap: true,
                                     itemCount:
-                                        (response['data']['dependents'] as List)
-                                            .length,
+                                        response.data!.dependents!.length,
                                     itemBuilder: (context, index) {
                                       return horizontalListWidget(
                                           index, response);
@@ -165,11 +170,11 @@ class _DependentScreenState extends State<DependentScreen> {
                                   onTap: () {
                                     Get.to(() => MedicalReportScreen(
                                         userImg:
-                                            "https://health-app-test.s3.ap-south-1.amazonaws.com/user/${response['data']['dependents'][currentIndex]['userId']['userImage']}",
+                                            "https://health-app-test.s3.ap-south-1.amazonaws.com/user/${response.data!.dependents![currentIndex].userId!.userImage!}",
                                         userRelation:
-                                            "${response['data']['dependents'][currentIndex]['relation']}",
+                                            "${response.data!.dependents![currentIndex].relation}",
                                         userName:
-                                            "${response['data']['dependents'][currentIndex]['userId']['name']}"));
+                                            "${response.data!.dependents![currentIndex].userId!.name!}"));
                                   },
                                   child: Image.asset(ImageConst.checkbox)),
                               CommonWidget.commonSizedBox(height: 10),
@@ -194,22 +199,24 @@ class _DependentScreenState extends State<DependentScreen> {
                                     onTap: () {
                                       if (index == 0) {
                                         Get.to(() => DependentWaterGraphScreen(
+                                              userId:
+                                                  "${response.data!.dependents![currentIndex].userId!.id}",
                                               userName:
-                                                  "${response['data']['dependents'][currentIndex]['userId']['name']}",
+                                                  "${response.data!.dependents![currentIndex].userId!.name}",
                                               userImg:
-                                                  "https://health-app-test.s3.ap-south-1.amazonaws.com/user/${response['data']['dependents'][currentIndex]['userId']['userImage']}",
+                                                  "https://health-app-test.s3.ap-south-1.amazonaws.com/user/${response.data!.dependents![currentIndex].userId!.userImage}",
                                             ));
                                       }
                                     },
                                     name: overViewData[index]['name'],
                                     image: overViewData[index]['image'],
                                     medGm: index == 0
-                                        ? '${response['data']['dependents'][currentIndex]['userId']['water'] ?? 'Not Set'}'
+                                        ? '${response.data!.dependents![currentIndex].userId!.weight ?? 'Not Set'}'
                                         : index == 1
-                                            ? '${response['data']['dependents'][currentIndex]['userId']['weight'] ?? 'Not Set'}'
+                                            ? '${response.data!.dependents![currentIndex].userId!.weight ?? 'Not Set'}'
                                             : index == 2
-                                                ? '${response['data']['dependents'][currentIndex]['userId']['heartRate'] ?? 'Not Set'}'
-                                                : '${response['data']['dependents'][currentIndex]['userId']['bmi'] ?? 'Not Set'}',
+                                                ? '${response.data!.dependents![currentIndex].userId!.height ?? 'Not Set'}'
+                                                : '${(response.data!.dependents![currentIndex].userId!.weight! / math.pow((response.data!.dependents![currentIndex].userId!.height! / 100), 2)).toStringAsFixed(1) ?? 'Not Set'}',
                                     type: overViewData[index]
                                         ['name_of_subject'],
                                     color: overViewData[index]['color'],
@@ -298,15 +305,23 @@ class _DependentScreenState extends State<DependentScreen> {
     );
   }
 
-  Padding horizontalListWidget(int index, response) {
+  Padding horizontalListWidget(int index, DependentsResponseModel response) {
     return Padding(
       padding: EdgeInsets.all(8.0),
       child: Column(
         children: [
           GestureDetector(
             onTap: () {
-              currentIndex = index;
-              setState(() {});
+              setState(() {
+                currentIndex = index;
+              });
+
+              getGlassViewModel.getGlassViewModel(
+                  isLoading: false,
+                  userId: response.data!.dependents![index].userId!.id);
+              getHeartRateViewModel.getHeartRateViewModel(
+                  isLoading: false,
+                  userId: response.data!.dependents![index].userId!.id);
             },
             child: Column(
               children: [
@@ -321,7 +336,7 @@ class _DependentScreenState extends State<DependentScreen> {
                           width: index == currentIndex ? 2 : 0),
                       image: DecorationImage(
                         image: NetworkImage(
-                          'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${response['data']['dependents'][index]['userId']['userImage']}',
+                          'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${response.data!.dependents![index].userId!.userImage!}',
                         ),
                         fit: BoxFit.cover,
                       ),
@@ -329,12 +344,11 @@ class _DependentScreenState extends State<DependentScreen> {
                   width: 44.sp,
                 ),
                 CommonText.textBoldWight500(
-                    text:
-                        '${response['data']['dependents'][index]['userId']['name']}',
+                    text: '${response.data!.dependents![index].userId!.name!}',
                     fontSize: 12.sp,
                     color: CommonColor.blackColor1B1B1B),
                 CommonText.textBoldWight500(
-                  text: '${response['data']['dependents'][index]['relation']}',
+                  text: '${response.data!.dependents![index].relation!}',
                   fontSize: 9.sp,
                   color: CommonColor.gery72777A,
                 ),

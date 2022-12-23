@@ -42,8 +42,8 @@ class Data {
 
   List<Doc>? docs;
   int? total;
-  int? limit;
-  int? page;
+  String? limit;
+  String? page;
   int? pages;
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(

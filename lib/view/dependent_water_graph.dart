@@ -18,8 +18,12 @@ import '../constant/color_const.dart';
 class DependentWaterGraphScreen extends StatefulWidget {
   final String userName;
   final String userImg;
+  final String userId;
   DependentWaterGraphScreen(
-      {Key? key, required this.userName, required this.userImg})
+      {Key? key,
+      required this.userName,
+      required this.userImg,
+      required this.userId})
       : super(key: key);
 
   @override
@@ -45,7 +49,7 @@ class _DependentWaterGraphScreenState extends State<DependentWaterGraphScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getGlassViewModel.getGlassViewModel();
+    getGlassViewModel.getGlassViewModel(userId: widget.userId);
   }
 
   @override

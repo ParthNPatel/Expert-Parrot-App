@@ -5,11 +5,13 @@ import '../services/api_services.dart';
 import '../services/base_service.dart';
 
 class GetHeartRateRepo extends BaseService {
-  static Future<GetHeartRateResponseModel> getHeartRateRepo() async {
+  static Future<GetHeartRateResponseModel> getHeartRateRepo(
+      {String? userId}) async {
     print('LINK response===>>>  ${APIConst.addMedicine}');
 
-    var response = await APIService()
-        .getResponse(url: '${APIConst.heartRate}', apitype: APIType.aGet);
+    var response = await APIService().getResponse(
+        url: '${APIConst.heartRate}?dependentId=$userId',
+        apitype: APIType.aGet);
 
     print('GetHeartRate response===>>>  $response');
 

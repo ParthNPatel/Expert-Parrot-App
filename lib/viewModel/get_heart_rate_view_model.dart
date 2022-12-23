@@ -9,14 +9,15 @@ class GetHeartRateViewModel extends GetxController {
 
   ApiResponse get getHeartRateApiResponse => _getHeartRateApiResponse;
 
-  Future<void> getHeartRateViewModel({bool isLoading = true}) async {
+  Future<void> getHeartRateViewModel(
+      {bool isLoading = true, String? userId}) async {
     if (isLoading) {
       _getHeartRateApiResponse = ApiResponse.loading(message: 'Loading');
     }
     // update();
     try {
       GetHeartRateResponseModel response =
-          await GetHeartRateRepo.getHeartRateRepo();
+          await GetHeartRateRepo.getHeartRateRepo(userId: userId);
       print("GetHeartRateResponseModel=response==>$response");
 
       _getHeartRateApiResponse = ApiResponse.complete(response);
