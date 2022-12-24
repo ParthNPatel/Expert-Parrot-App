@@ -50,7 +50,7 @@ class CommonText {
     );
   }
 
-  static textBoldWight600(
+  static Text textBoldWight600(
       {required String text,
       double? fontSize,
       Color? color,

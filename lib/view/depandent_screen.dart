@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:dotted_line/dotted_line.dart';
 import 'package:expert_parrot_app/Models/responseModel/dependents_response_model.dart';
+import 'package:expert_parrot_app/Models/responseModel/get_glass_res_model.dart';
+import 'package:expert_parrot_app/Models/responseModel/get_heart_rate_res_model.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
@@ -84,9 +86,12 @@ class _DependentScreenState extends State<DependentScreen> {
   GetGlassViewModel getGlassViewModel = Get.put(GetGlassViewModel());
   GetHeartRateViewModel getHeartRateViewModel =
       Get.put(GetHeartRateViewModel());
+
+  GetGlassResponseModel? glassResponse;
+  GetHeartRateResponseModel? heartRateResponse;
   @override
   void initState() {
-    getDependentViewModel.getDependentViewModel();
+    apiCall();
     super.initState();
   }
 
@@ -95,6 +100,27 @@ class _DependentScreenState extends State<DependentScreen> {
     // TODO: implement dispose
     super.dispose();
     _emailOrMobileController.dispose();
+  }
+
+  apiCall() async {
+    await getDependentViewModel.getDependentViewModel();
+
+    DependentsResponseModel response =
+        getDependentViewModel.getDependentApiResponse.data;
+
+    if (response.data!.dependents!.isNotEmpty &&
+        response.data!.dependents != []) {
+      await getGlassViewModel.getGlassViewModel(
+          isLoading: false,
+          userId: response.data!.dependents!.first.userId!.id);
+
+      await getHeartRateViewModel.getHeartRateViewModel(
+          isLoading: false,
+          userId: response.data!.dependents!.first.userId!.id);
+
+      glassResponse = getGlassViewModel.getGlassApiResponse.data;
+      heartRateResponse = getHeartRateViewModel.getHeartRateApiResponse.data;
+    }
   }
 
   @override
@@ -145,9 +171,7 @@ class _DependentScreenState extends State<DependentScreen> {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(
-                                height: 15,
-                              ),
+                              SizedBox(height: 15),
                               Align(
                                 alignment: Alignment.center,
                                 child: Container(
@@ -210,13 +234,7 @@ class _DependentScreenState extends State<DependentScreen> {
                                     },
                                     name: overViewData[index]['name'],
                                     image: overViewData[index]['image'],
-                                    medGm: index == 0
-                                        ? '${response.data!.dependents![currentIndex].userId!.weight ?? 'Not Set'}'
-                                        : index == 1
-                                            ? '${response.data!.dependents![currentIndex].userId!.weight ?? 'Not Set'}'
-                                            : index == 2
-                                                ? '${response.data!.dependents![currentIndex].userId!.height ?? 'Not Set'}'
-                                                : '${(response.data!.dependents![currentIndex].userId!.weight! / math.pow((response.data!.dependents![currentIndex].userId!.height! / 100), 2)).toStringAsFixed(1) ?? 'Not Set'}',
+                                    medGm: buildShowText(index, response),
                                     type: overViewData[index]
                                         ['name_of_subject'],
                                     color: overViewData[index]['color'],
@@ -305,23 +323,46 @@ class _DependentScreenState extends State<DependentScreen> {
     );
   }
 
+  Widget buildShowText(int index, DependentsResponseModel response) {
+    try {
+      return showText(
+        index == 0
+            ? '${response.data!.dependents![currentIndex].userId!.weight ?? 'Not Set'}'
+            : index == 1
+                ? '${response.data!.dependents![currentIndex].userId!.weight ?? 'Not Set'}'
+                : index == 2
+                    ? '${response.data!.dependents![currentIndex].userId!.weight ?? 'Not Set'}'
+                    : '${(response.data!.dependents![currentIndex].userId!.weight! / math.pow((response.data!.dependents![currentIndex].userId!.height! / 100), 2)).toStringAsFixed(1).isNotEmpty ? (response.data!.dependents![currentIndex].userId!.weight! / math.pow((response.data!.dependents![currentIndex].userId!.height! / 100), 2)).toStringAsFixed(1) : 0}',
+      );
+    } catch (e) {
+      return SizedBox();
+    }
+  }
+
   Padding horizontalListWidget(int index, DependentsResponseModel response) {
     return Padding(
       padding: EdgeInsets.all(8.0),
       child: Column(
         children: [
           GestureDetector(
-            onTap: () {
+            onTap: () async {
               setState(() {
                 currentIndex = index;
               });
 
-              getGlassViewModel.getGlassViewModel(
+              await getGlassViewModel.getGlassViewModel(
                   isLoading: false,
                   userId: response.data!.dependents![index].userId!.id);
-              getHeartRateViewModel.getHeartRateViewModel(
+
+              await getHeartRateViewModel.getHeartRateViewModel(
                   isLoading: false,
                   userId: response.data!.dependents![index].userId!.id);
+
+              setState(() {
+                glassResponse = getGlassViewModel.getGlassApiResponse.data;
+                heartRateResponse =
+                    getHeartRateViewModel.getHeartRateApiResponse.data;
+              });
             },
             child: Column(
               children: [
@@ -336,7 +377,7 @@ class _DependentScreenState extends State<DependentScreen> {
                           width: index == currentIndex ? 2 : 0),
                       image: DecorationImage(
                         image: NetworkImage(
-                          'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${response.data!.dependents![index].userId!.userImage!}',
+                          'https://health-app-test.s3.ap-south-1.amazonaws.com/user/${response.data!.dependents![index].userId!.userImage}',
                         ),
                         fit: BoxFit.cover,
                       ),
@@ -393,7 +434,7 @@ class _DependentScreenState extends State<DependentScreen> {
 
   Widget overViewWidget({
     required String name,
-    required String medGm,
+    required Widget medGm,
     required String type,
     required String image,
     required Color color,
@@ -423,10 +464,7 @@ class _DependentScreenState extends State<DependentScreen> {
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          CommonText.textBoldWight600(
-                              text: medGm,
-                              color: CommonColor.blackColor1D253C,
-                              fontSize: 15.sp),
+                          medGM(medGm),
                           CommonText.textBoldWight500(
                               text: type,
                               color:
@@ -445,5 +483,23 @@ class _DependentScreenState extends State<DependentScreen> {
             ],
           )),
     );
+  }
+
+  Widget medGM(Widget medGm) {
+    try {
+      return medGm;
+    } catch (e) {
+      return SizedBox();
+    }
+  }
+
+  Text showText(String medGm) {
+    try {
+      return CommonText.textBoldWight600(
+          text: medGm, color: CommonColor.blackColor1D253C, fontSize: 15.sp);
+    } catch (e) {
+      return CommonText.textBoldWight600(
+          text: "", color: CommonColor.blackColor1D253C, fontSize: 15.sp);
+    }
   }
 }
