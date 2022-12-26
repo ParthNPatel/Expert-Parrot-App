@@ -6,10 +6,10 @@ import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
-import 'package:expert_parrot_app/view/water_graph_screen.dart';
 import 'package:expert_parrot_app/viewModel/get_heart_rate_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -77,10 +77,10 @@ class _HeartRateScreenState extends State<HeartRateScreen> {
                             ? 7
                             : response.data!.docs!.reversed.toList().length,
                         (index) => ChartData(
-                            weekDayCounter(response.data!.docs!.reversed
+                            DateFormat("dd MMM").format(response
+                                .data!.docs!.reversed
                                 .toList()[index]
-                                .date!
-                                .weekday),
+                                .date!),
                             response.data!.docs!.reversed
                                 .toList()[index]
                                 .rate!
@@ -566,4 +566,10 @@ class _HeartRateScreenState extends State<HeartRateScreen> {
       ],
     );
   }
+}
+
+class ChartData {
+  ChartData(this.x, this.y);
+  final String x;
+  final double? y;
 }

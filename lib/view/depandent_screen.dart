@@ -17,6 +17,7 @@ import 'package:expert_parrot_app/viewModel/get_glass_view_model.dart';
 import 'package:expert_parrot_app/viewModel/get_heart_rate_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:sizer/sizer.dart';
 
 import '../Models/apis/api_response.dart';
@@ -87,8 +88,6 @@ class _DependentScreenState extends State<DependentScreen> {
   GetHeartRateViewModel getHeartRateViewModel =
       Get.put(GetHeartRateViewModel());
 
-  GetGlassResponseModel? glassResponse;
-  GetHeartRateResponseModel? heartRateResponse;
   @override
   void initState() {
     apiCall();
@@ -117,9 +116,6 @@ class _DependentScreenState extends State<DependentScreen> {
       await getHeartRateViewModel.getHeartRateViewModel(
           isLoading: false,
           userId: response.data!.dependents!.first.userId!.id);
-
-      glassResponse = getGlassViewModel.getGlassApiResponse.data;
-      heartRateResponse = getHeartRateViewModel.getHeartRateApiResponse.data;
     }
   }
 
@@ -219,26 +215,127 @@ class _DependentScreenState extends State<DependentScreen> {
                                         crossAxisCount: 2,
                                         childAspectRatio: 2 / 1.5),
                                 itemBuilder: (context, index) {
-                                  return overViewWidget(
-                                    onTap: () {
-                                      if (index == 0) {
-                                        Get.to(() => DependentWaterGraphScreen(
-                                              userId:
-                                                  "${response.data!.dependents![currentIndex].userId!.id}",
-                                              userName:
-                                                  "${response.data!.dependents![currentIndex].userId!.name}",
-                                              userImg:
-                                                  "https://health-app-test.s3.ap-south-1.amazonaws.com/user/${response.data!.dependents![currentIndex].userId!.userImage}",
-                                            ));
-                                      }
-                                    },
-                                    name: overViewData[index]['name'],
-                                    image: overViewData[index]['image'],
-                                    medGm: buildShowText(index, response),
-                                    type: overViewData[index]
-                                        ['name_of_subject'],
-                                    color: overViewData[index]['color'],
-                                  );
+                                  return index == 0
+                                      ? GetBuilder<GetGlassViewModel>(
+                                          builder: (controllerGlass) {
+                                          if (controllerGlass
+                                                  .getGlassApiResponse.status ==
+                                              Status.LOADING) {
+                                            return overViewShimmer();
+                                          }
+
+                                          if (controllerGlass
+                                                  .getGlassApiResponse.status ==
+                                              Status.COMPLETE) {
+                                            GetGlassResponseModel respGlass =
+                                                controllerGlass
+                                                    .getGlassApiResponse.data;
+
+                                            return overViewWidget(
+                                              onTap: () {
+                                                Get.to(() =>
+                                                    DependentWaterGraphScreen(
+                                                      userId:
+                                                          "${response.data!.dependents![currentIndex].userId!.id}",
+                                                      userName:
+                                                          "${response.data!.dependents![currentIndex].userId!.name}",
+                                                      userImg:
+                                                          "https://health-app-test.s3.ap-south-1.amazonaws.com/user/${response.data!.dependents![currentIndex].userId!.userImage}",
+                                                    ));
+                                              },
+                                              name: overViewData[index]['name'],
+                                              image: overViewData[index]
+                                                  ['image'],
+                                              medGm:
+                                                  '${respGlass.data!.docs!.first.glass!.toInt() + respGlass.data!.docs!.first.bottle!.toInt() + respGlass.data!.docs!.first.largeBottle!.toInt()}',
+                                              type: overViewData[index]
+                                                  ['name_of_subject'],
+                                              color: overViewData[index]
+                                                  ['color'],
+                                            );
+                                          } else
+                                            return overViewWidget(
+                                              onTap: () {},
+                                              name: overViewData[index]['name'],
+                                              image: overViewData[index]
+                                                  ['image'],
+                                              medGm: 'Not Set',
+                                              type: overViewData[index]
+                                                  ['name_of_subject'],
+                                              color: overViewData[index]
+                                                  ['color'],
+                                            );
+                                        })
+                                      : index == 2
+                                          ? GetBuilder<GetHeartRateViewModel>(
+                                              builder: (controllerHeart) {
+                                              if (controllerHeart
+                                                      .getHeartRateApiResponse
+                                                      .status ==
+                                                  Status.LOADING) {
+                                                return overViewShimmer();
+                                              }
+
+                                              if (controllerHeart
+                                                      .getHeartRateApiResponse
+                                                      .status ==
+                                                  Status.COMPLETE) {
+                                                GetHeartRateResponseModel
+                                                    heartResp = controllerHeart
+                                                        .getHeartRateApiResponse
+                                                        .data;
+                                                return overViewWidget(
+                                                  onTap: () {},
+                                                  name: overViewData[index]
+                                                      ['name'],
+                                                  image: overViewData[index]
+                                                      ['image'],
+                                                  medGm:
+                                                      '${heartResp.data!.docs!.first.rate ?? 'Not Set'}',
+                                                  type: overViewData[index]
+                                                      ['name_of_subject'],
+                                                  color: overViewData[index]
+                                                      ['color'],
+                                                );
+                                              } else
+                                                return overViewWidget(
+                                                  onTap: () {},
+                                                  name: overViewData[index]
+                                                      ['name'],
+                                                  image: overViewData[index]
+                                                      ['image'],
+                                                  medGm: 'Not Set',
+                                                  type: overViewData[index]
+                                                      ['name_of_subject'],
+                                                  color: overViewData[index]
+                                                      ['color'],
+                                                );
+                                            })
+                                          : overViewWidget(
+                                              onTap: () {
+                                                if (index == 0) {
+                                                  Get.to(() =>
+                                                      DependentWaterGraphScreen(
+                                                        userId:
+                                                            "${response.data!.dependents![currentIndex].userId!.id}",
+                                                        userName:
+                                                            "${response.data!.dependents![currentIndex].userId!.name}",
+                                                        userImg:
+                                                            "https://health-app-test.s3.ap-south-1.amazonaws.com/user/${response.data!.dependents![currentIndex].userId!.userImage}",
+                                                      ));
+                                                }
+                                              },
+                                              name: overViewData[index]['name'],
+                                              image: overViewData[index]
+                                                  ['image'],
+                                              medGm: index == 1
+                                                  ? '${response.data!.dependents![currentIndex].userId!.weight ?? 'Not Set'}'
+                                                  : '${(response.data!.dependents![currentIndex].userId!.weight! / math.pow((response.data!.dependents![currentIndex].userId!.height! / 100), 2)).toStringAsFixed(1).isNotEmpty ? (response.data!.dependents![currentIndex].userId!.weight! / math.pow((response.data!.dependents![currentIndex].userId!.height! / 100), 2)).toStringAsFixed(1) : 0}',
+                                              type: overViewData[index]
+                                                  ['name_of_subject'],
+                                              color: overViewData[index]
+                                                  ['color'],
+                                            );
                                 },
                               ),
                               CommonWidget.commonSizedBox(height: 30),
@@ -323,20 +420,18 @@ class _DependentScreenState extends State<DependentScreen> {
     );
   }
 
-  Widget buildShowText(int index, DependentsResponseModel response) {
-    try {
-      return showText(
-        index == 0
-            ? '${response.data!.dependents![currentIndex].userId!.weight ?? 'Not Set'}'
-            : index == 1
-                ? '${response.data!.dependents![currentIndex].userId!.weight ?? 'Not Set'}'
-                : index == 2
-                    ? '${response.data!.dependents![currentIndex].userId!.weight ?? 'Not Set'}'
-                    : '${(response.data!.dependents![currentIndex].userId!.weight! / math.pow((response.data!.dependents![currentIndex].userId!.height! / 100), 2)).toStringAsFixed(1).isNotEmpty ? (response.data!.dependents![currentIndex].userId!.weight! / math.pow((response.data!.dependents![currentIndex].userId!.height! / 100), 2)).toStringAsFixed(1) : 0}',
-      );
-    } catch (e) {
-      return SizedBox();
-    }
+  Shimmer overViewShimmer() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade400,
+      child: Container(
+        height: 16.h,
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+        decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(16)),
+      ),
+    );
   }
 
   Padding horizontalListWidget(int index, DependentsResponseModel response) {
@@ -358,11 +453,11 @@ class _DependentScreenState extends State<DependentScreen> {
                   isLoading: false,
                   userId: response.data!.dependents![index].userId!.id);
 
-              setState(() {
+              /*        setState(() {
                 glassResponse = getGlassViewModel.getGlassApiResponse.data;
                 heartRateResponse =
                     getHeartRateViewModel.getHeartRateApiResponse.data;
-              });
+              });*/
             },
             child: Column(
               children: [
@@ -434,7 +529,7 @@ class _DependentScreenState extends State<DependentScreen> {
 
   Widget overViewWidget({
     required String name,
-    required Widget medGm,
+    required String medGm,
     required String type,
     required String image,
     required Color color,
@@ -464,7 +559,10 @@ class _DependentScreenState extends State<DependentScreen> {
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          medGM(medGm),
+                          CommonText.textBoldWight600(
+                              text: medGm,
+                              color: CommonColor.blackColor1D253C,
+                              fontSize: 15.sp),
                           CommonText.textBoldWight500(
                               text: type,
                               color:
@@ -483,23 +581,5 @@ class _DependentScreenState extends State<DependentScreen> {
             ],
           )),
     );
-  }
-
-  Widget medGM(Widget medGm) {
-    try {
-      return medGm;
-    } catch (e) {
-      return SizedBox();
-    }
-  }
-
-  Text showText(String medGm) {
-    try {
-      return CommonText.textBoldWight600(
-          text: medGm, color: CommonColor.blackColor1D253C, fontSize: 15.sp);
-    } catch (e) {
-      return CommonText.textBoldWight600(
-          text: "", color: CommonColor.blackColor1D253C, fontSize: 15.sp);
-    }
   }
 }

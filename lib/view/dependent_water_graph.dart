@@ -9,6 +9,7 @@ import 'package:expert_parrot_app/viewModel/add_glass_view_model.dart';
 import 'package:expert_parrot_app/viewModel/get_glass_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -98,10 +99,10 @@ class _DependentWaterGraphScreenState extends State<DependentWaterGraphScreen> {
                             ? 7
                             : response.data!.docs!.reversed.toList().length,
                         (index) => ChartData(
-                            weekDayCounter(response.data!.docs!.reversed
+                            DateFormat("dd MMM").format(response
+                                .data!.docs!.reversed
                                 .toList()[index]
-                                .date!
-                                .weekday),
+                                .date!),
                             selectedIndex == 0
                                 ? response.data!.docs!.reversed
                                     .toList()[index]

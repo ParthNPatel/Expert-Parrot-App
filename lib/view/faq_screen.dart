@@ -26,8 +26,7 @@ class FAQScreen extends StatefulWidget {
 class _FAQScreenState extends State<FAQScreen> {
   List<String> menu = ["All", 'General', 'Account', 'Service', 'Application'];
 
-  int selectMenu = -1;
-  int isAllSelected = 0;
+  int selectMenu = 0;
 
   bool value = false;
   TextEditingController search = TextEditingController();
@@ -49,7 +48,7 @@ class _FAQScreenState extends State<FAQScreen> {
     AllFaqCategoryResponseModel resp =
         allFaqCategoryViewModel.allFaqCategoryApiResponse.data;
 
-    getFaqViewModel.getFaqViewModel(id: resp.data![0].sId!);
+    await getFaqViewModel.getFaqViewModel(id: resp.data![0].sId!);
   }
 
   @override
@@ -59,6 +58,7 @@ class _FAQScreenState extends State<FAQScreen> {
       body: CommonWidget.commonBackGround(
         body: Center(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CommonWidget.faqHeader(
                   backOnTap: () {
@@ -80,97 +80,64 @@ class _FAQScreenState extends State<FAQScreen> {
               CommonWidget.commonSizedBox(height: 27.sp),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isAllSelected = 0;
-                          selectMenu = -1;
-                        });
-                      },
-                      child: Container(
-                        height: 6.5.h,
-                        margin: EdgeInsets.only(right: 4.w),
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 20.sp, vertical: 8.sp),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100.h),
-                          color: isAllSelected == 0
-                              ? CommonColor.greenColor
-                              : Colors.transparent,
-                          border: Border.all(
-                            color: CommonColor.greenColor,
-                          ),
-                        ),
-                        child: CommonText.textBoldWight600(
-                            text: 'All',
-                            color: isAllSelected == 0
-                                ? CommonColor.whiteColorEDEDED
-                                : CommonColor.blackColor0D0D0D),
-                      ),
-                    ),
+                child:
                     GetBuilder<AllFaqCategoryViewModel>(builder: (controller) {
-                      if (controller.allFaqCategoryApiResponse.status ==
-                          Status.ERROR) {
-                        return Center(
-                          child: CircularProgressIndicator(
-                              color: CommonColor.greenColor),
-                        );
-                      }
+                  if (controller.allFaqCategoryApiResponse.status ==
+                      Status.ERROR) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                          color: CommonColor.greenColor),
+                    );
+                  }
 
-                      if (controller.allFaqCategoryApiResponse.status ==
-                          Status.COMPLETE) {
-                        AllFaqCategoryResponseModel response =
-                            controller.allFaqCategoryApiResponse.data;
+                  if (controller.allFaqCategoryApiResponse.status ==
+                      Status.COMPLETE) {
+                    AllFaqCategoryResponseModel response =
+                        controller.allFaqCategoryApiResponse.data;
 
-                        return SizedBox(
-                            height: 6.5.h,
-                            child: Row(
-                              children: List.generate(
-                                response.data!.length,
-                                (index) => GestureDetector(
-                                  onTap: () async {
-                                    setState(() {
-                                      selectMenu = index;
-                                    });
-                                    isAllSelected = 1;
+                    return SizedBox(
+                        height: 6.5.h,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: List.generate(
+                            response.data!.length,
+                            (index) => GestureDetector(
+                              onTap: () async {
+                                setState(() {
+                                  selectMenu = index;
+                                });
 
-                                    await getFaqViewModel.getFaqViewModel(
-                                        id: response.data![index].sId!);
-                                  },
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    margin: EdgeInsets.only(right: 4.w),
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 20.sp, vertical: 8.sp),
-                                    decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(100.h),
-                                      color: selectMenu == index
-                                          ? CommonColor.greenColor
-                                          : Colors.transparent,
-                                      border: Border.all(
-                                        color: CommonColor.greenColor,
-                                      ),
-                                    ),
-                                    child: CommonText.textBoldWight600(
-                                        text:
-                                            '${response.data![index].name.toString().capitalizeFirst}',
-                                        color: selectMenu == index
-                                            ? CommonColor.whiteColorEDEDED
-                                            : CommonColor.blackColor0D0D0D),
+                                await getFaqViewModel.getFaqViewModel(
+                                    id: response.data![index].sId!);
+                              },
+                              child: Container(
+                                alignment: Alignment.center,
+                                margin: EdgeInsets.only(right: 4.w),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 20.sp, vertical: 8.sp),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100.h),
+                                  color: selectMenu == index
+                                      ? CommonColor.greenColor
+                                      : Colors.transparent,
+                                  border: Border.all(
+                                    color: CommonColor.greenColor,
                                   ),
                                 ),
+                                child: CommonText.textBoldWight600(
+                                    text:
+                                        '${response.data![index].name.toString().capitalizeFirst}',
+                                    color: selectMenu == index
+                                        ? CommonColor.whiteColorEDEDED
+                                        : CommonColor.blackColor0D0D0D),
                               ),
-                            ));
-                      }
+                            ),
+                          ),
+                        ));
+                  }
 
-                      return SizedBox();
-                    }),
-                  ],
-                ),
+                  return SizedBox();
+                }),
               ),
               CommonWidget.commonSizedBox(height: 20.sp),
               CommonWidget.textFormField(
@@ -205,6 +172,8 @@ class _FAQScreenState extends State<FAQScreen> {
                         controller.getFaqApiResponse.data;
                     return ListView.builder(
                       itemCount: response.data!.length,
+                      shrinkWrap: true,
+                      physics: BouncingScrollPhysics(),
                       itemBuilder: (context, index) {
                         return Column(children: [
                           Container(

@@ -10,7 +10,7 @@ class GetHeartRateViewModel extends GetxController {
   ApiResponse get getHeartRateApiResponse => _getHeartRateApiResponse;
 
   Future<void> getHeartRateViewModel(
-      {bool isLoading = true, String? userId}) async {
+      {bool isLoading = true, String? userId = ""}) async {
     if (isLoading) {
       _getHeartRateApiResponse = ApiResponse.loading(message: 'Loading');
     }
