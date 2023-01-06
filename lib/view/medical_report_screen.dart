@@ -1,3 +1,5 @@
+import 'package:expert_parrot_app/Models/apis/api_response.dart';
+import 'package:expert_parrot_app/Models/responseModel/get_record_medicine_res_model.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
@@ -145,7 +147,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
   void initState() {
     super.initState();
     getRecordMedicineViewModel.getRecordMedicineViewModel(
-        dependentId: "&dependentId=" + widget.userDepndentId);
+        /* dependentId: "&dependentId=" + widget.userDepndentId*/);
   }
 
   @override
@@ -162,7 +164,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
                 child: Column(children: [
                   CommonWidget.commonSizedBox(height: 23),
                   userProfileWidget(),
-                  /*GetBuilder<GetRecordMedicineViewModel>(
+                  GetBuilder<GetRecordMedicineViewModel>(
                       builder: (controllerRM) {
                     if (controllerRM.getRecordMedicineApiResponse.status ==
                         Status.LOADING) {
@@ -173,101 +175,96 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
                       GetRecordMedicineResponseModel respRM =
                           controllerRM.getRecordMedicineApiResponse.data;
 
-                      return Expanded(
-                        child: SingleChildScrollView(
-                          physics: BouncingScrollPhysics(),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CommonWidget.commonSizedBox(height: 23),
-                              dateShowWidget(),
-                              CommonWidget.commonSizedBox(height: 23),
-                              respRM.data!.length != 0 &&
-                                      respRM.data!.isNotEmpty
-                                  ? Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          height: 120.sp,
-                                          alignment: Alignment.center,
-                                          // color: Colors.grey.shade300,
-                                          child: ListView.builder(
-                                              physics: BouncingScrollPhysics(),
-                                              scrollDirection: Axis.horizontal,
-                                              itemCount: respRM.data!.length > 7
-                                                  ? 7
-                                                  : respRM.data!.length,
-                                              shrinkWrap: true,
-                                              reverse: true,
-                                              itemBuilder: (_, index) {
-                                                return Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      Container(
-                                                        //  height: 150,
-                                                        // color: Colors.red,
-                                                        width: 28,
-                                                        child: ListView.builder(
-                                                          scrollDirection:
-                                                              Axis.vertical,
-                                                          shrinkWrap: true,
-                                                          itemCount: respRM
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CommonWidget.commonSizedBox(height: 23),
+                          dateShowWidget(),
+                          CommonWidget.commonSizedBox(height: 23),
+                          respRM.data!.length != 0 && respRM.data!.isNotEmpty
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      height: 120.sp,
+                                      alignment: Alignment.center,
+                                      // color: Colors.grey.shade300,
+                                      child: ListView.builder(
+                                          physics: BouncingScrollPhysics(),
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: respRM.data!.length > 7
+                                              ? 7
+                                              : respRM.data!.length,
+                                          shrinkWrap: true,
+                                          reverse: true,
+                                          itemBuilder: (_, index) {
+                                            return Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  Container(
+                                                    //  height: 150,
+                                                    // color: Colors.red,
+                                                    width: 28,
+                                                    child: ListView.builder(
+                                                      scrollDirection:
+                                                          Axis.vertical,
+                                                      shrinkWrap: true,
+                                                      itemCount: respRM
+                                                                  .data![index]
+                                                                  .date ==
+                                                              dayOf
+                                                                  .toString()
+                                                                  .split(" ")
+                                                                  .first
+                                                          ? respRM
                                                               .data![index]
                                                               .records![
                                                                   selectedPillIndex]
-                                                              .totalTimes,
-                                                          itemBuilder: (context,
-                                                              indexOfDose) {
-                                                            print(
-                                                                '$indexOfDose${selectedPilesDose}');
-                                                            return Column(
-                                                              children: [
-                                                                pilesContainer(
-                                                                    date: respRM
-                                                                        .data![
+                                                              .totalTimes
+                                                          : 3,
+                                                      itemBuilder: (context,
+                                                          indexOfDose) {
+                                                        print(
+                                                            '$indexOfDose${selectedPilesDose}');
+                                                        return Column(
+                                                          children: [
+                                                            pilesContainer(
+                                                                completedDoses: respRM
+                                                                    .data![
+                                                                        index]
+                                                                    .records![
+                                                                        selectedPillIndex]
+                                                                    .doses!,
+                                                                selectMainDose:
+                                                                    index,
+                                                                selectedList:
+                                                                    selectedPilesDose,
+                                                                index:
+                                                                    indexOfDose,
+                                                                totalDoseLength:
+                                                                    listOfPiles[
                                                                             index]
-                                                                        .records![
-                                                                            selectedPillIndex]
-                                                                        .createdAt!,
-                                                                    completedDoses: respRM
-                                                                        .data![
-                                                                            index]
-                                                                        .records![
-                                                                            selectedPillIndex]
-                                                                        .doses!,
-                                                                    colorSelected:
-                                                                        listOfPiles[index]
-                                                                            [
-                                                                            indexOfDose],
-                                                                    selectMainDose:
-                                                                        index,
-                                                                    selectedList:
-                                                                        selectedPilesDose,
-                                                                    index:
-                                                                        indexOfDose,
-                                                                    totalDoseLength:
-                                                                        listOfPiles[index]
-                                                                            .length),
-                                                                Divider(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  height: 1,
-                                                                )
-                                                              ],
-                                                            );
-                                                          },
-                                                        ),
-                                                      ),
-                                                      //  Spacer(),
-                                                      Container(
-                                                          // height: 40,
-                                                          // width: 22,
-                                                          child: CommonText.textBoldWight600(
+                                                                        .length),
+                                                            Divider(
+                                                              color:
+                                                                  Colors.white,
+                                                              height: 1,
+                                                            )
+                                                          ],
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                  //  Spacer(),
+                                                  Container(
+                                                      // height: 40,
+                                                      // width: 22,
+                                                      child: CommonText
+                                                          .textBoldWight600(
                                                               color: CommonColor
                                                                   .gery9D9D9D,
                                                               fontSize: 10,
@@ -276,181 +273,166 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
                                                                       .data![
                                                                           index]
                                                                       .date!))),
-                                                    ],
-                                                  ),
-                                                );
-                                              }),
-                                        ),
-                                        CommonWidget.commonSizedBox(height: 10),
-                                        Align(
-                                            alignment: Alignment.center,
-                                            child: SizedBox(
-                                              height: 30.sp,
-                                              child: ListView.separated(
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                                shrinkWrap: true,
-                                                itemCount: respRM
-                                                    .data![selectedPilesDose]
-                                                    .records![selectedPillIndex]
-                                                    .totalTimes!,
-                                                separatorBuilder:
-                                                    (context, index) {
-                                                  return SizedBox(width: 20.sp);
-                                                },
-                                                itemBuilder: (context, index) {
-                                                  return respRM
-                                                          .data![
-                                                              selectedPilesDose]
-                                                          .records![
-                                                              selectedPillIndex]
-                                                          .doses!
-                                                          .contains(index + 1)
-                                                      ? Row(
-                                                          children: [
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(4.0),
-                                                              child:
-                                                                  Image.asset(
-                                                                ImageConst
-                                                                    .doubleTickIcon,
-                                                                scale: 4,
-                                                              ),
-                                                            ),
-                                                            CommonText
-                                                                .textBoldWight400(
-                                                                    text:
-                                                                        "${respRM.data![selectedPilesDose].records![selectedPillIndex].shceduleTime![index]}",
-                                                                    fontSize:
-                                                                        12.sp)
-                                                          ],
-                                                        )
-                                                      : Row(
-                                                          children: [
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(4.0),
-                                                              child:
-                                                                  Image.asset(
-                                                                ImageConst
-                                                                    .doubleTickIcon,
-                                                                scale: 4,
-                                                                color: Color(
-                                                                        0xffFB0A0A)
-                                                                    .withOpacity(
-                                                                        .8),
-                                                              ),
-                                                            ),
-                                                            CommonText
-                                                                .textBoldWight400(
-                                                                    text:
-                                                                        "${respRM.data![selectedPilesDose].records![selectedPillIndex].shceduleTime![index]}",
-                                                                    fontSize:
-                                                                        12.sp)
-                                                          ],
-                                                        );
-                                                },
+                                                ],
                                               ),
-                                            )),
-                                        CommonWidget.commonSizedBox(height: 10),
-                                        Align(
-                                            alignment: Alignment.center,
-                                            child: CommonText.textBoldWight500(
-                                                text: 'Pill List',
-                                                fontSize: 18.sp,
-                                                color: CommonColor
-                                                    .blackColor0D0D0D)),
-                                        CommonWidget.commonSizedBox(height: 4),
-                                        ListView.builder(
-                                          physics:
-                                              NeverScrollableScrollPhysics(),
-                                          shrinkWrap: true,
-                                          reverse: true,
-                                          itemCount: respRM
-                                              .data![selectedPilesDose]
-                                              .records!
-                                              .length,
-                                          itemBuilder: (context, index) {
-                                            print(
-                                                'dfgvde ${medScheduleList[index]}');
+                                            );
+                                          }),
+                                    ),
+                                    CommonWidget.commonSizedBox(height: 10),
+                                    Align(
+                                        alignment: Alignment.center,
+                                        child: SizedBox(
+                                          height: 30.sp,
+                                          child: ListView.separated(
+                                            scrollDirection: Axis.horizontal,
+                                            shrinkWrap: true,
+                                            itemCount: respRM
+                                                .data![selectedPilesDose]
+                                                .records![selectedPillIndex]
+                                                .totalTimes!,
+                                            separatorBuilder: (context, index) {
+                                              return SizedBox(width: 20.sp);
+                                            },
+                                            itemBuilder: (context, index) {
+                                              return respRM
+                                                      .data![selectedPilesDose]
+                                                      .records![
+                                                          selectedPillIndex]
+                                                      .doses!
+                                                      .contains(index + 1)
+                                                  ? Row(
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(4.0),
+                                                          child: Image.asset(
+                                                            ImageConst
+                                                                .doubleTickIcon,
+                                                            scale: 4,
+                                                          ),
+                                                        ),
+                                                        CommonText.textBoldWight400(
+                                                            text:
+                                                                "${respRM.data![selectedPilesDose].records![selectedPillIndex].shceduleTime![index]}",
+                                                            fontSize: 12.sp)
+                                                      ],
+                                                    )
+                                                  : Row(
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(4.0),
+                                                          child: Image.asset(
+                                                            ImageConst
+                                                                .doubleTickIcon,
+                                                            scale: 4,
+                                                            color: Color(
+                                                                    0xffFB0A0A)
+                                                                .withOpacity(
+                                                                    .8),
+                                                          ),
+                                                        ),
+                                                        CommonText.textBoldWight400(
+                                                            text:
+                                                                "${respRM.data![selectedPilesDose].records![selectedPillIndex].shceduleTime![index]}",
+                                                            fontSize: 12.sp)
+                                                      ],
+                                                    );
+                                            },
+                                          ),
+                                        )),
+                                    CommonWidget.commonSizedBox(height: 10),
+                                    Align(
+                                        alignment: Alignment.center,
+                                        child: CommonText.textBoldWight500(
+                                            text: 'Pill List',
+                                            fontSize: 18.sp,
+                                            color:
+                                                CommonColor.blackColor0D0D0D)),
+                                    CommonWidget.commonSizedBox(height: 4),
+                                    ListView.builder(
+                                      physics: NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      reverse: true,
+                                      itemCount: respRM.data![selectedPilesDose]
+                                          .records!.length,
+                                      itemBuilder: (context, index) {
+                                        print(
+                                            'dfgvde ${medScheduleList[index]}');
 
-                                            return medScheduleList[index] ==
-                                                    null
-                                                ? SizedBox()
-                                                : medDetailsWidget(
-                                                    medId: respRM
-                                                        .data![
-                                                            selectedPilesDose]
-                                                        .records![index]
-                                                        .sId!,
-                                                    totalTimes: respRM
-                                                        .data![
-                                                            selectedPilesDose]
-                                                        .records![index]
-                                                        .totalTimes!,
-                                                    pilesList:
-                                                        listOfPiles[index],
-                                                    image: respRM.data![selectedPilesDose].records![index].appearance!
+                                        return medScheduleList[index] == null
+                                            ? SizedBox()
+                                            : medDetailsWidget(
+                                                medId: respRM
+                                                    .data![selectedPilesDose]
+                                                    .records![index]
+                                                    .sId!,
+                                                totalTimes: respRM
+                                                    .data![selectedPilesDose]
+                                                    .records![index]
+                                                    .totalTimes!,
+                                                pilesList: listOfPiles[index],
+                                                image: respRM.data![selectedPilesDose].records![index].appearance!
+                                                            .toLowerCase() ==
+                                                        'pills'
+                                                    ? ImageConst.med3Icon
+                                                    : respRM.data![selectedPilesDose].records![index].appearance!
                                                                 .toLowerCase() ==
-                                                            'pills'
-                                                        ? ImageConst.med3Icon
+                                                            'gel'
+                                                        ? ImageConst.med1Icon
                                                         : respRM.data![selectedPilesDose].records![index].appearance!
                                                                     .toLowerCase() ==
-                                                                'gel'
+                                                                'syrup'
                                                             ? ImageConst
-                                                                .med1Icon
-                                                            : respRM.data![selectedPilesDose].records![index].appearance!
-                                                                        .toLowerCase() ==
-                                                                    'syrup'
-                                                                ? ImageConst
-                                                                    .med2Icon
-                                                                : ImageConst
-                                                                    .med2Icon,
-                                                    medName: respRM
-                                                        .data![
-                                                            selectedPilesDose]
-                                                        .records![index]
-                                                        .name!,
-                                                    medGm:
-                                                        '${respRM.data![selectedPilesDose].records![index].strength} gm',
-                                                    iconColor: respRM
+                                                                .med2Icon
+                                                            : ImageConst
+                                                                .med2Icon,
+                                                medName: respRM
+                                                    .data![selectedPilesDose]
+                                                    .records![index]
+                                                    .name!,
+                                                medGm:
+                                                    '${respRM.data![selectedPilesDose].records![index].strength} gm',
+                                                iconColor: respRM
+                                                            .data![
+                                                                selectedPilesDose]
+                                                            .records![index]
+                                                            .appearance!
+                                                            .toLowerCase() ==
+                                                        'pills'
+                                                    ? Color(0xff21D200)
+                                                    : respRM
                                                                 .data![selectedPilesDose]
                                                                 .records![index]
                                                                 .appearance!
                                                                 .toLowerCase() ==
-                                                            'pills'
-                                                        ? Color(0xff21D200)
-                                                        : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() == 'gel'
-                                                            ? Color(0xffFFDD2C)
-                                                            : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() == 'syrup'
-                                                                ? Color(0xff9255E5)
-                                                                : Color(0xff9255E5),
-                                                    dose: respRM.data![selectedPilesDose].records![index].doses!,
-                                                    index: index);
-                                          },
-                                        ),
-                                        CommonWidget.commonSizedBox(
-                                            height: 100),
-                                      ],
-                                    )
-                                  : Center(
-                                      child: Padding(
-                                          padding: EdgeInsets.only(top: 20),
-                                          child: CommonText.textBoldWight400(
-                                              text:
-                                                  "No med schedule on ${CommonWidget.convertDateForm(dayOf)}")),
+                                                            'gel'
+                                                        ? Color(0xffFFDD2C)
+                                                        : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() == 'syrup'
+                                                            ? Color(0xff9255E5)
+                                                            : Color(0xff9255E5),
+                                                dose: respRM.data![selectedPilesDose].records![index].doses!,
+                                                index: index);
+                                      },
                                     ),
-                            ],
-                          ),
-                        ),
+                                    CommonWidget.commonSizedBox(height: 100),
+                                  ],
+                                )
+                              : Center(
+                                  child: Padding(
+                                      padding: EdgeInsets.only(top: 20),
+                                      child: CommonText.textBoldWight400(
+                                          text:
+                                              "No med schedule on ${CommonWidget.convertDateForm(dayOf)}")),
+                                ),
+                        ],
                       );
                     } else
                       return SizedBox();
-                  }),*/
-                  Container(
+                  }),
+/*                  Container(
                     height: 140,
                     // color: Colors.grey.shade300,
                     child: Row(
@@ -534,7 +516,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
                               totalTimes: 3);
                     },
                   ),
-                  CommonWidget.commonSizedBox(height: 100),
+                  CommonWidget.commonSizedBox(height: 100),*/
                 ]),
               ),
             )
@@ -1506,8 +1488,6 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
 
   Widget pilesContainer(
       {required int index,
-      required int colorSelected,
-      required String date,
       required List completedDoses,
       required int totalDoseLength,
       required int selectMainDose,
