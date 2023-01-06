@@ -23,7 +23,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool isSwitched = false;
+  bool isSwitched = true;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController heightController = TextEditingController();

@@ -189,12 +189,15 @@ class _DependentScreenState extends State<DependentScreen> {
                               InkWell(
                                   onTap: () {
                                     Get.to(() => MedicalReportScreen(
-                                        userImg:
-                                            "https://health-app-test.s3.ap-south-1.amazonaws.com/user/${response.data!.dependents![currentIndex].userId!.userImage!}",
-                                        userRelation:
-                                            "${response.data!.dependents![currentIndex].relation}",
-                                        userName:
-                                            "${response.data!.dependents![currentIndex].userId!.name!}"));
+                                          userImg:
+                                              "https://health-app-test.s3.ap-south-1.amazonaws.com/user/${response.data!.dependents![currentIndex].userId!.userImage!}",
+                                          userRelation:
+                                              "${response.data!.dependents![currentIndex].relation}",
+                                          userName:
+                                              "${response.data!.dependents![currentIndex].userId!.name!}",
+                                          userDepndentId:
+                                              "${response.data!.dependents![currentIndex].userId!.id}",
+                                        ));
                                   },
                                   child: Image.asset(ImageConst.checkbox)),
                               CommonWidget.commonSizedBox(height: 10),
@@ -385,10 +388,6 @@ class _DependentScreenState extends State<DependentScreen> {
                                                   padding: 10,
                                                   text: '31 kcal',
                                                   image: ImageConst.kcalIcon),
-                                              reportEventWidget(
-                                                  padding: 4,
-                                                  text: '50 min',
-                                                  image: ImageConst.timeIcon),
                                               reportEventWidget(
                                                   padding: 0,
                                                   height: 43,

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+
 import 'package:expert_parrot_app/Models/repo/edit_profile_repo.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
@@ -145,7 +146,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Text('Height'),
+                        child: Text('Height (cm)'),
                       ),
                     ),
                     Padding(
@@ -172,7 +173,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Text('Weight'),
+                        child: Text('Weight (kg)'),
                       ),
                     ),
                     Padding(

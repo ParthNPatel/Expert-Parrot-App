@@ -103,7 +103,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                               topLeft: Radius.circular(8),
                                               topRight: Radius.circular(8)),
                                           child: Image.network(
-                                            "https://health-app-test.s3.ap-south-1.amazonaws.com/video/" +
+                                            "https://health-app-test.s3.ap-south-1.amazonaws.com/video/1671467948401.octet-stream" +
                                                 response
                                                     .data![index].thumbnail!,
                                             fit: BoxFit.cover,

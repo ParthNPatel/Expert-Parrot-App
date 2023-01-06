@@ -1,13 +1,15 @@
+import 'dart:developer';
+
 import 'package:dotted_line/dotted_line.dart';
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
-import 'package:expert_parrot_app/Models/responseModel/date_record_medicine_res_model.dart';
+import 'package:expert_parrot_app/Models/responseModel/get_record_medicine_res_model.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:expert_parrot_app/viewModel/add_record_medicine_view_model.dart';
-import 'package:expert_parrot_app/viewModel/date_medicine_record_view_model.dart';
+import 'package:expert_parrot_app/viewModel/get_record_medicine_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/svg.dart';
@@ -130,25 +132,20 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
     [0, 1, 1]
   ];
   int selectedPilesDose = 0;
-
-  DateMedicineRecordViewModel dateMedicineRecordViewModel =
-      Get.put(DateMedicineRecordViewModel());
+  int selectedPillIndex = 0;
 
   AddRecordMedicineViewModel addRecordMedicineViewModel =
       Get.put(AddRecordMedicineViewModel());
+
+  GetRecordMedicineViewModel getRecordMedicineViewModel =
+      Get.put(GetRecordMedicineViewModel());
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    dateMedicineRecordViewModel
-        .dateMedicineRecordViewModel(model: {"date": "${dayOf}"});
 
-    // for (int i = 0; i < 50000; i++) {
-    //   if (i % 2 == 0) {
-    //     print(i);
-    //   }
-    // }
+    getRecordMedicineViewModel.getRecordMedicineViewModel();
   }
 
   @override
@@ -168,16 +165,15 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
             header(),
             CommonWidget.commonSizedBox(height: 13),
             buildDottedLine(),
-            GetBuilder<DateMedicineRecordViewModel>(builder: (controller) {
-              if (controller.dateMedicineRecordApiResponse.status ==
+            GetBuilder<GetRecordMedicineViewModel>(builder: (controllerRM) {
+              if (controllerRM.getRecordMedicineApiResponse.status ==
                   Status.LOADING) {
                 return SizedBox();
               }
-              if (controller.dateMedicineRecordApiResponse.status ==
+              if (controllerRM.getRecordMedicineApiResponse.status ==
                   Status.COMPLETE) {
-                print('COMPLETE');
-                DateMedicineRecordResponseModel respDMR =
-                    controller.dateMedicineRecordApiResponse.data;
+                GetRecordMedicineResponseModel respRM =
+                    controllerRM.getRecordMedicineApiResponse.data;
 
                 return Expanded(
                   child: SingleChildScrollView(
@@ -188,7 +184,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                         CommonWidget.commonSizedBox(height: 23),
                         dateShowWidget(),
                         CommonWidget.commonSizedBox(height: 23),
-                        respDMR.data!.length != 0 && respDMR.data!.isNotEmpty
+                        respRM.data!.length != 0 && respRM.data!.isNotEmpty
                             ? Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -199,7 +195,9 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                                     child: ListView.builder(
                                         physics: BouncingScrollPhysics(),
                                         scrollDirection: Axis.horizontal,
-                                        itemCount: respDMR.data!.length,
+                                        itemCount: respRM.data!.length > 7
+                                            ? 7
+                                            : respRM.data!.length,
                                         shrinkWrap: true,
                                         reverse: true,
                                         itemBuilder: (_, index) {
@@ -211,35 +209,35 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                                               children: [
                                                 Container(
                                                   //  height: 150,
-                                                  width: 28,
                                                   // color: Colors.red,
+                                                  width: 28,
                                                   child: ListView.builder(
                                                     scrollDirection:
                                                         Axis.vertical,
                                                     shrinkWrap: true,
-                                                    itemCount: respDMR
-                                                        .data![index]
-                                                        .totalTimes,
+                                                    itemCount: respRM
+                                                                .data![index]
+                                                                .date ==
+                                                            dayOf
+                                                                .toString()
+                                                                .split(" ")
+                                                                .first
+                                                        ? respRM
+                                                            .data![index]
+                                                            .records![
+                                                                selectedPillIndex]
+                                                            .totalTimes
+                                                        : 3,
                                                     itemBuilder:
                                                         (context, indexOfDose) {
-                                                      print(
-                                                          '$indexOfDose${selectedPilesDose}');
                                                       return Column(
                                                         children: [
                                                           pilesContainer(
-                                                              date: respDMR
+                                                              completedDoses: respRM
                                                                   .data![index]
-                                                                  .createdAt!,
-                                                              completedDoses:
-                                                                  respDMR
-                                                                      .data![
-                                                                          index]
-                                                                      .doses!,
-                                                              colorSelected:
-                                                                  listOfPiles[
-                                                                          index]
-                                                                      [
-                                                                      indexOfDose],
+                                                                  .records![
+                                                                      selectedPillIndex]
+                                                                  .doses!,
                                                               selectMainDose:
                                                                   index,
                                                               selectedList:
@@ -251,7 +249,8 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                                                                           index]
                                                                       .length),
                                                           Divider(
-                                                            color: Colors.white,
+                                                            color: Colors
+                                                                .transparent,
                                                             height: 1,
                                                           )
                                                         ],
@@ -268,9 +267,11 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                                                             color: CommonColor
                                                                 .gery9D9D9D,
                                                             fontSize: 10,
-                                                            text: respDMR
-                                                                .data![index]
-                                                                .name!)),
+                                                            text: weekDayGen(
+                                                                date: respRM
+                                                                    .data![
+                                                                        index]
+                                                                    .date!))),
                                               ],
                                             ),
                                           );
@@ -284,15 +285,17 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                                         child: ListView.separated(
                                           scrollDirection: Axis.horizontal,
                                           shrinkWrap: true,
-                                          itemCount: respDMR
+                                          itemCount: respRM
                                               .data![selectedPilesDose]
+                                              .records![selectedPillIndex]
                                               .totalTimes!,
                                           separatorBuilder: (context, index) {
                                             return SizedBox(width: 20.sp);
                                           },
                                           itemBuilder: (context, index) {
-                                            return respDMR
+                                            return respRM
                                                     .data![selectedPilesDose]
+                                                    .records![selectedPillIndex]
                                                     .doses!
                                                     .contains(index + 1)
                                                 ? Row(
@@ -309,7 +312,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                                                       ),
                                                       CommonText.textBoldWight400(
                                                           text:
-                                                              "${respDMR.data![selectedPilesDose].shceduleTime![index]}",
+                                                              "${respRM.data![selectedPilesDose].records![selectedPillIndex].shceduleTime![index]}",
                                                           fontSize: 12.sp)
                                                     ],
                                                   )
@@ -330,7 +333,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                                                       ),
                                                       CommonText.textBoldWight400(
                                                           text:
-                                                              "${respDMR.data![selectedPilesDose].shceduleTime![index]}",
+                                                              "${respRM.data![selectedPilesDose].records![selectedPillIndex].shceduleTime![index]}",
                                                           fontSize: 12.sp)
                                                     ],
                                                   );
@@ -349,50 +352,62 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                                     physics: NeverScrollableScrollPhysics(),
                                     shrinkWrap: true,
                                     reverse: true,
-                                    itemCount: respDMR.data!.length,
+                                    itemCount: respRM.data![selectedPilesDose]
+                                        .records!.length,
                                     itemBuilder: (context, index) {
-                                      print('dfgvde ${medScheduleList[index]}');
+                                      log('dfgvde ${medScheduleList[index]}');
 
                                       return medScheduleList[index] == null
                                           ? SizedBox()
                                           : medDetailsWidget(
-                                              medId: respDMR.data![index].sId!,
-                                              totalTimes: respDMR
-                                                  .data![index].totalTimes!,
+                                              medId: respRM
+                                                  .data![selectedPilesDose]
+                                                  .records![index]
+                                                  .sId!,
+                                              totalTimes: respRM
+                                                  .data![selectedPilesDose]
+                                                  .records![index]
+                                                  .totalTimes!,
                                               pilesList: listOfPiles[index],
-                                              image: respDMR.data![index].appearance!
+                                              image: respRM
+                                                          .data![
+                                                              selectedPilesDose]
+                                                          .records![index]
+                                                          .appearance!
                                                           .toLowerCase() ==
                                                       'pills'
                                                   ? ImageConst.med3Icon
-                                                  : respDMR.data![index].appearance!
+                                                  : respRM
+                                                              .data![
+                                                                  selectedPilesDose]
+                                                              .records![index]
+                                                              .appearance!
                                                               .toLowerCase() ==
                                                           'gel'
                                                       ? ImageConst.med1Icon
-                                                      : respDMR.data![index].appearance!
-                                                                  .toLowerCase() ==
+                                                      : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() ==
                                                               'syrup'
                                                           ? ImageConst.med2Icon
                                                           : ImageConst.med2Icon,
-                                              medName:
-                                                  respDMR.data![index].name!,
+                                              medName: respRM
+                                                  .data![selectedPilesDose]
+                                                  .records![index]
+                                                  .name!,
                                               medGm:
-                                                  '${respDMR.data![index].strength} gm',
-                                              iconColor: respDMR.data![index]
+                                                  '${respRM.data![selectedPilesDose].records![index].strength} gm',
+                                              iconColor: respRM
+                                                          .data![selectedPilesDose]
+                                                          .records![index]
                                                           .appearance!
                                                           .toLowerCase() ==
                                                       'pills'
                                                   ? Color(0xff21D200)
-                                                  : respDMR.data![index].appearance!
-                                                              .toLowerCase() ==
-                                                          'gel'
+                                                  : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() == 'gel'
                                                       ? Color(0xffFFDD2C)
-                                                      : respDMR.data![index]
-                                                                  .appearance!
-                                                                  .toLowerCase() ==
-                                                              'syrup'
+                                                      : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() == 'syrup'
                                                           ? Color(0xff9255E5)
                                                           : Color(0xff9255E5),
-                                              dose: respDMR.data![index].doses!,
+                                              dose: respRM.data![selectedPilesDose].records![index].doses!,
                                               index: index);
                                     },
                                   ),
@@ -419,7 +434,58 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
     );
   }
 
-  Future<StatefulBuilder> takeMedConfirmation(
+  String weekDayGen({required String date}) {
+    int weekDay = DateTime.parse(date).weekday;
+
+    log("weekDay ====== > ${weekDay}");
+
+    switch (weekDay) {
+      case 1:
+        {
+          date = "Mon";
+        }
+        break;
+
+      case 2:
+        {
+          date = "Tue";
+        }
+        break;
+      case 3:
+        {
+          date = "Wed";
+        }
+        break;
+      case 4:
+        {
+          date = "Thu";
+        }
+        break;
+      case 5:
+        {
+          date = "Fri";
+        }
+        break;
+      case 6:
+        {
+          date = "Sat";
+        }
+        break;
+      case 7:
+        {
+          date = "Sun";
+        }
+        break;
+
+      default:
+        {}
+        break;
+    }
+
+    return date;
+  }
+
+/*  Future<StatefulBuilder> takeMedConfirmation(
       {required int index, required String medId}) async {
     return StatefulBuilder(
       builder: (context, setState) => Dialog(
@@ -488,7 +554,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                                     "doses": [index],
                                   };
 
-                                  print('====== > ${_req}');
+                                  log('====== > ${_req}');
 
                                   await addRecordMedicineViewModel
                                       .addRecordMedicineViewModel(model: _req);
@@ -542,12 +608,10 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
         ),
       ),
     );
-  }
+  }*/
 
   Widget pilesContainer(
       {required int index,
-      required int colorSelected,
-      required String date,
       required List completedDoses,
       required int totalDoseLength,
       required int selectMainDose,
@@ -613,15 +677,17 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
       required int totalTimes,
       required String image,
       required int index}) {
-    print('=====> $pilesList');
+    log('=====> $pilesList');
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8),
       child: GestureDetector(
         onTap: () {
-          selectedPilesDose = index;
+          selectedPillIndex = index;
+
           setState(() {});
-          print('ijnininini ${index}');
+          log('ijnininini ${selectedPillIndex}');
+          log('asndjasndjbsab ${selectedPilesDose}');
         },
         child: DecoratedBox(
           decoration: BoxDecoration(
@@ -629,7 +695,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
             gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: selectedPilesDose == index
+                colors: selectedPillIndex == index
                     ? [Color(0xff32B854), Color(0xff1DAD84)]
                     : [Color(0xfffffff), Color(0xfffffff)]),
           ),
@@ -690,7 +756,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                             //   crossAxisAlignment: CrossAxisAlignment.start,
                             //   children:
                             //       List.generate(pilesList.length, (indexPiles) {
-                            //     print(
+                            //     log(
                             //         'pilesList[indexPiles]  ${pilesList[indexPiles]}');
                             //     return InkWell(
                             //       onTap: () {
@@ -752,32 +818,12 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                                             scale: 4.5,
                                           ),
                                         )
-                                      : GestureDetector(
-                                          onTap: () async {
-                                            if (dayOf
-                                                    .toString()
-                                                    .split(" ")
-                                                    .first ==
-                                                DateTime.now()
-                                                    .toString()
-                                                    .split(" ")
-                                                    .first) {
-                                              Get.dialog(
-                                                // barrierDismissible: false,
-
-                                                await takeMedConfirmation(
-                                                    index: index + 1,
-                                                    medId: medId),
-                                              );
-                                            }
-                                          },
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: Image.asset(
-                                                ImageConst.doubleTickIcon,
-                                                scale: 4.5,
-                                                color: CommonColor.geryD9D9D9),
-                                          ),
+                                      : Padding(
+                                          padding: const EdgeInsets.all(4.0),
+                                          child: Image.asset(
+                                              ImageConst.doubleTickIcon,
+                                              scale: 4.5,
+                                              color: CommonColor.geryD9D9D9),
                                         );
                                 },
                               ),
@@ -856,14 +902,16 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CommonWidget.commonBackButton(onTap: () {
-          dayOf = DateTime.utc(
-            dayOf.year,
-            dayOf.month,
-            dayOf.day - 1,
-          );
-          dateMedicineRecordViewModel
-              .dateMedicineRecordViewModel(model: {"date": "${dayOf}"});
+          if (selectedPilesDose < 6) {
+            dayOf = DateTime.utc(
+              dayOf.year,
+              dayOf.month,
+              dayOf.day - 1,
+            );
 
+            selectedPilesDose += 1;
+            log("selectedPilesDose ================== > ${selectedPilesDose}");
+          }
           setState(() {});
         }),
         CommonWidget.commonSizedBox(width: 26),
@@ -887,10 +935,11 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                 dayOf.month,
                 dayOf.day + 1,
               );
-              dateMedicineRecordViewModel
-                  .dateMedicineRecordViewModel(model: {"date": "${dayOf}"});
+              selectedPilesDose -= 1;
+
+              log("selectedPilesDose ================== > ${selectedPilesDose}");
             }
-            print(difference);
+            log("${difference}");
             setState(() {});
           }),
         ),

@@ -52,7 +52,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
   List selectedDose = [];
   List completedDoses = [];
-  List stepCounterMethod = ["Steps", "Km", "Miles"];
+  List stepCounterMethod = ["Miles", "Steps", "Km"];
 
   int pageCounter = 0;
   int selectMethod = 0;

@@ -154,7 +154,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Align(
               alignment: Alignment.centerLeft,
-              child: Text('Height'),
+              child: Text('Height (cm)'),
             ),
           ),
           Padding(
@@ -181,7 +181,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Align(
               alignment: Alignment.centerLeft,
-              child: Text('Weight'),
+              child: Text('Weight (kg)'),
             ),
           ),
           Padding(
