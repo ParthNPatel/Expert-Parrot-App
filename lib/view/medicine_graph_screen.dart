@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dotted_line/dotted_line.dart';
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_record_medicine_res_model.dart';
@@ -133,6 +131,10 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
   ];
   int selectedPilesDose = 0;
   int selectedPillIndex = 0;
+  int limitData = 0;
+  String tmpID = "";
+
+  List tmpList = [];
 
   AddRecordMedicineViewModel addRecordMedicineViewModel =
       Get.put(AddRecordMedicineViewModel());
@@ -175,6 +177,19 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                 GetRecordMedicineResponseModel respRM =
                     controllerRM.getRecordMedicineApiResponse.data;
 
+                if (tmpID == "") {
+                  tmpID = respRM.data![0].records![0].sId!;
+                }
+
+                limitData = 0;
+                for (int i = 0; i < respRM.data!.length; i++) {
+                  for (int j = 0; j < respRM.data![i].records!.length; j++) {
+                    if (respRM.data![i].records![j].sId == tmpID) {
+                      limitData += 1;
+                    }
+                  }
+                }
+
                 return Expanded(
                   child: SingleChildScrollView(
                     physics: BouncingScrollPhysics(),
@@ -195,9 +210,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                                     child: ListView.builder(
                                         physics: BouncingScrollPhysics(),
                                         scrollDirection: Axis.horizontal,
-                                        itemCount: respRM.data!.length > 7
-                                            ? 7
-                                            : respRM.data!.length,
+                                        itemCount: limitData,
                                         shrinkWrap: true,
                                         reverse: true,
                                         itemBuilder: (_, index) {
@@ -355,8 +368,6 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                                     itemCount: respRM.data![selectedPilesDose]
                                         .records!.length,
                                     itemBuilder: (context, index) {
-                                      log('dfgvde ${medScheduleList[index]}');
-
                                       return medScheduleList[index] == null
                                           ? SizedBox()
                                           : medDetailsWidget(
@@ -436,8 +447,6 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
 
   String weekDayGen({required String date}) {
     int weekDay = DateTime.parse(date).weekday;
-
-    log("weekDay ====== > ${weekDay}");
 
     switch (weekDay) {
       case 1:
@@ -677,17 +686,23 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
       required int totalTimes,
       required String image,
       required int index}) {
-    log('=====> $pilesList');
+    // log('=====> $selectedPillIndex');
+
+    // respRM.data![index].records!
+    //     .length ==
+    //     respRM
+    //         .data![selectedPilesDose]
+    //         .records!
+    //         .length
+    //     ?
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8),
       child: GestureDetector(
         onTap: () {
           selectedPillIndex = index;
-
+          tmpID = medId;
           setState(() {});
-          log('ijnininini ${selectedPillIndex}');
-          log('asndjasndjbsab ${selectedPilesDose}');
         },
         child: DecoratedBox(
           decoration: BoxDecoration(
@@ -902,7 +917,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CommonWidget.commonBackButton(onTap: () {
-          if (selectedPilesDose < 6) {
+          if (selectedPilesDose < limitData - 1) {
             dayOf = DateTime.utc(
               dayOf.year,
               dayOf.month,
@@ -910,7 +925,6 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
             );
 
             selectedPilesDose += 1;
-            log("selectedPilesDose ================== > ${selectedPilesDose}");
           }
           setState(() {});
         }),
@@ -935,11 +949,10 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                 dayOf.month,
                 dayOf.day + 1,
               );
-              selectedPilesDose -= 1;
 
-              log("selectedPilesDose ================== > ${selectedPilesDose}");
+              selectedPilesDose -= 1;
             }
-            log("${difference}");
+
             setState(() {});
           }),
         ),
