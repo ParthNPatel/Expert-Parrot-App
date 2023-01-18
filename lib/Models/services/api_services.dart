@@ -47,7 +47,8 @@ class APIService {
         print("resp${result.body}");
         response = returnResponse(result.statusCode, result.body);
         print(result.statusCode);
-      } /*else {
+      }
+      /*else {
         print("REQUEST PARAMETER url  $url");
         print("REQUEST PARAMETER $body");
 
