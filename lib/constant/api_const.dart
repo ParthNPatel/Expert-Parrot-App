@@ -1,5 +1,5 @@
 class APIConst {
-  static String baseUrl = "http://3.109.139.48:5000";
+  static String baseUrl = "http://52.66.209.219:5000 ";
 
   static String loginUrl = "/auth/login";
   static String addMedicine = "/medicine/";
