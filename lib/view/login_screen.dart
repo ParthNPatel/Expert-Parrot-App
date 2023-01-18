@@ -195,6 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   bool isChecked = false;
+
   @override
   Widget build(BuildContext context) {
     log('DATE TIME :- ${DateTime.now()}');

@@ -61,6 +61,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           log("Enter Valid OTP");
         } else {
           try {
+            print('1111');
             await LoginRepo.loginUserRepo(
                 model: {
                   "loginType": "mobile",
@@ -71,7 +72,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 loginType: "mobile",
                 logInId: "${widget.logInId}",
                 progress: progress);
+            print('2222');
           } catch (e) {
+            print('3333');
             progress.dismiss();
 
             CommonWidget.getSnackBar(

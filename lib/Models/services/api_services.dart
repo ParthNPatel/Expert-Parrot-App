@@ -12,7 +12,7 @@ enum APIType { aPost, aGet, aPut }
 
 class APIService {
   var response;
-  String baseUrl = 'http://3.109.139.48:5000';
+  String baseUrl = 'http://52.66.209.219:5000';
   // var request;
 
   @override

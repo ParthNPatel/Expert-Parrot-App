@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/responseModel/add_post_res_model.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_all_post_categories_res_model.dart';
@@ -23,7 +22,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sizer/sizer.dart';
-
 import '../components/common_widget.dart';
 import '../constant/image_const.dart';
 import '../constant/text_styel.dart';
