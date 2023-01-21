@@ -1,11 +1,9 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
-
 import 'app_exception.dart';
 
 enum APIType { aPost, aGet, aPut }

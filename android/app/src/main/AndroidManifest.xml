@@ -2,7 +2,7 @@
     package="com.example.expert_parrot_app">
     <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="expert_parrot_app"
+        android:label="Expert Parrot"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
