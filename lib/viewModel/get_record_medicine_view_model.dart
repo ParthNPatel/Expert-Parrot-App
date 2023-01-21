@@ -6,30 +6,6 @@ import 'package:expert_parrot_app/Models/responseModel/get_record_medicine_res_m
 import 'package:get/get.dart';
 
 class GetRecordMedicineViewModel extends GetxController {
-  // pageCounterAdd() {
-  //   pageCounter++;
-  //   update();
-  // }
-  //
-  // pageCounterRemove(value) {
-  //   if (value > 0) {
-  //     pageCounter--;
-  //   }
-  //   update();
-  // }
-  //
-  // apiPageCounterAdd() {
-  //   apiPageCounter++;
-  //   update();
-  // }
-  //
-  // apiPageCounterRemove(value) {
-  //   if (value > 0) {
-  //     apiPageCounter--;
-  //   }
-  //   update();
-  // }
-
   ApiResponse _getRecordMedicineApiResponse =
       ApiResponse.initial(message: 'Initialization');
 
