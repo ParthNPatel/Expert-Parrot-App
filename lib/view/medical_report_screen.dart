@@ -147,7 +147,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
   void initState() {
     super.initState();
     getRecordMedicineViewModel.getRecordMedicineViewModel(
-        /* dependentId: "&dependentId=" + widget.userDepndentId*/);
+        dependentId: "&dependentId=" + widget.userDepndentId);
   }
 
   @override

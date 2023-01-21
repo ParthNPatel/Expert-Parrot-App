@@ -6,14 +6,13 @@ import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
-import 'package:expert_parrot_app/viewModel/add_record_medicine_view_model.dart';
 import 'package:expert_parrot_app/viewModel/get_record_medicine_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class MedicineGraphScreen extends StatefulWidget {
   const MedicineGraphScreen({Key? key}) : super(key: key);
@@ -26,6 +25,8 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
   TextEditingController _emailOrMobileController = TextEditingController();
   String? verificationCode;
   DateTime dayOf = DateTime.now();
+  bool isDaily = true;
+
   List medScheduleList = [
     {
       'image': ImageConst.capsule4,
@@ -76,6 +77,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
   int appearanceSelected = 0;
   int frequencySelected = 0;
   int timeSelected = 0;
+  double? innerRadius;
 
   List<String> medicines = [
     'Duloxetine',
@@ -136,9 +138,6 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
 
   List tmpList = [];
 
-  AddRecordMedicineViewModel addRecordMedicineViewModel =
-      Get.put(AddRecordMedicineViewModel());
-
   GetRecordMedicineViewModel getRecordMedicineViewModel =
       Get.put(GetRecordMedicineViewModel());
 
@@ -189,7 +188,11 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                     }
                   }
                 }
-
+                final List<ChartData> chartData = [
+                  ChartData(80, 53, CommonColor.lightGreenColor),
+                  ChartData(70, 17, CommonColor.lightYellowColor),
+                  ChartData(60, 30, CommonColor.lightRedColor)
+                ];
                 return Expanded(
                   child: SingleChildScrollView(
                     physics: BouncingScrollPhysics(),
@@ -203,156 +206,138 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                             ? Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Container(
-                                    height: 120.sp,
-                                    alignment: Alignment.center,
-                                    // color: Colors.grey.shade300,
-                                    child: ListView.builder(
-                                        physics: BouncingScrollPhysics(),
-                                        scrollDirection: Axis.horizontal,
-                                        itemCount: limitData,
-                                        shrinkWrap: true,
-                                        reverse: true,
-                                        itemBuilder: (_, index) {
-                                          return Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                Container(
-                                                  //  height: 150,
-                                                  // color: Colors.red,
-                                                  width: 28,
-                                                  child: ListView.builder(
-                                                    scrollDirection:
-                                                        Axis.vertical,
-                                                    shrinkWrap: true,
-                                                    itemCount: respRM
-                                                                .data![index]
-                                                                .date ==
-                                                            dayOf
-                                                                .toString()
-                                                                .split(" ")
-                                                                .first
-                                                        ? respRM
-                                                            .data![index]
-                                                            .records![
-                                                                selectedPillIndex]
-                                                            .totalTimes
-                                                        : 3,
-                                                    itemBuilder:
-                                                        (context, indexOfDose) {
-                                                      return Column(
-                                                        children: [
-                                                          pilesContainer(
-                                                              completedDoses: respRM
-                                                                  .data![index]
-                                                                  .records![
-                                                                      selectedPillIndex]
-                                                                  .doses!,
-                                                              selectMainDose:
-                                                                  index,
-                                                              selectedList:
-                                                                  selectedPilesDose,
-                                                              index:
-                                                                  indexOfDose,
-                                                              totalDoseLength:
-                                                                  listOfPiles[
-                                                                          index]
-                                                                      .length),
-                                                          Divider(
-                                                            color: Colors
-                                                                .transparent,
-                                                            height: 1,
-                                                          )
-                                                        ],
-                                                      );
-                                                    },
-                                                  ),
-                                                ),
-                                                //  Spacer(),
-                                                Container(
-                                                    // height: 40,
-                                                    // width: 22,
-                                                    child: CommonText
-                                                        .textBoldWight600(
-                                                            color: CommonColor
-                                                                .gery9D9D9D,
-                                                            fontSize: 10,
-                                                            text: weekDayGen(
-                                                                date: respRM
-                                                                    .data![
-                                                                        index]
-                                                                    .date!))),
-                                              ],
+                                  isDaily
+                                      ? dailyGraph(respRM)
+                                      : SfCircularChart(
+                                          onChartTouchInteractionUp:
+                                              (ChartTouchInteractionArgs args) {
+                                            print(args.position.dx.toString());
+                                            print(args.position.dy.toString());
+                                          },
+                                          annotations: <
+                                              CircularChartAnnotation>[
+                                            CircularChartAnnotation(
+                                                widget: const Text('62%',
+                                                    style: TextStyle(
+                                                        color: Color.fromRGBO(
+                                                            0, 0, 0, 0.5),
+                                                        fontSize: 25)))
+                                          ],
+                                          selectionGesture:
+                                              ActivationMode.longPress,
+                                          series: <CircularSeries>[
+                                            DoughnutSeries<ChartData, double>(
+                                                dataSource: chartData,
+                                                pointColorMapper:
+                                                    (ChartData data, _) =>
+                                                        data.color,
+                                                xValueMapper:
+                                                    (ChartData data, _) {
+                                                  innerRadius = data.x;
+
+                                                  return data.x;
+                                                },
+                                                yValueMapper:
+                                                    (ChartData data, _) =>
+                                                        data.y,
+                                                innerRadius: "80" + "%",
+                                                explode: true)
+                                          ]),
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Container(
+                                              height: 15,
+                                              width: 30,
+                                              margin: EdgeInsets.only(right: 8),
+                                              decoration: BoxDecoration(
+                                                  color: CommonColor
+                                                      .lightGreenColor,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          20)),
                                             ),
-                                          );
-                                        }),
-                                  ),
-                                  CommonWidget.commonSizedBox(height: 10),
-                                  Align(
-                                      alignment: Alignment.center,
-                                      child: SizedBox(
-                                        height: 30.sp,
-                                        child: ListView.separated(
-                                          scrollDirection: Axis.horizontal,
-                                          shrinkWrap: true,
-                                          itemCount: respRM
-                                              .data![selectedPilesDose]
-                                              .records![selectedPillIndex]
-                                              .totalTimes!,
-                                          separatorBuilder: (context, index) {
-                                            return SizedBox(width: 20.sp);
-                                          },
-                                          itemBuilder: (context, index) {
-                                            return respRM
-                                                    .data![selectedPilesDose]
-                                                    .records![selectedPillIndex]
-                                                    .doses!
-                                                    .contains(index + 1)
-                                                ? Row(
-                                                    children: [
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(4.0),
-                                                        child: Image.asset(
-                                                          ImageConst
-                                                              .doubleTickIcon,
-                                                          scale: 4,
-                                                        ),
-                                                      ),
-                                                      CommonText.textBoldWight400(
-                                                          text:
-                                                              "${respRM.data![selectedPilesDose].records![selectedPillIndex].shceduleTime![index]}",
-                                                          fontSize: 12.sp)
-                                                    ],
-                                                  )
-                                                : Row(
-                                                    children: [
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(4.0),
-                                                        child: Image.asset(
-                                                          ImageConst
-                                                              .doubleTickIcon,
-                                                          scale: 4,
-                                                          color: Color(
-                                                                  0xffFB0A0A)
-                                                              .withOpacity(.8),
-                                                        ),
-                                                      ),
-                                                      CommonText.textBoldWight400(
-                                                          text:
-                                                              "${respRM.data![selectedPilesDose].records![selectedPillIndex].shceduleTime![index]}",
-                                                          fontSize: 12.sp)
-                                                    ],
-                                                  );
-                                          },
+                                            CommonText.textBoldWight500(
+                                                text: '50 Taken',
+                                                fontSize: 10.sp,
+                                                color: CommonColor
+                                                    .blackColor0D0D0D)
+                                          ],
                                         ),
-                                      )),
+                                        Row(
+                                          children: [
+                                            Container(
+                                              height: 15,
+                                              width: 30,
+                                              margin: EdgeInsets.only(right: 5),
+                                              decoration: BoxDecoration(
+                                                  color: CommonColor
+                                                      .lightYellowColor,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          20)),
+                                            ),
+                                            CommonText.textBoldWight500(
+                                                text: '08 Snoozed',
+                                                fontSize: 10.sp,
+                                                color: CommonColor
+                                                    .blackColor0D0D0D)
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            Container(
+                                              height: 15,
+                                              width: 30,
+                                              margin: EdgeInsets.only(right: 5),
+                                              decoration: BoxDecoration(
+                                                  color:
+                                                      CommonColor.lightRedColor,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          20)),
+                                            ),
+                                            CommonText.textBoldWight500(
+                                                text: '12 Missed',
+                                                fontSize: 10.sp,
+                                                color: CommonColor
+                                                    .blackColor0D0D0D)
+                                          ],
+                                        ),
+                                      ]),
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Container(
+                                      margin:
+                                          EdgeInsets.symmetric(vertical: 15.sp),
+                                      alignment: Alignment.center,
+                                      height: 30.sp,
+                                      width: 120.sp,
+                                      decoration: BoxDecoration(
+                                          color: Color(0xff27AE60),
+                                          borderRadius:
+                                              BorderRadius.circular(100)),
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Image.asset(
+                                              "assets/png/share_arrow.png",
+                                              scale: 4,
+                                            ),
+                                            SizedBox(width: 5),
+                                            CommonText.textBoldWight500(
+                                                text: 'Export/Share',
+                                                fontSize: 10.sp,
+                                                color: CommonColor
+                                                    .whiteColorEDEDED)
+                                          ]),
+                                    ),
+                                  ),
+                                  buildDottedLine(),
                                   CommonWidget.commonSizedBox(height: 10),
                                   Align(
                                       alignment: Alignment.center,
@@ -442,6 +427,126 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Column dailyGraph(GetRecordMedicineResponseModel respRM) {
+    return Column(
+      children: [
+        Container(
+          height: 120.sp,
+          alignment: Alignment.center,
+          // color: Colors.grey.shade300,
+          child: ListView.builder(
+              physics: BouncingScrollPhysics(),
+              scrollDirection: Axis.horizontal,
+              itemCount: limitData,
+              shrinkWrap: true,
+              reverse: true,
+              itemBuilder: (_, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        //  height: 150,
+                        // color: Colors.red,
+                        width: 28,
+                        child: ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemCount: respRM.data![index].date ==
+                                  dayOf.toString().split(" ").first
+                              ? respRM.data![index].records![selectedPillIndex]
+                                  .totalTimes
+                              : 3,
+                          itemBuilder: (context, indexOfDose) {
+                            return Column(
+                              children: [
+                                pilesContainer(
+                                    completedDoses: respRM.data![index]
+                                        .records![selectedPillIndex].doses!,
+                                    selectMainDose: index,
+                                    selectedList: selectedPilesDose,
+                                    index: indexOfDose,
+                                    totalDoseLength: listOfPiles[index].length),
+                                Divider(
+                                  color: Colors.transparent,
+                                  height: 1,
+                                )
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                      //  Spacer(),
+                      Container(
+                          // height: 40,
+                          // width: 22,
+                          child: CommonText.textBoldWight600(
+                              color: CommonColor.gery9D9D9D,
+                              fontSize: 10,
+                              text:
+                                  weekDayGen(date: respRM.data![index].date!))),
+                    ],
+                  ),
+                );
+              }),
+        ),
+        CommonWidget.commonSizedBox(height: 10),
+        Align(
+            alignment: Alignment.center,
+            child: SizedBox(
+              height: 30.sp,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                itemCount: respRM.data![selectedPilesDose]
+                    .records![selectedPillIndex].totalTimes!,
+                separatorBuilder: (context, index) {
+                  return SizedBox(width: 20.sp);
+                },
+                itemBuilder: (context, index) {
+                  return respRM.data![selectedPilesDose]
+                          .records![selectedPillIndex].doses!
+                          .contains(index + 1)
+                      ? Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Image.asset(
+                                ImageConst.doubleTickIcon,
+                                scale: 4,
+                              ),
+                            ),
+                            CommonText.textBoldWight400(
+                                text:
+                                    "${respRM.data![selectedPilesDose].records![selectedPillIndex].shceduleTime![index]}",
+                                fontSize: 12.sp)
+                          ],
+                        )
+                      : Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Image.asset(
+                                ImageConst.doubleTickIcon,
+                                scale: 4,
+                                color: Color(0xffFB0A0A).withOpacity(.8),
+                              ),
+                            ),
+                            CommonText.textBoldWight400(
+                                text:
+                                    "${respRM.data![selectedPilesDose].records![selectedPillIndex].shceduleTime![index]}",
+                                fontSize: 12.sp)
+                          ],
+                        );
+                },
+              ),
+            )),
+        CommonWidget.commonSizedBox(height: 10),
+      ],
     );
   }
 
@@ -960,14 +1065,6 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
     );
   }
 
-  // Widget graphWidget({
-  //   required DateMedicineRecordResponseModel resp,
-  // }) {
-  //   return resp.data!.length != 0 && resp.data!.isNotEmpty
-  //       ?
-  //       : SizedBox();
-  // }
-
   Row header() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -980,819 +1077,22 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
         CommonText.textBoldWight500(
             text: TextConst.medicineReport, fontSize: 18.sp),
         CommonWidget.commonBackButton(
-          image: ImageConst.add,
+          image: ImageConst.filter,
+          color: CommonColor.blackColor0D0D0D,
           onTap: () {
-            Get.dialog(StatefulBuilder(
-              builder: (context, setState) =>
-                  addMedicineDialog(context, setState),
-            )).then((value) {
-              setState(() {});
+            setState(() {
+              isDaily = !isDaily;
             });
           },
         ),
       ],
     );
   }
+}
 
-  Dialog addMedicineDialog(BuildContext context, StateSetter setState) {
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Container(
-        height: 400.sp,
-        width: 300.sp,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding:
-                  EdgeInsets.only(left: 20, top: 13, right: 20, bottom: 13),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CommonText.textBoldWight500(
-                    text: "Add Medicine",
-                    fontSize: 17.sp,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Get.back();
-                    },
-                    child: CommonWidget.commonSvgPitcher(
-                      image: ImageConst.close,
-                    ),
-                  )
-                ],
-              ),
-            ),
-            CommonWidget.dottedLineWidget(),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 5,
-                          ),
-                          CommonText.textBoldWight500(
-                              text: "Med Info",
-                              fontSize: 13.sp,
-                              color: Colors.black),
-                          SizedBox(
-                            height: 12,
-                          ),
-                          Container(
-                            //height: 40.sp,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: Color(0xffF8F8F6),
-                            ),
-                            child: Theme(
-                              data: Theme.of(context)
-                                  .copyWith(dividerColor: Colors.transparent),
-                              child: ExpansionTile(
-                                  iconColor: CommonColor.greenColor,
-                                  title: Row(
-                                    children: [
-                                      SvgPicture.asset(
-                                        'assets/svg/pills.svg',
-                                        height: 15.sp,
-                                        width: 15.sp,
-                                        color: Color(0xff9B9B9B),
-                                      ),
-                                      SizedBox(
-                                        width: 18,
-                                      ),
-                                      CommonText.textBoldWight500(
-                                          text:
-                                              "${medicines[medicineSelected]}",
-                                          fontSize: 13.sp,
-                                          color: Colors.black),
-                                    ],
-                                  ),
-                                  children: [
-                                    Container(
-                                      color: Colors.white,
-                                      child: Column(
-                                        children: List.generate(
-                                            medicines.length,
-                                            (index) => GestureDetector(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      medicineSelected = index;
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    color: medicineSelected ==
-                                                            index
-                                                        ? Color(0xffe1f9ea)
-                                                        : Colors.white,
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 10,
-                                                            vertical: 10),
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(
-                                                          Icons.check,
-                                                          size: 17,
-                                                          color:
-                                                              medicineSelected ==
-                                                                      index
-                                                                  ? CommonColor
-                                                                      .greenColor
-                                                                  : Colors
-                                                                      .white,
-                                                        ),
-                                                        SizedBox(
-                                                          width: 10,
-                                                        ),
-                                                        CommonText
-                                                            .textBoldWight500(
-                                                                text: medicines[
-                                                                    index])
-                                                      ],
-                                                    ),
-                                                  ),
-                                                )),
-                                      ),
-                                    )
-                                  ]),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          CommonText.textBoldWight500(
-                              text: "Strength",
-                              fontSize: 13.sp,
-                              color: Colors.black),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  //height: 40.sp,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    color: Color(0xffF8F8F6),
-                                  ),
-                                  child: Theme(
-                                    data: Theme.of(context).copyWith(
-                                        dividerColor: Colors.transparent),
-                                    child: ExpansionTile(
-                                      collapsedIconColor: Colors.transparent,
-                                      iconColor: Colors.transparent,
-                                      title: Row(
-                                        children: [
-                                          SvgPicture.asset(
-                                            'assets/svg/network.svg',
-                                            height: 15.sp,
-                                            width: 15.sp,
-                                            color: Color(0xff9B9B9B),
-                                          ),
-                                          SizedBox(
-                                            width: 18,
-                                          ),
-                                          CommonText.textBoldWight500(
-                                              text:
-                                                  "${strength[strengthSelected]}",
-                                              fontSize: 13.sp,
-                                              color: Colors.black),
-                                        ],
-                                      ),
-                                      children: [
-                                        Container(
-                                          color: Colors.white,
-                                          child: Column(
-                                            children: List.generate(
-                                                strength.length,
-                                                (index) => GestureDetector(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          strengthSelected =
-                                                              index;
-                                                        });
-                                                      },
-                                                      child: Container(
-                                                        color:
-                                                            strengthSelected ==
-                                                                    index
-                                                                ? Color(
-                                                                    0xffe1f9ea)
-                                                                : Colors.white,
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 10,
-                                                                vertical: 10),
-                                                        child: Row(
-                                                          children: [
-                                                            Icon(
-                                                              Icons.check,
-                                                              size: 17,
-                                                              color: strengthSelected ==
-                                                                      index
-                                                                  ? CommonColor
-                                                                      .greenColor
-                                                                  : Colors
-                                                                      .transparent,
-                                                            ),
-                                                            SizedBox(
-                                                              width: 10,
-                                                            ),
-                                                            CommonText
-                                                                .textBoldWight500(
-                                                                    text: strength[
-                                                                        index])
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    )),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: Container(
-                                  //height: 40.sp,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    color: Color(0xffF8F8F6),
-                                  ),
-                                  child: Theme(
-                                    data: Theme.of(context).copyWith(
-                                        dividerColor: Colors.transparent),
-                                    child: ExpansionTile(
-                                      collapsedIconColor: Colors.transparent,
-                                      iconColor: Colors.transparent,
-                                      title: Row(
-                                        children: [
-                                          SvgPicture.asset(
-                                            'assets/svg/calender.svg',
-                                            height: 15.sp,
-                                            width: 15.sp,
-                                            color: Color(0xff9B9B9B),
-                                          ),
-                                          SizedBox(
-                                            width: 18,
-                                          ),
-                                          CommonText.textBoldWight500(
-                                              text: "${days[daysSelected]}",
-                                              fontSize: 13.sp,
-                                              color: Colors.black),
-                                        ],
-                                      ),
-                                      children: [
-                                        Container(
-                                          color: Colors.white,
-                                          child: Column(
-                                            children: List.generate(
-                                                days.length,
-                                                (index) => GestureDetector(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          daysSelected = index;
-                                                        });
-                                                      },
-                                                      child: Container(
-                                                        color: daysSelected ==
-                                                                index
-                                                            ? Color(0xffe1f9ea)
-                                                            : Colors.white,
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 10,
-                                                                vertical: 10),
-                                                        child: Row(
-                                                          children: [
-                                                            Icon(
-                                                              Icons.check,
-                                                              size: 17,
-                                                              color: daysSelected ==
-                                                                      index
-                                                                  ? CommonColor
-                                                                      .greenColor
-                                                                  : Colors
-                                                                      .transparent,
-                                                            ),
-                                                            SizedBox(
-                                                              width: 10,
-                                                            ),
-                                                            CommonText
-                                                                .textBoldWight500(
-                                                                    text: days[
-                                                                        index])
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    )),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          CommonText.textBoldWight500(
-                              text: "Appearance",
-                              fontSize: 13.sp,
-                              color: Colors.black),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            //height: 40.sp,
-                            width: 130.sp,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: Color(0xffF8F8F6),
-                            ),
-                            child: Theme(
-                              data: Theme.of(context)
-                                  .copyWith(dividerColor: Colors.transparent),
-                              child: ExpansionTile(
-                                collapsedIconColor: Colors.transparent,
-                                iconColor: Colors.transparent,
-                                title: Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      'assets/svg/pills.svg',
-                                      height: 15.sp,
-                                      width: 15.sp,
-                                      color: Color(0xff9B9B9B),
-                                    ),
-                                    SizedBox(
-                                      width: 18,
-                                    ),
-                                    CommonText.textBoldWight500(
-                                        text:
-                                            "${appearance[appearanceSelected]}",
-                                        fontSize: 13.sp,
-                                        color: Colors.black),
-                                  ],
-                                ),
-                                children: [
-                                  Container(
-                                    color: Colors.white,
-                                    child: Column(
-                                      children: List.generate(
-                                        appearance.length,
-                                        (index) => GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              appearanceSelected = index;
-                                            });
-                                          },
-                                          child: Container(
-                                            color: appearanceSelected == index
-                                                ? Color(0xffe1f9ea)
-                                                : Colors.white,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 10),
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.check,
-                                                  size: 17,
-                                                  color: appearanceSelected ==
-                                                          index
-                                                      ? CommonColor.greenColor
-                                                      : Colors.transparent,
-                                                ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                CommonText.textBoldWight500(
-                                                    text: appearance[index])
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 20),
-                          CommonWidget.commonButton(
-                              color: CommonColor.greenColor,
-                              radius: 10,
-                              onTap: () {
-                                Get.back();
-                                Get.dialog(StatefulBuilder(
-                                  builder: (context, setState) => Dialog(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Container(
-                                      height: 400.sp,
-                                      width: 300.sp,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                left: 20,
-                                                top: 13,
-                                                right: 20,
-                                                bottom: 13),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                CommonText.textBoldWight500(
-                                                  text: "Schedule",
-                                                  fontSize: 17.sp,
-                                                ),
-                                                InkWell(
-                                                  onTap: () {
-                                                    Get.back();
-                                                  },
-                                                  child: CommonWidget
-                                                      .commonSvgPitcher(
-                                                    image: ImageConst.close,
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                          CommonWidget.dottedLineWidget(),
-                                          Expanded(
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 20,
-                                                            vertical: 10),
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        SizedBox(
-                                                          height: 5,
-                                                        ),
-                                                        CommonText
-                                                            .textBoldWight500(
-                                                                text:
-                                                                    "Frequency",
-                                                                fontSize: 13.sp,
-                                                                color: Colors
-                                                                    .black),
-                                                        SizedBox(
-                                                          height: 12,
-                                                        ),
-                                                        Container(
-                                                          //height: 40.sp,
-                                                          width:
-                                                              double.infinity,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        15),
-                                                            color: Color(
-                                                                0xffF8F8F6),
-                                                          ),
-                                                          child: Theme(
-                                                            data: Theme.of(
-                                                                    context)
-                                                                .copyWith(
-                                                                    dividerColor:
-                                                                        Colors
-                                                                            .transparent),
-                                                            child:
-                                                                ExpansionTile(
-                                                                    iconColor:
-                                                                        CommonColor
-                                                                            .greenColor,
-                                                                    title: Row(
-                                                                      children: [
-                                                                        SizedBox(
-                                                                          width:
-                                                                              18,
-                                                                        ),
-                                                                        CommonText.textBoldWight500(
-                                                                            text:
-                                                                                "${frequency[frequencySelected]}",
-                                                                            fontSize:
-                                                                                13.sp,
-                                                                            color: Colors.black),
-                                                                      ],
-                                                                    ),
-                                                                    children: [
-                                                                  Container(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    child:
-                                                                        Column(
-                                                                      children: List.generate(
-                                                                          frequency.length,
-                                                                          (index) => GestureDetector(
-                                                                                onTap: () {
-                                                                                  setState(() {
-                                                                                    frequencySelected = index;
-                                                                                  });
-                                                                                },
-                                                                                child: Container(
-                                                                                  color: frequencySelected == index ? Color(0xffe1f9ea) : Colors.white,
-                                                                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                                                                  child: Row(
-                                                                                    children: [
-                                                                                      Icon(
-                                                                                        Icons.check,
-                                                                                        size: 17,
-                                                                                        color: frequencySelected == index ? CommonColor.greenColor : Colors.transparent,
-                                                                                      ),
-                                                                                      SizedBox(
-                                                                                        width: 10,
-                                                                                      ),
-                                                                                      CommonText.textBoldWight500(text: frequency[index])
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                              )),
-                                                                    ),
-                                                                  )
-                                                                ]),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 20,
-                                                        ),
-                                                        CommonText.textBoldWight500(
-                                                            text:
-                                                                "How Many Times A Day?",
-                                                            fontSize: 13.sp,
-                                                            color:
-                                                                Colors.black),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Container(
-                                                          //height: 40.sp,
-                                                          width: 140.sp,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        15),
-                                                            color: Color(
-                                                                0xffF8F8F6),
-                                                          ),
-                                                          child: Theme(
-                                                            data: Theme.of(
-                                                                    context)
-                                                                .copyWith(
-                                                                    dividerColor:
-                                                                        Colors
-                                                                            .transparent),
-                                                            child:
-                                                                ExpansionTile(
-                                                              collapsedIconColor:
-                                                                  Colors
-                                                                      .transparent,
-                                                              iconColor: Colors
-                                                                  .transparent,
-                                                              title: Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 18,
-                                                                  ),
-                                                                  CommonText.textBoldWight500(
-                                                                      text:
-                                                                          "${times[timeSelected]}",
-                                                                      fontSize:
-                                                                          13.sp,
-                                                                      color: Colors
-                                                                          .black),
-                                                                ],
-                                                              ),
-                                                              children: [
-                                                                Container(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  child: Column(
-                                                                    children: List.generate(
-                                                                        times.length,
-                                                                        (index) => GestureDetector(
-                                                                              onTap: () {
-                                                                                setState(() {
-                                                                                  timeSelected = index;
-                                                                                });
-                                                                              },
-                                                                              child: Container(
-                                                                                color: timeSelected == index ? Color(0xffe1f9ea) : Colors.white,
-                                                                                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                                                                child: Row(
-                                                                                  children: [
-                                                                                    Icon(
-                                                                                      Icons.check,
-                                                                                      size: 17,
-                                                                                      color: timeSelected == index ? CommonColor.greenColor : Colors.transparent,
-                                                                                    ),
-                                                                                    SizedBox(
-                                                                                      width: 10,
-                                                                                    ),
-                                                                                    CommonText.textBoldWight500(text: times[index])
-                                                                                  ],
-                                                                                ),
-                                                                              ),
-                                                                            )),
-                                                                  ),
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 20,
-                                                        ),
-                                                        CommonText.textBoldWight500(
-                                                            text:
-                                                                "Set Date & Time",
-                                                            fontSize: 13.sp,
-                                                            color:
-                                                                Colors.black),
-                                                        Row(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .end,
-                                                          children: [
-                                                            Column(
-                                                              children:
-                                                                  List.generate(
-                                                                timeSelected ==
-                                                                        0
-                                                                    ? 1
-                                                                    : timeSelected ==
-                                                                            1
-                                                                        ? 2
-                                                                        : 3,
-                                                                (index) =>
-                                                                    Container(
-                                                                  height: 40.sp,
-                                                                  width: 170.sp,
-                                                                  margin: EdgeInsets
-                                                                      .only(
-                                                                          top:
-                                                                              10),
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            15),
-                                                                    color: Color(
-                                                                        0xffF8F8F6),
-                                                                  ),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      SizedBox(
-                                                                        width:
-                                                                            18,
-                                                                      ),
-                                                                      SvgPicture
-                                                                          .asset(
-                                                                        'assets/svg/notification2.svg',
-                                                                        height:
-                                                                            15.sp,
-                                                                        width: 15
-                                                                            .sp,
-                                                                        color: Color(
-                                                                            0xff9B9B9B),
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            18,
-                                                                      ),
-                                                                      CommonText.textBoldWight500(
-                                                                          text:
-                                                                              "10:00 AM",
-                                                                          fontSize: 13
-                                                                              .sp,
-                                                                          color:
-                                                                              Colors.black),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Spacer(),
-                                                            Container(
-                                                              height: 40.sp,
-                                                              width: 40.sp,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: Color(
-                                                                    0xffeffcf4),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            15),
-                                                              ),
-                                                              child: Center(
-                                                                child: Icon(
-                                                                  Icons.add,
-                                                                  size: 15,
-                                                                  color: CommonColor
-                                                                      .greenColor,
-                                                                ),
-                                                              ),
-                                                            )
-                                                          ],
-                                                        ),
-                                                        SizedBox(height: 20),
-                                                        CommonWidget
-                                                            .commonButton(
-                                                                color: CommonColor
-                                                                    .greenColor,
-                                                                radius: 10,
-                                                                onTap: () {
-                                                                  Get.back();
-                                                                  CommonWidget.getSnackBar(
-                                                                      title:
-                                                                          "Added!",
-                                                                      message:
-                                                                          'Your medicine has been added successfully.',
-                                                                      color: CommonColor
-                                                                          .greenColor,
-                                                                      colorText:
-                                                                          Colors
-                                                                              .white);
-                                                                },
-                                                                text: "Add")
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                )).then((value) {
-                                  setState(
-                                    () {},
-                                  );
-                                });
-                              },
-                              text: "Next")
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+class ChartData {
+  ChartData(this.x, this.y, [this.color]);
+  final double x;
+  final double y;
+  final Color? color;
 }

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+
 import '../constant/color_const.dart';
 import '../constant/image_const.dart';
 import '../constant/text_const.dart';
@@ -67,7 +68,7 @@ class CommonWidget {
   }
 
   static Widget commonBackButton(
-      {final onTap, String image = ImageConst.backArrow}) {
+      {final onTap, String image = ImageConst.backArrow, Color? color}) {
     return Container(
       height: 30.sp,
       width: 30.sp,
@@ -78,7 +79,7 @@ class CommonWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(10)),
       child: IconButton(
-        icon: SvgPicture.asset(image),
+        icon: SvgPicture.asset(image, color: color),
         onPressed: onTap,
       ),
     );

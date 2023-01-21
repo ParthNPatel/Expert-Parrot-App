@@ -1,10 +1,12 @@
 import 'package:expert_parrot_app/view/dashboard_screen.dart';
+import 'package:expert_parrot_app/view/medicine_graph_screen.dart';
 import 'package:expert_parrot_app/view/profile_screen.dart';
-import 'package:expert_parrot_app/view/reminder_screen.dart';
 import 'package:expert_parrot_app/view/video_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
+
 import '../controller/handle_float_controller.dart';
 import 'community_screen.dart';
 
@@ -20,7 +22,7 @@ class BottomNavScreen extends StatefulWidget {
 class _BottomNavScreenState extends State<BottomNavScreen> {
   List<String> iconList = [
     'assets/png/home.png',
-    'assets/png/notification (3).png',
+    'assets/svg/dependent.svg',
     'assets/png/profile (2).png',
     'assets/png/chat.png'
   ];
@@ -41,7 +43,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
       body: pageSelected == 0
           ? DashBoardScreen()
           : pageSelected == 1
-              ? ReminderScreen()
+              ? MedicineGraphScreen()
               : pageSelected == 2
                   ? ProfileScreen()
                   : pageSelected == 3
@@ -94,14 +96,23 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                         pageSelected = index;
                       });
                     },
-                    child: Image.asset(
-                      iconList[index],
-                      height: 20.sp,
-                      width: 20.sp,
-                      color: pageSelected == index
-                          ? Color(0xff1FAD85)
-                          : Color(0xffc2c2c2),
-                    ),
+                    child: iconList[index].contains(".svg")
+                        ? SvgPicture.asset(
+                            iconList[index],
+                            height: 20.sp,
+                            width: 20.sp,
+                            color: pageSelected == index
+                                ? Color(0xff1FAD85)
+                                : Color(0xffc2c2c2),
+                          )
+                        : Image.asset(
+                            iconList[index],
+                            height: 20.sp,
+                            width: 20.sp,
+                            color: pageSelected == index
+                                ? Color(0xff1FAD85)
+                                : Color(0xffc2c2c2),
+                          ),
                   ),
                 ),
               ),

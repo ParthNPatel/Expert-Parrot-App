@@ -14,6 +14,7 @@ import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:expert_parrot_app/view/bottom_nav_screen.dart';
 import 'package:expert_parrot_app/view/heart_rate_screen.dart';
+import 'package:expert_parrot_app/view/reminder_screen.dart';
 import 'package:expert_parrot_app/view/view_all_med_schedule_screen.dart';
 import 'package:expert_parrot_app/view/water_graph_screen.dart';
 import 'package:expert_parrot_app/viewModel/add_medicine_view_model.dart';
@@ -28,7 +29,6 @@ import 'package:sizer/sizer.dart';
 
 import '../Models/responseModel/get_all_mdeicine_names_list.dart';
 import '../controller/handle_float_controller.dart';
-import 'medicine_graph_screen.dart';
 
 class DashBoardScreen extends StatefulWidget {
   const DashBoardScreen({Key? key}) : super(key: key);
@@ -586,14 +586,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                 fontSize: 17.sp,
                                 color: CommonColor.blackColor0D0D0D),
                             Spacer(),
-                            InkWell(
-                              onTap: () {
-                                Get.to(() => MedicineGraphScreen());
-                              },
-                              child: CommonText.textGradient(
-                                text: 'My Medical Report',
-                                fontSize: 14.sp,
-                              ),
+                            CommonText.textGradient(
+                              text: 'My Medical Report',
+                              fontSize: 14.sp,
                             )
                           ],
                         ),
@@ -3574,9 +3569,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 '${GetStorageServices.getUserName().toString().split(" ").first}!',
             fontSize: 18.sp),
         Spacer(),
-        Image.asset(
-          ImageConst.notification,
-          scale: 5,
+        InkWell(
+          onTap: () {
+            Get.to(ReminderScreen());
+          },
+          child: Image.asset(
+            ImageConst.notification,
+            scale: 5,
+          ),
         ),
         CommonWidget.commonSizedBox(width: 6),
         InkWell(

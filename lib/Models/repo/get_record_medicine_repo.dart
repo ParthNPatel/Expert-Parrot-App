@@ -12,7 +12,7 @@ class GetRecordMedicineRepo extends BaseService {
     log("dependentId ====== > ${APIConst.recordMedicine + "?limit=7&page=0" + dependentId}");
 
     var response = await APIService().getResponse(
-      url: APIConst.recordMedicine + "?limit=7&page=0" + dependentId,
+      url: APIConst.recordMedicine + "?limit=7" + dependentId,
       apitype: APIType.aGet,
     );
     print('GetRecordMedicineRepo response===>>>  $response');

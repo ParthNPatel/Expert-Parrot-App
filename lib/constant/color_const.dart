@@ -30,6 +30,9 @@ class CommonColor {
   static Color gery72777A = const Color(0xff72777A);
   static Color geryE2E2E2 = const Color(0xffE2E2E2);
   static const greenColor = Color(0xff1BD15D);
+  static const lightGreenColor = Color(0xff45C42C);
+  static const lightYellowColor = Color(0xffF3A64E);
+  static const lightRedColor = Color(0xffFF5F5F);
 }
 
 const blackButtonColor1E232C = const Color(0xfff1E232C);
