@@ -76,7 +76,8 @@ class _VideoScreenState extends State<VideoScreen> {
                                       response.data![index].isLiked!);
                                   likeUnLikeVideoViewModel
                                       .enterValue(response.data![index].likes!);
-
+                                  https: //health-app-test.s3.ap-south-1.amazonaws.com/post/1669714747401.jpeg
+                                  https: //api.postman.com/collections/19617648-9a5011c6-a994-43d0-80a1-5f968cfd2dd6?access_key=PMAT-01GQ9EMR4DCSCTVR4657JB1NRN
                                   Get.to(
                                     () => VideoPlayScreen(
                                       videoLink:
@@ -103,7 +104,7 @@ class _VideoScreenState extends State<VideoScreen> {
                                               topLeft: Radius.circular(8),
                                               topRight: Radius.circular(8)),
                                           child: Image.network(
-                                            "https://health-app-test.s3.ap-south-1.amazonaws.com/video/1671467948401.octet-stream" +
+                                            "https://health-app-test.s3.ap-south-1.amazonaws.com/video/" +
                                                 response
                                                     .data![index].thumbnail!,
                                             fit: BoxFit.cover,

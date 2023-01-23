@@ -585,11 +585,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                 text: TextConst.overview,
                                 fontSize: 17.sp,
                                 color: CommonColor.blackColor0D0D0D),
-                            Spacer(),
-                            CommonText.textGradient(
-                              text: 'My Medical Report',
-                              fontSize: 14.sp,
-                            )
+                            // Spacer(),
+                            // CommonText.textGradient(
+                            //   text: 'My Medical Report',
+                            //   fontSize: 14.sp,
+                            // )
                           ],
                         ),
                         CommonWidget.commonSizedBox(height: 16),
@@ -3041,218 +3041,235 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       required String image}) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8),
-      child: Container(
-        // height: 16.h,
+      child: InkWell(
+        onTap: () async {
+          Get.dialog(
+            await takenMedicineDialog(
+                totalTimes: totalTimes, takenDoses: takenDoses, medId: medId),
+          ).then(
+            (value) {
+              setState(
+                () {
+                  completedDoses.clear();
+                  selectedDose.clear();
+                },
+              );
+            },
+          );
+        },
+        child: Container(
+          // height: 16.h,
 
-        padding: EdgeInsets.only(
-          top: 10,
-          bottom: 10,
-          left: 16,
-        ),
-        decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(16)),
-        child: Row(
-          children: [
-            Container(
-                height: 30.sp,
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                ),
-                child: Image.asset(
-                  image,
-                  scale: 5,
-                )),
-            CommonWidget.commonSizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+          padding: EdgeInsets.only(
+            top: 10,
+            bottom: 10,
+            left: 16,
+          ),
+          decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16)),
+          child: Row(
+            children: [
+              Container(
+                  height: 30.sp,
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                  ),
+                  child: Image.asset(
+                    image,
+                    scale: 5,
+                  )),
+              CommonWidget.commonSizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CommonText.textBoldWight500(
+                              text: medName,
+                              color: CommonColor.blackColor0D0D0D,
+                              fontSize: 15.sp),
+                          PopupMenuButton(
+                            // color: iconColor == Color(0xff21D200)
+                            //     ? Color(0xffDBF3D8)
+                            //     : iconColor == Color(0xffFFDD2C)
+                            //         ? Color(0xffEBF3D9)
+                            //         : iconColor == Color(0xff9255E5)
+                            //             ? Color(0xffE0DFED)
+                            //             : Color(0xff9255E5),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            padding: EdgeInsets.zero,
+                            icon: Icon(
+                              Icons.more_vert,
+                              color: CommonColor.geryB4B4B4,
+                            ),
+                            onSelected: (value) async {
+                              switch (value) {
+                                case 'mark':
+                                  return Get.dialog(
+                                    // barrierDismissible: false,
+                                    await takenMedicineDialog(
+                                        totalTimes: totalTimes,
+                                        takenDoses: takenDoses,
+                                        medId: medId),
+                                  ).then(
+                                    (value) {
+                                      setState(
+                                        () {
+                                          completedDoses.clear();
+                                          selectedDose.clear();
+                                        },
+                                      );
+                                    },
+                                  );
+                                default:
+                                  throw UnimplementedError();
+                              }
+                            },
+                            itemBuilder: (context) {
+                              if (dayOf.toString().split(" ").first ==
+                                  DateTime.now().toString().split(" ").first) {
+                                return [
+                                  PopupMenuItem(
+                                    onTap: () async {},
+                                    child: Text("Mark as Taken"),
+                                    value: "mark",
+                                  ),
+                                  PopupMenuItem(
+                                    onTap: () async {
+                                      if (medId.isNotEmpty) {
+                                        var resp = await DeleteMedicineRepo
+                                            .deleteMedicineRepo(id: medId);
+
+                                        if (resp["flag"] == true) {
+                                          await userDataViewModel
+                                              .userDataViewModel();
+                                          dateMedicineRecordViewModel
+                                              .dateMedicineRecordViewModel(
+                                                  isLoading: false,
+                                                  model: {"date": "${dayOf}"});
+                                          CommonWidget.getSnackBar(
+                                              duration: 2,
+                                              color: CommonColor.greenColor
+                                                  .withOpacity(.4),
+                                              colorText: Colors.white,
+                                              title: "Done!",
+                                              message: '${resp["data"]}');
+                                        } else {
+                                          CommonWidget.getSnackBar(
+                                              duration: 2,
+                                              color: Colors.red.withOpacity(.4),
+                                              colorText: Colors.white,
+                                              title: "Something went wrong!",
+                                              message: '${resp["data"]}');
+                                        }
+                                      } else {
+                                        CommonWidget.getSnackBar(
+                                            duration: 2,
+                                            color: Colors.red.withOpacity(.4),
+                                            colorText: Colors.white,
+                                            title: "Something went wrong",
+                                            message: 'Please try again!');
+                                      }
+                                    },
+                                    child: Text("Skipped"),
+                                  ),
+                                ];
+                              } else {
+                                return [
+                                  PopupMenuItem(
+                                    onTap: () async {
+                                      if (medId.isNotEmpty) {
+                                        var resp = await DeleteMedicineRepo
+                                            .deleteMedicineRepo(id: medId);
+
+                                        if (resp["flag"] == true) {
+                                          await userDataViewModel
+                                              .userDataViewModel();
+                                          dateMedicineRecordViewModel
+                                              .dateMedicineRecordViewModel(
+                                                  isLoading: false,
+                                                  model: {"date": "${dayOf}"});
+                                          CommonWidget.getSnackBar(
+                                              duration: 2,
+                                              color: CommonColor.greenColor
+                                                  .withOpacity(.4),
+                                              colorText: Colors.white,
+                                              title: "Done!",
+                                              message: '${resp["data"]}');
+                                        } else {
+                                          CommonWidget.getSnackBar(
+                                              duration: 2,
+                                              color: Colors.red.withOpacity(.4),
+                                              colorText: Colors.white,
+                                              title: "Something went wrong!",
+                                              message: '${resp["data"]}');
+                                        }
+                                      } else {
+                                        CommonWidget.getSnackBar(
+                                            duration: 2,
+                                            color: Colors.red.withOpacity(.4),
+                                            colorText: Colors.white,
+                                            title: "Something went wrong",
+                                            message: 'Please try again!');
+                                      }
+                                    },
+                                    child: Text("Skipped"),
+                                  ),
+                                ];
+                              }
+                            },
+                          )
+                        ]),
+                    CommonText.textBoldWight400(
+                        text: medGm,
+                        color: CommonColor.blackColor0D0D0D,
+                        fontSize: 11.sp),
+                    CommonWidget.commonSizedBox(height: 10),
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CommonText.textBoldWight500(
-                            text: medName,
+                        CommonText.textBoldWight400(
+                            text: timeOfDay,
                             color: CommonColor.blackColor0D0D0D,
-                            fontSize: 15.sp),
-                        PopupMenuButton(
-                          // color: iconColor == Color(0xff21D200)
-                          //     ? Color(0xffDBF3D8)
-                          //     : iconColor == Color(0xffFFDD2C)
-                          //         ? Color(0xffEBF3D9)
-                          //         : iconColor == Color(0xff9255E5)
-                          //             ? Color(0xffE0DFED)
-                          //             : Color(0xff9255E5),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          padding: EdgeInsets.zero,
-                          icon: Icon(
-                            Icons.more_vert,
-                            color: CommonColor.geryB4B4B4,
-                          ),
-                          onSelected: (value) async {
-                            switch (value) {
-                              case 'mark':
-                                return Get.dialog(
-                                  // barrierDismissible: false,
-                                  await takenMedicineDialog(
-                                      totalTimes: totalTimes,
-                                      takenDoses: takenDoses,
-                                      medId: medId),
-                                ).then(
-                                  (value) {
-                                    setState(
-                                      () {
-                                        completedDoses.clear();
-                                        selectedDose.clear();
-                                      },
-                                    );
-                                  },
-                                );
-                              default:
-                                throw UnimplementedError();
-                            }
-                          },
-                          itemBuilder: (context) {
-                            if (dayOf.toString().split(" ").first ==
-                                DateTime.now().toString().split(" ").first) {
-                              return [
-                                PopupMenuItem(
-                                  onTap: () async {},
-                                  child: Text("Mark as Taken"),
-                                  value: "mark",
+                            fontSize: 9.sp),
+                        takenDoses!.length == int.parse(totalTimes)
+                            ? Padding(
+                                padding: const EdgeInsets.only(right: 10),
+                                child: Container(
+                                  height: 18.sp,
+                                  width: 18.sp,
+                                  alignment: Alignment.center,
+                                  child: Icon(
+                                    Icons.check, size: 16,
+                                    color: iconColor,
+                                    //size: 18.sp,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: iconColor, width: 1.5),
+                                    shape: BoxShape.circle,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                                PopupMenuItem(
-                                  onTap: () async {
-                                    if (medId.isNotEmpty) {
-                                      var resp = await DeleteMedicineRepo
-                                          .deleteMedicineRepo(id: medId);
-
-                                      if (resp["flag"] == true) {
-                                        await userDataViewModel
-                                            .userDataViewModel();
-                                        dateMedicineRecordViewModel
-                                            .dateMedicineRecordViewModel(
-                                                isLoading: false,
-                                                model: {"date": "${dayOf}"});
-                                        CommonWidget.getSnackBar(
-                                            duration: 2,
-                                            color: CommonColor.greenColor
-                                                .withOpacity(.4),
-                                            colorText: Colors.white,
-                                            title: "Done!",
-                                            message: '${resp["data"]}');
-                                      } else {
-                                        CommonWidget.getSnackBar(
-                                            duration: 2,
-                                            color: Colors.red.withOpacity(.4),
-                                            colorText: Colors.white,
-                                            title: "Something went wrong!",
-                                            message: '${resp["data"]}');
-                                      }
-                                    } else {
-                                      CommonWidget.getSnackBar(
-                                          duration: 2,
-                                          color: Colors.red.withOpacity(.4),
-                                          colorText: Colors.white,
-                                          title: "Something went wrong",
-                                          message: 'Please try again!');
-                                    }
-                                  },
-                                  child: Text("Skipped"),
-                                ),
-                              ];
-                            } else {
-                              return [
-                                PopupMenuItem(
-                                  onTap: () async {
-                                    if (medId.isNotEmpty) {
-                                      var resp = await DeleteMedicineRepo
-                                          .deleteMedicineRepo(id: medId);
-
-                                      if (resp["flag"] == true) {
-                                        await userDataViewModel
-                                            .userDataViewModel();
-                                        dateMedicineRecordViewModel
-                                            .dateMedicineRecordViewModel(
-                                                isLoading: false,
-                                                model: {"date": "${dayOf}"});
-                                        CommonWidget.getSnackBar(
-                                            duration: 2,
-                                            color: CommonColor.greenColor
-                                                .withOpacity(.4),
-                                            colorText: Colors.white,
-                                            title: "Done!",
-                                            message: '${resp["data"]}');
-                                      } else {
-                                        CommonWidget.getSnackBar(
-                                            duration: 2,
-                                            color: Colors.red.withOpacity(.4),
-                                            colorText: Colors.white,
-                                            title: "Something went wrong!",
-                                            message: '${resp["data"]}');
-                                      }
-                                    } else {
-                                      CommonWidget.getSnackBar(
-                                          duration: 2,
-                                          color: Colors.red.withOpacity(.4),
-                                          colorText: Colors.white,
-                                          title: "Something went wrong",
-                                          message: 'Please try again!');
-                                    }
-                                  },
-                                  child: Text("Skipped"),
-                                ),
-                              ];
-                            }
-                          },
-                        )
-                      ]),
-                  CommonText.textBoldWight400(
-                      text: medGm,
-                      color: CommonColor.blackColor0D0D0D,
-                      fontSize: 11.sp),
-                  CommonWidget.commonSizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CommonText.textBoldWight400(
-                          text: timeOfDay,
-                          color: CommonColor.blackColor0D0D0D,
-                          fontSize: 9.sp),
-                      takenDoses!.length == int.parse(totalTimes)
-                          ? Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: Container(
+                              )
+                            : SizedBox(
                                 height: 18.sp,
                                 width: 18.sp,
-                                alignment: Alignment.center,
-                                child: Icon(
-                                  Icons.check, size: 16,
-                                  color: iconColor,
-                                  //size: 18.sp,
-                                ),
-                                decoration: BoxDecoration(
-                                  border:
-                                      Border.all(color: iconColor, width: 1.5),
-                                  shape: BoxShape.circle,
-                                  color: Colors.white,
-                                ),
                               ),
-                            )
-                          : SizedBox(
-                              height: 18.sp,
-                              width: 18.sp,
-                            ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
