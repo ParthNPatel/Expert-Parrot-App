@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dotted_line/dotted_line.dart';
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_record_medicine_res_model.dart';
@@ -18,7 +16,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 
 class MedicineGraphScreen extends StatefulWidget {
   const MedicineGraphScreen({Key? key}) : super(key: key);
@@ -149,10 +146,11 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
   String weekMedName = "";
   String weekGm = "";
 
-  DateTime now = DateTime.now();
+  DateTime startDate = DateTime.utc(
+      DateTime.now().year, DateTime.now().month, DateTime.now().day - 6);
+  DateTime endDate = DateTime.now();
 
   List tmpList = [];
-  int touchedIndex = -1;
 
   GetRecordMedicineViewModel getRecordMedicineViewModel =
       Get.put(GetRecordMedicineViewModel());
@@ -165,10 +163,12 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
     // TODO: implement initState
     super.initState();
 
+    print('-=-=-=-=-=-= ${startDate.toString().split(" ").first}');
+    print('-=-=-=-=-=-= end ${endDate.toString().split(" ").first}');
     getWeekRecordMedicineViewModel.getWeekRecordMedicineViewModel(body: {
-      "startDate": "${now.toString().split(" ").first}",
-      "endDate": "2023-01-30"
-      // "${DateTime.utc(DateTime.now().year, DateTime.now().month, DateTime.now().day - 6).toString().split(" ").first}"
+      "startDate": "${startDate.toString().split(" ").first}",
+      "endDate": /*"2023-01-30"*/
+          "${endDate.toString().split(" ").first}"
     });
     getRecordMedicineViewModel.getRecordMedicineViewModel();
   }
@@ -200,163 +200,230 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                 GetRecordMedicineResponseModel respRM =
                     controllerRM.getRecordMedicineApiResponse.data;
 
-                return GetBuilder<GetWeekRecordMedicineViewModel>(
-                    builder: (controllerWeek) {
-                  if (controllerWeek.getWeekRecordMedicineApiResponse.status ==
-                      Status.LOADING) {
-                    return SizedBox();
+                if (tmpID == "") {
+                  tmpID = respRM.data![0].records![0].sId!;
+                }
+
+                limitData = 0;
+                for (int i = 0; i < respRM.data!.length; i++) {
+                  for (int j = 0; j < respRM.data![i].records!.length; j++) {
+                    if (respRM.data![i].records![j].sId == tmpID) {
+                      limitData += 1;
+                    }
                   }
+                }
 
-                  if (controllerWeek.getWeekRecordMedicineApiResponse.status ==
-                      Status.COMPLETE) {
-                    GetWeekRecordMedicineResponseModel respWK =
-                        controllerWeek.getWeekRecordMedicineApiResponse.data;
+                return Expanded(
+                  child: SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CommonWidget.commonSizedBox(height: 23),
+                        respRM.data!.length != 0 && respRM.data!.isNotEmpty
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  !isDaily
+                                      ? GetBuilder<
+                                              GetWeekRecordMedicineViewModel>(
+                                          builder: (controllerWeek) {
+                                          if (controllerWeek
+                                                  .getWeekRecordMedicineApiResponse
+                                                  .status ==
+                                              Status.LOADING) {
+                                            return Column(
+                                              children: [
+                                                weekShowWidget(),
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 30.sp),
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                          strokeWidth: 1.5,
+                                                          color: CommonColor
+                                                              .greenColor),
+                                                )
+                                              ],
+                                            );
+                                          }
 
-                    if (tmpID == "") {
-                      tmpID = respRM.data![0].records![0].sId!;
-                    }
+                                          if (controllerWeek
+                                                  .getWeekRecordMedicineApiResponse
+                                                  .status ==
+                                              Status.COMPLETE) {
+                                            GetWeekRecordMedicineResponseModel
+                                                respWK = controllerWeek
+                                                    .getWeekRecordMedicineApiResponse
+                                                    .data;
 
-                    limitData = 0;
-                    for (int i = 0; i < respRM.data!.length; i++) {
-                      for (int j = 0;
-                          j < respRM.data![i].records!.length;
-                          j++) {
-                        if (respRM.data![i].records![j].sId == tmpID) {
-                          limitData += 1;
-                        }
-                      }
-                    }
+                                            if (respWK.data.isNotEmpty &&
+                                                respWK.data != []) {
+                                              if (isFirst) {
+                                                for (int i = 0;
+                                                    i < respWK.data.length;
+                                                    i++) {
+                                                  for (int j = 0;
+                                                      j <
+                                                          respWK.data[i].records
+                                                              .length;
+                                                      j++) {
+                                                    if (respWK.data[i]
+                                                            .records[j].id ==
+                                                        tmpID) {
+                                                      weekTotal += respWK
+                                                          .data[i]
+                                                          .records[j]
+                                                          .totalTimes;
+                                                      weekTaken += respWK
+                                                          .data[i]
+                                                          .records[j]
+                                                          .doses
+                                                          .length;
+                                                    }
+                                                  }
+                                                }
+                                                isFirst = false;
+                                                weekMissed =
+                                                    weekTotal - weekTaken;
+                                                weekMedName = respWK
+                                                    .data[0].records[0].name;
+                                                weekGm = respWK
+                                                    .data[0].records[0].strength
+                                                    .toString();
+                                              }
 
-                    if (isFirst) {
-                      for (int i = 0; i < respWK.data.length; i++) {
-                        for (int j = 0;
-                            j < respWK.data[i].records.length;
-                            j++) {
-                          if (respWK.data[i].records[j].id == tmpID) {
-                            weekTotal += respWK.data[i].records[j].totalTimes;
-                            weekTaken += weekTaken +
-                                respWK.data[i].records[j].doses.length;
-                          }
-                        }
-                      }
-                      isFirst = false;
-                      weekMissed = weekTotal - weekTaken;
-                    }
-
-                    // print("weekTotal ============= > ${weekTotal}");
-                    // print("weekTaken ============= > ${weekTaken}");
-                    // print("weekMissed ============= > ${weekMissed}");
-
-                    return Expanded(
-                      child: SingleChildScrollView(
-                        physics: BouncingScrollPhysics(),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CommonWidget.commonSizedBox(height: 23),
-                            isDaily ? dateShowWidget() : weekShowWidget(),
-                            CommonWidget.commonSizedBox(height: 23),
-                            respRM.data!.length != 0 && respRM.data!.isNotEmpty
-                                ? Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      isDaily
-                                          ? dailyGraph(respRM)
-                                          : weekGraph(),
-                                      buildDottedLine(),
-                                      CommonWidget.commonSizedBox(height: 10),
-                                      Align(
-                                          alignment: Alignment.center,
-                                          child: CommonText.textBoldWight500(
-                                              text: 'Pill List',
-                                              fontSize: 18.sp,
-                                              color: CommonColor
-                                                  .blackColor0D0D0D)),
-                                      CommonWidget.commonSizedBox(height: 4),
-                                      ListView.builder(
-                                        physics: NeverScrollableScrollPhysics(),
-                                        shrinkWrap: true,
-                                        reverse: true,
-                                        itemCount: respRM
-                                            .data![selectedPilesDose]
-                                            .records!
-                                            .length,
-                                        itemBuilder: (context, index) {
-                                          return medScheduleList[index] == null
-                                              ? SizedBox()
-                                              : medDetailsWidget(
-                                                  medId: respRM
-                                                      .data![selectedPilesDose]
-                                                      .records![index]
-                                                      .sId!,
-                                                  totalTimes: respRM
-                                                      .data![selectedPilesDose]
-                                                      .records![index]
-                                                      .totalTimes!,
-                                                  pilesList: listOfPiles[index],
-                                                  image: respRM
+                                              return Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  weekShowWidget(),
+                                                  CommonWidget.commonSizedBox(
+                                                      height: 23),
+                                                  weekGraph(),
+                                                ],
+                                              );
+                                            } else
+                                              return Column(
+                                                children: [
+                                                  weekShowWidget(),
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 30.sp),
+                                                    child: CommonText
+                                                        .textBoldWight500(
+                                                            text:
+                                                                "No data in this week"),
+                                                  )
+                                                ],
+                                              );
+                                          } else
+                                            return Column(children: [
+                                              weekShowWidget(),
+                                              Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 30.sp),
+                                                  child: CommonText
+                                                      .textBoldWight500(
+                                                          text:
+                                                              "Something went wrong"))
+                                            ]);
+                                        })
+                                      : Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            dateShowWidget(),
+                                            CommonWidget.commonSizedBox(
+                                                height: 23),
+                                            dailyGraph(respRM),
+                                          ],
+                                        ),
+                                  buildDottedLine(),
+                                  CommonWidget.commonSizedBox(height: 10),
+                                  Align(
+                                      alignment: Alignment.center,
+                                      child: CommonText.textBoldWight500(
+                                          text: 'Pill List',
+                                          fontSize: 18.sp,
+                                          color: CommonColor.blackColor0D0D0D)),
+                                  CommonWidget.commonSizedBox(height: 4),
+                                  ListView.builder(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    reverse: true,
+                                    itemCount: respRM.data![selectedPilesDose]
+                                        .records!.length,
+                                    itemBuilder: (context, index) {
+                                      return medScheduleList[index] == null
+                                          ? SizedBox()
+                                          : medDetailsWidget(
+                                              medId: respRM
+                                                  .data![selectedPilesDose]
+                                                  .records![index]
+                                                  .sId!,
+                                              totalTimes: respRM
+                                                  .data![selectedPilesDose]
+                                                  .records![index]
+                                                  .totalTimes!,
+                                              pilesList: listOfPiles[index],
+                                              image: respRM
+                                                          .data![
+                                                              selectedPilesDose]
+                                                          .records![index]
+                                                          .appearance!
+                                                          .toLowerCase() ==
+                                                      'pills'
+                                                  ? ImageConst.med3Icon
+                                                  : respRM
                                                               .data![
                                                                   selectedPilesDose]
                                                               .records![index]
                                                               .appearance!
                                                               .toLowerCase() ==
-                                                          'pills'
-                                                      ? ImageConst.med3Icon
+                                                          'gel'
+                                                      ? ImageConst.med1Icon
                                                       : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() ==
-                                                              'gel'
-                                                          ? ImageConst.med1Icon
-                                                          : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() ==
-                                                                  'syrup'
-                                                              ? ImageConst
-                                                                  .med2Icon
-                                                              : ImageConst
-                                                                  .med2Icon,
-                                                  medName: respRM
-                                                      .data![selectedPilesDose]
-                                                      .records![index]
-                                                      .name!,
-                                                  medGm:
-                                                      '${respRM.data![selectedPilesDose].records![index].strength} gm',
-                                                  iconColor: respRM
-                                                              .data![
-                                                                  selectedPilesDose]
-                                                              .records![index]
-                                                              .appearance!
-                                                              .toLowerCase() ==
-                                                          'pills'
-                                                      ? Color(0xff21D200)
-                                                      : respRM
-                                                                  .data![selectedPilesDose]
-                                                                  .records![index]
-                                                                  .appearance!
-                                                                  .toLowerCase() ==
-                                                              'gel'
-                                                          ? Color(0xffFFDD2C)
-                                                          : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() == 'syrup'
-                                                              ? Color(0xff9255E5)
-                                                              : Color(0xff9255E5),
-                                                  dose: respRM.data![selectedPilesDose].records![index].doses!,
-                                                  index: index);
-                                        },
-                                      ),
-                                      CommonWidget.commonSizedBox(height: 100),
-                                    ],
-                                  )
-                                : Center(
-                                    child: Padding(
-                                        padding: EdgeInsets.only(top: 20),
-                                        child: CommonText.textBoldWight400(
-                                            text:
-                                                "No med schedule on ${CommonWidget.convertDateForm(dayOf)}")),
+                                                              'syrup'
+                                                          ? ImageConst.med2Icon
+                                                          : ImageConst.med2Icon,
+                                              medName: respRM
+                                                  .data![selectedPilesDose]
+                                                  .records![index]
+                                                  .name!,
+                                              medGm:
+                                                  '${respRM.data![selectedPilesDose].records![index].strength} gm',
+                                              iconColor: respRM
+                                                          .data![selectedPilesDose]
+                                                          .records![index]
+                                                          .appearance!
+                                                          .toLowerCase() ==
+                                                      'pills'
+                                                  ? Color(0xff21D200)
+                                                  : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() == 'gel'
+                                                      ? Color(0xffFFDD2C)
+                                                      : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() == 'syrup'
+                                                          ? Color(0xff9255E5)
+                                                          : Color(0xff9255E5),
+                                              dose: respRM.data![selectedPilesDose].records![index].doses!,
+                                              index: index);
+                                    },
                                   ),
-                          ],
-                        ),
-                      ),
-                    );
-                  } else
-                    return SizedBox();
-                });
+                                  CommonWidget.commonSizedBox(height: 100),
+                                ],
+                              )
+                            : Center(
+                                child: Padding(
+                                    padding: EdgeInsets.only(top: 20),
+                                    child: CommonText.textBoldWight400(
+                                        text:
+                                            "No med schedule on ${CommonWidget.convertDateForm(dayOf)}")),
+                              ),
+                      ],
+                    ),
+                  ),
+                );
               } else
                 return SizedBox();
             }),
@@ -372,7 +439,9 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
       Row(
         children: [
           CommonText.textBoldWight500(
-              text: "01 - 07 Jan 2023", fontSize: 11.sp),
+              text:
+                  "${DateFormat("dd MMM").format(startDate)} - ${DateFormat("dd MMM yyyy").format(endDate)}",
+              fontSize: 11.sp),
           SizedBox(width: 10.sp),
           Container(
             height: 20.sp,
@@ -383,17 +452,22 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
             child: IconButton(
               icon: SvgPicture.asset(ImageConst.backArrow,
                   color: CommonColor.whiteColorEDEDED),
-              onPressed: () {
-                // if (selectedPilesDose <
-                //     limitData - 1) {
-                //   dayOf = DateTime.utc(
-                //     dayOf.year,
-                //     dayOf.month,
-                //     dayOf.day - 1,
-                //   );
-                //   selectedPilesDose += 1;
-                // }
-                // setState(() {});
+              onPressed: () async {
+                endDate =
+                    DateTime.utc(endDate.year, endDate.month, endDate.day - 7);
+                startDate = DateTime.utc(
+                  startDate.year,
+                  startDate.month,
+                  startDate.day - 7,
+                );
+
+                await getWeekRecordMedicineViewModel
+                    .getWeekRecordMedicineViewModel(body: {
+                  "startDate": "${startDate.toString().split(" ").first}",
+                  "endDate": /*"2023-01-30"*/
+                      "${endDate.toString().split(" ").first}"
+                });
+                setState(() {});
               },
             ),
           ),
@@ -409,20 +483,23 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
               child: IconButton(
                 icon: SvgPicture.asset(ImageConst.backArrow,
                     color: CommonColor.whiteColorEDEDED),
-                onPressed: () {
-                  // var difference =
-                  //     DateTime.now()
-                  //         .difference(dayOf)
-                  //         .inDays;
-                  // if (difference != 0) {
-                  //   dayOf = DateTime.utc(
-                  //     dayOf.year,
-                  //     dayOf.month,
-                  //     dayOf.day + 1,
-                  //   );
-                  //   selectedPilesDose -= 1;
-                  // }
-                  // setState(() {});
+                onPressed: () async {
+                  var difference = DateTime.now().difference(startDate).inDays;
+                  if (difference != 0) {
+                    endDate = DateTime.utc(
+                        endDate.year, endDate.month, endDate.day + 7);
+                    startDate = DateTime.utc(
+                        startDate.year, startDate.month, startDate.day + 7);
+
+                    await getWeekRecordMedicineViewModel
+                        .getWeekRecordMedicineViewModel(body: {
+                      "startDate": "${startDate.toString().split(" ").first}",
+                      "endDate": /*"2023-01-30"*/
+                          "${endDate.toString().split(" ").first}"
+                    });
+                  }
+
+                  setState(() {});
                 },
               ),
             ),
@@ -442,28 +519,36 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
             color: CommonColor.lightGreenColor),
         SizedBox(
           height: 28.h,
-          child: PieChart(PieChartData(
-              centerSpaceRadius: 40,
-              sectionsSpace: 0,
-              borderData: FlBorderData(show: true),
-              startDegreeOffset: -90,
-              sections: [
-                PieChartSectionData(
-                    value: weekTaken.toDouble(),
-                    showTitle: false,
-                    color: CommonColor.lightGreenColor,
-                    radius: 37),
-                PieChartSectionData(
-                    value: weekSnoozed.toDouble(),
-                    showTitle: false,
-                    color: CommonColor.lightYellowColor,
-                    radius: 30),
-                PieChartSectionData(
-                    value: weekMissed.toDouble(),
-                    showTitle: false,
-                    color: CommonColor.lightRedColor,
-                    radius: 23)
-              ])),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              PieChart(PieChartData(
+                  centerSpaceRadius: 40,
+                  sectionsSpace: 0,
+                  borderData: FlBorderData(show: true),
+                  startDegreeOffset: -90,
+                  sections: [
+                    PieChartSectionData(
+                        value: weekTaken.toDouble(),
+                        showTitle: false,
+                        color: CommonColor.lightGreenColor,
+                        radius: 35),
+                    PieChartSectionData(
+                        value: weekSnoozed.toDouble(),
+                        showTitle: false,
+                        color: CommonColor.lightYellowColor,
+                        radius: 30),
+                    PieChartSectionData(
+                        value: weekMissed.toDouble(),
+                        showTitle: false,
+                        color: CommonColor.lightRedColor,
+                        radius: 25)
+                  ])),
+              CommonText.textBoldWight500(
+                  text: "${((weekTaken / weekTotal) * 100).toPrecision(2)} %",
+                  fontSize: 14.sp)
+            ],
+          ),
         ),
         Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
           Row(
