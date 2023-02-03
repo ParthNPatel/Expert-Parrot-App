@@ -1,6 +1,5 @@
 import 'dart:developer' as log;
 import 'dart:math';
-
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/repo/delete_medicine_repo.dart';
 import 'package:expert_parrot_app/Models/responseModel/date_record_medicine_res_model.dart';
@@ -26,7 +25,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
-
 import '../Models/responseModel/get_all_mdeicine_names_list.dart';
 import '../controller/handle_float_controller.dart';
 
@@ -124,10 +122,12 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   ];
 
   List appearance = [
-    'Pills',
-    'Gel',
+    'Tablet',
+    'Capsule',
     'Syrup',
-    'Syringe',
+    'Cream',
+    'Ointment',
+    'Injection',
   ];
 
   List frequency = [
@@ -248,58 +248,110 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               ? 3
                               : respDMR.data!.length,
                           itemBuilder: (context, index) {
+                            // respDMR.data!.indexWhere((element) {
+                            //   if (element.sId == LastData[index]["id"]) {
+                            //     completedDoses = element.doses!;
+                            //   } else {
+                            //     completedDoses = [];
+                            //   }
+                            //   return element.sId == LastData[index]["id"];
+                            // });
+                            // var UserEqual = userResponse.data!
+                            //     .medicines![index]["appearance"];
                             try {
-                              return medDetailsWidget(
-                                  medId: "${respDMR.data![index].sId}",
-                                  totalTimes:
-                                      "${respDMR.data![index].totalTimes}",
-                                  takenDoses: respDMR.data![index].doses,
-                                  image: respDMR.data![index].appearance!
-                                              .toLowerCase() ==
-                                          'pills'
-                                      ? ImageConst.med3Icon
-                                      : respDMR.data![index].appearance!
+                              return /*recordLength > 3
+                                            ? */
+                                  medDetailsWidget(
+                                      medId: "${respDMR.data![index].sId}",
+                                      totalTimes:
+                                          "${respDMR.data![index].totalTimes}",
+                                      takenDoses: respDMR.data![index].doses,
+                                      image: respDMR.data![index].appearance!
                                                   .toLowerCase() ==
-                                              'gel'
-                                          ? ImageConst.med1Icon
+                                              'Tablet'
+                                          ? ImageConst.med3Icon
                                           : respDMR.data![index].appearance!
                                                       .toLowerCase() ==
-                                                  'syrup'
-                                              ? ImageConst.med2Icon
-                                              : ImageConst.med2Icon,
-                                  medName: '${respDMR.data![index].name}',
-                                  medGm: '${respDMR.data![index].strength} gm',
-                                  iconColor: respDMR.data![index].appearance!
-                                              .toLowerCase() ==
-                                          'pills'
-                                      ? Color(0xff21D200)
-                                      : respDMR.data![index].appearance!
+                                                  'Cream'
+                                              ? ImageConst.med1Icon
+                                              : respDMR.data![index].appearance!
+                                                          .toLowerCase() ==
+                                                      'Syrup'
+                                                  ? ImageConst.med2Icon
+                                                  : ImageConst.med2Icon,
+                                      medName: '${respDMR.data![index].name}',
+                                      medGm:
+                                          '${respDMR.data![index].strength} gm',
+                                      iconColor: respDMR.data![index].appearance!
                                                   .toLowerCase() ==
-                                              'gel'
-                                          ? Color(0xffFFDD2C)
+                                              'Tablet'
+                                          ? Color(0xff21D200)
                                           : respDMR.data![index].appearance!
                                                       .toLowerCase() ==
-                                                  'syrup'
-                                              ? Color(0xff9255E5)
-                                              : Color(0xff9255E5),
-                                  timeOfDay:
-                                      '${respDMR.data![index].totalTimes} pills ${respDMR.data![index].frequency}',
-                                  color: respDMR.data![index].appearance!
-                                              .toLowerCase() ==
-                                          'pills'
-                                      ? Color.fromRGBO(69, 196, 44, 0.13)
-                                      : respDMR.data![index].appearance!.toLowerCase() == 'gel'
-                                          ? Color.fromRGBO(193, 196, 44, 0.13)
-                                          : respDMR.data![index].appearance!.toLowerCase() == 'syrup'
-                                              ? Color.fromRGBO(111, 44, 196, 0.13)
-                                              : Color.fromRGBO(111, 44, 196, 0.13));
+                                                  'Cream'
+                                              ? Color(0xffFFDD2C)
+                                              : respDMR.data![index].appearance!
+                                                          .toLowerCase() ==
+                                                      'Syrup'
+                                                  ? Color(0xff9255E5)
+                                                  : Color(0xff9255E5),
+                                      timeOfDay:
+                                          '${respDMR.data![index].totalTimes} Tablet ${respDMR.data![index].frequency}',
+                                      color: respDMR.data![index].appearance!
+                                                  .toLowerCase() ==
+                                              'pills'
+                                          ? Color.fromRGBO(69, 196, 44, 0.13)
+                                          : respDMR.data![index].appearance!.toLowerCase() == 'Cream'
+                                              ? Color.fromRGBO(193, 196, 44, 0.13)
+                                              : respDMR.data![index].appearance!.toLowerCase() == 'Syrup'
+                                                  ? Color.fromRGBO(111, 44, 196, 0.13)
+                                                  : Color.fromRGBO(111, 44, 196, 0.13));
                             } catch (e) {
                               return SizedBox();
                             }
+                            /*: medDetailsWidget(
+                                                medId: "${LastData[index]['id']}",
+                                                totalTimes:
+                                                    "${LastData[index]['totalTimes']}",
+                                                takenDoses: completedDoses,
+                                                image: UserEqual == 'Pills'
+                                                    ? ImageConst.med3Icon
+                                                    : UserEqual == 'Gel'
+                                                        ? ImageConst.med1Icon
+                                                        : UserEqual == 'Syrup'
+                                                            ? ImageConst.med2Icon
+                                                            : ImageConst.med2Icon,
+                                                medName:
+                                                    '${userResponse.data!.medicines![index]["name"]!}',
+                                                medGm:
+                                                    '${userResponse.data!.medicines![index]["strength"]} gm',
+                                                iconColor: UserEqual == 'Pills'
+                                                    ? Color(0xff21D200)
+                                                    : UserEqual == 'Gel'
+                                                        ? Color(0xffFFDD2C)
+                                                        : UserEqual == 'Syrup'
+                                                            ? Color(0xff9255E5)
+                                                            : Color(0xff9255E5),
+                                                timeOfDay:
+                                                    '${userResponse.data!.medicines![index]["totalTimes"]} pills ${userResponse.data!.medicines![index]["frequency"]}',
+                                                color: UserEqual == 'Pills'
+                                                    ? Color.fromRGBO(
+                                                        69, 196, 44, 0.13)
+                                                    : UserEqual == 'Gel'
+                                                        ? Color.fromRGBO(
+                                                            193, 196, 44, 0.13)
+                                                        : UserEqual == 'Syrup'
+                                                            ? Color.fromRGBO(111,
+                                                                44, 196, 0.13)
+                                                            : Color.fromRGBO(
+                                                                111,
+                                                                44,
+                                                                196,
+                                                                0.13,
+                                                              ),
+                                              );*/
                           },
                         ),
-
-                        ///
                         respDMR.data!.length > 3
                             ? Align(
                                 alignment: Alignment.centerRight,
@@ -1104,10 +1156,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                           GetStorageServices.eraseSteps();
                                           GetStorageServices.eraseMiles();
 
-                                          selectMethod == 0
+                                          selectMethod == 1
                                               ? GetStorageServices.setUserSteps(
                                                   _kmController.text.trim())
-                                              : selectMethod == 1
+                                              : selectMethod == 2
                                                   ? GetStorageServices
                                                       .setUserKm(_kmController
                                                           .text
@@ -2847,68 +2899,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               color: CommonColor.geryB4B4B4,
                             ),
                             onSelected: (value) async {
-                              ///111111
-                              if (value == 'mark') {
-                                bool isOpen = false;
-                                try {
-                                  print('Takendose list  ${takenDoses}');
-                                  print(
-                                      'Takendose runtype  ${takenDoses.runtimeType}');
-                                  int dose = int.parse(totalTimes);
-                                  print('TOTAL TIME $dose');
-                                } catch (e) {}
-                                if (true == false) {
-                                  var _req = {
-                                    "medicineId": "${medId}",
-                                    "doses": selectedDose,
-                                  };
-
-                                  print('====== > ${_req}');
-
-                                  await addRecordMedicineViewModel
-                                      .addRecordMedicineViewModel(model: _req);
-
-                                  if (addRecordMedicineViewModel
-                                          .addRecordMedicineApiResponse
-                                          .status ==
-                                      Status.COMPLETE) {
-                                    dateMedicineRecordViewModel
-                                        .dateMedicineRecordViewModel(
-                                            isLoading: false,
-                                            model: {"date": "${dayOf}"});
-                                    selectedDose.clear();
-                                    Get.back();
-                                    userDataViewModel.userDataViewModel();
-                                    dateMedicineRecordViewModel
-                                        .dateMedicineRecordViewModel(
-                                            model: {"date": "${dayOf}"});
-                                    CommonWidget.getSnackBar(
-                                        duration: 2,
-                                        color: CommonColor.greenColor
-                                            .withOpacity(.4),
-                                        colorText: Colors.white,
-                                        title: "Done!",
-                                        message: 'Record Updated!');
-                                  }
-                                  if (addRecordMedicineViewModel
-                                          .addRecordMedicineApiResponse
-                                          .status ==
-                                      Status.ERROR) {
-                                    selectedDose.clear();
-
-                                    Get.back();
-                                    CommonWidget.getSnackBar(
-                                        duration: 2,
-                                        color: Colors.red.withOpacity(.4),
-                                        colorText: Colors.white,
-                                        title: "Failed!",
-                                        message:
-                                            'Record not updated try again!');
-                                  }
-                                } else {
-                                  print('opennenenennenene $totalTimes');
-                                  print('opennenenennenene $takenDoses');
-
+                              switch (value) {
+                                case 'mark':
                                   return Get.dialog(
                                     // barrierDismissible: false,
                                     await takenMedicineDialog(
@@ -2925,7 +2917,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                       );
                                     },
                                   );
-                                }
+                                default:
+                                  throw UnimplementedError();
                               }
                             },
                             itemBuilder: (context) {
