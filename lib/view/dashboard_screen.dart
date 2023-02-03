@@ -21,6 +21,7 @@ import 'package:expert_parrot_app/viewModel/add_record_medicine_view_model.dart'
 import 'package:expert_parrot_app/viewModel/date_medicine_record_view_model.dart';
 import 'package:expert_parrot_app/viewModel/user_data_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -96,6 +97,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   int timeSelected = 0;
 
   TextEditingController medicineName = TextEditingController();
+  TextEditingController strengthName = TextEditingController();
 
   // List<String> medicines = [
   //   'Duloxetine',
@@ -106,18 +108,16 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   // ];
 
   List strength = [
-    '100',
-    '200',
-    '300',
-    '400',
-    '500',
+    'mg',
+    'g',
+    'mcg',
+    'ml',
   ];
 
   List days = [
     '10',
     '20',
     '30',
-    '40',
     '40',
   ];
 
@@ -1560,6 +1560,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
   Dialog addMedicineDialog(BuildContext context, StateSetter setState) {
     return Dialog(
+      insetPadding: EdgeInsets.symmetric(horizontal: 25),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -1628,6 +1629,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               data: Theme.of(context)
                                   .copyWith(dividerColor: Colors.transparent),
                               child: ExpansionTile(
+                                key: GlobalKey(),
                                 iconColor: CommonColor.greenColor,
                                 title: Row(
                                   children: [
@@ -1738,181 +1740,186 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           SizedBox(
                             height: 10,
                           ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  //height: 40.sp,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    color: Color(0xffF8F8F6),
-                                  ),
-                                  child: Theme(
-                                    data: Theme.of(context).copyWith(
-                                        dividerColor: Colors.transparent),
-                                    child: ExpansionTile(
-                                      collapsedIconColor: Colors.transparent,
-                                      iconColor: Colors.transparent,
-                                      title: Row(
-                                        children: [
-                                          SvgPicture.asset(
-                                            'assets/svg/network.svg',
-                                            height: 15.sp,
-                                            width: 15.sp,
-                                            color: Color(0xff9B9B9B),
-                                          ),
-                                          SizedBox(
-                                            width: 18,
-                                          ),
-                                          CommonText.textBoldWight500(
-                                              text:
-                                                  "${strength[strengthSelected]}",
-                                              fontSize: 13.sp,
-                                              color: Colors.black),
+                          Container(
+                            //height: 40.sp,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: Color(0xffF8F8F6),
+                            ),
+                            child: Theme(
+                              data: Theme.of(context)
+                                  .copyWith(dividerColor: Colors.transparent),
+                              child: ExpansionTile(
+                                key: GlobalKey(),
+                                collapsedIconColor: Colors.transparent,
+                                iconColor: Colors.transparent,
+                                title: Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/svg/network.svg',
+                                      height: 13.sp,
+                                      width: 13.sp,
+                                      color: Color(0xff9B9B9B),
+                                    ),
+                                    SizedBox(
+                                      width: 18,
+                                    ),
+                                    Expanded(
+                                      child: TextFormField(
+                                        controller: strengthName,
+                                        inputFormatters: [
+                                          TextInputFormatter.withFunction((oldValue,
+                                                  newValue) =>
+                                              newValue.copyWith(
+                                                  text: newValue.text.contains(
+                                                          "${strength[strengthSelected]}")
+                                                      ? newValue.text
+                                                      : "${strength[strengthSelected]}"))
                                         ],
+                                        decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText:
+                                                "${strength[strengthSelected]}"),
                                       ),
-                                      children: [
-                                        Container(
-                                          color: Colors.white,
-                                          child: Column(
-                                            children: List.generate(
-                                              strength.length,
-                                              (index) => GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    strengthSelected = index;
-                                                  });
-                                                },
-                                                child: Container(
-                                                  color:
-                                                      strengthSelected == index
-                                                          ? Color(0xffe1f9ea)
-                                                          : Colors.white,
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 10),
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.check,
-                                                        size: 17,
-                                                        color:
-                                                            strengthSelected ==
-                                                                    index
-                                                                ? CommonColor
-                                                                    .greenColor
-                                                                : Colors
-                                                                    .transparent,
-                                                      ),
-                                                      SizedBox(
-                                                        width: 10,
-                                                      ),
-                                                      CommonText
-                                                          .textBoldWight500(
-                                                        text:
-                                                            '${strength[index]} mg',
-                                                      )
-                                                    ],
-                                                  ),
+                                    ),
+                                    // CommonText.textBoldWight500(
+                                    //     text:
+                                    //         "${strength[strengthSelected]}",
+                                    //     fontSize: 13.sp,
+                                    //     color: Colors.black),
+                                  ],
+                                ),
+                                children: [
+                                  Container(
+                                    color: Colors.white,
+                                    child: Column(
+                                      children: List.generate(
+                                        strength.length,
+                                        (index) => GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              strengthSelected = index;
+                                            });
+                                            // strengthName =
+                                            //     TextEditingController(
+                                            //   text: strength[index],
+                                            // );
+                                          },
+                                          child: Container(
+                                            color: strengthSelected == index
+                                                ? Color(0xffe1f9ea)
+                                                : Colors.white,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 10),
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.check,
+                                                  size: 17,
+                                                  color: strengthSelected ==
+                                                          index
+                                                      ? CommonColor.greenColor
+                                                      : Colors.transparent,
                                                 ),
-                                              ),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+                                                CommonText.textBoldWight500(
+                                                  text: '${strength[index]}',
+                                                )
+                                              ],
                                             ),
                                           ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: Container(
-                                  //height: 40.sp,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    color: Color(0xffF8F8F6),
-                                  ),
-                                  child: Theme(
-                                    data: Theme.of(context).copyWith(
-                                        dividerColor: Colors.transparent),
-                                    child: ExpansionTile(
-                                      collapsedIconColor: Colors.transparent,
-                                      iconColor: Colors.transparent,
-                                      title: Row(
-                                        children: [
-                                          SvgPicture.asset(
-                                            'assets/svg/calender.svg',
-                                            height: 15.sp,
-                                            width: 15.sp,
-                                            color: Color(0xff9B9B9B),
-                                          ),
-                                          SizedBox(
-                                            width: 18,
-                                          ),
-                                          CommonText.textBoldWight500(
-                                              text: "${days[daysSelected]}",
-                                              fontSize: 13.sp,
-                                              color: Colors.black),
-                                        ],
+                                        ),
                                       ),
-                                      children: [
-                                        Container(
-                                          color: Colors.white,
-                                          child: Column(
-                                            children: List.generate(
-                                              days.length,
-                                              (index) => GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    daysSelected = index;
-                                                  });
-                                                },
-                                                child: Container(
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          CommonText.textBoldWight500(
+                              text: "End Date",
+                              fontSize: 13.sp,
+                              color: Colors.black),
+                          Container(
+                            //height: 40.sp,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: Color(0xffF8F8F6),
+                            ),
+                            child: Theme(
+                              data: Theme.of(context)
+                                  .copyWith(dividerColor: Colors.transparent),
+                              child: ExpansionTile(
+                                key: GlobalKey(),
+                                collapsedIconColor: Colors.transparent,
+                                iconColor: Colors.transparent,
+                                title: Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      'assets/svg/calender.svg',
+                                      height: 15.sp,
+                                      width: 15.sp,
+                                      color: Color(0xff9B9B9B),
+                                    ),
+                                    SizedBox(
+                                      width: 18,
+                                    ),
+                                    CommonText.textBoldWight500(
+                                        text: "${days[daysSelected]}",
+                                        fontSize: 13.sp,
+                                        color: Colors.black),
+                                  ],
+                                ),
+                                children: [
+                                  Container(
+                                    color: Colors.white,
+                                    child: Column(
+                                      children: List.generate(
+                                        days.length,
+                                        (index) => GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              daysSelected = index;
+                                            });
+                                          },
+                                          child: Container(
+                                            color: daysSelected == index
+                                                ? Color(0xffe1f9ea)
+                                                : Colors.white,
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 10),
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.check,
+                                                  size: 17,
                                                   color: daysSelected == index
-                                                      ? Color(0xffe1f9ea)
-                                                      : Colors.white,
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 10),
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.check,
-                                                        size: 17,
-                                                        color:
-                                                            daysSelected ==
-                                                                    index
-                                                                ? CommonColor
-                                                                    .greenColor
-                                                                : Colors
-                                                                    .transparent,
-                                                      ),
-                                                      SizedBox(
-                                                        width: 10,
-                                                      ),
-                                                      CommonText
-                                                          .textBoldWight500(
-                                                        text:
-                                                            '${days[index]} days',
-                                                      )
-                                                    ],
-                                                  ),
+                                                      ? CommonColor.greenColor
+                                                      : Colors.transparent,
                                                 ),
-                                              ),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+                                                CommonText.textBoldWight500(
+                                                  text: '${days[index]} days',
+                                                )
+                                              ],
                                             ),
                                           ),
-                                        )
-                                      ],
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
+                                  )
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                           SizedBox(
                             height: 20,
@@ -1935,6 +1942,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               data: Theme.of(context)
                                   .copyWith(dividerColor: Colors.transparent),
                               child: ExpansionTile(
+                                key: GlobalKey(),
                                 collapsedIconColor: Colors.transparent,
                                 iconColor: Colors.transparent,
                                 title: Row(
@@ -2008,6 +2016,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               Get.dialog(
                                 StatefulBuilder(
                                   builder: (context, setState) => Dialog(
+                                    insetPadding:
+                                        EdgeInsets.symmetric(horizontal: 10),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20),
                                     ),
@@ -2103,6 +2113,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                             .transparent),
                                                             child:
                                                                 ExpansionTile(
+                                                              key: GlobalKey(),
                                                               iconColor:
                                                                   CommonColor
                                                                       .greenColor,
@@ -2206,6 +2217,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                             .transparent),
                                                             child:
                                                                 ExpansionTile(
+                                                              key: GlobalKey(),
                                                               collapsedIconColor:
                                                                   Colors
                                                                       .transparent,
