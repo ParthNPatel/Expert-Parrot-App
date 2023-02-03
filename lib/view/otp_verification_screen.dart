@@ -120,7 +120,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   CommonText.textBoldWight400(
                       color: CommonColor.hintTextColor8391A1,
                       text:
-                          'Enter the verification code we just sent on your email address.',
+                          'Enter the verification code we just sent on your phone number.',
                       fontSize: 12.sp),
                   CommonWidget.commonSizedBox(height: 20),
                   Center(
