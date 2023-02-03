@@ -1,6 +1,5 @@
 import 'dart:developer' as log;
 import 'dart:math';
-
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/repo/delete_medicine_repo.dart';
 import 'package:expert_parrot_app/Models/responseModel/date_record_medicine_res_model.dart';
@@ -26,7 +25,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
-
 import '../Models/responseModel/get_all_mdeicine_names_list.dart';
 import '../controller/handle_float_controller.dart';
 
@@ -1158,10 +1156,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                           GetStorageServices.eraseSteps();
                                           GetStorageServices.eraseMiles();
 
-                                          selectMethod == 0
+                                          selectMethod == 1
                                               ? GetStorageServices.setUserSteps(
                                                   _kmController.text.trim())
-                                              : selectMethod == 1
+                                              : selectMethod == 2
                                                   ? GetStorageServices
                                                       .setUserKm(_kmController
                                                           .text

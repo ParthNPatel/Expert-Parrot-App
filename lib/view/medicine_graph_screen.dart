@@ -11,11 +11,11 @@ import 'package:expert_parrot_app/viewModel/get_record_medicine_view_model.dart'
 import 'package:expert_parrot_app/viewModel/get_week_record_medicine_view_model.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
+import 'package:share_plus/share_plus.dart';
 
 class MedicineGraphScreen extends StatefulWidget {
   const MedicineGraphScreen({Key? key}) : super(key: key);
@@ -374,7 +374,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                                                           .records![index]
                                                           .appearance!
                                                           .toLowerCase() ==
-                                                      'pills'
+                                                      'Tablet'
                                                   ? ImageConst.med3Icon
                                                   : respRM
                                                               .data![
@@ -382,10 +382,10 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                                                               .records![index]
                                                               .appearance!
                                                               .toLowerCase() ==
-                                                          'gel'
+                                                          'Cream'
                                                       ? ImageConst.med1Icon
                                                       : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() ==
-                                                              'syrup'
+                                                              'Syrup'
                                                           ? ImageConst.med2Icon
                                                           : ImageConst.med2Icon,
                                               medName: respRM
@@ -399,11 +399,11 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                                                           .records![index]
                                                           .appearance!
                                                           .toLowerCase() ==
-                                                      'pills'
+                                                      'Tablet'
                                                   ? Color(0xff21D200)
-                                                  : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() == 'gel'
+                                                  : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() == 'Cream'
                                                       ? Color(0xffFFDD2C)
-                                                      : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() == 'syrup'
+                                                      : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() == 'Syrup'
                                                           ? Color(0xff9255E5)
                                                           : Color(0xff9255E5),
                                               dose: respRM.data![selectedPilesDose].records![index].doses!,
@@ -550,56 +550,62 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
             ],
           ),
         ),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          Row(
-            children: [
-              Container(
-                height: 15,
-                width: 30,
-                margin: EdgeInsets.only(right: 8),
-                decoration: BoxDecoration(
-                    color: CommonColor.lightGreenColor,
-                    borderRadius: BorderRadius.circular(20)),
-              ),
-              CommonText.textBoldWight500(
-                  text: '$weekTaken Taken',
-                  fontSize: 10.sp,
-                  color: CommonColor.blackColor0D0D0D)
-            ],
-          ),
-          Row(
-            children: [
-              Container(
-                height: 15,
-                width: 30,
-                margin: EdgeInsets.only(right: 5),
-                decoration: BoxDecoration(
-                    color: CommonColor.lightYellowColor,
-                    borderRadius: BorderRadius.circular(20)),
-              ),
-              CommonText.textBoldWight500(
-                  text: '$weekSnoozed Snoozed',
-                  fontSize: 10.sp,
-                  color: CommonColor.blackColor0D0D0D)
-            ],
-          ),
-          Row(
-            children: [
-              Container(
-                height: 15,
-                width: 30,
-                margin: EdgeInsets.only(right: 5),
-                decoration: BoxDecoration(
-                    color: CommonColor.lightRedColor,
-                    borderRadius: BorderRadius.circular(20)),
-              ),
-              CommonText.textBoldWight500(
-                  text: '$weekMissed Missed',
-                  fontSize: 10.sp,
-                  color: CommonColor.blackColor0D0D0D)
-            ],
-          ),
-        ]),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              children: [
+                Container(
+                  height: 15,
+                  width: 30,
+                  margin: EdgeInsets.only(right: 8),
+                  decoration: BoxDecoration(
+                      color: CommonColor.lightGreenColor,
+                      borderRadius: BorderRadius.circular(20)),
+                ),
+                CommonText.textBoldWight500(
+                    text: '$weekTaken Taken',
+                    fontSize: 10.sp,
+                    color: CommonColor.blackColor0D0D0D)
+              ],
+            ),
+            // Row(
+            //   children: [
+            //     Container(
+            //       height: 15,
+            //       width: 30,
+            //       margin: EdgeInsets.only(right: 5),
+            //       decoration: BoxDecoration(
+            //           color: CommonColor.lightYellowColor,
+            //           borderRadius: BorderRadius.circular(20)),
+            //     ),
+            //     CommonText.textBoldWight500(
+            //         text: '$weekSnoozed Snoozed',
+            //         fontSize: 10.sp,
+            //         color: CommonColor.blackColor0D0D0D)
+            //   ],
+            // ),
+            SizedBox(
+              width: 20.sp,
+            ),
+            Row(
+              children: [
+                Container(
+                  height: 15,
+                  width: 30,
+                  margin: EdgeInsets.only(right: 5),
+                  decoration: BoxDecoration(
+                      color: CommonColor.lightRedColor,
+                      borderRadius: BorderRadius.circular(20)),
+                ),
+                CommonText.textBoldWight500(
+                    text: '$weekMissed Missed',
+                    fontSize: 10.sp,
+                    color: CommonColor.blackColor0D0D0D)
+              ],
+            ),
+          ],
+        ),
         Align(
           alignment: Alignment.center,
           child: Container(
@@ -616,10 +622,15 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                 scale: 4,
               ),
               SizedBox(width: 5),
-              CommonText.textBoldWight500(
-                  text: 'Export/Share',
-                  fontSize: 10.sp,
-                  color: CommonColor.whiteColorEDEDED)
+              InkWell(
+                onTap: () {
+                  Share.share("Test");
+                },
+                child: CommonText.textBoldWight500(
+                    text: 'Export/Share',
+                    fontSize: 10.sp,
+                    color: CommonColor.whiteColorEDEDED),
+              )
             ]),
           ),
         )
@@ -1142,55 +1153,6 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                                 },
                               ),
                             ),
-                            // Container(
-                            //   height: 30,
-                            //   //width: 100,
-                            //   child: ListView.builder(
-                            //     shrinkWrap: true,
-                            //     reverse: true,
-                            //     itemCount: pilesList.length,
-                            //     scrollDirection: Axis.horizontal,
-                            //     itemBuilder: (context, indexPiles) {
-                            //       return InkWell(
-                            //         onTap: () {
-                            //           if (pilesList[indexPiles] == 0) {
-                            //             if (listOfPiles[index].length == 3) {
-                            //               listOfPiles[index] = [1, 1, 1];
-                            //             } else if (listOfPiles[index].length ==
-                            //                 2) {
-                            //               listOfPiles[index] = [1, 1];
-                            //             } else {
-                            //               listOfPiles[index] = [1];
-                            //             }
-                            //           }
-                            //           setState(() {});
-                            //         },
-                            //         child: Column(
-                            //           children: [
-                            //             pilesList[indexPiles] == 1
-                            //                 ? Padding(
-                            //                     padding:
-                            //                         const EdgeInsets.all(4.0),
-                            //                     child: Image.asset(
-                            //                       ImageConst.doubleTickIcon,
-                            //                       scale: 4.5,
-                            //                     ),
-                            //                   )
-                            //                 : Padding(
-                            //                     padding:
-                            //                         const EdgeInsets.all(4.0),
-                            //                     child: Image.asset(
-                            //                         ImageConst.doubleTickIcon,
-                            //                         scale: 4.5,
-                            //                         color:
-                            //                             CommonColor.geryD9D9D9),
-                            //                   )
-                            //           ],
-                            //         ),
-                            //       );
-                            //     },
-                            //   ),
-                            // ),
                             Row(
                               children: [
                                 Image.asset(ImageConst.eyesIcon, scale: 3.5),
