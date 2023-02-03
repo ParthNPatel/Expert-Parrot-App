@@ -124,10 +124,12 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   ];
 
   List appearance = [
-    'Pills',
-    'Gel',
+    'Tablet',
+    'Capsule',
     'Syrup',
-    'Syringe',
+    'Cream',
+    'Ointment',
+    'Injection',
   ];
 
   List frequency = [
@@ -268,42 +270,42 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                       takenDoses: respDMR.data![index].doses,
                                       image: respDMR.data![index].appearance!
                                                   .toLowerCase() ==
-                                              'pills'
+                                              'Tablet'
                                           ? ImageConst.med3Icon
-                                          : respDMR.data![index].appearance!.toLowerCase() ==
-                                                  'gel'
+                                          : respDMR.data![index].appearance!
+                                                      .toLowerCase() ==
+                                                  'Cream'
                                               ? ImageConst.med1Icon
                                               : respDMR.data![index].appearance!
                                                           .toLowerCase() ==
-                                                      'syrup'
+                                                      'Syrup'
                                                   ? ImageConst.med2Icon
                                                   : ImageConst.med2Icon,
                                       medName: '${respDMR.data![index].name}',
                                       medGm:
                                           '${respDMR.data![index].strength} gm',
-                                      iconColor: respDMR
-                                                  .data![index].appearance!
+                                      iconColor: respDMR.data![index].appearance!
                                                   .toLowerCase() ==
-                                              'pills'
+                                              'Tablet'
                                           ? Color(0xff21D200)
                                           : respDMR.data![index].appearance!
                                                       .toLowerCase() ==
-                                                  'gel'
+                                                  'Cream'
                                               ? Color(0xffFFDD2C)
                                               : respDMR.data![index].appearance!
                                                           .toLowerCase() ==
-                                                      'syrup'
+                                                      'Syrup'
                                                   ? Color(0xff9255E5)
                                                   : Color(0xff9255E5),
                                       timeOfDay:
-                                          '${respDMR.data![index].totalTimes} pills ${respDMR.data![index].frequency}',
+                                          '${respDMR.data![index].totalTimes} Tablet ${respDMR.data![index].frequency}',
                                       color: respDMR.data![index].appearance!
                                                   .toLowerCase() ==
                                               'pills'
                                           ? Color.fromRGBO(69, 196, 44, 0.13)
-                                          : respDMR.data![index].appearance!.toLowerCase() == 'gel'
+                                          : respDMR.data![index].appearance!.toLowerCase() == 'Cream'
                                               ? Color.fromRGBO(193, 196, 44, 0.13)
-                                              : respDMR.data![index].appearance!.toLowerCase() == 'syrup'
+                                              : respDMR.data![index].appearance!.toLowerCase() == 'Syrup'
                                                   ? Color.fromRGBO(111, 44, 196, 0.13)
                                                   : Color.fromRGBO(111, 44, 196, 0.13));
                             } catch (e) {
@@ -352,217 +354,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                               );*/
                           },
                         ),
-                        /*SizedBox(
-                          height: LastData.length == 3
-                              ? 63.5.h
-                              : LastData.length == 2
-                                  ? 42.h
-                                  : LastData.length == 0
-                                      ? 21.h
-                                      : 0,
-                          child: PageView.builder(
-                            reverse: true,
-                            controller: pageController,
-                            itemCount: respDMR.data!.length,
-                            onPageChanged: (val) {
-                              setState(() {
-                                pageCounter = val;
-                              });
-                              print('============ > ${pageCounter}');
-                            },
-                            physics: BouncingScrollPhysics(),
-                            itemBuilder: (context, indexPage) {
-                              print('indexPage ============ > ${indexPage}');
-                              LastData.clear();
-
-                              respGRM.data!.indexWhere(
-                                (element) {
-                                  print(
-                                      '${DateTime.parse(element.date!) == DateTime.parse(dayOf.toString().split(" ").first)} ======== dayOf ${DateTime.parse(dayOf.toString().split(" ").first)} ======= element.date ${DateTime.parse(element.date!)}');
-
-                                  if (DateTime.parse(element.date!) ==
-                                      DateTime.parse(
-                                          dayOf.toString().split(" ").first)) {
-                                    recordLength = element.records!.length;
-                                    print(
-                                        'indexPage ============ > ${element.date!}');
-
-                                    if (recordLength > 3) {
-                                      for (int i = 0; i < 3; i++) {
-                                        LastData.insert(i, {
-                                          'id': '${element.records![i].sId}',
-                                          'totalTimes':
-                                              '${element.records![i].totalTimes}',
-                                          'medName':
-                                              '${element.records![i].name}',
-                                          'medGm':
-                                              '${element.records![i].strength} gm',
-                                          'timeOfDay':
-                                              '${element.records![i].totalTimes} pills ${element.records![i].frequency}',
-                                          'ap':
-                                              '${element.records![i].appearance}'
-                                        });
-                                      }
-                                    } else {
-                                      for (int i = 0; i < recordLength; i++) {
-                                        LastData.insert(i, {
-                                          'id': '${element.records![i].sId}',
-                                          'totalTimes':
-                                              '${element.records![i].totalTimes}',
-                                          'medName':
-                                              '${element.records![i].name}',
-                                          'medGm':
-                                              '${element.records![i].strength} gm',
-                                          'timeOfDay':
-                                              '${element.records![i].totalTimes} pills ${element.records![i].frequency}',
-                                          'ap':
-                                              '${element.records![i].appearance}'
-                                        });
-                                      }
-                                    }
-                                  }
-                                  return DateTime.parse(element.date!) ==
-                                      DateTime.parse(
-                                          dayOf.toString().split(" ").first);
-                                },
-                              );
-
-                              try {
-                                return ListView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: recordLength > 3
-                                      ? LastData.length
-                                      : respGRM
-                                          .data![indexPage].records!.length,
-                                  itemBuilder: (context, index) {
-                                    respGRM.data!.indexWhere((element) {
-                                      if (DateTime.parse(element.date!) ==
-                                          DateTime.parse(dayOf
-                                              .toString()
-                                              .split(" ")
-                                              .first)) {
-                                        if (element.records![index].sId ==
-                                            LastData[index]["id"]) {
-                                          completedDoses =
-                                              element.records![index].doses!;
-                                        } else {
-                                          completedDoses = [];
-                                        }
-                                      }
-                                      return DateTime.parse(element.date!) ==
-                                          DateTime.parse(dayOf
-                                              .toString()
-                                              .split(" ")
-                                              .first);
-                                    });
-                                    // var UserEqual = userResponse.data!
-                                    //     .medicines![index]["appearance"];
-                                    try {
-                                      return */
-                        /*recordLength > 3
-                                            ? */
-                        /*
-                                          medDetailsWidget(
-                                              medId: "${LastData[index]['id']}",
-                                              totalTimes:
-                                                  "${LastData[index]['totalTimes']}",
-                                              takenDoses: completedDoses,
-                                              image: LastData[index]['ap'] ==
-                                                      'Pills'
-                                                  ? ImageConst.med3Icon
-                                                  : LastData[index]['ap'] ==
-                                                          'Gel'
-                                                      ? ImageConst.med1Icon
-                                                      : LastData[index]['ap'] ==
-                                                              'Syrup'
-                                                          ? ImageConst.med2Icon
-                                                          : ImageConst.med2Icon,
-                                              medName:
-                                                  '${LastData[index]['medName']}',
-                                              medGm:
-                                                  '${LastData[index]['medGm']}',
-                                              iconColor: LastData[index]
-                                                          ['ap'] ==
-                                                      'Pills'
-                                                  ? Color(0xff21D200)
-                                                  : LastData[index]['ap'] ==
-                                                          'Gel'
-                                                      ? Color(0xffFFDD2C)
-                                                      : LastData[index]['ap'] ==
-                                                              'Syrup'
-                                                          ? Color(0xff9255E5)
-                                                          : Color(0xff9255E5),
-                                              timeOfDay:
-                                                  '${LastData[index]['timeOfDay']}',
-                                              color: LastData[index]['ap'] ==
-                                                      'Pills'
-                                                  ? Color.fromRGBO(
-                                                      69, 196, 44, 0.13)
-                                                  : LastData[index]['ap'] ==
-                                                          'Gel'
-                                                      ? Color.fromRGBO(
-                                                          193, 196, 44, 0.13)
-                                                      : LastData[index]['ap'] ==
-                                                              'Syrup'
-                                                          ? Color.fromRGBO(111,
-                                                              44, 196, 0.13)
-                                                          : Color.fromRGBO(111,
-                                                              44, 196, 0.13));
-                                    } catch (e) {
-                                      return SizedBox();
-                                    }
-                                    */
-                        /*: medDetailsWidget(
-                                                medId: "${LastData[index]['id']}",
-                                                totalTimes:
-                                                    "${LastData[index]['totalTimes']}",
-                                                takenDoses: completedDoses,
-                                                image: UserEqual == 'Pills'
-                                                    ? ImageConst.med3Icon
-                                                    : UserEqual == 'Gel'
-                                                        ? ImageConst.med1Icon
-                                                        : UserEqual == 'Syrup'
-                                                            ? ImageConst.med2Icon
-                                                            : ImageConst.med2Icon,
-                                                medName:
-                                                    '${userResponse.data!.medicines![index]["name"]!}',
-                                                medGm:
-                                                    '${userResponse.data!.medicines![index]["strength"]} gm',
-                                                iconColor: UserEqual == 'Pills'
-                                                    ? Color(0xff21D200)
-                                                    : UserEqual == 'Gel'
-                                                        ? Color(0xffFFDD2C)
-                                                        : UserEqual == 'Syrup'
-                                                            ? Color(0xff9255E5)
-                                                            : Color(0xff9255E5),
-                                                timeOfDay:
-                                                    '${userResponse.data!.medicines![index]["totalTimes"]} pills ${userResponse.data!.medicines![index]["frequency"]}',
-                                                color: UserEqual == 'Pills'
-                                                    ? Color.fromRGBO(
-                                                        69, 196, 44, 0.13)
-                                                    : UserEqual == 'Gel'
-                                                        ? Color.fromRGBO(
-                                                            193, 196, 44, 0.13)
-                                                        : UserEqual == 'Syrup'
-                                                            ? Color.fromRGBO(111,
-                                                                44, 196, 0.13)
-                                                            : Color.fromRGBO(
-                                                                111,
-                                                                44,
-                                                                196,
-                                                                0.13,
-                                                              ),
-                                              );*/
-                        /*
-                                  },
-                                );
-                              } catch (e) {
-                                return SizedBox();
-                              }
-                            },
-                          ),
-                        ),*/
                         respDMR.data!.length > 3
                             ? Align(
                                 alignment: Alignment.centerRight,
