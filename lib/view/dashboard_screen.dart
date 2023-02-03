@@ -107,11 +107,19 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   //   'Desvenla',
   // ];
 
+  // List strength = [
+  //   'mg',
+  //   'g',
+  //   'mcg',
+  //   'ml',
+  // ];
+
   List strength = [
-    'mg',
-    'g',
-    'mcg',
-    'ml',
+    '100',
+    '200',
+    '300',
+    '400',
+    '500',
   ];
 
   List days = [
@@ -1765,29 +1773,28 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     SizedBox(
                                       width: 18,
                                     ),
-                                    Expanded(
-                                      child: TextFormField(
-                                        controller: strengthName,
-                                        inputFormatters: [
-                                          TextInputFormatter.withFunction((oldValue,
-                                                  newValue) =>
-                                              newValue.copyWith(
-                                                  text: newValue.text.contains(
-                                                          "${strength[strengthSelected]}")
-                                                      ? newValue.text
-                                                      : "${strength[strengthSelected]}"))
-                                        ],
-                                        decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                            hintText:
-                                                "${strength[strengthSelected]}"),
-                                      ),
-                                    ),
-                                    // CommonText.textBoldWight500(
-                                    //     text:
-                                    //         "${strength[strengthSelected]}",
-                                    //     fontSize: 13.sp,
-                                    //     color: Colors.black),
+                                    // Expanded(
+                                    //   child: TextFormField(
+                                    //     controller: strengthName,
+                                    //     inputFormatters: [
+                                    //       TextInputFormatter.withFunction((oldValue,
+                                    //               newValue) =>
+                                    //           newValue.copyWith(
+                                    //               text: newValue.text.contains(
+                                    //                       "${strength[strengthSelected]}")
+                                    //                   ? newValue.text
+                                    //                   : "${strength[strengthSelected]}"))
+                                    //     ],
+                                    //     decoration: InputDecoration(
+                                    //         border: InputBorder.none,
+                                    //         hintText:
+                                    //             "${strength[strengthSelected]}"),
+                                    //   ),
+                                    // ),
+                                    CommonText.textBoldWight500(
+                                        text: "${strength[strengthSelected]}",
+                                        fontSize: 13.sp,
+                                        color: Colors.black),
                                   ],
                                 ),
                                 children: [
