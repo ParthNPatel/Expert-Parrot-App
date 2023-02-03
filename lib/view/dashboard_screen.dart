@@ -2911,8 +2911,95 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               color: CommonColor.geryB4B4B4,
                             ),
                             onSelected: (value) async {
-                              switch (value) {
-                                case 'mark':
+                              if (value == 'mark') {
+                                bool isOpen = false;
+                                List tackDataPass = [];
+                                try {
+                                  int dose = int.parse(totalTimes);
+                                  if (dose == takenDoses!.length) {
+                                    isOpen = false;
+                                  } else if (dose == 1 &&
+                                      takenDoses.length == 0) {
+                                    isOpen = true;
+                                    tackDataPass = [1];
+                                  } else if (dose == 2 &&
+                                      takenDoses.length == 1) {
+                                    isOpen = true;
+                                    if (takenDoses.contains(1)) {
+                                      tackDataPass = [2];
+                                    } else {
+                                      tackDataPass = [1];
+                                    }
+                                  } else if (dose == 3 &&
+                                      takenDoses.length == 2) {
+                                    isOpen = true;
+                                    if (takenDoses.contains(1) &&
+                                        takenDoses.contains(2)) {
+                                      tackDataPass = [3];
+                                    } else if (takenDoses.contains(1) &&
+                                        takenDoses.contains(3)) {
+                                      tackDataPass = [2];
+                                    } else {
+                                      tackDataPass = [1];
+                                    }
+                                  } else {
+                                    isOpen = false;
+                                  }
+                                  print('Total dose : ${totalTimes}');
+                                  print('taken dose : ${takenDoses}');
+                                  print('select dose: ${tackDataPass}');
+                                  print('is open    : ${isOpen}');
+                                } catch (e) {}
+                                if (isOpen) {
+                                  var _req = {
+                                    "medicineId": "${medId}",
+                                    "doses": tackDataPass,
+                                  };
+
+                                  print('====== > ${_req}');
+
+                                  await addRecordMedicineViewModel
+                                      .addRecordMedicineViewModel(model: _req);
+
+                                  if (addRecordMedicineViewModel
+                                          .addRecordMedicineApiResponse
+                                          .status ==
+                                      Status.COMPLETE) {
+                                    dateMedicineRecordViewModel
+                                        .dateMedicineRecordViewModel(
+                                            isLoading: false,
+                                            model: {"date": "${dayOf}"});
+                                    selectedDose.clear();
+                                    userDataViewModel.userDataViewModel();
+                                    dateMedicineRecordViewModel
+                                        .dateMedicineRecordViewModel(
+                                            model: {"date": "${dayOf}"});
+                                    CommonWidget.getSnackBar(
+                                        duration: 2,
+                                        color: CommonColor.greenColor
+                                            .withOpacity(.4),
+                                        colorText: Colors.white,
+                                        title: "Done!",
+                                        message: 'Record Updated!');
+                                  }
+                                  if (addRecordMedicineViewModel
+                                          .addRecordMedicineApiResponse
+                                          .status ==
+                                      Status.ERROR) {
+                                    selectedDose.clear();
+
+                                    CommonWidget.getSnackBar(
+                                        duration: 2,
+                                        color: Colors.red.withOpacity(.4),
+                                        colorText: Colors.white,
+                                        title: "Failed!",
+                                        message:
+                                            'Record not updated try again!');
+                                  }
+                                } else {
+                                  print('opennenenennenene $totalTimes');
+                                  print('opennenenennenene $takenDoses');
+
                                   return Get.dialog(
                                     // barrierDismissible: false,
                                     await takenMedicineDialog(
@@ -2929,8 +3016,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                       );
                                     },
                                   );
-                                default:
-                                  throw UnimplementedError();
+                                }
                               }
                             },
                             itemBuilder: (context) {
