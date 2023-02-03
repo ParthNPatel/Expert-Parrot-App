@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
+import '../viewModel/user_data_view_model.dart';
+
 class ViewAllMedScheduleScreen extends StatefulWidget {
   DateTime date;
   ViewAllMedScheduleScreen({Key? key, required this.date}) : super(key: key);
@@ -23,6 +25,9 @@ class ViewAllMedScheduleScreen extends StatefulWidget {
 class _ViewAllMedScheduleScreenState extends State<ViewAllMedScheduleScreen> {
   List selectedDose = [];
   List completedDoses = [];
+  UserDataViewModel userDataViewModel = Get.put(UserDataViewModel());
+  DateTime dayOf = DateTime.now();
+
   AddRecordMedicineViewModel addRecordMedicineViewModel =
       Get.put(AddRecordMedicineViewModel());
   DateMedicineRecordViewModel dateMedicineRecordViewModel =
@@ -264,8 +269,64 @@ class _ViewAllMedScheduleScreenState extends State<ViewAllMedScheduleScreen> {
                             color: CommonColor.geryB4B4B4,
                           ),
                           onSelected: (value) async {
-                            switch (value) {
-                              case 'mark':
+                            if (value == 'mark') {
+                              bool isOpen = false;
+                              try {
+                                print('Takendose list  ${takenDoses}');
+                                print(
+                                    'Takendose runtype  ${takenDoses.runtimeType}');
+                                int dose = int.parse(totalTimes);
+                                print('TOTAL TIME $dose');
+                              } catch (e) {}
+                              if (true == false) {
+                                var _req = {
+                                  "medicineId": "${medId}",
+                                  "doses": selectedDose,
+                                };
+
+                                print('====== > ${_req}');
+
+                                await addRecordMedicineViewModel
+                                    .addRecordMedicineViewModel(model: _req);
+
+                                if (addRecordMedicineViewModel
+                                        .addRecordMedicineApiResponse.status ==
+                                    Status.COMPLETE) {
+                                  dateMedicineRecordViewModel
+                                      .dateMedicineRecordViewModel(
+                                          isLoading: false,
+                                          model: {"date": "${dayOf}"});
+                                  selectedDose.clear();
+                                  Get.back();
+                                  userDataViewModel.userDataViewModel();
+                                  dateMedicineRecordViewModel
+                                      .dateMedicineRecordViewModel(
+                                          model: {"date": "${dayOf}"});
+                                  CommonWidget.getSnackBar(
+                                      duration: 2,
+                                      color: CommonColor.greenColor
+                                          .withOpacity(.4),
+                                      colorText: Colors.white,
+                                      title: "Done!",
+                                      message: 'Record Updated!');
+                                }
+                                if (addRecordMedicineViewModel
+                                        .addRecordMedicineApiResponse.status ==
+                                    Status.ERROR) {
+                                  selectedDose.clear();
+
+                                  Get.back();
+                                  CommonWidget.getSnackBar(
+                                      duration: 2,
+                                      color: Colors.red.withOpacity(.4),
+                                      colorText: Colors.white,
+                                      title: "Failed!",
+                                      message: 'Record not updated try again!');
+                                }
+                              } else {
+                                print('opennenenennenene $totalTimes');
+                                print('opennenenennenene $takenDoses');
+
                                 return Get.dialog(
                                   // barrierDismissible: false,
                                   await takenMedicineDialog(
@@ -282,8 +343,7 @@ class _ViewAllMedScheduleScreenState extends State<ViewAllMedScheduleScreen> {
                                     );
                                   },
                                 );
-                              default:
-                                throw UnimplementedError();
+                              }
                             }
                           },
                           itemBuilder: (context) {

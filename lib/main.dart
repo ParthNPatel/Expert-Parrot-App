@@ -73,6 +73,7 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+
 }
 
 class BaseBindings extends Bindings {
