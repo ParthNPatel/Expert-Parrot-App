@@ -68,107 +68,154 @@ class _ViewAllMedScheduleScreenState extends State<ViewAllMedScheduleScreen> {
                   shrinkWrap: true,
                   itemCount: response.data!.length,
                   itemBuilder: (context, index) {
-                    // respDMR.data!.indexWhere((element) {
-                    //   if (element.sId == LastData[index]["id"]) {
-                    //     completedDoses = element.doses!;
-                    //   } else {
-                    //     completedDoses = [];
-                    //   }
-                    //   return element.sId == LastData[index]["id"];
-                    // });
-                    // var UserEqual = userResponse.data!
-                    //     .medicines![index]["appearance"];
-
                     try {
-                      return /*recordLength > 3
-                                                      ? */
-                          medDetailsWidget(
-                              medId: "${response.data![index].sId}",
-                              totalTimes: "${response.data![index].totalTimes}",
-                              takenDoses: response.data![index].doses,
-                              image: response.data![index].appearance!
-                                          .toLowerCase() ==
-                                      'pills'
-                                  ? ImageConst.med3Icon
+                      return medDetailsWidget(
+                          onTap: () async {
+                            bool isOpen = false;
+                            List tackDataPass = [];
+                            try {
+                              int dose = int.parse(
+                                  response.data![index].totalTimes.toString());
+                              if (dose == response.data![index].doses!.length) {
+                                isOpen = false;
+                              } else if (dose == 1 &&
+                                  response.data![index].doses!.length == 0) {
+                                isOpen = true;
+                                tackDataPass = [1];
+                              } else if (dose == 2 &&
+                                  response.data![index].doses!.length == 1) {
+                                isOpen = true;
+                                if (response.data![index].doses!.contains(1)) {
+                                  tackDataPass = [2];
+                                } else {
+                                  tackDataPass = [1];
+                                }
+                              } else if (dose == 3 &&
+                                  response.data![index].doses!.length == 2) {
+                                isOpen = true;
+                                if (response.data![index].doses!.contains(1) &&
+                                    response.data![index].doses!.contains(2)) {
+                                  tackDataPass = [3];
+                                } else if (response.data![index].doses!
+                                        .contains(1) &&
+                                    response.data![index].doses!.contains(3)) {
+                                  tackDataPass = [2];
+                                } else {
+                                  tackDataPass = [1];
+                                }
+                              } else {
+                                isOpen = false;
+                              }
+                            } catch (e) {}
+                            if (isOpen) {
+                              var _req = {
+                                "medicineId": "${response.data![index].sId}",
+                                "doses": tackDataPass,
+                              };
+
+                              print('====== > ${_req}');
+
+                              await addRecordMedicineViewModel
+                                  .addRecordMedicineViewModel(model: _req);
+
+                              if (addRecordMedicineViewModel
+                                      .addRecordMedicineApiResponse.status ==
+                                  Status.COMPLETE) {
+                                dateMedicineRecordViewModel
+                                    .dateMedicineRecordViewModel(
+                                        isLoading: false,
+                                        model: {"date": "${dayOf}"});
+                                selectedDose.clear();
+                                userDataViewModel.userDataViewModel();
+                                dateMedicineRecordViewModel
+                                    .dateMedicineRecordViewModel(
+                                        model: {"date": "${dayOf}"});
+                                CommonWidget.getSnackBar(
+                                    duration: 2,
+                                    color:
+                                        CommonColor.greenColor.withOpacity(.4),
+                                    colorText: Colors.white,
+                                    title: "Done!",
+                                    message: 'Record Updated!');
+                              }
+                              if (addRecordMedicineViewModel
+                                      .addRecordMedicineApiResponse.status ==
+                                  Status.ERROR) {
+                                selectedDose.clear();
+
+                                CommonWidget.getSnackBar(
+                                    duration: 2,
+                                    color: Colors.red.withOpacity(.4),
+                                    colorText: Colors.white,
+                                    title: "Failed!",
+                                    message: 'Record not updated try again!');
+                              }
+                            } else {
+                              Get.dialog(
+                                await takenMedicineDialog(
+                                  totalTimes:
+                                      "${response.data![index].totalTimes}",
+                                  takenDoses: response.data![index].doses,
+                                  medId: "${response.data![index].sId}",
+                                ),
+                              ).then(
+                                (value) {
+                                  setState(
+                                    () {
+                                      completedDoses.clear();
+                                      selectedDose.clear();
+                                    },
+                                  );
+                                },
+                              );
+                            }
+                          },
+                          medId: "${response.data![index].sId}",
+                          totalTimes: "${response.data![index].totalTimes}",
+                          takenDoses: response.data![index].doses,
+                          image: response.data![index].appearance!
+                                      .toLowerCase() ==
+                                  'pills'
+                              ? ImageConst.med3Icon
+                              : response.data![index].appearance!.toLowerCase() ==
+                                      'gel'
+                                  ? ImageConst.med1Icon
                                   : response.data![index].appearance!
                                               .toLowerCase() ==
-                                          'gel'
-                                      ? ImageConst.med1Icon
-                                      : response.data![index].appearance!
-                                                  .toLowerCase() ==
-                                              'syrup'
-                                          ? ImageConst.med2Icon
-                                          : ImageConst.med2Icon,
-                              medName: '${response.data![index].name}',
-                              medGm: '${response.data![index].strength}',
-                              iconColor: response.data![index].appearance!
-                                          .toLowerCase() ==
-                                      'pills'
-                                  ? Color(0xff21D200)
+                                          'syrup'
+                                      ? ImageConst.med2Icon
+                                      : ImageConst.med2Icon,
+                          medName: '${response.data![index].name}',
+                          medGm: '${response.data![index].strength}',
+                          iconColor: response.data![index].appearance!
+                                      .toLowerCase() ==
+                                  'pills'
+                              ? Color(0xff21D200)
+                              : response.data![index].appearance!.toLowerCase() ==
+                                      'gel'
+                                  ? Color(0xffFFDD2C)
                                   : response.data![index].appearance!
                                               .toLowerCase() ==
-                                          'gel'
-                                      ? Color(0xffFFDD2C)
-                                      : response.data![index].appearance!
-                                                  .toLowerCase() ==
-                                              'syrup'
-                                          ? Color(0xff9255E5)
-                                          : Color(0xff9255E5),
-                              timeOfDay:
-                                  '${response.data![index].totalTimes} pills ${response.data![index].frequency}',
-                              color: response.data![index].appearance!
-                                          .toLowerCase() ==
-                                      'pills'
-                                  ? Color.fromRGBO(69, 196, 44, 0.13)
-                                  : response.data![index].appearance!.toLowerCase() == 'gel'
-                                      ? Color.fromRGBO(193, 196, 44, 0.13)
-                                      : response.data![index].appearance!.toLowerCase() == 'syrup'
-                                          ? Color.fromRGBO(111, 44, 196, 0.13)
-                                          : Color.fromRGBO(111, 44, 196, 0.13));
+                                          'syrup'
+                                      ? Color(0xff9255E5)
+                                      : Color(0xff9255E5),
+                          timeOfDay:
+                              '${response.data![index].totalTimes} pills ${response.data![index].frequency}',
+                          color: response.data![index].appearance!
+                                      .toLowerCase() ==
+                                  'pills'
+                              ? Color.fromRGBO(69, 196, 44, 0.13)
+                              : response.data![index].appearance!.toLowerCase() ==
+                                      'gel'
+                                  ? Color.fromRGBO(193, 196, 44, 0.13)
+                                  : response.data![index].appearance!
+                                              .toLowerCase() ==
+                                          'syrup'
+                                      ? Color.fromRGBO(111, 44, 196, 0.13)
+                                      : Color.fromRGBO(111, 44, 196, 0.13));
                     } catch (e) {
                       return SizedBox();
                     }
-                    /*: medDetailsWidget(
-                                                          medId: "${LastData[index]['id']}",
-                                                          totalTimes:
-                                                              "${LastData[index]['totalTimes']}",
-                                                          takenDoses: completedDoses,
-                                                          image: UserEqual == 'Pills'
-                                                              ? ImageConst.med3Icon
-                                                              : UserEqual == 'Gel'
-                                                                  ? ImageConst.med1Icon
-                                                                  : UserEqual == 'Syrup'
-                                                                      ? ImageConst.med2Icon
-                                                                      : ImageConst.med2Icon,
-                                                          medName:
-                                                              '${userResponse.data!.medicines![index]["name"]!}',
-                                                          medGm:
-                                                              '${userResponse.data!.medicines![index]["strength"]} gm',
-                                                          iconColor: UserEqual == 'Pills'
-                                                              ? Color(0xff21D200)
-                                                              : UserEqual == 'Gel'
-                                                                  ? Color(0xffFFDD2C)
-                                                                  : UserEqual == 'Syrup'
-                                                                      ? Color(0xff9255E5)
-                                                                      : Color(0xff9255E5),
-                                                          timeOfDay:
-                                                              '${userResponse.data!.medicines![index]["totalTimes"]} pills ${userResponse.data!.medicines![index]["frequency"]}',
-                                                          color: UserEqual == 'Pills'
-                                                              ? Color.fromRGBO(
-                                                                  69, 196, 44, 0.13)
-                                                              : UserEqual == 'Gel'
-                                                                  ? Color.fromRGBO(
-                                                                      193, 196, 44, 0.13)
-                                                                  : UserEqual == 'Syrup'
-                                                                      ? Color.fromRGBO(111,
-                                                                          44, 196, 0.13)
-                                                                      : Color.fromRGBO(
-                                                                          111,
-                                                                          44,
-                                                                          196,
-                                                                          0.13,
-                                                                        ),
-                                                        );*/
                   },
                 ),
               );
@@ -213,294 +260,294 @@ class _ViewAllMedScheduleScreenState extends State<ViewAllMedScheduleScreen> {
       required String timeOfDay,
       required Color color,
       required Color iconColor,
+      required VoidCallback onTap,
       required String image}) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8),
-      child: Container(
-        // height: 16.h,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          // height: 16.h,
 
-        padding: EdgeInsets.only(
-          top: 10,
-          bottom: 10,
-          left: 16,
-        ),
-        decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(16)),
-        child: Row(
-          children: [
-            Container(
-                height: 30.sp,
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                ),
-                child: Image.asset(
-                  image,
-                  scale: 5,
-                )),
-            CommonWidget.commonSizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        CommonText.textBoldWight500(
-                            text: medName,
-                            color: CommonColor.blackColor0D0D0D,
-                            fontSize: 15.sp),
-                        PopupMenuButton(
-                          // color: iconColor == Color(0xff21D200)
-                          //     ? Color(0xffDBF3D8)
-                          //     : iconColor == Color(0xffFFDD2C)
-                          //         ? Color(0xffEBF3D9)
-                          //         : iconColor == Color(0xff9255E5)
-                          //             ? Color(0xffE0DFED)
-                          //             : Color(0xff9255E5),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          padding: EdgeInsets.zero,
-                          icon: Icon(
-                            Icons.more_vert,
-                            color: CommonColor.geryB4B4B4,
-                          ),
-                          onSelected: (value) async {
-                            if (value == 'mark') {
-                              bool isOpen = false;
-                              List tackDataPass = [];
-                              try {
-                                //[1]  [1,2]   [1,2,3]
+          padding: EdgeInsets.only(
+            top: 10,
+            bottom: 10,
+            left: 16,
+          ),
+          decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16)),
+          child: Row(
+            children: [
+              Container(
+                  height: 30.sp,
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                  ),
+                  child: Image.asset(
+                    image,
+                    scale: 5,
+                  )),
+              CommonWidget.commonSizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CommonText.textBoldWight500(
+                              text: medName,
+                              color: CommonColor.blackColor0D0D0D,
+                              fontSize: 15.sp),
+                          PopupMenuButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            padding: EdgeInsets.zero,
+                            icon: Icon(
+                              Icons.more_vert,
+                              color: CommonColor.geryB4B4B4,
+                            ),
+                            onSelected: (value) async {
+                              if (value == 'mark') {
+                                bool isOpen = false;
+                                List tackDataPass = [];
+                                try {
+                                  //[1]  [1,2]   [1,2,3]
 
-                                int dose = int.parse(totalTimes);
-                                if (dose == takenDoses!.length) {
-                                  isOpen = false;
-                                } else if (dose == 1 &&
-                                    takenDoses.length == 0) {
-                                  isOpen = true;
-                                  tackDataPass = [1];
-                                } else if (dose == 2 &&
-                                    takenDoses.length == 1) {
-                                  isOpen = true;
-                                  if (takenDoses.contains(1)) {
-                                    tackDataPass = [2];
-                                  } else {
+                                  int dose = int.parse(totalTimes);
+                                  if (dose == takenDoses!.length) {
+                                    isOpen = false;
+                                  } else if (dose == 1 &&
+                                      takenDoses.length == 0) {
+                                    isOpen = true;
                                     tackDataPass = [1];
+                                  } else if (dose == 2 &&
+                                      takenDoses.length == 1) {
+                                    isOpen = true;
+                                    if (takenDoses.contains(1)) {
+                                      tackDataPass = [2];
+                                    } else {
+                                      tackDataPass = [1];
+                                    }
+                                  } else if (dose == 3 &&
+                                      takenDoses.length == 2) {
+                                    isOpen = true;
+                                    if (takenDoses.contains(1) &&
+                                        takenDoses.contains(2)) {
+                                      tackDataPass = [3];
+                                    } else if (takenDoses.contains(1) &&
+                                        takenDoses.contains(3)) {
+                                      tackDataPass = [2];
+                                    } else {
+                                      tackDataPass = [1];
+                                    }
+                                  } else {
+                                    isOpen = false;
                                   }
-                                } else if (dose == 3 &&
-                                    takenDoses.length == 2) {
-                                  isOpen = true;
-                                  if (takenDoses.contains(1) &&
-                                      takenDoses.contains(2)) {
-                                    tackDataPass = [3];
-                                  } else if (takenDoses.contains(1) &&
-                                      takenDoses.contains(3)) {
-                                    tackDataPass = [2];
-                                  } else {
-                                    tackDataPass = [1];
+                                  print('Total dose : ${totalTimes}');
+                                  print('taken dose : ${takenDoses}');
+                                  print('select dose: ${tackDataPass}');
+                                  print('is open    : ${isOpen}');
+                                } catch (e) {}
+                                if (isOpen) {
+                                  var _req = {
+                                    "medicineId": "${medId}",
+                                    "doses": tackDataPass,
+                                  };
+
+                                  print('====== > ${_req}');
+
+                                  await addRecordMedicineViewModel
+                                      .addRecordMedicineViewModel(model: _req);
+
+                                  if (addRecordMedicineViewModel
+                                          .addRecordMedicineApiResponse
+                                          .status ==
+                                      Status.COMPLETE) {
+                                    dateMedicineRecordViewModel
+                                        .dateMedicineRecordViewModel(
+                                            isLoading: false,
+                                            model: {"date": "${dayOf}"});
+                                    selectedDose.clear();
+                                    userDataViewModel.userDataViewModel();
+                                    dateMedicineRecordViewModel
+                                        .dateMedicineRecordViewModel(
+                                            model: {"date": "${dayOf}"});
+                                    CommonWidget.getSnackBar(
+                                        duration: 2,
+                                        color: CommonColor.greenColor
+                                            .withOpacity(.4),
+                                        colorText: Colors.white,
+                                        title: "Done!",
+                                        message: 'Record Updated!');
+                                  }
+                                  if (addRecordMedicineViewModel
+                                          .addRecordMedicineApiResponse
+                                          .status ==
+                                      Status.ERROR) {
+                                    selectedDose.clear();
+
+                                    CommonWidget.getSnackBar(
+                                        duration: 2,
+                                        color: Colors.red.withOpacity(.4),
+                                        colorText: Colors.white,
+                                        title: "Failed!",
+                                        message:
+                                            'Record not updated try again!');
                                   }
                                 } else {
-                                  isOpen = false;
+                                  print('opennenenennenene $totalTimes');
+                                  print('opennenenennenene $takenDoses');
+
+                                  return Get.dialog(
+                                    // barrierDismissible: false,
+                                    await takenMedicineDialog(
+                                        totalTimes: totalTimes,
+                                        takenDoses: takenDoses,
+                                        medId: medId),
+                                  ).then(
+                                    (value) {
+                                      setState(
+                                        () {
+                                          completedDoses.clear();
+                                          selectedDose.clear();
+                                        },
+                                      );
+                                    },
+                                  );
                                 }
-                                print('Total dose : ${totalTimes}');
-                                print('taken dose : ${takenDoses}');
-                                print('select dose: ${tackDataPass}');
-                                print('is open    : ${isOpen}');
-                              } catch (e) {}
-                              if (isOpen) {
-                                var _req = {
-                                  "medicineId": "${medId}",
-                                  "doses": tackDataPass,
-                                };
-
-                                print('====== > ${_req}');
-
-                                await addRecordMedicineViewModel
-                                    .addRecordMedicineViewModel(model: _req);
-
-                                if (addRecordMedicineViewModel
-                                        .addRecordMedicineApiResponse.status ==
-                                    Status.COMPLETE) {
-                                  dateMedicineRecordViewModel
-                                      .dateMedicineRecordViewModel(
-                                          isLoading: false,
-                                          model: {"date": "${dayOf}"});
-                                  selectedDose.clear();
-                                  userDataViewModel.userDataViewModel();
-                                  dateMedicineRecordViewModel
-                                      .dateMedicineRecordViewModel(
-                                          model: {"date": "${dayOf}"});
-                                  CommonWidget.getSnackBar(
-                                      duration: 2,
-                                      color: CommonColor.greenColor
-                                          .withOpacity(.4),
-                                      colorText: Colors.white,
-                                      title: "Done!",
-                                      message: 'Record Updated!');
-                                }
-                                if (addRecordMedicineViewModel
-                                        .addRecordMedicineApiResponse.status ==
-                                    Status.ERROR) {
-                                  selectedDose.clear();
-
-                                  CommonWidget.getSnackBar(
-                                      duration: 2,
-                                      color: Colors.red.withOpacity(.4),
-                                      colorText: Colors.white,
-                                      title: "Failed!",
-                                      message: 'Record not updated try again!');
-                                }
-                              } else {
-                                print('opennenenennenene $totalTimes');
-                                print('opennenenennenene $takenDoses');
-
-                                return Get.dialog(
-                                  // barrierDismissible: false,
-                                  await takenMedicineDialog(
-                                      totalTimes: totalTimes,
-                                      takenDoses: takenDoses,
-                                      medId: medId),
-                                ).then(
-                                  (value) {
-                                    setState(
-                                      () {
-                                        completedDoses.clear();
-                                        selectedDose.clear();
-                                      },
-                                    );
-                                  },
-                                );
                               }
-                            }
-                          },
-                          itemBuilder: (context) {
-                            if (widget.date.toString().split(" ").first ==
-                                DateTime.now().toString().split(" ").first) {
-                              return [
-                                PopupMenuItem(
-                                  onTap: () async {},
-                                  child: Text("Mark as Taken"),
-                                  value: "mark",
-                                ),
-                                PopupMenuItem(
-                                  onTap: () async {
-                                    if (medId.isNotEmpty) {
-                                      var resp = await DeleteMedicineRepo
-                                          .deleteMedicineRepo(id: medId);
+                            },
+                            itemBuilder: (context) {
+                              if (widget.date.toString().split(" ").first ==
+                                  DateTime.now().toString().split(" ").first) {
+                                return [
+                                  PopupMenuItem(
+                                    onTap: () async {},
+                                    child: Text("Mark as Taken"),
+                                    value: "mark",
+                                  ),
+                                  PopupMenuItem(
+                                    onTap: () async {
+                                      if (medId.isNotEmpty) {
+                                        var resp = await DeleteMedicineRepo
+                                            .deleteMedicineRepo(id: medId);
 
-                                      if (resp["flag"] == true) {
-                                        CommonWidget.getSnackBar(
-                                            duration: 2,
-                                            color: CommonColor.greenColor
-                                                .withOpacity(.4),
-                                            colorText: Colors.white,
-                                            title: "Done!",
-                                            message: '${resp["data"]}');
+                                        if (resp["flag"] == true) {
+                                          CommonWidget.getSnackBar(
+                                              duration: 2,
+                                              color: CommonColor.greenColor
+                                                  .withOpacity(.4),
+                                              colorText: Colors.white,
+                                              title: "Done!",
+                                              message: '${resp["data"]}');
+                                        } else {
+                                          CommonWidget.getSnackBar(
+                                              duration: 2,
+                                              color: Colors.red.withOpacity(.4),
+                                              colorText: Colors.white,
+                                              title: "Something went wrong!",
+                                              message: '${resp["data"]}');
+                                        }
                                       } else {
                                         CommonWidget.getSnackBar(
                                             duration: 2,
                                             color: Colors.red.withOpacity(.4),
                                             colorText: Colors.white,
-                                            title: "Something went wrong!",
-                                            message: '${resp["data"]}');
+                                            title: "Something went wrong",
+                                            message: 'Please try again!');
                                       }
-                                    } else {
-                                      CommonWidget.getSnackBar(
-                                          duration: 2,
-                                          color: Colors.red.withOpacity(.4),
-                                          colorText: Colors.white,
-                                          title: "Something went wrong",
-                                          message: 'Please try again!');
-                                    }
-                                  },
-                                  child: Text("Delete"),
-                                ),
-                              ];
-                            } else {
-                              return [
-                                PopupMenuItem(
-                                  onTap: () async {
-                                    if (medId.isNotEmpty) {
-                                      var resp = await DeleteMedicineRepo
-                                          .deleteMedicineRepo(id: medId);
+                                    },
+                                    child: Text("Delete"),
+                                  ),
+                                ];
+                              } else {
+                                return [
+                                  PopupMenuItem(
+                                    onTap: () async {
+                                      if (medId.isNotEmpty) {
+                                        var resp = await DeleteMedicineRepo
+                                            .deleteMedicineRepo(id: medId);
 
-                                      if (resp["flag"] == true) {
-                                        CommonWidget.getSnackBar(
-                                            duration: 2,
-                                            color: CommonColor.greenColor
-                                                .withOpacity(.4),
-                                            colorText: Colors.white,
-                                            title: "Done!",
-                                            message: '${resp["data"]}');
+                                        if (resp["flag"] == true) {
+                                          CommonWidget.getSnackBar(
+                                              duration: 2,
+                                              color: CommonColor.greenColor
+                                                  .withOpacity(.4),
+                                              colorText: Colors.white,
+                                              title: "Done!",
+                                              message: '${resp["data"]}');
+                                        } else {
+                                          CommonWidget.getSnackBar(
+                                              duration: 2,
+                                              color: Colors.red.withOpacity(.4),
+                                              colorText: Colors.white,
+                                              title: "Something went wrong!",
+                                              message: '${resp["data"]}');
+                                        }
                                       } else {
                                         CommonWidget.getSnackBar(
                                             duration: 2,
                                             color: Colors.red.withOpacity(.4),
                                             colorText: Colors.white,
-                                            title: "Something went wrong!",
-                                            message: '${resp["data"]}');
+                                            title: "Something went wrong",
+                                            message: 'Please try again!');
                                       }
-                                    } else {
-                                      CommonWidget.getSnackBar(
-                                          duration: 2,
-                                          color: Colors.red.withOpacity(.4),
-                                          colorText: Colors.white,
-                                          title: "Something went wrong",
-                                          message: 'Please try again!');
-                                    }
-                                  },
-                                  child: Text("Delete"),
+                                    },
+                                    child: Text("Delete"),
+                                  ),
+                                ];
+                              }
+                            },
+                          )
+                        ]),
+                    CommonText.textBoldWight400(
+                        text: medGm,
+                        color: CommonColor.blackColor0D0D0D,
+                        fontSize: 11.sp),
+                    CommonWidget.commonSizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CommonText.textBoldWight400(
+                            text: timeOfDay,
+                            color: CommonColor.blackColor0D0D0D,
+                            fontSize: 9.sp),
+                        takenDoses!.length == int.parse(totalTimes)
+                            ? Padding(
+                                padding: const EdgeInsets.only(right: 10),
+                                child: Container(
+                                  height: 18.sp,
+                                  width: 18.sp,
+                                  alignment: Alignment.center,
+                                  child: Icon(
+                                    Icons.check, size: 16,
+                                    color: iconColor,
+                                    //size: 18.sp,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: iconColor, width: 1.5),
+                                    shape: BoxShape.circle,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                              ];
-                            }
-                          },
-                        )
-                      ]),
-                  CommonText.textBoldWight400(
-                      text: medGm,
-                      color: CommonColor.blackColor0D0D0D,
-                      fontSize: 11.sp),
-                  CommonWidget.commonSizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CommonText.textBoldWight400(
-                          text: timeOfDay,
-                          color: CommonColor.blackColor0D0D0D,
-                          fontSize: 9.sp),
-                      takenDoses!.length == int.parse(totalTimes)
-                          ? Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: Container(
+                              )
+                            : SizedBox(
                                 height: 18.sp,
                                 width: 18.sp,
-                                alignment: Alignment.center,
-                                child: Icon(
-                                  Icons.check, size: 16,
-                                  color: iconColor,
-                                  //size: 18.sp,
-                                ),
-                                decoration: BoxDecoration(
-                                  border:
-                                      Border.all(color: iconColor, width: 1.5),
-                                  shape: BoxShape.circle,
-                                  color: Colors.white,
-                                ),
                               ),
-                            )
-                          : SizedBox(
-                              height: 18.sp,
-                              width: 18.sp,
-                            ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -664,7 +711,7 @@ class _ViewAllMedScheduleScreenState extends State<ViewAllMedScheduleScreen> {
                                             model: {"date": "${widget.date}"});
 
                                     CommonWidget.getSnackBar(
-                                        duration: 2,
+                                        duration: 1,
                                         color: CommonColor.greenColor
                                             .withOpacity(.4),
                                         colorText: Colors.white,
@@ -679,7 +726,7 @@ class _ViewAllMedScheduleScreenState extends State<ViewAllMedScheduleScreen> {
 
                                     Get.back();
                                     CommonWidget.getSnackBar(
-                                        duration: 2,
+                                        duration: 1,
                                         color: Colors.red.withOpacity(.4),
                                         colorText: Colors.white,
                                         title: "Failed!",

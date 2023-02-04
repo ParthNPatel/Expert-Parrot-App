@@ -98,6 +98,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
   TextEditingController medicineName = TextEditingController();
   TextEditingController strengthName = TextEditingController();
+  TextEditingController days = TextEditingController();
 
   // List<String> medicines = [
   //   'Duloxetine',
@@ -115,19 +116,18 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   // ];
 
   List strength = [
-    '100',
-    '200',
-    '300',
-    '400',
-    '500',
+    'mg',
+    'g',
+    'mcg',
+    'ml',
   ];
 
-  List days = [
-    '10',
-    '20',
-    '30',
-    '40',
-  ];
+  // List days = [
+  //   '10',
+  //   '20',
+  //   '30',
+  //   '40',
+  // ];
 
   List appearance = [
     'Tablet',
@@ -317,47 +317,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                             } catch (e) {
                               return SizedBox();
                             }
-                            /*: medDetailsWidget(
-                                                medId: "${LastData[index]['id']}",
-                                                totalTimes:
-                                                    "${LastData[index]['totalTimes']}",
-                                                takenDoses: completedDoses,
-                                                image: UserEqual == 'Pills'
-                                                    ? ImageConst.med3Icon
-                                                    : UserEqual == 'Gel'
-                                                        ? ImageConst.med1Icon
-                                                        : UserEqual == 'Syrup'
-                                                            ? ImageConst.med2Icon
-                                                            : ImageConst.med2Icon,
-                                                medName:
-                                                    '${userResponse.data!.medicines![index]["name"]!}',
-                                                medGm:
-                                                    '${userResponse.data!.medicines![index]["strength"]} gm',
-                                                iconColor: UserEqual == 'Pills'
-                                                    ? Color(0xff21D200)
-                                                    : UserEqual == 'Gel'
-                                                        ? Color(0xffFFDD2C)
-                                                        : UserEqual == 'Syrup'
-                                                            ? Color(0xff9255E5)
-                                                            : Color(0xff9255E5),
-                                                timeOfDay:
-                                                    '${userResponse.data!.medicines![index]["totalTimes"]} pills ${userResponse.data!.medicines![index]["frequency"]}',
-                                                color: UserEqual == 'Pills'
-                                                    ? Color.fromRGBO(
-                                                        69, 196, 44, 0.13)
-                                                    : UserEqual == 'Gel'
-                                                        ? Color.fromRGBO(
-                                                            193, 196, 44, 0.13)
-                                                        : UserEqual == 'Syrup'
-                                                            ? Color.fromRGBO(111,
-                                                                44, 196, 0.13)
-                                                            : Color.fromRGBO(
-                                                                111,
-                                                                44,
-                                                                196,
-                                                                0.13,
-                                                              ),
-                                              );*/
                           },
                         ),
                         respDMR.data!.length > 3
@@ -1199,376 +1158,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 ),
               ),
             ));
-
-    /* return StatefulBuilder(
-      builder: (context, setState) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Container(
-          width: 300.sp,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    CommonText.textBoldWight500(
-                      text: "Calculating Report",
-                      fontSize: 17.sp,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        _kmController.clear();
-                        Get.back();
-                      },
-                      child: CommonWidget.commonSvgPitcher(
-                        image: ImageConst.close,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              CommonWidget.dottedLineWidget(),
-              SizedBox(height: 20),
-
-              Expanded(
-                child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CommonText.textBoldWight400(
-                        text:
-                            "please enter ${stepCounterMethod[selectMethod]} that you have covered so far",
-                        fontSize: 11.sp,
-                        color: Color(0xff9B9B9B),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      CommonText.textBoldWight500(
-                          text: "KM", fontSize: 13.sp, color: Colors.black),
-                      SizedBox(
-                        height: 12,
-                      ),
-                      Container(
-                        //height: 40.sp,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Color(0xffF8F8F6),
-                        ),
-                        child: Theme(
-                          data: Theme.of(context)
-                              .copyWith(dividerColor: Colors.transparent),
-                          child: ExpansionTile(
-                            iconColor: CommonColor.greenColor,
-                            title: Row(
-                              children: [
-                                CommonText.textBoldWight500(
-                                    text: "${stepCounterMethod[selectMethod]}",
-                                    fontSize: 13.sp,
-                                    color: Colors.black),
-                              ],
-                            ),
-                            children: [
-                              Container(
-                                color: Colors.white,
-                                child: Column(
-                                  children: List.generate(
-                                    stepCounterMethod.length,
-                                    (index) => GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          selectMethod = index;
-                                        });
-                                        setState(() {});
-                                        print(
-                                            "select:- ${stepCounterMethod[selectMethod]}");
-                                      },
-                                      child: Container(
-                                        color: selectMethod == index
-                                            ? Color(0xffe1f9ea)
-                                            : Colors.white,
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 10),
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.check,
-                                              size: 17,
-                                              color: selectMethod == index
-                                                  ? CommonColor.greenColor
-                                                  : Colors.white,
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            CommonText.textBoldWight500(
-                                              text: stepCounterMethod[index],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      TextFormField(
-                        controller: _kmController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Color(0xffF8F8F6),
-                          hintText: "Enter count ",
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20.sp),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(width: 20.sp),
-                          // SizedBox(
-                          //   height: 6.5.h,
-                          //   width: 25.w,
-                          //   child: CommonWidget.commonButton(
-                          //       color: CommonColor.greenColor,
-                          //       radius: 10,
-                          //       onTap: () async {
-                          //         if (_kmController
-                          //             .text.isNotEmpty) {
-                          //           await AddGlassRepo1.addGlassRepo(
-                          //               addGlass: _glassController,
-                          //               model: {
-                          //                 "type":
-                          //                     "${waterTypeList[selectMethod]}",
-                          //                 "quantity": _glassController
-                          //                     .text
-                          //                     .trim()
-                          //               });
-                          //
-                          //           await getGlassViewModel
-                          //               .getGlassViewModel(
-                          //                   isLoading: false);
-                          //           if (getGlassViewModel
-                          //                   .getGlassApiResponse
-                          //                   .status ==
-                          //               Status.COMPLETE) {}
-                          //           if (getGlassViewModel
-                          //                   .getGlassApiResponse
-                          //                   .status ==
-                          //               Status.ERROR) {
-                          //             CommonWidget.getSnackBar(
-                          //                 duration: 2,
-                          //                 color: CommonColor.greenColor
-                          //                     .withOpacity(.4),
-                          //                 colorText: Colors.white,
-                          //                 title: "Please",
-                          //                 message: 'Refresh Page');
-                          //           }
-                          //           // await controller
-                          //           //     .addGlassViewModel(
-                          //           //         model: {
-                          //           //       "type":
-                          //           //           "${waterTypeList[selectMethod]}",
-                          //           //       "quantity":
-                          //           //           _glassController
-                          //           //               .text
-                          //           //               .trim()
-                          //           //     });
-                          //           //
-                          //           // if (controller
-                          //           //         .addGlassApiResponse
-                          //           //         .status ==
-                          //           //     Status
-                          //           //         .COMPLETE) {
-                          //           //   Get.back();
-                          //           //   GetStorageServices.setUserWater((GetStorageServices.getUserWater() ==
-                          //           //               null
-                          //           //           ? 0
-                          //           //           : GetStorageServices
-                          //           //               .getUserWater()) +
-                          //           //       int.parse(
-                          //           //           _glassController
-                          //           //               .text));
-                          //           //   _glassController
-                          //           //       .clear();
-                          //           //   // await getGlassViewModel
-                          //           //   //     .getGlassViewModel(
-                          //           //   //         isLoading:
-                          //           //   //             false);
-                          //           //   // if (getGlassViewModel
-                          //           //   //         .getGlassApiResponse
-                          //           //   //         .status ==
-                          //           //   //     Status
-                          //           //   //         .COMPLETE) {}
-                          //           //   // if (getGlassViewModel
-                          //           //   //         .getGlassApiResponse
-                          //           //   //         .status ==
-                          //           //   //     Status
-                          //           //   //         .ERROR) {
-                          //           //   //   CommonWidget.getSnackBar(
-                          //           //   //       duration:
-                          //           //   //           2,
-                          //           //   //       color: CommonColor
-                          //           //   //           .greenColor
-                          //           //   //           .withOpacity(
-                          //           //   //               .4),
-                          //           //   //       colorText:
-                          //           //   //           Colors
-                          //           //   //               .white,
-                          //           //   //       title:
-                          //           //   //           "Please",
-                          //           //   //       message:
-                          //           //   //           'Refresh Page');
-                          //           //   // }
-                          //           //
-                          //           //   CommonWidget.getSnackBar(
-                          //           //       duration: 2,
-                          //           //       color: CommonColor
-                          //           //           .greenColor
-                          //           //           .withOpacity(
-                          //           //               .4),
-                          //           //       colorText:
-                          //           //           Colors
-                          //           //               .white,
-                          //           //       title:
-                          //           //           "Done!",
-                          //           //       message:
-                          //           //           'added successfully!');
-                          //           // }
-                          //           // if (controller
-                          //           //         .addGlassApiResponse
-                          //           //         .status ==
-                          //           //     Status
-                          //           //         .ERROR) {
-                          //           //   _glassController
-                          //           //       .clear();
-                          //           //   Get.back();
-                          //           //
-                          //           //   CommonWidget.getSnackBar(
-                          //           //       duration: 2,
-                          //           //       color: Colors
-                          //           //           .red
-                          //           //           .shade300,
-                          //           //       colorText:
-                          //           //           Colors
-                          //           //               .white,
-                          //           //       title:
-                          //           //           "Oops!",
-                          //           //       message:
-                          //           //           'Something goes wrong please enter bottle again!');
-                          //           // }
-                          //         } else {
-                          //           CommonWidget.getSnackBar(
-                          //               duration: 2,
-                          //               color: Colors.red.shade300,
-                          //               colorText: Colors.white,
-                          //               title: "Oops!",
-                          //               message:
-                          //                   'Please enter proper amount of bottle!');
-                          //         }
-                          //       },
-                          //       text: "Add"),
-                          // ),
-                          SizedBox(
-                            height: 6.5.h,
-                            width: 25.w,
-                            child: CommonWidget.commonButton(
-                                color: CommonColor.greenColor,
-                                radius: 10,
-                                onTap: () {
-                                  Navigator.of(context).pop();
-                                },
-                                text: "Back"),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CommonText.textBoldWight400(
-                      text: "please enter Km that you have covered so far",
-                      fontSize: 11.sp,
-                      color: Color(0xff9B9B9B),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    CommonText.textBoldWight500(
-                        text: "KM", fontSize: 13.sp, color: Colors.black),
-                    SizedBox(
-                      height: 12,
-                    ),
-                    TextFormField(
-                      controller: _kmController,
-                      decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Color(0xffF8F8F6),
-                          hintText: "Enter Km",
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius: BorderRadius.circular(20),
-                          )),
-                    ),
-                    SizedBox(height: 23),
-                    CommonWidget.commonButton(
-                        color: CommonColor.greenColor,
-                        radius: 10,
-                        onTap: () async {
-                          if (_kmController.text.isNotEmpty) {
-                            GetStorageServices.setUserKm(
-                                _kmController.text.trim());
-
-                            Get.back();
-                          } else {
-                            CommonWidget.getSnackBar(
-                                color: Colors.red,
-                                duration: 2,
-                                colorText: Colors.white,
-                                title: "Required",
-                                message: 'Please enter hear.');
-                          }
-                        },
-                        text: "Next")
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );*/
   }
 
   Dialog addMedicineDialog(BuildContext context, StateSetter setState) {
     return Dialog(
-      insetPadding: EdgeInsets.symmetric(horizontal: 25),
+      insetPadding: EdgeInsets.symmetric(horizontal: 20),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -1773,28 +1367,32 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     SizedBox(
                                       width: 18,
                                     ),
-                                    // Expanded(
-                                    //   child: TextFormField(
-                                    //     controller: strengthName,
-                                    //     inputFormatters: [
-                                    //       TextInputFormatter.withFunction((oldValue,
-                                    //               newValue) =>
-                                    //           newValue.copyWith(
-                                    //               text: newValue.text.contains(
-                                    //                       "${strength[strengthSelected]}")
-                                    //                   ? newValue.text
-                                    //                   : "${strength[strengthSelected]}"))
-                                    //     ],
-                                    //     decoration: InputDecoration(
-                                    //         border: InputBorder.none,
-                                    //         hintText:
-                                    //             "${strength[strengthSelected]}"),
-                                    //   ),
-                                    // ),
+                                    Expanded(
+                                      child: TextFormField(
+                                        controller: strengthName,
+                                        // inputFormatters: [
+                                        //   TextInputFormatter.withFunction((oldValue,
+                                        //           newValue) =>
+                                        //       newValue.copyWith(
+                                        //           text: newValue.text.contains(
+                                        //                   "${strength[strengthSelected]}")
+                                        //               ? newValue.text
+                                        //               : "${strength[strengthSelected]}"))
+                                        // ],
+                                        decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText:
+                                                "${strength[strengthSelected]}"),
+                                      ),
+                                    ),
                                     CommonText.textBoldWight500(
                                         text: "${strength[strengthSelected]}",
                                         fontSize: 13.sp,
                                         color: Colors.black),
+                                    // CommonText.textBoldWight500(
+                                    //     text: "${strength[strengthSelected]}",
+                                    //     fontSize: 13.sp,
+                                    //     color: Colors.black),
                                   ],
                                 ),
                                 children: [
@@ -1847,14 +1445,16 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                             ),
                           ),
                           SizedBox(
-                            width: 10,
+                            height: 20,
                           ),
                           CommonText.textBoldWight500(
                               text: "End Date",
                               fontSize: 13.sp,
                               color: Colors.black),
+                          SizedBox(
+                            height: 12,
+                          ),
                           Container(
-                            //height: 40.sp,
                             width: double.infinity,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),
@@ -1878,52 +1478,56 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     SizedBox(
                                       width: 18,
                                     ),
-                                    CommonText.textBoldWight500(
-                                        text: "${days[daysSelected]}",
-                                        fontSize: 13.sp,
-                                        color: Colors.black),
+                                    Expanded(
+                                      child: TextFormField(
+                                        controller: days,
+                                        decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            hintText: "Enter  Days"),
+                                      ),
+                                    ),
                                   ],
                                 ),
                                 children: [
-                                  Container(
-                                    color: Colors.white,
-                                    child: Column(
-                                      children: List.generate(
-                                        days.length,
-                                        (index) => GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              daysSelected = index;
-                                            });
-                                          },
-                                          child: Container(
-                                            color: daysSelected == index
-                                                ? Color(0xffe1f9ea)
-                                                : Colors.white,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 10),
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.check,
-                                                  size: 17,
-                                                  color: daysSelected == index
-                                                      ? CommonColor.greenColor
-                                                      : Colors.transparent,
-                                                ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                CommonText.textBoldWight500(
-                                                  text: '${days[index]} days',
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  )
+                                  // Container(
+                                  //   color: Colors.white,
+                                  //   child: Column(
+                                  //     children: List.generate(
+                                  //       days.length,
+                                  //       (index) => GestureDetector(
+                                  //         onTap: () {
+                                  //           setState(() {
+                                  //             daysSelected = index;
+                                  //           });
+                                  //         },
+                                  //         child: Container(
+                                  //           color: daysSelected == index
+                                  //               ? Color(0xffe1f9ea)
+                                  //               : Colors.white,
+                                  //           padding: EdgeInsets.symmetric(
+                                  //               horizontal: 10, vertical: 10),
+                                  //           child: Row(
+                                  //             children: [
+                                  //               Icon(
+                                  //                 Icons.check,
+                                  //                 size: 17,
+                                  //                 color: daysSelected == index
+                                  //                     ? CommonColor.greenColor
+                                  //                     : Colors.transparent,
+                                  //               ),
+                                  //               SizedBox(
+                                  //                 width: 10,
+                                  //               ),
+                                  //               CommonText.textBoldWight500(
+                                  //                 text: '${days[index]} days',
+                                  //               )
+                                  //             ],
+                                  //           ),
+                                  //         ),
+                                  //       ),
+                                  //     ),
+                                  //   ),
+                                  // )
                                 ],
                               ),
                             ),
@@ -2023,8 +1627,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               Get.dialog(
                                 StatefulBuilder(
                                   builder: (context, setState) => Dialog(
-                                    insetPadding:
-                                        EdgeInsets.symmetric(horizontal: 10),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20),
                                     ),
@@ -2530,10 +2132,13 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       } else {
         log.log('TOTAL DATE :- ${dateTimes}');
 
+        int selectedDays =
+            days.text.isNotEmpty ? int.parse("${days.text}") : 40;
+
         await addMedicineViewModel.addMedicineViewModel(model: {
           "name": "${medicineName.text.trim()}",
-          "strength": int.parse("${strength[strengthSelected]}"),
-          "days": int.parse("${days[daysSelected]}"),
+          "strength": int.parse("${strengthName.text}"),
+          "days": selectedDays,
           "appearance": "${appearance[appearanceSelected]}",
           "frequency": "${frequency[frequencySelected]}",
           "totalTimes": timeSelected + 1,
@@ -2851,23 +2456,99 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       padding: EdgeInsets.symmetric(vertical: 8),
       child: InkWell(
         onTap: () async {
-          Get.dialog(
-            await takenMedicineDialog(
-                totalTimes: totalTimes, takenDoses: takenDoses, medId: medId),
-          ).then(
-            (value) {
-              setState(
-                () {
-                  completedDoses.clear();
-                  selectedDose.clear();
-                },
-              );
-            },
-          );
+          bool isOpen = false;
+          List tackDataPass = [];
+          try {
+            int dose = int.parse(totalTimes);
+            if (dose == takenDoses.length) {
+              isOpen = false;
+            } else if (dose == 1 && takenDoses.length == 0) {
+              isOpen = true;
+              tackDataPass = [1];
+            } else if (dose == 2 && takenDoses.length == 1) {
+              isOpen = true;
+              if (takenDoses.contains(1)) {
+                tackDataPass = [2];
+              } else {
+                tackDataPass = [1];
+              }
+            } else if (dose == 3 && takenDoses.length == 2) {
+              isOpen = true;
+              if (takenDoses.contains(1) && takenDoses.contains(2)) {
+                tackDataPass = [3];
+              } else if (takenDoses.contains(1) && takenDoses.contains(3)) {
+                tackDataPass = [2];
+              } else {
+                tackDataPass = [1];
+              }
+            } else {
+              isOpen = false;
+            }
+            print('Total dose : ${totalTimes}');
+            print('taken dose : ${takenDoses}');
+            print('select dose: ${tackDataPass}');
+            print('is open    : ${isOpen}');
+          } catch (e) {}
+          if (isOpen) {
+            var _req = {
+              "medicineId": "${medId}",
+              "doses": tackDataPass,
+            };
+
+            print('====== > ${_req}');
+
+            await addRecordMedicineViewModel.addRecordMedicineViewModel(
+                model: _req);
+
+            if (addRecordMedicineViewModel
+                    .addRecordMedicineApiResponse.status ==
+                Status.COMPLETE) {
+              dateMedicineRecordViewModel.dateMedicineRecordViewModel(
+                  isLoading: false, model: {"date": "${dayOf}"});
+              selectedDose.clear();
+              userDataViewModel.userDataViewModel();
+              dateMedicineRecordViewModel
+                  .dateMedicineRecordViewModel(model: {"date": "${dayOf}"});
+              CommonWidget.getSnackBar(
+                  duration: 2,
+                  color: CommonColor.greenColor.withOpacity(.4),
+                  colorText: Colors.white,
+                  title: "Done!",
+                  message: 'Record Updated!');
+            }
+            if (addRecordMedicineViewModel
+                    .addRecordMedicineApiResponse.status ==
+                Status.ERROR) {
+              selectedDose.clear();
+
+              CommonWidget.getSnackBar(
+                  duration: 2,
+                  color: Colors.red.withOpacity(.4),
+                  colorText: Colors.white,
+                  title: "Failed!",
+                  message: 'Record not updated try again!');
+            }
+          } else {
+            print('opennenenennenene $totalTimes');
+            print('opennenenennenene $takenDoses');
+
+            return Get.dialog(
+              // barrierDismissible: false,
+              await takenMedicineDialog(
+                  totalTimes: totalTimes, takenDoses: takenDoses, medId: medId),
+            ).then(
+              (value) {
+                setState(
+                  () {
+                    completedDoses.clear();
+                    selectedDose.clear();
+                  },
+                );
+              },
+            );
+          }
         },
         child: Container(
-          // height: 16.h,
-
           padding: EdgeInsets.only(
             top: 10,
             bottom: 10,
@@ -2902,13 +2583,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               color: CommonColor.blackColor0D0D0D,
                               fontSize: 15.sp),
                           PopupMenuButton(
-                            // color: iconColor == Color(0xff21D200)
-                            //     ? Color(0xffDBF3D8)
-                            //     : iconColor == Color(0xffFFDD2C)
-                            //         ? Color(0xffEBF3D9)
-                            //         : iconColor == Color(0xff9255E5)
-                            //             ? Color(0xffE0DFED)
-                            //             : Color(0xff9255E5),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
                             ),
@@ -2922,6 +2596,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                 bool isOpen = false;
                                 List tackDataPass = [];
                                 try {
+                                  //[1]  [1,2]   [1,2,3]
+
                                   int dose = int.parse(totalTimes);
                                   if (dose == takenDoses!.length) {
                                     isOpen = false;
