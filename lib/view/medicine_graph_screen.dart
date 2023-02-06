@@ -98,17 +98,6 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
     '500 mg',
   ];
 
-  List days = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
-  ];
-
   List appearance = [
     'Pills',
     'Gel',

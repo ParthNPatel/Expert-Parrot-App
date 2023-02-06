@@ -91,7 +91,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
   int medicineSelected = 0;
   int strengthSelected = 0;
-  int daysSelected = 0;
+
   int appearanceSelected = 0;
   int frequencySelected = 0;
   int timeSelected = 0;
@@ -251,7 +251,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                         ListView.builder(
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
-                          //reverse: true,
+                          reverse: true,
                           itemCount: respDMR.data!.length > 3
                               ? 3
                               : respDMR.data!.length,
@@ -1497,10 +1497,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Container(
-                                      height: frequency[frequencySelected] ==
-                                              "Everyday"
-                                          ? 400.sp
-                                          : 300.sp,
+                                      height: 400.sp,
                                       width: 300.sp,
                                       decoration: BoxDecoration(
                                         color: Colors.white,
@@ -1822,6 +1819,42 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                 ],
                                                               )
                                                             : SizedBox(),
+                                                        frequency[frequencySelected] !=
+                                                                "Everyday"
+                                                            ? Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  CommonText.textBoldWight500(
+                                                                      text:
+                                                                          "Select the day of a week",
+                                                                      fontSize:
+                                                                          13.sp,
+                                                                      color: Colors
+                                                                          .black),
+                                                                  SizedBox(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Column(
+                                                                    children: List
+                                                                        .generate(
+                                                                      frequency[frequencySelected] ==
+                                                                              "Once a week"
+                                                                          ? 1
+                                                                          : frequency[frequencySelected] == "Twice a week"
+                                                                              ? 2
+                                                                              : 3,
+                                                                      (index) =>
+                                                                          DaysWidget(),
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height: 20,
+                                                                  ),
+                                                                ],
+                                                              )
+                                                            : SizedBox(),
                                                         CommonText.textBoldWight500(
                                                             text:
                                                                 "Set Date & Time",
@@ -2052,7 +2085,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       select = 1;
       medicineSelected = 0;
       strengthSelected = 0;
-      daysSelected = 0;
       appearanceSelected = 0;
       frequencySelected = 0;
       timeSelected = 0;
@@ -3062,6 +3094,89 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class DaysWidget extends StatefulWidget {
+  const DaysWidget({Key? key}) : super(key: key);
+
+  @override
+  State<DaysWidget> createState() => _DaysWidgetState();
+}
+
+class _DaysWidgetState extends State<DaysWidget> {
+  int daysSelected = 0;
+
+  List<String> listOfWeak = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 10),
+      width: 140.sp,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        color: Color(0xffF8F8F6),
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          key: GlobalKey(),
+          collapsedIconColor: Colors.transparent,
+          iconColor: Colors.transparent,
+          title: Row(
+            children: [
+              SizedBox(
+                width: 18,
+              ),
+              CommonText.textBoldWight500(
+                  text: listOfWeak[daysSelected],
+                  fontSize: 13.sp,
+                  color: Colors.black),
+            ],
+          ),
+          children: [
+            Container(
+              color: Colors.white,
+              child: Column(
+                children: List.generate(
+                  listOfWeak.length,
+                  (index) => GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        daysSelected = index;
+                      });
+                      setState(() {});
+                    },
+                    child: Container(
+                      color: daysSelected == index
+                          ? Color(0xffe1f9ea)
+                          : Colors.white,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.check,
+                            size: 17,
+                            color: daysSelected == index
+                                ? CommonColor.greenColor
+                                : Colors.transparent,
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          CommonText.textBoldWight500(text: listOfWeak[index])
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
