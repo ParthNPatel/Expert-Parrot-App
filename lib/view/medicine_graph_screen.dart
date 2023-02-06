@@ -89,6 +89,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
     'Dicyclomine',
     'Desvenla',
   ];
+
   List strength = [
     '100 mg',
     '200 mg',
@@ -98,11 +99,14 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
   ];
 
   List days = [
-    '10 days',
-    '20 days',
-    '30 days',
-    '40 days',
-    '40 days',
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
   ];
 
   List appearance = [
@@ -533,11 +537,11 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                         showTitle: false,
                         color: CommonColor.lightGreenColor,
                         radius: 35),
-                    PieChartSectionData(
-                        value: weekSnoozed.toDouble(),
-                        showTitle: false,
-                        color: CommonColor.lightYellowColor,
-                        radius: 30),
+                    // PieChartSectionData(
+                    //     value: weekSnoozed.toDouble(),
+                    //     showTitle: false,
+                    //     color: CommonColor.lightYellowColor,
+                    //     radius: 30),
                     PieChartSectionData(
                         value: weekMissed.toDouble(),
                         showTitle: false,
@@ -807,131 +811,6 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
     return date;
   }
 
-/*  Future<StatefulBuilder> takeMedConfirmation(
-      {required int index, required String medId}) async {
-    return StatefulBuilder(
-      builder: (context, setState) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Container(
-          height: 160.sp,
-          width: 300.sp,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding:
-                    EdgeInsets.only(left: 20, top: 13, right: 20, bottom: 13),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    CommonText.textBoldWight500(
-                      text: "Confirmation",
-                      fontSize: 17.sp,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        Get.back();
-                      },
-                      child: CommonWidget.commonSvgPitcher(
-                          image: ImageConst.close),
-                    )
-                  ],
-                ),
-              ),
-              CommonWidget.dottedLineWidget(),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: 5,
-                            ),
-                            CommonText.textBoldWight500(
-                                text: "Are you want to take your Dose $index ",
-                                fontSize: 13.sp,
-                                color: Colors.black),
-                            SizedBox(
-                              height: 12,
-                            ),
-                            CommonWidget.commonButton(
-                                color: CommonColor.greenColor,
-                                radius: 10,
-                                onTap: () async {
-                                  var _req = {
-                                    "medicineId": "${medId}",
-                                    "doses": [index],
-                                  };
-
-                                  log('====== > ${_req}');
-
-                                  await addRecordMedicineViewModel
-                                      .addRecordMedicineViewModel(model: _req);
-
-                                  if (addRecordMedicineViewModel
-                                          .addRecordMedicineApiResponse
-                                          .status ==
-                                      Status.COMPLETE) {
-                                    dateMedicineRecordViewModel
-                                        .dateMedicineRecordViewModel(
-                                            isLoading: false,
-                                            model: {"date": "${dayOf}"});
-
-                                    dateMedicineRecordViewModel
-                                        .dateMedicineRecordViewModel(
-                                            model: {"date": "${dayOf}"});
-                                    Get.back();
-
-                                    CommonWidget.getSnackBar(
-                                        duration: 2,
-                                        color: CommonColor.greenColor
-                                            .withOpacity(.4),
-                                        colorText: Colors.white,
-                                        title: "Done!",
-                                        message: 'Record Updated!');
-                                  }
-                                  if (addRecordMedicineViewModel
-                                          .addRecordMedicineApiResponse
-                                          .status ==
-                                      Status.ERROR) {
-                                    Get.back();
-                                    CommonWidget.getSnackBar(
-                                        duration: 2,
-                                        color: Colors.red.withOpacity(.4),
-                                        colorText: Colors.white,
-                                        title: "Failed!",
-                                        message:
-                                            'Record not updated try again!');
-                                  }
-                                },
-                                text: "Add")
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }*/
-
   Widget pilesContainer(
       {required int index,
       required List completedDoses,
@@ -1077,51 +956,6 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            // Row(
-                            //   crossAxisAlignment: CrossAxisAlignment.start,
-                            //   children:
-                            //       List.generate(pilesList.length, (indexPiles) {
-                            //     log(
-                            //         'pilesList[indexPiles]  ${pilesList[indexPiles]}');
-                            //     return InkWell(
-                            //       onTap: () {
-                            //         if (pilesList[indexPiles] == 0) {
-                            //           if (listOfPiles[index].length == 3) {
-                            //             listOfPiles[index] = [1, 1, 1];
-                            //           } else if (listOfPiles[index].length ==
-                            //               2) {
-                            //             listOfPiles[index] = [1, 1];
-                            //           } else {
-                            //             listOfPiles[index] = [1];
-                            //           }
-                            //         }
-                            //         setState(() {});
-                            //       },
-                            //       child: Column(
-                            //         children: [
-                            //           pilesList[indexPiles] == 1
-                            //               ? Padding(
-                            //                   padding:
-                            //                       const EdgeInsets.all(4.0),
-                            //                   child: Image.asset(
-                            //                     ImageConst.doubleTickIcon,
-                            //                     scale: 4.5,
-                            //                   ),
-                            //                 )
-                            //               : Padding(
-                            //                   padding:
-                            //                       const EdgeInsets.all(4.0),
-                            //                   child: Image.asset(
-                            //                       ImageConst.doubleTickIcon,
-                            //                       scale: 4.5,
-                            //                       color:
-                            //                           CommonColor.geryD9D9D9),
-                            //                 )
-                            //         ],
-                            //       ),
-                            //     );
-                            //   }),
-                            // ),
                             SizedBox(
                               height: 30,
                               child: ListView.separated(

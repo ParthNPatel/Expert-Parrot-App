@@ -251,7 +251,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                         ListView.builder(
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
-                          reverse: true,
+                          //reverse: true,
                           itemCount: respDMR.data!.length > 3
                               ? 3
                               : respDMR.data!.length,
@@ -475,7 +475,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                     : GetStorageServices
                                                                 .getUserMiles() !=
                                                             null
-                                                        ? '${(int.parse(GetStorageServices.getUserMiles()) * 2112)}'
+                                                        ? '${(double.parse(GetStorageServices.getUserMiles()) * 2112)}'
                                                         : '0',
                                             fontSize: 18.sp,
                                             color:
@@ -514,7 +514,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                               GetStorageServices
                                                                       .getUserMiles() !=
                                                                   ""
-                                                          ? '${(int.parse(GetStorageServices.getUserMiles()) * 85)}Kcal'
+                                                          ? '${(double.parse(GetStorageServices.getUserMiles()) * 85)}Kcal'
                                                           : '0 kcal',
                                               image: ImageConst.kcalIcon),
                                           SizedBox(width: 5),
@@ -876,6 +876,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                   data: Theme.of(context).copyWith(
                                       dividerColor: Colors.transparent),
                                   child: ExpansionTile(
+                                    key: GlobalKey(),
                                     iconColor: CommonColor.greenColor,
                                     title: Row(
                                       children: [
@@ -971,149 +972,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   SizedBox(width: 20.sp),
-                                  // SizedBox(
-                                  //   height: 6.5.h,
-                                  //   width: 25.w,
-                                  //   child: CommonWidget.commonButton(
-                                  //       color: CommonColor.greenColor,
-                                  //       radius: 10,
-                                  //       onTap: () async {
-                                  //         if (_kmController
-                                  //             .text.isNotEmpty) {
-                                  //           await AddGlassRepo1.addGlassRepo(
-                                  //               addGlass: _glassController,
-                                  //               model: {
-                                  //                 "type":
-                                  //                     "${waterTypeList[selectMethod]}",
-                                  //                 "quantity": _glassController
-                                  //                     .text
-                                  //                     .trim()
-                                  //               });
-                                  //
-                                  //           await getGlassViewModel
-                                  //               .getGlassViewModel(
-                                  //                   isLoading: false);
-                                  //           if (getGlassViewModel
-                                  //                   .getGlassApiResponse
-                                  //                   .status ==
-                                  //               Status.COMPLETE) {}
-                                  //           if (getGlassViewModel
-                                  //                   .getGlassApiResponse
-                                  //                   .status ==
-                                  //               Status.ERROR) {
-                                  //             CommonWidget.getSnackBar(
-                                  //                 duration: 2,
-                                  //                 color: CommonColor.greenColor
-                                  //                     .withOpacity(.4),
-                                  //                 colorText: Colors.white,
-                                  //                 title: "Please",
-                                  //                 message: 'Refresh Page');
-                                  //           }
-                                  //           // await controller
-                                  //           //     .addGlassViewModel(
-                                  //           //         model: {
-                                  //           //       "type":
-                                  //           //           "${waterTypeList[selectMethod]}",
-                                  //           //       "quantity":
-                                  //           //           _glassController
-                                  //           //               .text
-                                  //           //               .trim()
-                                  //           //     });
-                                  //           //
-                                  //           // if (controller
-                                  //           //         .addGlassApiResponse
-                                  //           //         .status ==
-                                  //           //     Status
-                                  //           //         .COMPLETE) {
-                                  //           //   Get.back();
-                                  //           //   GetStorageServices.setUserWater((GetStorageServices.getUserWater() ==
-                                  //           //               null
-                                  //           //           ? 0
-                                  //           //           : GetStorageServices
-                                  //           //               .getUserWater()) +
-                                  //           //       int.parse(
-                                  //           //           _glassController
-                                  //           //               .text));
-                                  //           //   _glassController
-                                  //           //       .clear();
-                                  //           //   // await getGlassViewModel
-                                  //           //   //     .getGlassViewModel(
-                                  //           //   //         isLoading:
-                                  //           //   //             false);
-                                  //           //   // if (getGlassViewModel
-                                  //           //   //         .getGlassApiResponse
-                                  //           //   //         .status ==
-                                  //           //   //     Status
-                                  //           //   //         .COMPLETE) {}
-                                  //           //   // if (getGlassViewModel
-                                  //           //   //         .getGlassApiResponse
-                                  //           //   //         .status ==
-                                  //           //   //     Status
-                                  //           //   //         .ERROR) {
-                                  //           //   //   CommonWidget.getSnackBar(
-                                  //           //   //       duration:
-                                  //           //   //           2,
-                                  //           //   //       color: CommonColor
-                                  //           //   //           .greenColor
-                                  //           //   //           .withOpacity(
-                                  //           //   //               .4),
-                                  //           //   //       colorText:
-                                  //           //   //           Colors
-                                  //           //   //               .white,
-                                  //           //   //       title:
-                                  //           //   //           "Please",
-                                  //           //   //       message:
-                                  //           //   //           'Refresh Page');
-                                  //           //   // }
-                                  //           //
-                                  //           //   CommonWidget.getSnackBar(
-                                  //           //       duration: 2,
-                                  //           //       color: CommonColor
-                                  //           //           .greenColor
-                                  //           //           .withOpacity(
-                                  //           //               .4),
-                                  //           //       colorText:
-                                  //           //           Colors
-                                  //           //               .white,
-                                  //           //       title:
-                                  //           //           "Done!",
-                                  //           //       message:
-                                  //           //           'added successfully!');
-                                  //           // }
-                                  //           // if (controller
-                                  //           //         .addGlassApiResponse
-                                  //           //         .status ==
-                                  //           //     Status
-                                  //           //         .ERROR) {
-                                  //           //   _glassController
-                                  //           //       .clear();
-                                  //           //   Get.back();
-                                  //           //
-                                  //           //   CommonWidget.getSnackBar(
-                                  //           //       duration: 2,
-                                  //           //       color: Colors
-                                  //           //           .red
-                                  //           //           .shade300,
-                                  //           //       colorText:
-                                  //           //           Colors
-                                  //           //               .white,
-                                  //           //       title:
-                                  //           //           "Oops!",
-                                  //           //       message:
-                                  //           //           'Something goes wrong please enter bottle again!');
-                                  //           // }
-                                  //         } else {
-                                  //           CommonWidget.getSnackBar(
-                                  //               duration: 2,
-                                  //               color: Colors.red.shade300,
-                                  //               colorText: Colors.white,
-                                  //               title: "Oops!",
-                                  //               message:
-                                  //                   'Please enter proper amount of bottle!');
-                                  //         }
-                                  //       },
-                                  //       text: "Add"),
-                                  // ),
                                   CommonWidget.commonButton(
                                       color: CommonColor.greenColor,
                                       radius: 10,
@@ -1131,10 +989,8 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                       .setUserKm(_kmController
                                                           .text
                                                           .trim())
-                                                  : GetStorageServices
-                                                      .setUserMiles(
-                                                          _kmController.text
-                                                              .trim());
+                                                  : GetStorageServices.setUserMiles(
+                                                      "${int.parse(_kmController.text.trim())}");
 
                                           Get.back();
                                         } else {
@@ -1162,7 +1018,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
   Dialog addMedicineDialog(BuildContext context, StateSetter setState) {
     return Dialog(
-      insetPadding: EdgeInsets.symmetric(horizontal: 20),
+      insetPadding: EdgeInsets.symmetric(horizontal: 25),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -1370,6 +1226,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     Expanded(
                                       child: TextFormField(
                                         controller: strengthName,
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.digitsOnly
+                                        ],
                                         // inputFormatters: [
                                         //   TextInputFormatter.withFunction((oldValue,
                                         //           newValue) =>
@@ -1481,6 +1341,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     Expanded(
                                       child: TextFormField(
                                         controller: days,
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.digitsOnly
+                                        ],
                                         decoration: InputDecoration(
                                             border: InputBorder.none,
                                             hintText: "Enter  Days"),
@@ -1627,11 +1491,16 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               Get.dialog(
                                 StatefulBuilder(
                                   builder: (context, setState) => Dialog(
+                                    insetPadding:
+                                        EdgeInsets.symmetric(horizontal: 25),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Container(
-                                      height: 400.sp,
+                                      height: frequency[frequencySelected] ==
+                                              "Everyday"
+                                          ? 400.sp
+                                          : 300.sp,
                                       width: 300.sp,
                                       decoration: BoxDecoration(
                                         color: Colors.white,
@@ -1759,6 +1628,21 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                                                 index;
                                                                           });
 
+                                                                          // if (frequency[frequencySelected] ==
+                                                                          //     "Twice a week") {
+                                                                          //   timeSelected =
+                                                                          //       2;
+                                                                          //   dateTimes.insert(1,
+                                                                          //       'select2');
+                                                                          // } else if (frequency[frequencySelected] ==
+                                                                          //     "Thrice a week") {
+                                                                          //   timeSelected =
+                                                                          //       3;
+                                                                          //
+                                                                          //   dateTimes.insert(2,
+                                                                          //       'select3');
+                                                                          // }
+
                                                                           log.log(
                                                                               'FREQUENCY ${frequency[frequencySelected]}');
                                                                         },
@@ -1796,165 +1680,148 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                         SizedBox(
                                                           height: 20,
                                                         ),
-                                                        CommonText.textBoldWight500(
-                                                            text:
-                                                                "How Many Times A Day?",
-                                                            fontSize: 13.sp,
-                                                            color:
-                                                                Colors.black),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Container(
-                                                          //height: 40.sp,
-                                                          width: 140.sp,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        15),
-                                                            color: Color(
-                                                                0xffF8F8F6),
-                                                          ),
-                                                          child: Theme(
-                                                            data: Theme.of(
-                                                                    context)
-                                                                .copyWith(
-                                                                    dividerColor:
-                                                                        Colors
-                                                                            .transparent),
-                                                            child:
-                                                                ExpansionTile(
-                                                              key: GlobalKey(),
-                                                              collapsedIconColor:
-                                                                  Colors
-                                                                      .transparent,
-                                                              iconColor: Colors
-                                                                  .transparent,
-                                                              title: Row(
+                                                        frequency[frequencySelected] ==
+                                                                "Everyday"
+                                                            ? Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
                                                                 children: [
-                                                                  SizedBox(
-                                                                    width: 18,
-                                                                  ),
                                                                   CommonText.textBoldWight500(
                                                                       text:
-                                                                          "${times[timeSelected]}",
+                                                                          "How Many Times A Day?",
                                                                       fontSize:
                                                                           13.sp,
                                                                       color: Colors
                                                                           .black),
-                                                                ],
-                                                              ),
-                                                              children: [
-                                                                Container(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  child: Column(
-                                                                    children: List
-                                                                        .generate(
-                                                                      times
-                                                                          .length,
-                                                                      (index) =>
-                                                                          GestureDetector(
-                                                                        onTap:
-                                                                            () {
-                                                                          setState(
-                                                                              () {
-                                                                            timeSelected =
-                                                                                index;
-                                                                          });
-
-                                                                          log.log(
-                                                                              'SELECT INDEX:-$timeSelected');
-                                                                          if (timeSelected ==
-                                                                              0) {
-                                                                            select =
-                                                                                1;
-
-                                                                            if (dateTimes.length == 3 &&
-                                                                                select == 1) {
-                                                                              dateTimes.removeLast();
-                                                                              dateTimes.removeLast();
-                                                                            }
-                                                                            if (dateTimes.length == 2 &&
-                                                                                select == 1) {
-                                                                              dateTimes.removeLast();
-                                                                            }
-                                                                          }
-
-                                                                          if (timeSelected ==
-                                                                              1) {
-                                                                            select =
-                                                                                2;
-
-                                                                            if (dateTimes.length == 1 &&
-                                                                                select == 2) {
-                                                                              dateTimes.insert(1, 'select2');
-                                                                            }
-
-                                                                            if (dateTimes.length == 3 &&
-                                                                                select == 2) {
-                                                                              dateTimes.removeLast();
-                                                                            }
-
-                                                                            log.log('SELCET2  $dateTimes');
-                                                                          }
-
-                                                                          if (timeSelected ==
-                                                                              2) {
-                                                                            select =
-                                                                                3;
-
-                                                                            if (dateTimes.length == 2 &&
-                                                                                select == 3) {
-                                                                              dateTimes.insert(2, 'select3');
-                                                                            }
-                                                                            if (dateTimes.length == 1 &&
-                                                                                select == 3) {
-                                                                              dateTimes.insert(1, 'select2');
-                                                                              dateTimes.insert(2, 'select3');
-                                                                            }
-
-                                                                            log.log('SELCET3  $dateTimes');
-                                                                          }
-                                                                          setState(
-                                                                              () {});
-                                                                        },
-                                                                        child:
-                                                                            Container(
-                                                                          color: timeSelected == index
-                                                                              ? Color(0xffe1f9ea)
-                                                                              : Colors.white,
-                                                                          padding: EdgeInsets.symmetric(
-                                                                              horizontal: 10,
-                                                                              vertical: 10),
-                                                                          child:
-                                                                              Row(
-                                                                            children: [
-                                                                              Icon(
-                                                                                Icons.check,
-                                                                                size: 17,
-                                                                                color: timeSelected == index ? CommonColor.greenColor : Colors.transparent,
-                                                                              ),
-                                                                              SizedBox(
-                                                                                width: 10,
-                                                                              ),
-                                                                              CommonText.textBoldWight500(text: times[index])
-                                                                            ],
-                                                                          ),
+                                                                  SizedBox(
+                                                                    height: 10,
+                                                                  ),
+                                                                  Container(
+                                                                    //height: 40.sp,
+                                                                    width:
+                                                                        140.sp,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              15),
+                                                                      color: Color(
+                                                                          0xffF8F8F6),
+                                                                    ),
+                                                                    child:
+                                                                        Theme(
+                                                                      data: Theme.of(
+                                                                              context)
+                                                                          .copyWith(
+                                                                              dividerColor: Colors.transparent),
+                                                                      child:
+                                                                          ExpansionTile(
+                                                                        key:
+                                                                            GlobalKey(),
+                                                                        collapsedIconColor:
+                                                                            Colors.transparent,
+                                                                        iconColor:
+                                                                            Colors.transparent,
+                                                                        title:
+                                                                            Row(
+                                                                          children: [
+                                                                            SizedBox(
+                                                                              width: 18,
+                                                                            ),
+                                                                            CommonText.textBoldWight500(
+                                                                                text: "${times[timeSelected]}",
+                                                                                fontSize: 13.sp,
+                                                                                color: Colors.black),
+                                                                          ],
                                                                         ),
+                                                                        children: [
+                                                                          Container(
+                                                                            color:
+                                                                                Colors.white,
+                                                                            child:
+                                                                                Column(
+                                                                              children: List.generate(
+                                                                                times.length,
+                                                                                (index) => GestureDetector(
+                                                                                  onTap: () {
+                                                                                    setState(() {
+                                                                                      timeSelected = index;
+                                                                                    });
+
+                                                                                    log.log('SELECT INDEX:-$timeSelected');
+                                                                                    if (timeSelected == 0) {
+                                                                                      select = 1;
+
+                                                                                      if (dateTimes.length == 3 && select == 1) {
+                                                                                        dateTimes.removeLast();
+                                                                                        dateTimes.removeLast();
+                                                                                      }
+                                                                                      if (dateTimes.length == 2 && select == 1) {
+                                                                                        dateTimes.removeLast();
+                                                                                      }
+                                                                                    }
+
+                                                                                    if (timeSelected == 1) {
+                                                                                      select = 2;
+
+                                                                                      if (dateTimes.length == 1 && select == 2) {
+                                                                                        dateTimes.insert(1, 'select2');
+                                                                                      }
+
+                                                                                      if (dateTimes.length == 3 && select == 2) {
+                                                                                        dateTimes.removeLast();
+                                                                                      }
+
+                                                                                      log.log('SELCET2  $dateTimes');
+                                                                                    }
+
+                                                                                    if (timeSelected == 2) {
+                                                                                      select = 3;
+
+                                                                                      if (dateTimes.length == 2 && select == 3) {
+                                                                                        dateTimes.insert(2, 'select3');
+                                                                                      }
+                                                                                      if (dateTimes.length == 1 && select == 3) {
+                                                                                        dateTimes.insert(1, 'select2');
+                                                                                        dateTimes.insert(2, 'select3');
+                                                                                      }
+
+                                                                                      log.log('SELCET3  $dateTimes');
+                                                                                    }
+                                                                                    setState(() {});
+                                                                                  },
+                                                                                  child: Container(
+                                                                                    color: timeSelected == index ? Color(0xffe1f9ea) : Colors.white,
+                                                                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                                                                    child: Row(
+                                                                                      children: [
+                                                                                        Icon(
+                                                                                          Icons.check,
+                                                                                          size: 17,
+                                                                                          color: timeSelected == index ? CommonColor.greenColor : Colors.transparent,
+                                                                                        ),
+                                                                                        SizedBox(
+                                                                                          width: 10,
+                                                                                        ),
+                                                                                        CommonText.textBoldWight500(text: times[index])
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          )
+                                                                        ],
                                                                       ),
                                                                     ),
                                                                   ),
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 20,
-                                                        ),
+                                                                  SizedBox(
+                                                                    height: 20,
+                                                                  ),
+                                                                ],
+                                                              )
+                                                            : SizedBox(),
                                                         CommonText.textBoldWight500(
                                                             text:
                                                                 "Set Date & Time",

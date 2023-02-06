@@ -10,7 +10,6 @@ import 'package:expert_parrot_app/viewModel/date_medicine_record_view_model.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
-
 import '../viewModel/user_data_view_model.dart';
 
 class ViewAllMedScheduleScreen extends StatefulWidget {
