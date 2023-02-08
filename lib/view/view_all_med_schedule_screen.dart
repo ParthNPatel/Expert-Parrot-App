@@ -60,7 +60,6 @@ class _ViewAllMedScheduleScreenState extends State<ViewAllMedScheduleScreen> {
                 Status.COMPLETE) {
               DateMedicineRecordResponseModel response =
                   controller.dateMedicineRecordApiResponse.data;
-
               return Expanded(
                 child: ListView.builder(
                   physics: BouncingScrollPhysics(),
@@ -172,44 +171,42 @@ class _ViewAllMedScheduleScreenState extends State<ViewAllMedScheduleScreen> {
                           medId: "${response.data![index].sId}",
                           totalTimes: "${response.data![index].totalTimes}",
                           takenDoses: response.data![index].doses,
-                          image: response.data![index].appearance!
-                                      .toLowerCase() ==
-                                  'pills'
+                          image: response.data![index].appearance!.toLowerCase() ==
+                                      'tablet' ||
+                                  response.data![index].appearance!.toLowerCase() ==
+                                      'capsule'
                               ? ImageConst.med3Icon
                               : response.data![index].appearance!.toLowerCase() ==
-                                      'gel'
-                                  ? ImageConst.med1Icon
-                                  : response.data![index].appearance!
+                                          'cream' ||
+                                      response.data![index].appearance!
+                                              .toLowerCase() ==
+                                          'ointment' ||
+                                      response.data![index].appearance!
                                               .toLowerCase() ==
                                           'syrup'
+                                  ? ImageConst.med1Icon
+                                  : response.data![index].appearance!.toLowerCase() ==
+                                          'injection'
                                       ? ImageConst.med2Icon
                                       : ImageConst.med2Icon,
                           medName: '${response.data![index].name}',
                           medGm: '${response.data![index].strength}',
-                          iconColor: response.data![index].appearance!
-                                      .toLowerCase() ==
-                                  'pills'
+                          iconColor: response.data![index].appearance!.toLowerCase() ==
+                                  'tablet'
                               ? Color(0xff21D200)
                               : response.data![index].appearance!.toLowerCase() ==
-                                      'gel'
+                                      'cream'
                                   ? Color(0xffFFDD2C)
-                                  : response.data![index].appearance!
-                                              .toLowerCase() ==
+                                  : response.data![index].appearance!.toLowerCase() ==
                                           'syrup'
                                       ? Color(0xff9255E5)
                                       : Color(0xff9255E5),
-                          timeOfDay:
-                              '${response.data![index].totalTimes} pills ${response.data![index].frequency}',
-                          color: response.data![index].appearance!
-                                      .toLowerCase() ==
-                                  'pills'
+                          timeOfDay: '${response.data![index].totalTimes} ${response.data![index].appearance} ${response.data![index].frequency}',
+                          color: response.data![index].appearance!.toLowerCase() == 'tablet'
                               ? Color.fromRGBO(69, 196, 44, 0.13)
-                              : response.data![index].appearance!.toLowerCase() ==
-                                      'gel'
+                              : response.data![index].appearance!.toLowerCase() == 'cream'
                                   ? Color.fromRGBO(193, 196, 44, 0.13)
-                                  : response.data![index].appearance!
-                                              .toLowerCase() ==
-                                          'syrup'
+                                  : response.data![index].appearance!.toLowerCase() == 'syrup'
                                       ? Color.fromRGBO(111, 44, 196, 0.13)
                                       : Color.fromRGBO(111, 44, 196, 0.13));
                     } catch (e) {
@@ -437,6 +434,45 @@ class _ViewAllMedScheduleScreenState extends State<ViewAllMedScheduleScreen> {
                                             .deleteMedicineRepo(id: medId);
 
                                         if (resp["flag"] == true) {
+                                          CommonWidget.getSnackBar(
+                                              duration: 2,
+                                              color: CommonColor.greenColor
+                                                  .withOpacity(.4),
+                                              colorText: Colors.white,
+                                              title: "Done!",
+                                              message: 'Medicine Skipped!}');
+                                        } else {
+                                          CommonWidget.getSnackBar(
+                                              duration: 2,
+                                              color: Colors.red.withOpacity(.4),
+                                              colorText: Colors.white,
+                                              title: "Something went wrong!",
+                                              message: '${resp["data"]}');
+                                        }
+                                      } else {
+                                        CommonWidget.getSnackBar(
+                                            duration: 2,
+                                            color: Colors.red.withOpacity(.4),
+                                            colorText: Colors.white,
+                                            title: "Something went wrong",
+                                            message: 'Please try again!');
+                                      }
+                                    },
+                                    child: Text("Skipped"),
+                                  ),
+                                  PopupMenuItem(
+                                    onTap: () async {
+                                      if (medId.isNotEmpty) {
+                                        var resp = await DeleteMedicineRepo
+                                            .deleteMedicineRepo(id: medId);
+
+                                        if (resp["flag"] == true) {
+                                          await userDataViewModel
+                                              .userDataViewModel();
+                                          dateMedicineRecordViewModel
+                                              .dateMedicineRecordViewModel(
+                                                  isLoading: false,
+                                                  model: {"date": "${dayOf}"});
                                           CommonWidget.getSnackBar(
                                               duration: 2,
                                               color: CommonColor.greenColor

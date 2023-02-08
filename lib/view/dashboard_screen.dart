@@ -256,16 +256,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                               ? 3
                               : respDMR.data!.length,
                           itemBuilder: (context, index) {
-                            // respDMR.data!.indexWhere((element) {
-                            //   if (element.sId == LastData[index]["id"]) {
-                            //     completedDoses = element.doses!;
-                            //   } else {
-                            //     completedDoses = [];
-                            //   }
-                            //   return element.sId == LastData[index]["id"];
-                            // });
-                            // var UserEqual = userResponse.data!
-                            //     .medicines![index]["appearance"];
+                            print("APP==>>${respDMR.data![index].appearance}");
                             try {
                               return /*recordLength > 3
                                             ? */
@@ -275,43 +266,45 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                           "${respDMR.data![index].totalTimes}",
                                       takenDoses: respDMR.data![index].doses,
                                       image: respDMR.data![index].appearance!
-                                                  .toLowerCase() ==
-                                              'Tablet'
-                                          ? ImageConst.med3Icon
-                                          : respDMR.data![index].appearance!
                                                       .toLowerCase() ==
-                                                  'Cream'
+                                                  'tablet' ||
+                                              respDMR.data![index].appearance!
+                                                      .toLowerCase() ==
+                                                  'capsule'
+                                          ? ImageConst.med3Icon
+                                          : respDMR.data![index]
+                                                          .appearance!
+                                                          .toLowerCase() ==
+                                                      'cream' ||
+                                                  respDMR.data![index]
+                                                          .appearance!
+                                                          .toLowerCase() ==
+                                                      'ointment' ||
+                                                  respDMR.data![index]
+                                                          .appearance!
+                                                          .toLowerCase() ==
+                                                      'syrup'
                                               ? ImageConst.med1Icon
                                               : respDMR.data![index].appearance!
                                                           .toLowerCase() ==
-                                                      'Syrup'
+                                                      'injection'
                                                   ? ImageConst.med2Icon
                                                   : ImageConst.med2Icon,
                                       medName: '${respDMR.data![index].name}',
-                                      medGm:
-                                          '${respDMR.data![index].strength} gm',
-                                      iconColor: respDMR.data![index].appearance!
-                                                  .toLowerCase() ==
-                                              'Tablet'
+                                      medGm: '${respDMR.data![index].strength} gm',
+                                      iconColor: respDMR.data![index].appearance!.toLowerCase() == 'tablet'
                                           ? Color(0xff21D200)
-                                          : respDMR.data![index].appearance!
-                                                      .toLowerCase() ==
-                                                  'Cream'
+                                          : respDMR.data![index].appearance!.toLowerCase() == 'cream'
                                               ? Color(0xffFFDD2C)
-                                              : respDMR.data![index].appearance!
-                                                          .toLowerCase() ==
-                                                      'Syrup'
+                                              : respDMR.data![index].appearance!.toLowerCase() == 'syrup'
                                                   ? Color(0xff9255E5)
                                                   : Color(0xff9255E5),
-                                      timeOfDay:
-                                          '${respDMR.data![index].totalTimes} Tablet ${respDMR.data![index].frequency}',
-                                      color: respDMR.data![index].appearance!
-                                                  .toLowerCase() ==
-                                              'pills'
+                                      timeOfDay: '${respDMR.data![index].totalTimes} ${respDMR.data![index].appearance} ${respDMR.data![index].frequency}',
+                                      color: respDMR.data![index].appearance!.toLowerCase() == 'tablet'
                                           ? Color.fromRGBO(69, 196, 44, 0.13)
-                                          : respDMR.data![index].appearance!.toLowerCase() == 'Cream'
+                                          : respDMR.data![index].appearance!.toLowerCase() == 'cream'
                                               ? Color.fromRGBO(193, 196, 44, 0.13)
-                                              : respDMR.data![index].appearance!.toLowerCase() == 'Syrup'
+                                              : respDMR.data![index].appearance!.toLowerCase() == 'syrup'
                                                   ? Color.fromRGBO(111, 44, 196, 0.13)
                                                   : Color.fromRGBO(111, 44, 196, 0.13));
                             } catch (e) {
@@ -360,11 +353,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                   crossAxisCount: 2,
                                   childAspectRatio: 2 / 1.5),
                           itemBuilder: (context, index) {
-                            // 'name': 'Weight',
-                            // 'image': 'assets/png/glass_icon.png.png',
-                            // 'name_of_count': '78KG',
-                            // 'name_of_subject': 'This Week',
-                            // 'color': Color(0xffFAF0DB),
                             return overViewWidget(
                               onTap: () async {
                                 if (index == 3) {
@@ -383,9 +371,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                   Get.to(() => WaterGraphScreen());
                                 } else if (index == 2) {
                                   Get.to(() => HeartRateScreen());
-
-                                  // Get.dialog(await enterHeartRateDialog())
-                                  //     .whenComplete(() => setState(() {}));
                                 }
                               },
                               name: overViewData[index]['name'],
@@ -1308,7 +1293,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                             height: 20,
                           ),
                           CommonText.textBoldWight500(
-                              text: "End Date",
+                              text: " nter days (optional)",
                               fontSize: 13.sp,
                               color: Colors.black),
                           SizedBox(
@@ -2629,7 +2614,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                   .withOpacity(.4),
                                               colorText: Colors.white,
                                               title: "Done!",
-                                              message: '${resp["data"]}');
+                                              message: 'Medicine Skipped!');
                                         } else {
                                           CommonWidget.getSnackBar(
                                               duration: 2,
@@ -2648,6 +2633,45 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                       }
                                     },
                                     child: Text("Skipped"),
+                                  ),
+                                  PopupMenuItem(
+                                    onTap: () async {
+                                      if (medId.isNotEmpty) {
+                                        var resp = await DeleteMedicineRepo
+                                            .deleteMedicineRepo(id: medId);
+
+                                        if (resp["flag"] == true) {
+                                          await userDataViewModel
+                                              .userDataViewModel();
+                                          dateMedicineRecordViewModel
+                                              .dateMedicineRecordViewModel(
+                                                  isLoading: false,
+                                                  model: {"date": "${dayOf}"});
+                                          CommonWidget.getSnackBar(
+                                              duration: 2,
+                                              color: CommonColor.greenColor
+                                                  .withOpacity(.4),
+                                              colorText: Colors.white,
+                                              title: "Done!",
+                                              message: '${resp["data"]}');
+                                        } else {
+                                          CommonWidget.getSnackBar(
+                                              duration: 2,
+                                              color: Colors.red.withOpacity(.4),
+                                              colorText: Colors.white,
+                                              title: "Something went wrong!",
+                                              message: '${resp["data"]}');
+                                        }
+                                      } else {
+                                        CommonWidget.getSnackBar(
+                                            duration: 2,
+                                            color: Colors.red.withOpacity(.4),
+                                            colorText: Colors.white,
+                                            title: "Something went wrong",
+                                            message: 'Please try again!');
+                                      }
+                                    },
+                                    child: Text("Delete"),
                                   ),
                                 ];
                               } else {
