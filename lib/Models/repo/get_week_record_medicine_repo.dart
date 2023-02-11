@@ -9,11 +9,18 @@ import '../services/base_service.dart';
 
 class GetWeekRecordMedicineRepo extends BaseService {
   static Future<GetWeekRecordMedicineResponseModel> getWeekRecordMedicineRepo(
-      {String? page, required Map<String, dynamic> body}) async {
+      {String? page,
+      required Map<String, dynamic> body,
+      isForDependent = false,
+      String? dependentId}) async {
     log("body ====== > ${body}");
 
     var response = await APIService().getResponse(
-        url: APIConst.weekRecordMedicine, apitype: APIType.aPost, body: body);
+        url: isForDependent == true
+            ? "${APIConst.weekRecordMedicine}?dependentId=$dependentId"
+            : APIConst.weekRecordMedicine,
+        apitype: APIType.aPost,
+        body: body);
     print('GetWeekRecordMedicineRepo response===>>>  $response');
     GetWeekRecordMedicineResponseModel getWeekRecordMedicineResponseModel =
         GetWeekRecordMedicineResponseModel.fromJson(response);

@@ -176,7 +176,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
     getWeekRecordMedicineViewModel.getWeekRecordMedicineViewModel(body: {
       "startDate": "${startDate.toString().split(" ").first}",
       "endDate": "${endDate.toString().split(" ").first}"
-    });
+    }, isForDependent: true, dependentId: widget.userDepndentId);
 
     getRecordMedicineViewModel.getRecordMedicineViewModel(
         dependentId: "&dependentId=" + widget.userDepndentId);

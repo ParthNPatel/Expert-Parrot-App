@@ -17,7 +17,9 @@ class GetWeekRecordMedicineViewModel extends GetxController {
   Future<void> getWeekRecordMedicineViewModel(
       {bool? isLoading = true,
       String? page,
-      required Map<String, dynamic> body}) async {
+      required Map<String, dynamic> body,
+      isForDependent = false,
+      String? dependentId}) async {
     if (isLoading!) {
       _getWeekRecordMedicineApiResponse =
           ApiResponse.loading(message: 'Loading');
@@ -26,7 +28,10 @@ class GetWeekRecordMedicineViewModel extends GetxController {
     try {
       GetWeekRecordMedicineResponseModel response =
           await GetWeekRecordMedicineRepo.getWeekRecordMedicineRepo(
-              page: page, body: body);
+              page: page,
+              body: body,
+              dependentId: dependentId,
+              isForDependent: isForDependent);
       log("GetWeekRecordMedicineResponseModel=response==>$response");
 
       _getWeekRecordMedicineApiResponse = ApiResponse.complete(response);
