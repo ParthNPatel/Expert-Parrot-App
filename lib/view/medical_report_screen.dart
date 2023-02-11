@@ -1,16 +1,21 @@
+import 'package:dotted_line/dotted_line.dart';
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_record_medicine_res_model.dart';
 import 'package:expert_parrot_app/constant/color_const.dart';
 import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:expert_parrot_app/viewModel/get_record_medicine_view_model.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:sizer/sizer.dart';
 
+import '../Models/responseModel/get_week_record_medicine_response_model.dart';
 import '../components/common_widget.dart';
+import '../viewModel/get_week_record_medicine_view_model.dart';
 
 class MedicalReportScreen extends StatefulWidget {
   final String userName;
@@ -32,6 +37,9 @@ class MedicalReportScreen extends StatefulWidget {
 
 class _MedicalReportScreenState extends State<MedicalReportScreen> {
   int index = 0;
+
+  bool isDaily = true;
+
   List medScheduleList = [
     {
       'image': ImageConst.capsule4,
@@ -108,6 +116,8 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
     '40 days',
   ];
 
+  int limitData = 0;
+
   List appearance = [
     'Pills',
     'Gel',
@@ -140,12 +150,34 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
   int selectedPilesDose = 0;
   int selectedPillIndex = 0;
 
+  String tmpID = "";
+  int weekTotal = 0;
+  int weekTaken = 0;
+  int weekSnoozed = 4;
+  int weekMissed = 0;
+  bool isFirst = true;
+  String weekMedName = "";
+  String weekGm = "";
+
   GetRecordMedicineViewModel getRecordMedicineViewModel =
       Get.put(GetRecordMedicineViewModel());
+
+  GetWeekRecordMedicineViewModel getWeekRecordMedicineViewModel =
+      Get.put(GetWeekRecordMedicineViewModel());
+
+  DateTime startDate = DateTime.utc(
+      DateTime.now().year, DateTime.now().month, DateTime.now().day - 6);
+
+  DateTime endDate = DateTime.now();
 
   @override
   void initState() {
     super.initState();
+    getWeekRecordMedicineViewModel.getWeekRecordMedicineViewModel(body: {
+      "startDate": "${startDate.toString().split(" ").first}",
+      "endDate": "${endDate.toString().split(" ").first}"
+    });
+
     getRecordMedicineViewModel.getRecordMedicineViewModel(
         dependentId: "&dependentId=" + widget.userDepndentId);
   }
@@ -175,463 +207,332 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
                       GetRecordMedicineResponseModel respRM =
                           controllerRM.getRecordMedicineApiResponse.data;
 
+                      if (tmpID == "") {
+                        tmpID = respRM.data![0].records![0].sId!;
+                      }
+
+                      limitData = 0;
+                      for (int i = 0; i < respRM.data!.length; i++) {
+                        for (int j = 0;
+                            j < respRM.data![i].records!.length;
+                            j++) {
+                          if (respRM.data![i].records![j].sId == tmpID) {
+                            limitData += 1;
+                          }
+                        }
+                      }
+
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CommonWidget.commonSizedBox(height: 23),
-                          dateShowWidget(),
-                          CommonWidget.commonSizedBox(height: 23),
-                          respRM.data!.length != 0 && respRM.data!.isNotEmpty
-                              ? Column(
+                          !isDaily
+                              ? GetBuilder<GetWeekRecordMedicineViewModel>(
+                                  builder: (controllerWeek) {
+                                  if (controllerWeek
+                                          .getWeekRecordMedicineApiResponse
+                                          .status ==
+                                      Status.LOADING) {
+                                    return Column(
+                                      children: [
+                                        weekShowWidget(),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 30.sp),
+                                          child: CircularProgressIndicator(
+                                              strokeWidth: 1.5,
+                                              color: CommonColor.greenColor),
+                                        )
+                                      ],
+                                    );
+                                  }
+
+                                  if (controllerWeek
+                                          .getWeekRecordMedicineApiResponse
+                                          .status ==
+                                      Status.COMPLETE) {
+                                    GetWeekRecordMedicineResponseModel respWK =
+                                        controllerWeek
+                                            .getWeekRecordMedicineApiResponse
+                                            .data;
+
+                                    if (respWK.data.isNotEmpty &&
+                                        respWK.data != []) {
+                                      if (isFirst) {
+                                        for (int i = 0;
+                                            i < respWK.data.length;
+                                            i++) {
+                                          for (int j = 0;
+                                              j < respWK.data[i].records.length;
+                                              j++) {
+                                            if (respWK.data[i].records[j].id ==
+                                                tmpID) {
+                                              weekTotal += respWK.data[i]
+                                                  .records[j].totalTimes;
+                                              weekTaken += respWK.data[i]
+                                                  .records[j].doses.length;
+                                            }
+                                          }
+                                        }
+                                        isFirst = false;
+                                        weekMissed = weekTotal - weekTaken;
+                                        weekMedName =
+                                            respWK.data[0].records[0].name;
+                                        weekGm = respWK
+                                            .data[0].records[0].strength
+                                            .toString();
+                                      }
+
+                                      return Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          weekShowWidget(),
+                                          CommonWidget.commonSizedBox(
+                                              height: 23),
+                                          weekGraph(),
+                                        ],
+                                      );
+                                    } else
+                                      return Column(
+                                        children: [
+                                          weekShowWidget(),
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 30.sp),
+                                            child: CommonText.textBoldWight500(
+                                                text: "No data in this week"),
+                                          )
+                                        ],
+                                      );
+                                  } else
+                                    return Column(children: [
+                                      weekShowWidget(),
+                                      Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 30.sp),
+                                          child: CommonText.textBoldWight500(
+                                              text: "Something went wrong"))
+                                    ]);
+                                })
+                              : Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Container(
-                                      height: 120.sp,
-                                      alignment: Alignment.center,
-                                      // color: Colors.grey.shade300,
-                                      child: ListView.builder(
-                                          physics: BouncingScrollPhysics(),
-                                          scrollDirection: Axis.horizontal,
-                                          itemCount: respRM.data!.length > 7
-                                              ? 7
-                                              : respRM.data!.length,
-                                          shrinkWrap: true,
-                                          reverse: true,
-                                          itemBuilder: (_, index) {
-                                            return Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  Container(
-                                                    //  height: 150,
-                                                    // color: Colors.red,
-                                                    width: 28,
-                                                    child: ListView.builder(
-                                                      scrollDirection:
-                                                          Axis.vertical,
-                                                      shrinkWrap: true,
-                                                      itemCount: respRM
-                                                                  .data![index]
-                                                                  .date ==
-                                                              dayOf
-                                                                  .toString()
-                                                                  .split(" ")
-                                                                  .first
-                                                          ? respRM
-                                                              .data![index]
-                                                              .records![
-                                                                  selectedPillIndex]
-                                                              .totalTimes
-                                                          : 3,
-                                                      itemBuilder: (context,
-                                                          indexOfDose) {
-                                                        print(
-                                                            '$indexOfDose${selectedPilesDose}');
-                                                        return Column(
-                                                          children: [
-                                                            pilesContainer(
-                                                                completedDoses: respRM
-                                                                    .data![
-                                                                        index]
-                                                                    .records![
-                                                                        selectedPillIndex]
-                                                                    .doses!,
-                                                                selectMainDose:
-                                                                    index,
-                                                                selectedList:
-                                                                    selectedPilesDose,
-                                                                index:
-                                                                    indexOfDose,
-                                                                totalDoseLength:
-                                                                    listOfPiles[
-                                                                            index]
-                                                                        .length),
-                                                            Divider(
-                                                              color:
-                                                                  Colors.white,
-                                                              height: 1,
-                                                            )
-                                                          ],
-                                                        );
-                                                      },
-                                                    ),
-                                                  ),
-                                                  //  Spacer(),
-                                                  Container(
-                                                      // height: 40,
-                                                      // width: 22,
-                                                      child: CommonText
-                                                          .textBoldWight600(
-                                                              color: CommonColor
-                                                                  .gery9D9D9D,
-                                                              fontSize: 10,
-                                                              text: weekDayGen(
-                                                                  date: respRM
-                                                                      .data![
-                                                                          index]
-                                                                      .date!))),
-                                                ],
-                                              ),
-                                            );
-                                          }),
-                                    ),
-                                    CommonWidget.commonSizedBox(height: 10),
-                                    Align(
-                                        alignment: Alignment.center,
-                                        child: SizedBox(
-                                          height: 30.sp,
-                                          child: ListView.separated(
-                                            scrollDirection: Axis.horizontal,
-                                            shrinkWrap: true,
-                                            itemCount: respRM
-                                                .data![selectedPilesDose]
-                                                .records![selectedPillIndex]
-                                                .totalTimes!,
-                                            separatorBuilder: (context, index) {
-                                              return SizedBox(width: 20.sp);
-                                            },
-                                            itemBuilder: (context, index) {
-                                              return respRM
-                                                      .data![selectedPilesDose]
-                                                      .records![
-                                                          selectedPillIndex]
-                                                      .doses!
-                                                      .contains(index + 1)
-                                                  ? Row(
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(4.0),
-                                                          child: Image.asset(
-                                                            ImageConst
-                                                                .doubleTickIcon,
-                                                            scale: 4,
-                                                          ),
-                                                        ),
-                                                        CommonText.textBoldWight400(
-                                                            text:
-                                                                "${respRM.data![selectedPilesDose].records![selectedPillIndex].shceduleTime![index]}",
-                                                            fontSize: 12.sp)
-                                                      ],
-                                                    )
-                                                  : Row(
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(4.0),
-                                                          child: Image.asset(
-                                                            ImageConst
-                                                                .doubleTickIcon,
-                                                            scale: 4,
-                                                            color: Color(
-                                                                    0xffFB0A0A)
-                                                                .withOpacity(
-                                                                    .8),
-                                                          ),
-                                                        ),
-                                                        CommonText.textBoldWight400(
-                                                            text:
-                                                                "${respRM.data![selectedPilesDose].records![selectedPillIndex].shceduleTime![index]}",
-                                                            fontSize: 12.sp)
-                                                      ],
-                                                    );
-                                            },
-                                          ),
-                                        )),
-                                    CommonWidget.commonSizedBox(height: 10),
-                                    Align(
-                                        alignment: Alignment.center,
-                                        child: CommonText.textBoldWight500(
-                                            text: 'Pill List',
-                                            fontSize: 18.sp,
-                                            color:
-                                                CommonColor.blackColor0D0D0D)),
-                                    CommonWidget.commonSizedBox(height: 4),
-                                    ListView.builder(
-                                      physics: NeverScrollableScrollPhysics(),
-                                      shrinkWrap: true,
-                                      reverse: true,
-                                      itemCount: respRM.data![selectedPilesDose]
-                                          .records!.length,
-                                      itemBuilder: (context, index) {
-                                        print(
-                                            'dfgvde ${medScheduleList[index]}');
-
-                                        return medScheduleList[index] == null
-                                            ? SizedBox()
-                                            : medDetailsWidget(
-                                                medId: respRM
-                                                    .data![selectedPilesDose]
-                                                    .records![index]
-                                                    .sId!,
-                                                totalTimes: respRM
-                                                    .data![selectedPilesDose]
-                                                    .records![index]
-                                                    .totalTimes!,
-                                                pilesList: listOfPiles[index],
-                                                image: respRM.data![selectedPilesDose].records![index].appearance!
-                                                            .toLowerCase() ==
-                                                        'pills'
-                                                    ? ImageConst.med3Icon
-                                                    : respRM.data![selectedPilesDose].records![index].appearance!
-                                                                .toLowerCase() ==
-                                                            'gel'
-                                                        ? ImageConst.med1Icon
-                                                        : respRM.data![selectedPilesDose].records![index].appearance!
-                                                                    .toLowerCase() ==
-                                                                'syrup'
-                                                            ? ImageConst
-                                                                .med2Icon
-                                                            : ImageConst
-                                                                .med2Icon,
-                                                medName: respRM
-                                                    .data![selectedPilesDose]
-                                                    .records![index]
-                                                    .name!,
-                                                medGm:
-                                                    '${respRM.data![selectedPilesDose].records![index].strength} gm',
-                                                iconColor: respRM
-                                                            .data![
-                                                                selectedPilesDose]
-                                                            .records![index]
-                                                            .appearance!
-                                                            .toLowerCase() ==
-                                                        'pills'
-                                                    ? Color(0xff21D200)
-                                                    : respRM
-                                                                .data![selectedPilesDose]
-                                                                .records![index]
-                                                                .appearance!
-                                                                .toLowerCase() ==
-                                                            'gel'
-                                                        ? Color(0xffFFDD2C)
-                                                        : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() == 'syrup'
-                                                            ? Color(0xff9255E5)
-                                                            : Color(0xff9255E5),
-                                                dose: respRM.data![selectedPilesDose].records![index].doses!,
-                                                index: index);
-                                      },
-                                    ),
-                                    CommonWidget.commonSizedBox(height: 100),
+                                    dateShowWidget(),
+                                    CommonWidget.commonSizedBox(height: 23),
+                                    dailyGraph(respRM),
                                   ],
-                                )
-                              : Center(
-                                  child: Padding(
-                                      padding: EdgeInsets.only(top: 20),
-                                      child: CommonText.textBoldWight400(
-                                          text:
-                                              "No med schedule on ${CommonWidget.convertDateForm(dayOf)}")),
                                 ),
+                          buildDottedLine(),
+                          CommonWidget.commonSizedBox(height: 10),
+                          Align(
+                              alignment: Alignment.center,
+                              child: CommonText.textBoldWight500(
+                                  text: 'Pill List',
+                                  fontSize: 18.sp,
+                                  color: CommonColor.blackColor0D0D0D)),
+                          CommonWidget.commonSizedBox(height: 4),
+                          ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            reverse: true,
+                            itemCount:
+                                respRM.data![selectedPilesDose].records!.length,
+                            itemBuilder: (context, index) {
+                              return medScheduleList[index] == null
+                                  ? SizedBox()
+                                  : medDetailsWidget(
+                                      medId: respRM.data![selectedPilesDose]
+                                          .records![index].sId!,
+                                      totalTimes: respRM
+                                          .data![selectedPilesDose]
+                                          .records![index]
+                                          .totalTimes!,
+                                      pilesList: listOfPiles[index],
+                                      image: respRM.data![selectedPilesDose]
+                                                  .records![index].appearance!
+                                                  .toLowerCase() ==
+                                              'Tablet'
+                                          ? ImageConst.med3Icon
+                                          : respRM
+                                                      .data![selectedPilesDose]
+                                                      .records![index]
+                                                      .appearance!
+                                                      .toLowerCase() ==
+                                                  'Cream'
+                                              ? ImageConst.med1Icon
+                                              : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() ==
+                                                      'Syrup'
+                                                  ? ImageConst.med2Icon
+                                                  : ImageConst.med2Icon,
+                                      medName: respRM.data![selectedPilesDose]
+                                          .records![index].name!,
+                                      medGm:
+                                          '${respRM.data![selectedPilesDose].records![index].strength} gm',
+                                      iconColor: respRM.data![selectedPilesDose]
+                                                  .records![index].appearance!
+                                                  .toLowerCase() ==
+                                              'Tablet'
+                                          ? Color(0xff21D200)
+                                          : respRM
+                                                      .data![selectedPilesDose]
+                                                      .records![index]
+                                                      .appearance!
+                                                      .toLowerCase() ==
+                                                  'Cream'
+                                              ? Color(0xffFFDD2C)
+                                              : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() == 'Syrup'
+                                                  ? Color(0xff9255E5)
+                                                  : Color(0xff9255E5),
+                                      dose: respRM.data![selectedPilesDose].records![index].doses!,
+                                      index: index);
+                            },
+                          ),
+                          CommonWidget.commonSizedBox(height: 100),
                         ],
                       );
                     } else
                       return SizedBox();
                   }),
-/*                  Container(
-                    height: 140,
-                    // color: Colors.grey.shade300,
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: List.generate(listOfWeak.length, (index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Container(
-                                  //  height: 150,
-                                  width: 28,
-                                  // color: Colors.red,
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.vertical,
-                                    shrinkWrap: true,
-                                    itemCount: listOfPiles[index].length,
-                                    itemBuilder: (context, indexOfDose) {
-                                      return Column(
-                                        children: [
-                                          pilesContainer(
-                                              colorSelected: listOfPiles[index]
-                                                  [indexOfDose],
-                                              selectMainDose: index,
-                                              selectedList: selectedPilesDose,
-                                              index: indexOfDose,
-                                              totalDoseLength:
-                                                  listOfPiles[index].length,
-                                              date: '2-12-12',
-                                              completedDoses: [1, 2]),
-                                          Divider(
-                                            color: Colors.white,
-                                            height: 1,
-                                          )
-                                        ],
-                                      );
-                                    },
-                                  ),
-                                ),
-                                //  Spacer(),
-                                Container(
-                                    // height: 40,
-                                    // width: 22,
-                                    child: CommonText.textBoldWight600(
-                                        color: CommonColor.gery9D9D9D,
-                                        fontSize: 10,
-                                        text: listOfWeak[index])),
-                              ],
-                            ),
-                          );
-                        })),
-                  ),
-                  graphWidget(),
-                  CommonWidget.commonSizedBox(height: 16),
-                  Align(
-                      alignment: Alignment.center,
-                      child: CommonText.textBoldWight500(
-                          text: 'Pill List',
-                          fontSize: 18.sp,
-                          color: CommonColor.blackColor0D0D0D)),
-                  CommonWidget.commonSizedBox(height: 4),
-                  ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    reverse: true,
-                    itemCount: medScheduleList.length,
-                    itemBuilder: (context, index) {
-                      return medScheduleList[index] == null
-                          ? SizedBox()
-                          : medDetailsWidget(
-                              pilesList: listOfPiles[index],
-                              image: medScheduleList[index]['image'],
-                              medName: medScheduleList[index]['medName'],
-                              medGm: medScheduleList[index]['medGm'],
-                              iconColor: medScheduleList[index]['iconColor'],
-                              dose: medScheduleList[index]["dose"],
-                              index: index,
-                              medId: 'asddfedfsadfsa',
-                              totalTimes: 3);
-                    },
-                  ),
-                  CommonWidget.commonSizedBox(height: 100),*/
                 ]),
               ),
             )
-            // CommonWidget.commonSizedBox(height: 23),
-            // Container(
-            //   width: Get.width,
-            //   height: 186.sp,
-            //   child: Image.asset(
-            //     ImageConst.verticalGraph, fit: BoxFit.contain,
-            //     // scale: 5.5,
-            //   ),
-            // ),
-            // CommonWidget.commonSizedBox(height: 20),
-            // tabWidget(),
-            // CommonWidget.commonSizedBox(height: 25),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   crossAxisAlignment: CrossAxisAlignment.start,
-            //   children: [
-            //     Row(children: [
-            //       Container(
-            //           height: 28.sp,
-            //           width: 28.sp,
-            //           padding: EdgeInsets.all(8),
-            //           decoration: BoxDecoration(
-            //             boxShadow: [
-            //               new BoxShadow(
-            //                 color: Colors.grey.shade200,
-            //                 blurRadius: 20.0,
-            //               ),
-            //             ],
-            //             shape: BoxShape.circle,
-            //             color: Colors.white,
-            //           ),
-            //           child: CommonWidget.commonSvgPitcher(
-            //               height: 50, image: ImageConst.capsule1)),
-            //       CommonWidget.commonSizedBox(width: 8),
-            //       CommonText.textBoldWight400(
-            //           text: 'Softgel',
-            //           color: CommonColor.blackColor353535,
-            //           fontSize: 14.sp),
-            //     ]),
-            //     Column(children: [
-            //       Row(
-            //         children: [
-            //           CommonText.textBoldWight400(
-            //               text: '09:28 AM',
-            //               color: CommonColor.blackColor353535,
-            //               fontSize: 13.sp),
-            //           CommonWidget.commonSvgPitcher(
-            //             image: ImageConst.verified,
-            //           )
-            //         ],
-            //       ),
-            //       Row(
-            //         children: [
-            //           CommonText.textBoldWight400(
-            //               text: '09:28 AM',
-            //               color: CommonColor.blackColor353535,
-            //               fontSize: 13.sp),
-            //           CommonWidget.commonSvgPitcher(
-            //             image: ImageConst.verified,
-            //           )
-            //         ],
-            //       ),
-            //     ]),
-            //   ],
-            // ),
-            // CommonWidget.commonSizedBox(height: 6),
-            // CommonWidget.commonSvgPitcher(
-            //   image: 'assets/svg/Line 5.svg',
-            // ),
-            // CommonWidget.commonSizedBox(height: 6),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   crossAxisAlignment: CrossAxisAlignment.start,
-            //   children: [
-            //     Row(children: [
-            //       Container(
-            //           height: 28.sp,
-            //           width: 28.sp,
-            //           padding: EdgeInsets.all(8),
-            //           decoration: BoxDecoration(
-            //             boxShadow: [
-            //               new BoxShadow(
-            //                 color: Colors.grey.shade200,
-            //                 blurRadius: 20.0,
-            //               ),
-            //             ],
-            //             shape: BoxShape.circle,
-            //             color: Colors.white,
-            //           ),
-            //           child: Image.asset(ImageConst.med1Icon)),
-            //       CommonWidget.commonSizedBox(width: 8),
-            //       CommonText.textBoldWight400(
-            //           text: 'Disprien',
-            //           color: CommonColor.blackColor353535,
-            //           fontSize: 14.sp),
-            //     ]),
-            //     Row(
-            //       children: [
-            //         CommonText.textBoldWight400(
-            //             text: '01:30 PM',
-            //             color: CommonColor.blackColor353535,
-            //             fontSize: 13.sp),
-            //         CommonWidget.commonSvgPitcher(
-            //           image: ImageConst.verified,
-            //         )
-            //       ],
-            //     ),
-            //   ],
-            // ),
           ],
         ),
       ),
+    );
+  }
+
+  DottedLine buildDottedLine() {
+    return DottedLine(
+      lineLength: double.infinity,
+      lineThickness: 1.0,
+      dashLength: 10.0,
+      dashColor: Color(0xffbac2ba),
+      dashRadius: 0.0,
+      dashGapLength: 6.0,
+      dashGapColor: Colors.transparent,
+      dashGapRadius: 0.0,
+    );
+  }
+
+  Column dailyGraph(GetRecordMedicineResponseModel respRM) {
+    return Column(
+      children: [
+        Container(
+          height: 120.sp,
+          alignment: Alignment.center,
+          // color: Colors.grey.shade300,
+          child: ListView.builder(
+              physics: BouncingScrollPhysics(),
+              scrollDirection: Axis.horizontal,
+              itemCount: limitData,
+              shrinkWrap: true,
+              reverse: true,
+              itemBuilder: (_, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        //  height: 150,
+                        // color: Colors.red,
+                        width: 28,
+                        child: ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemCount: respRM.data![index].date ==
+                                  dayOf.toString().split(" ").first
+                              ? respRM.data![index].records![selectedPillIndex]
+                                  .totalTimes
+                              : 3,
+                          itemBuilder: (context, indexOfDose) {
+                            return Column(
+                              children: [
+                                pilesContainer(
+                                    completedDoses: respRM.data![index]
+                                        .records![selectedPillIndex].doses!,
+                                    selectMainDose: index,
+                                    selectedList: selectedPilesDose,
+                                    index: indexOfDose,
+                                    totalDoseLength: listOfPiles[index].length),
+                                Divider(
+                                  color: Colors.transparent,
+                                  height: 1,
+                                )
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                      //  Spacer(),
+                      Container(
+                          // height: 40,
+                          // width: 22,
+                          child: CommonText.textBoldWight600(
+                              color: CommonColor.gery9D9D9D,
+                              fontSize: 10,
+                              text:
+                                  weekDayGen(date: respRM.data![index].date!))),
+                    ],
+                  ),
+                );
+              }),
+        ),
+        CommonWidget.commonSizedBox(height: 10),
+        Align(
+            alignment: Alignment.center,
+            child: SizedBox(
+              height: 30.sp,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                itemCount: respRM.data![selectedPilesDose]
+                    .records![selectedPillIndex].totalTimes!,
+                separatorBuilder: (context, index) {
+                  return SizedBox(width: 20.sp);
+                },
+                itemBuilder: (context, index) {
+                  return respRM.data![selectedPilesDose]
+                          .records![selectedPillIndex].doses!
+                          .contains(index + 1)
+                      ? Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Image.asset(
+                                ImageConst.doubleTickIcon,
+                                scale: 4,
+                              ),
+                            ),
+                            CommonText.textBoldWight400(
+                                text:
+                                    "${respRM.data![selectedPilesDose].records![selectedPillIndex].shceduleTime![index]}",
+                                fontSize: 12.sp)
+                          ],
+                        )
+                      : Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Image.asset(
+                                ImageConst.doubleTickIcon,
+                                scale: 4,
+                                color: Color(0xffFB0A0A).withOpacity(.8),
+                              ),
+                            ),
+                            CommonText.textBoldWight400(
+                                text:
+                                    "${respRM.data![selectedPilesDose].records![selectedPillIndex].shceduleTime![index]}",
+                                fontSize: 12.sp)
+                          ],
+                        );
+                },
+              ),
+            )),
+        CommonWidget.commonSizedBox(height: 10),
+      ],
     );
   }
 
@@ -684,807 +585,113 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
     return date;
   }
 
-/*  Dialog addMedicineDialog(BuildContext context, StateSetter setState) {
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Container(
-        height: 400.sp,
-        width: 300.sp,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+  Column weekGraph() {
+    return Column(
+      children: [
+        CommonText.textBoldWight500(text: "Taken Percentage", fontSize: 15.sp),
+        CommonText.textBoldWight500(
+            text: "$weekMedName ($weekGm)",
+            fontSize: 13,
+            color: CommonColor.lightGreenColor),
+        SizedBox(
+          height: 28.h,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              PieChart(PieChartData(
+                  centerSpaceRadius: 40,
+                  sectionsSpace: 0,
+                  borderData: FlBorderData(show: true),
+                  startDegreeOffset: -90,
+                  sections: [
+                    PieChartSectionData(
+                        value: weekTaken.toDouble(),
+                        showTitle: false,
+                        color: CommonColor.lightGreenColor,
+                        radius: 35),
+                    PieChartSectionData(
+                        value: weekMissed.toDouble(),
+                        showTitle: false,
+                        color: CommonColor.lightRedColor,
+                        radius: 25)
+                  ])),
+              CommonText.textBoldWight500(
+                  text: "${((weekTaken / weekTotal) * 100).toPrecision(2)} %",
+                  fontSize: 14.sp)
+            ],
+          ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
-              padding:
-                  EdgeInsets.only(left: 20, top: 13, right: 20, bottom: 13),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CommonText.textBoldWight500(
-                    text: "Add Medicine",
-                    fontSize: 17.sp,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Get.back();
-                    },
-                    child: CommonWidget.commonSvgPitcher(
-                      image: ImageConst.close,
-                    ),
-                  )
-                ],
-              ),
-            ),
-            CommonWidget.dottedLineWidget(),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 5,
-                          ),
-                          CommonText.textBoldWight500(
-                              text: "Med Info",
-                              fontSize: 13.sp,
-                              color: Colors.black),
-                          SizedBox(
-                            height: 12,
-                          ),
-                          Container(
-                            //height: 40.sp,
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: Color(0xffF8F8F6),
-                            ),
-                            child: Theme(
-                              data: Theme.of(context)
-                                  .copyWith(dividerColor: Colors.transparent),
-                              child: ExpansionTile(
-                                  iconColor: CommonColor.greenColor,
-                                  title: Row(
-                                    children: [
-                                      SvgPicture.asset(
-                                        'assets/svg/pills.svg',
-                                        height: 15.sp,
-                                        width: 15.sp,
-                                        color: Color(0xff9B9B9B),
-                                      ),
-                                      SizedBox(
-                                        width: 18,
-                                      ),
-                                      CommonText.textBoldWight500(
-                                          text:
-                                              "${medicines[medicineSelected]}",
-                                          fontSize: 13.sp,
-                                          color: Colors.black),
-                                    ],
-                                  ),
-                                  children: [
-                                    Container(
-                                      color: Colors.white,
-                                      child: Column(
-                                        children: List.generate(
-                                            medicines.length,
-                                            (index) => GestureDetector(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      medicineSelected = index;
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    color: medicineSelected ==
-                                                            index
-                                                        ? Color(0xffe1f9ea)
-                                                        : Colors.white,
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 10,
-                                                            vertical: 10),
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(
-                                                          Icons.check,
-                                                          size: 17,
-                                                          color:
-                                                              medicineSelected ==
-                                                                      index
-                                                                  ? CommonColor
-                                                                      .greenColor
-                                                                  : Colors
-                                                                      .white,
-                                                        ),
-                                                        SizedBox(
-                                                          width: 10,
-                                                        ),
-                                                        CommonText
-                                                            .textBoldWight500(
-                                                                text: medicines[
-                                                                    index])
-                                                      ],
-                                                    ),
-                                                  ),
-                                                )),
-                                      ),
-                                    )
-                                  ]),
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          CommonText.textBoldWight500(
-                              text: "Strength",
-                              fontSize: 13.sp,
-                              color: Colors.black),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  //height: 40.sp,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    color: Color(0xffF8F8F6),
-                                  ),
-                                  child: Theme(
-                                    data: Theme.of(context).copyWith(
-                                        dividerColor: Colors.transparent),
-                                    child: ExpansionTile(
-                                      collapsedIconColor: Colors.transparent,
-                                      iconColor: Colors.transparent,
-                                      title: Row(
-                                        children: [
-                                          SvgPicture.asset(
-                                            'assets/svg/network.svg',
-                                            height: 15.sp,
-                                            width: 15.sp,
-                                            color: Color(0xff9B9B9B),
-                                          ),
-                                          SizedBox(
-                                            width: 18,
-                                          ),
-                                          CommonText.textBoldWight500(
-                                              text:
-                                                  "${strength[strengthSelected]}",
-                                              fontSize: 13.sp,
-                                              color: Colors.black),
-                                        ],
-                                      ),
-                                      children: [
-                                        Container(
-                                          color: Colors.white,
-                                          child: Column(
-                                            children: List.generate(
-                                                strength.length,
-                                                (index) => GestureDetector(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          strengthSelected =
-                                                              index;
-                                                        });
-                                                      },
-                                                      child: Container(
-                                                        color:
-                                                            strengthSelected ==
-                                                                    index
-                                                                ? Color(
-                                                                    0xffe1f9ea)
-                                                                : Colors.white,
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 10,
-                                                                vertical: 10),
-                                                        child: Row(
-                                                          children: [
-                                                            Icon(
-                                                              Icons.check,
-                                                              size: 17,
-                                                              color: strengthSelected ==
-                                                                      index
-                                                                  ? CommonColor
-                                                                      .greenColor
-                                                                  : Colors
-                                                                      .transparent,
-                                                            ),
-                                                            SizedBox(
-                                                              width: 10,
-                                                            ),
-                                                            CommonText
-                                                                .textBoldWight500(
-                                                                    text: strength[
-                                                                        index])
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    )),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: Container(
-                                  //height: 40.sp,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    color: Color(0xffF8F8F6),
-                                  ),
-                                  child: Theme(
-                                    data: Theme.of(context).copyWith(
-                                        dividerColor: Colors.transparent),
-                                    child: ExpansionTile(
-                                      collapsedIconColor: Colors.transparent,
-                                      iconColor: Colors.transparent,
-                                      title: Row(
-                                        children: [
-                                          SvgPicture.asset(
-                                            'assets/svg/calender.svg',
-                                            height: 15.sp,
-                                            width: 15.sp,
-                                            color: Color(0xff9B9B9B),
-                                          ),
-                                          SizedBox(
-                                            width: 18,
-                                          ),
-                                          CommonText.textBoldWight500(
-                                              text: "${days[daysSelected]}",
-                                              fontSize: 13.sp,
-                                              color: Colors.black),
-                                        ],
-                                      ),
-                                      children: [
-                                        Container(
-                                          color: Colors.white,
-                                          child: Column(
-                                            children: List.generate(
-                                                days.length,
-                                                (index) => GestureDetector(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          daysSelected = index;
-                                                        });
-                                                      },
-                                                      child: Container(
-                                                        color: daysSelected ==
-                                                                index
-                                                            ? Color(0xffe1f9ea)
-                                                            : Colors.white,
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 10,
-                                                                vertical: 10),
-                                                        child: Row(
-                                                          children: [
-                                                            Icon(
-                                                              Icons.check,
-                                                              size: 17,
-                                                              color: daysSelected ==
-                                                                      index
-                                                                  ? CommonColor
-                                                                      .greenColor
-                                                                  : Colors
-                                                                      .transparent,
-                                                            ),
-                                                            SizedBox(
-                                                              width: 10,
-                                                            ),
-                                                            CommonText
-                                                                .textBoldWight500(
-                                                                    text: days[
-                                                                        index])
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    )),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          CommonText.textBoldWight500(
-                              text: "Appearance",
-                              fontSize: 13.sp,
-                              color: Colors.black),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Container(
-                            //height: 40.sp,
-                            width: 130.sp,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: Color(0xffF8F8F6),
-                            ),
-                            child: Theme(
-                              data: Theme.of(context)
-                                  .copyWith(dividerColor: Colors.transparent),
-                              child: ExpansionTile(
-                                collapsedIconColor: Colors.transparent,
-                                iconColor: Colors.transparent,
-                                title: Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      'assets/svg/pills.svg',
-                                      height: 15.sp,
-                                      width: 15.sp,
-                                      color: Color(0xff9B9B9B),
-                                    ),
-                                    SizedBox(
-                                      width: 18,
-                                    ),
-                                    CommonText.textBoldWight500(
-                                        text:
-                                            "${appearance[appearanceSelected]}",
-                                        fontSize: 13.sp,
-                                        color: Colors.black),
-                                  ],
-                                ),
-                                children: [
-                                  Container(
-                                    color: Colors.white,
-                                    child: Column(
-                                      children: List.generate(
-                                        appearance.length,
-                                        (index) => GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              appearanceSelected = index;
-                                            });
-                                          },
-                                          child: Container(
-                                            color: appearanceSelected == index
-                                                ? Color(0xffe1f9ea)
-                                                : Colors.white,
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 10),
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.check,
-                                                  size: 17,
-                                                  color: appearanceSelected ==
-                                                          index
-                                                      ? CommonColor.greenColor
-                                                      : Colors.transparent,
-                                                ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                CommonText.textBoldWight500(
-                                                    text: appearance[index])
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 20),
-                          CommonWidget.commonButton(
-                              color: CommonColor.greenColor,
-                              radius: 10,
-                              onTap: () {
-                                Get.back();
-                                Get.dialog(StatefulBuilder(
-                                  builder: (context, setState) => Dialog(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Container(
-                                      height: 400.sp,
-                                      width: 300.sp,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                left: 20,
-                                                top: 13,
-                                                right: 20,
-                                                bottom: 13),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                CommonText.textBoldWight500(
-                                                  text: "Schedule",
-                                                  fontSize: 17.sp,
-                                                ),
-                                                InkWell(
-                                                  onTap: () {
-                                                    Get.back();
-                                                  },
-                                                  child: CommonWidget
-                                                      .commonSvgPitcher(
-                                                    image: ImageConst.close,
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                          CommonWidget.dottedLineWidget(),
-                                          Expanded(
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 20,
-                                                            vertical: 10),
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        SizedBox(
-                                                          height: 5,
-                                                        ),
-                                                        CommonText
-                                                            .textBoldWight500(
-                                                                text:
-                                                                    "Frequency",
-                                                                fontSize: 13.sp,
-                                                                color: Colors
-                                                                    .black),
-                                                        SizedBox(
-                                                          height: 12,
-                                                        ),
-                                                        Container(
-                                                          //height: 40.sp,
-                                                          width:
-                                                              double.infinity,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        15),
-                                                            color: Color(
-                                                                0xffF8F8F6),
-                                                          ),
-                                                          child: Theme(
-                                                            data: Theme.of(
-                                                                    context)
-                                                                .copyWith(
-                                                                    dividerColor:
-                                                                        Colors
-                                                                            .transparent),
-                                                            child:
-                                                                ExpansionTile(
-                                                                    iconColor:
-                                                                        CommonColor
-                                                                            .greenColor,
-                                                                    title: Row(
-                                                                      children: [
-                                                                        SizedBox(
-                                                                          width:
-                                                                              18,
-                                                                        ),
-                                                                        CommonText.textBoldWight500(
-                                                                            text:
-                                                                                "${frequency[frequencySelected]}",
-                                                                            fontSize:
-                                                                                13.sp,
-                                                                            color: Colors.black),
-                                                                      ],
-                                                                    ),
-                                                                    children: [
-                                                                  Container(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    child:
-                                                                        Column(
-                                                                      children: List.generate(
-                                                                          frequency.length,
-                                                                          (index) => GestureDetector(
-                                                                                onTap: () {
-                                                                                  setState(() {
-                                                                                    frequencySelected = index;
-                                                                                  });
-                                                                                },
-                                                                                child: Container(
-                                                                                  color: frequencySelected == index ? Color(0xffe1f9ea) : Colors.white,
-                                                                                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                                                                  child: Row(
-                                                                                    children: [
-                                                                                      Icon(
-                                                                                        Icons.check,
-                                                                                        size: 17,
-                                                                                        color: frequencySelected == index ? CommonColor.greenColor : Colors.transparent,
-                                                                                      ),
-                                                                                      SizedBox(
-                                                                                        width: 10,
-                                                                                      ),
-                                                                                      CommonText.textBoldWight500(text: frequency[index])
-                                                                                    ],
-                                                                                  ),
-                                                                                ),
-                                                                              )),
-                                                                    ),
-                                                                  )
-                                                                ]),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 20,
-                                                        ),
-                                                        CommonText.textBoldWight500(
-                                                            text:
-                                                                "How Many Times A Day?",
-                                                            fontSize: 13.sp,
-                                                            color:
-                                                                Colors.black),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Container(
-                                                          //height: 40.sp,
-                                                          width: 140.sp,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        15),
-                                                            color: Color(
-                                                                0xffF8F8F6),
-                                                          ),
-                                                          child: Theme(
-                                                            data: Theme.of(
-                                                                    context)
-                                                                .copyWith(
-                                                                    dividerColor:
-                                                                        Colors
-                                                                            .transparent),
-                                                            child:
-                                                                ExpansionTile(
-                                                              collapsedIconColor:
-                                                                  Colors
-                                                                      .transparent,
-                                                              iconColor: Colors
-                                                                  .transparent,
-                                                              title: Row(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 18,
-                                                                  ),
-                                                                  CommonText.textBoldWight500(
-                                                                      text:
-                                                                          "${times[timeSelected]}",
-                                                                      fontSize:
-                                                                          13.sp,
-                                                                      color: Colors
-                                                                          .black),
-                                                                ],
-                                                              ),
-                                                              children: [
-                                                                Container(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  child: Column(
-                                                                    children: List.generate(
-                                                                        times.length,
-                                                                        (index) => GestureDetector(
-                                                                              onTap: () {
-                                                                                setState(() {
-                                                                                  timeSelected = index;
-                                                                                });
-                                                                              },
-                                                                              child: Container(
-                                                                                color: timeSelected == index ? Color(0xffe1f9ea) : Colors.white,
-                                                                                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                                                                child: Row(
-                                                                                  children: [
-                                                                                    Icon(
-                                                                                      Icons.check,
-                                                                                      size: 17,
-                                                                                      color: timeSelected == index ? CommonColor.greenColor : Colors.transparent,
-                                                                                    ),
-                                                                                    SizedBox(
-                                                                                      width: 10,
-                                                                                    ),
-                                                                                    CommonText.textBoldWight500(text: times[index])
-                                                                                  ],
-                                                                                ),
-                                                                              ),
-                                                                            )),
-                                                                  ),
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 20,
-                                                        ),
-                                                        CommonText.textBoldWight500(
-                                                            text:
-                                                                "Set Date & Time",
-                                                            fontSize: 13.sp,
-                                                            color:
-                                                                Colors.black),
-                                                        Row(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .end,
-                                                          children: [
-                                                            Column(
-                                                              children:
-                                                                  List.generate(
-                                                                timeSelected ==
-                                                                        0
-                                                                    ? 1
-                                                                    : timeSelected ==
-                                                                            1
-                                                                        ? 2
-                                                                        : 3,
-                                                                (index) =>
-                                                                    Container(
-                                                                  height: 40.sp,
-                                                                  width: 170.sp,
-                                                                  margin: EdgeInsets
-                                                                      .only(
-                                                                          top:
-                                                                              10),
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            15),
-                                                                    color: Color(
-                                                                        0xffF8F8F6),
-                                                                  ),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      SizedBox(
-                                                                        width:
-                                                                            18,
-                                                                      ),
-                                                                      SvgPicture
-                                                                          .asset(
-                                                                        'assets/svg/notification2.svg',
-                                                                        height:
-                                                                            15.sp,
-                                                                        width: 15
-                                                                            .sp,
-                                                                        color: Color(
-                                                                            0xff9B9B9B),
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            18,
-                                                                      ),
-                                                                      CommonText.textBoldWight500(
-                                                                          text:
-                                                                              "10:00 AM",
-                                                                          fontSize: 13
-                                                                              .sp,
-                                                                          color:
-                                                                              Colors.black),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Spacer(),
-                                                            Container(
-                                                              height: 40.sp,
-                                                              width: 40.sp,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: Color(
-                                                                    0xffeffcf4),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            15),
-                                                              ),
-                                                              child: Center(
-                                                                child: Icon(
-                                                                  Icons.add,
-                                                                  size: 15,
-                                                                  color: CommonColor
-                                                                      .greenColor,
-                                                                ),
-                                                              ),
-                                                            )
-                                                          ],
-                                                        ),
-                                                        SizedBox(height: 20),
-                                                        CommonWidget
-                                                            .commonButton(
-                                                                color: CommonColor
-                                                                    .greenColor,
-                                                                radius: 10,
-                                                                onTap: () {
-                                                                  Get.back();
-                                                                  CommonWidget.getSnackBar(
-                                                                      title:
-                                                                          "Added!",
-                                                                      message:
-                                                                          'Your medicine has been added successfully.',
-                                                                      color: CommonColor
-                                                                          .greenColor,
-                                                                      colorText:
-                                                                          Colors
-                                                                              .white);
-                                                                },
-                                                                text: "Add")
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                )).then((value) {
-                                  setState(
-                                    () {},
-                                  );
-                                });
-                              },
-                              text: "Next")
-                        ],
-                      ),
-                    ),
-                  ],
+            Row(
+              children: [
+                Container(
+                  height: 15,
+                  width: 30,
+                  margin: EdgeInsets.only(right: 8),
+                  decoration: BoxDecoration(
+                      color: CommonColor.lightGreenColor,
+                      borderRadius: BorderRadius.circular(20)),
                 ),
-              ),
+                CommonText.textBoldWight500(
+                    text: '$weekTaken Taken',
+                    fontSize: 10.sp,
+                    color: CommonColor.blackColor0D0D0D)
+              ],
+            ),
+            SizedBox(
+              width: 20.sp,
+            ),
+            Row(
+              children: [
+                Container(
+                  height: 15,
+                  width: 30,
+                  margin: EdgeInsets.only(right: 5),
+                  decoration: BoxDecoration(
+                      color: CommonColor.lightRedColor,
+                      borderRadius: BorderRadius.circular(20)),
+                ),
+                CommonText.textBoldWight500(
+                    text: '$weekMissed Missed',
+                    fontSize: 10.sp,
+                    color: CommonColor.blackColor0D0D0D)
+              ],
             ),
           ],
         ),
-      ),
+        Align(
+          alignment: Alignment.center,
+          child: Container(
+            margin: EdgeInsets.symmetric(vertical: 15.sp),
+            alignment: Alignment.center,
+            height: 30.sp,
+            width: 120.sp,
+            decoration: BoxDecoration(
+                color: Color(0xff27AE60),
+                borderRadius: BorderRadius.circular(100)),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Image.asset(
+                "assets/png/share_arrow.png",
+                scale: 4,
+              ),
+              SizedBox(width: 5),
+              InkWell(
+                onTap: () {
+                  Share.share("Test");
+                },
+                child: CommonText.textBoldWight500(
+                    text: 'Export/Share',
+                    fontSize: 10.sp,
+                    color: CommonColor.whiteColorEDEDED),
+              )
+            ]),
+          ),
+        )
+      ],
     );
-  }*/
+  }
 
   Widget pilesContainer(
       {required int index,
@@ -1870,9 +1077,100 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
       ),
       title: CommonText.textBoldWight500(
           text: "${widget.userName.capitalizeFirst}'s Medical Report",
-          fontSize: 16.sp,
+          fontSize: 13.sp,
           color: CommonColor.blackButtonColor1E232C),
       centerTitle: true,
+      actions: [
+        Row(
+          children: [
+            CommonWidget.commonBackButton(
+              image: ImageConst.filter,
+              color: CommonColor.blackColor0D0D0D,
+              onTap: () {
+                setState(() {
+                  isDaily = !isDaily;
+                });
+              },
+            ),
+          ],
+        ),
+      ],
     );
+  }
+
+  Column weekShowWidget() {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      CommonText.textBoldWight500(text: "Weekly Performance", fontSize: 12.sp),
+      Row(
+        children: [
+          CommonText.textBoldWight500(
+              text:
+                  "${DateFormat("dd MMM").format(startDate)} - ${DateFormat("dd MMM yyyy").format(endDate)}",
+              fontSize: 11.sp),
+          SizedBox(width: 10.sp),
+          Container(
+            height: 20.sp,
+            width: 20.sp,
+            decoration: BoxDecoration(
+                color: CommonColor.greenColor,
+                borderRadius: BorderRadius.circular(7)),
+            child: IconButton(
+              icon: SvgPicture.asset(ImageConst.backArrow,
+                  color: CommonColor.whiteColorEDEDED),
+              onPressed: () async {
+                endDate =
+                    DateTime.utc(endDate.year, endDate.month, endDate.day - 7);
+                startDate = DateTime.utc(
+                  startDate.year,
+                  startDate.month,
+                  startDate.day - 7,
+                );
+
+                await getWeekRecordMedicineViewModel
+                    .getWeekRecordMedicineViewModel(body: {
+                  "startDate": "${startDate.toString().split(" ").first}",
+                  "endDate": /*"2023-01-30"*/
+                      "${endDate.toString().split(" ").first}"
+                });
+                setState(() {});
+              },
+            ),
+          ),
+          SizedBox(width: 7.sp),
+          RotatedBox(
+            quarterTurns: 2,
+            child: Container(
+              height: 20.sp,
+              width: 20.sp,
+              decoration: BoxDecoration(
+                  color: CommonColor.greenColor,
+                  borderRadius: BorderRadius.circular(7)),
+              child: IconButton(
+                icon: SvgPicture.asset(ImageConst.backArrow,
+                    color: CommonColor.whiteColorEDEDED),
+                onPressed: () async {
+                  var difference = DateTime.now().difference(startDate).inDays;
+                  if (difference != 0) {
+                    endDate = DateTime.utc(
+                        endDate.year, endDate.month, endDate.day + 7);
+                    startDate = DateTime.utc(
+                        startDate.year, startDate.month, startDate.day + 7);
+
+                    await getWeekRecordMedicineViewModel
+                        .getWeekRecordMedicineViewModel(body: {
+                      "startDate": "${startDate.toString().split(" ").first}",
+                      "endDate": /*"2023-01-30"*/
+                          "${endDate.toString().split(" ").first}"
+                    });
+                  }
+
+                  setState(() {});
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    ]);
   }
 }

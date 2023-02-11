@@ -1293,7 +1293,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                             height: 20,
                           ),
                           CommonText.textBoldWight500(
-                              text: " nter days (optional)",
+                              text: "Enter days (optional)",
                               fontSize: 13.sp,
                               color: Colors.black),
                           SizedBox(
