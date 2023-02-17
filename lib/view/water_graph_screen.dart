@@ -7,6 +7,7 @@ import 'package:expert_parrot_app/Models/responseModel/get_glass_res_model.dart'
 import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
+import 'package:expert_parrot_app/view/bottom_nav_screen.dart';
 import 'package:expert_parrot_app/viewModel/add_glass_view_model.dart';
 import 'package:expert_parrot_app/viewModel/get_glass_view_model.dart';
 import 'package:flutter/material.dart';
@@ -86,328 +87,338 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CommonWidget.commonBackGround(
-        body: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            children: [
-              CommonWidget.commonSizedBox(height: 10),
-              header(),
-              CommonWidget.commonSizedBox(height: 13),
-              DottedLine(
-                lineLength: double.infinity,
-                lineThickness: 1.0,
-                dashLength: 10.0,
-                dashColor: Color(0xffbac2ba),
-                dashRadius: 0.0,
-                dashGapLength: 6.0,
-                dashGapColor: Colors.transparent,
-                dashGapRadius: 0.0,
-              ),
-              CommonWidget.commonSizedBox(height: 23),
-              GetBuilder<GetGlassViewModel>(
-                builder: (controller) {
-                  if (controller.getGlassApiResponse.status == Status.LOADING) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        color: CommonColor.greenColor,
-                      ),
-                    );
-                  }
-                  if (controller.getGlassApiResponse.status ==
-                      Status.COMPLETE) {
-                    GetGlassResponseModel response =
-                        controller.getGlassApiResponse.data;
+    return WillPopScope(
+      onWillPop: () async {
+        Get.offAll(() => BottomNavScreen());
+        return false;
+      },
+      child: Scaffold(
+        body: CommonWidget.commonBackGround(
+          body: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                CommonWidget.commonSizedBox(height: 10),
+                header(),
+                CommonWidget.commonSizedBox(height: 13),
+                DottedLine(
+                  lineLength: double.infinity,
+                  lineThickness: 1.0,
+                  dashLength: 10.0,
+                  dashColor: Color(0xffbac2ba),
+                  dashRadius: 0.0,
+                  dashGapLength: 6.0,
+                  dashGapColor: Colors.transparent,
+                  dashGapRadius: 0.0,
+                ),
+                CommonWidget.commonSizedBox(height: 23),
+                GetBuilder<GetGlassViewModel>(
+                  builder: (controller) {
+                    if (controller.getGlassApiResponse.status ==
+                        Status.LOADING) {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: CommonColor.greenColor,
+                        ),
+                      );
+                    }
+                    if (controller.getGlassApiResponse.status ==
+                        Status.COMPLETE) {
+                      GetGlassResponseModel response =
+                          controller.getGlassApiResponse.data;
 
-                    // for (int i = 0; i < response.data!.docs!.length; i++) {
-                    //   // log('HELLO ${CommonWidget.convertDateForm(response.data!.docs![i].date!)!}');
-                    //   days.add(CommonWidget.convertDateForm(
-                    //       response.data!.docs![i].date!));
-                    // }
-                    // log('TOTAL TIME :${days}');
-                    final List<ChartData> chartData = List.generate(
-                        response.data!.docs!.reversed.toList().length >= 7
-                            ? 7
-                            : response.data!.docs!.reversed.toList().length,
-                        (index) => ChartData(
-                            DateFormat("dd MMM").format(response
-                                .data!.docs!.reversed
-                                .toList()[index]
-                                .date!),
-                            selectedIndex == 0
-                                ? response.data!.docs!.reversed
-                                    .toList()[index]
-                                    .glass!
-                                    .toDouble()
-                                : selectedIndex == 1
-                                    ? response.data!.docs!.reversed
-                                        .toList()[index]
-                                        .bottle!
-                                        .toDouble()
-                                    : response.data!.docs!.reversed
-                                        .toList()[index]
-                                        .largeBottle!
-                                        .toDouble()));
+                      // for (int i = 0; i < response.data!.docs!.length; i++) {
+                      //   // log('HELLO ${CommonWidget.convertDateForm(response.data!.docs![i].date!)!}');
+                      //   days.add(CommonWidget.convertDateForm(
+                      //       response.data!.docs![i].date!));
+                      // }
+                      // log('TOTAL TIME :${days}');
+                      final List<ChartData> chartData = List.generate(
+                          response.data!.docs!.reversed.toList().length >= 7
+                              ? 7
+                              : response.data!.docs!.reversed.toList().length,
+                          (index) => ChartData(
+                              DateFormat("dd MMM").format(response
+                                  .data!.docs!.reversed
+                                  .toList()[index]
+                                  .date!),
+                              selectedIndex == 0
+                                  ? response.data!.docs!.reversed
+                                      .toList()[index]
+                                      .glass!
+                                      .toDouble()
+                                  : selectedIndex == 1
+                                      ? response.data!.docs!.reversed
+                                          .toList()[index]
+                                          .bottle!
+                                          .toDouble()
+                                      : response.data!.docs!.reversed
+                                          .toList()[index]
+                                          .largeBottle!
+                                          .toDouble()));
 
-                    return Column(
-                      children: [
-                        Container(
-                          height: 270.sp,
-                          padding: EdgeInsets.symmetric(vertical: 20.sp),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20)),
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: 200.sp,
-                                child: SfCartesianChart(
-                                  series: <ChartSeries>[
-                                    SplineSeries<ChartData, String>(
-                                        dataSource: chartData,
-                                        xValueMapper: (ChartData data, _) =>
-                                            data.x,
-                                        yValueMapper: (ChartData data, _) =>
-                                            data.y,
-                                        color: CommonColor.greenColor)
-                                  ],
-                                  plotAreaBorderWidth: 0,
-                                  primaryXAxis: CategoryAxis(
-                                      arrangeByIndex: false,
-                                      opposedPosition: true,
-                                      axisLine: AxisLine(width: 0),
-                                      borderWidth: 0,
-                                      majorTickLines: MajorTickLines(size: 0),
-                                      minorTickLines: MinorTickLines(size: 0),
-                                      majorGridLines: MajorGridLines(width: 0),
-                                      minorGridLines: MinorGridLines(width: 0),
-                                      axisBorderType:
-                                          AxisBorderType.withoutTopAndBottom,
-                                      labelStyle: TextStyle(
-                                          color: CommonColor.greenColor,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 10.sp)),
-                                  primaryYAxis: CategoryAxis(isVisible: false),
+                      return Column(
+                        children: [
+                          Container(
+                            height: 270.sp,
+                            padding: EdgeInsets.symmetric(vertical: 20.sp),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20)),
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 200.sp,
+                                  child: SfCartesianChart(
+                                    series: <ChartSeries>[
+                                      SplineSeries<ChartData, String>(
+                                          dataSource: chartData,
+                                          xValueMapper: (ChartData data, _) =>
+                                              data.x,
+                                          yValueMapper: (ChartData data, _) =>
+                                              data.y,
+                                          color: CommonColor.greenColor)
+                                    ],
+                                    plotAreaBorderWidth: 0,
+                                    primaryXAxis: CategoryAxis(
+                                        arrangeByIndex: false,
+                                        opposedPosition: true,
+                                        axisLine: AxisLine(width: 0),
+                                        borderWidth: 0,
+                                        majorTickLines: MajorTickLines(size: 0),
+                                        minorTickLines: MinorTickLines(size: 0),
+                                        majorGridLines:
+                                            MajorGridLines(width: 0),
+                                        minorGridLines:
+                                            MinorGridLines(width: 0),
+                                        axisBorderType:
+                                            AxisBorderType.withoutTopAndBottom,
+                                        labelStyle: TextStyle(
+                                            color: CommonColor.greenColor,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 10.sp)),
+                                    primaryYAxis:
+                                        CategoryAxis(isVisible: false),
+                                  ),
                                 ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                        height: 12.sp,
+                                        width: 12.sp,
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: CommonColor.greenColor)),
+                                    SizedBox(width: 5.sp),
+                                    CommonText.textBoldWight500(
+                                        text: "Achieved",
+                                        fontSize: 13.sp,
+                                        color: CommonColor.blackColor0D0D0D),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+
+                          Padding(
+                            padding: EdgeInsets.only(top: 20, bottom: 10),
+                            child: CommonText.textBoldWight500(
+                                text: TextConst.quickAddForToady,
+                                fontSize: 18.sp,
+                                color: CommonColor.blackColor0D0D0D),
+                          ),
+                          waterBottleWidget(),
+                          CommonWidget.commonSizedBox(height: 20),
+                          Align(
+                              alignment: Alignment.centerLeft,
+                              child: CommonText.textBoldWight500(
+                                  text: TextConst.today,
+                                  fontSize: 15.sp,
+                                  color: CommonColor.blackColor1D253C)),
+                          CommonWidget.commonSizedBox(height: 20),
+                          Row(
+                            children: [
+                              Image.asset(
+                                ImageConst.glassOfWater,
+                                scale: 4.5,
                               ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                      height: 12.sp,
-                                      width: 12.sp,
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: CommonColor.greenColor)),
-                                  SizedBox(width: 5.sp),
-                                  CommonText.textBoldWight500(
-                                      text: "Achieved",
-                                      fontSize: 13.sp,
-                                      color: CommonColor.blackColor0D0D0D),
-                                ],
-                              )
+                              response.data!.docs != null &&
+                                      response.data!.docs!.isNotEmpty
+                                  ? CommonText.textBoldWight600(
+                                      text:
+                                          ' ${(response.data!.docs!.first.glass! * 8) + (response.data!.docs!.first.bottle! * 16) + (response.data!.docs!.first.largeBottle! * 16)}',
+                                      fontSize: 20.sp,
+                                      color: CommonColor.blackColor1D253C)
+                                  : CommonText.textBoldWight600(
+                                      text: ' 0',
+                                      fontSize: 20.sp,
+                                      color: CommonColor.blackColor1D253C),
+                              CommonText.textBoldWight400(
+                                  text: ' fl oz of your ',
+                                  fontSize: 13.sp,
+                                  color: CommonColor.gery727272),
+                              CommonText.textBoldWight500(
+                                  text: '64 ',
+                                  fontSize: 14.sp,
+                                  color: CommonColor.blackColor1D253C),
+                              CommonText.textBoldWight400(
+                                  text: 'fl oz goal',
+                                  fontSize: 13.sp,
+                                  color: CommonColor.gery727272),
                             ],
                           ),
-                        ),
+                          CommonWidget.commonSizedBox(height: 12),
+                          // GetBuilder<GetGlassViewModel>(builder: (controller) {
+                          //   if (controller.getGlassApiResponse.status == Status.LOADING) {
+                          //     return CircularProgressIndicator();
+                          //   }
+                          //   if (controller.getGlassApiResponse.status == Status.ERROR) {
+                          //     return CommonWidget.getSnackBar(
+                          //         duration: 2,
+                          //         color: Colors.red.shade300,
+                          //         colorText: Colors.white,
+                          //         title: "Oops!",
+                          //         message: 'Something goes wrong to get data!');
+                          //   }
+                          //   if (controller.getGlassApiResponse.status == Status.COMPLETE) {
+                          //     GetGlassResponseModel resp = GetGlassResponseModel();
+                          //
+                          //     return ListView.builder(
+                          //       shrinkWrap: true,
+                          //       physics: NeverScrollableScrollPhysics(),
+                          //       itemCount: resp.data!.length >= 7 ? 7 : resp.data!.length,
+                          //       itemBuilder: (context, index) {
+                          //         return Column(
+                          //           crossAxisAlignment: CrossAxisAlignment.start,
+                          //           children: [
+                          //             CommonWidget.commonSvgPitcher(
+                          //               image: 'assets/svg/Line 5.svg',
+                          //             ),
+                          //             Row(
+                          //               children: [
+                          //                 SizedBox(
+                          //                   width: 55.sp,
+                          //                   child: Padding(
+                          //                     padding: EdgeInsets.symmetric(
+                          //                         horizontal: 10, vertical: 10),
+                          //                     child: CommonText.textBoldWight500(
+                          //                         text: dayList[index],
+                          //                         // text: resp.data![index].updatedAt.weekday,
+                          //
+                          //                         fontSize: 12.sp,
+                          //                         color: CommonColor.blackColor1D253C),
+                          //                   ),
+                          //                 ),
+                          //                 CommonWidget.commonSizedBox(width: 20),
+                          //                 CommonText.textBoldWight500(
+                          //                     text: '0 ',
+                          //                     fontSize: 14.sp,
+                          //                     color: CommonColor.blackColor1D253C),
+                          //                 CommonText.textBoldWight500(
+                          //                     text: 'fl oz',
+                          //                     fontSize: 12.sp,
+                          //                     color: CommonColor.gery696969)
+                          //               ],
+                          //             ),
+                          //           ],
+                          //         );
+                          //       },
+                          //     );
+                          //   } else
+                          //     return SizedBox();
+                          // }),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: response.data!.docs!.length,
+                            itemBuilder: (context, index) {
+                              String times = CommonWidget.convertDateForm(
+                                  response.data!.docs![index].date!)!;
 
-                        Padding(
-                          padding: EdgeInsets.only(top: 20, bottom: 10),
-                          child: CommonText.textBoldWight500(
-                              text: TextConst.quickAddForToady,
-                              fontSize: 18.sp,
-                              color: CommonColor.blackColor0D0D0D),
-                        ),
-                        waterBottleWidget(),
-                        CommonWidget.commonSizedBox(height: 20),
-                        Align(
-                            alignment: Alignment.centerLeft,
-                            child: CommonText.textBoldWight500(
-                                text: TextConst.today,
-                                fontSize: 15.sp,
-                                color: CommonColor.blackColor1D253C)),
-                        CommonWidget.commonSizedBox(height: 20),
-                        Row(
-                          children: [
-                            Image.asset(
-                              ImageConst.glassOfWater,
-                              scale: 4.5,
-                            ),
-                            response.data!.docs != null &&
-                                    response.data!.docs!.isNotEmpty
-                                ? CommonText.textBoldWight600(
-                                    text:
-                                        ' ${(response.data!.docs!.first.glass! * 8) + (response.data!.docs!.first.bottle! * 16) + (response.data!.docs!.first.largeBottle! * 16)}',
-                                    fontSize: 20.sp,
-                                    color: CommonColor.blackColor1D253C)
-                                : CommonText.textBoldWight600(
-                                    text: ' 0',
-                                    fontSize: 20.sp,
-                                    color: CommonColor.blackColor1D253C),
-                            CommonText.textBoldWight400(
-                                text: ' fl oz of your ',
-                                fontSize: 13.sp,
-                                color: CommonColor.gery727272),
-                            CommonText.textBoldWight500(
-                                text: '64 ',
-                                fontSize: 14.sp,
-                                color: CommonColor.blackColor1D253C),
-                            CommonText.textBoldWight400(
-                                text: 'fl oz goal',
-                                fontSize: 13.sp,
-                                color: CommonColor.gery727272),
-                          ],
-                        ),
-                        CommonWidget.commonSizedBox(height: 12),
-                        // GetBuilder<GetGlassViewModel>(builder: (controller) {
-                        //   if (controller.getGlassApiResponse.status == Status.LOADING) {
-                        //     return CircularProgressIndicator();
-                        //   }
-                        //   if (controller.getGlassApiResponse.status == Status.ERROR) {
-                        //     return CommonWidget.getSnackBar(
-                        //         duration: 2,
-                        //         color: Colors.red.shade300,
-                        //         colorText: Colors.white,
-                        //         title: "Oops!",
-                        //         message: 'Something goes wrong to get data!');
-                        //   }
-                        //   if (controller.getGlassApiResponse.status == Status.COMPLETE) {
-                        //     GetGlassResponseModel resp = GetGlassResponseModel();
-                        //
-                        //     return ListView.builder(
-                        //       shrinkWrap: true,
-                        //       physics: NeverScrollableScrollPhysics(),
-                        //       itemCount: resp.data!.length >= 7 ? 7 : resp.data!.length,
-                        //       itemBuilder: (context, index) {
-                        //         return Column(
-                        //           crossAxisAlignment: CrossAxisAlignment.start,
-                        //           children: [
-                        //             CommonWidget.commonSvgPitcher(
-                        //               image: 'assets/svg/Line 5.svg',
-                        //             ),
-                        //             Row(
-                        //               children: [
-                        //                 SizedBox(
-                        //                   width: 55.sp,
-                        //                   child: Padding(
-                        //                     padding: EdgeInsets.symmetric(
-                        //                         horizontal: 10, vertical: 10),
-                        //                     child: CommonText.textBoldWight500(
-                        //                         text: dayList[index],
-                        //                         // text: resp.data![index].updatedAt.weekday,
-                        //
-                        //                         fontSize: 12.sp,
-                        //                         color: CommonColor.blackColor1D253C),
-                        //                   ),
-                        //                 ),
-                        //                 CommonWidget.commonSizedBox(width: 20),
-                        //                 CommonText.textBoldWight500(
-                        //                     text: '0 ',
-                        //                     fontSize: 14.sp,
-                        //                     color: CommonColor.blackColor1D253C),
-                        //                 CommonText.textBoldWight500(
-                        //                     text: 'fl oz',
-                        //                     fontSize: 12.sp,
-                        //                     color: CommonColor.gery696969)
-                        //               ],
-                        //             ),
-                        //           ],
-                        //         );
-                        //       },
-                        //     );
-                        //   } else
-                        //     return SizedBox();
-                        // }),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: response.data!.docs!.length,
-                          itemBuilder: (context, index) {
-                            String times = CommonWidget.convertDateForm(
-                                response.data!.docs![index].date!)!;
+                              // for (int i = 0;
+                              //     i < response.data!.docs![index].data!.length;
+                              //     i++) {
+                              //   if (addGlassViewModel.index == 0 &&
+                              //       response.data!.docs![index].data![i].type ==
+                              //           'glass') {
+                              //     ozGlass += response
+                              //         .data!.docs![index].data![i].quantity!;
+                              //   } else if (addGlassViewModel.index == 1 &&
+                              //       response.data!.docs![index].data![i].type ==
+                              //           'Bottle') {
+                              //     ozBottle += response
+                              //         .data!.docs![index].data![i].quantity!;
+                              //   } else if (addGlassViewModel.index == 2 &&
+                              //       response.data!.docs![index].data![i].type ==
+                              //           'Lg Bottle') {
+                              //     ozLgBottle += response
+                              //         .data!.docs![index].data![i].quantity!;
+                              //   }
+                              // }
+                              // for (int i = 0;
+                              //     i < response.data!.docs![index].data!.length;
+                              //     i++) {
+                              //   if (addGlassViewModel.index == 0 &&
+                              //       response.data!.docs![index].data![i].type ==
+                              //           'glass') {
+                              //     return ShowData(times, response, index, i);
+                              //   } else if (addGlassViewModel.index == 1 &&
+                              //       response.data!.docs![index].data![i].type ==
+                              //           'Bottle') {
+                              //     return ShowData(times, response, index, i);
+                              //   } else if (addGlassViewModel.index == 2 &&
+                              //       response.data!.docs![index].data![i].type ==
+                              //           'Lg Bottle') {
+                              //     return ShowData(times, response, index, i);
+                              //   }
+                              // }
+                              return ShowData(times, response, index);
 
-                            // for (int i = 0;
-                            //     i < response.data!.docs![index].data!.length;
-                            //     i++) {
-                            //   if (addGlassViewModel.index == 0 &&
-                            //       response.data!.docs![index].data![i].type ==
-                            //           'glass') {
-                            //     ozGlass += response
-                            //         .data!.docs![index].data![i].quantity!;
-                            //   } else if (addGlassViewModel.index == 1 &&
-                            //       response.data!.docs![index].data![i].type ==
-                            //           'Bottle') {
-                            //     ozBottle += response
-                            //         .data!.docs![index].data![i].quantity!;
-                            //   } else if (addGlassViewModel.index == 2 &&
-                            //       response.data!.docs![index].data![i].type ==
-                            //           'Lg Bottle') {
-                            //     ozLgBottle += response
-                            //         .data!.docs![index].data![i].quantity!;
-                            //   }
-                            // }
-                            // for (int i = 0;
-                            //     i < response.data!.docs![index].data!.length;
-                            //     i++) {
-                            //   if (addGlassViewModel.index == 0 &&
-                            //       response.data!.docs![index].data![i].type ==
-                            //           'glass') {
-                            //     return ShowData(times, response, index, i);
-                            //   } else if (addGlassViewModel.index == 1 &&
-                            //       response.data!.docs![index].data![i].type ==
-                            //           'Bottle') {
-                            //     return ShowData(times, response, index, i);
-                            //   } else if (addGlassViewModel.index == 2 &&
-                            //       response.data!.docs![index].data![i].type ==
-                            //           'Lg Bottle') {
-                            //     return ShowData(times, response, index, i);
-                            //   }
-                            // }
-                            return ShowData(times, response, index);
-
-                            // return ListView.builder(
-                            //   shrinkWrap: true,
-                            //   physics: NeverScrollableScrollPhysics(),
-                            //   itemCount:
-                            //       response.data!.docs![index].data!.length,
-                            //   itemBuilder: (context, index1) {
-                            //     String times = CommonWidget.convertDateForm(
-                            //         response.data!.docs![index].date!)!;
-                            //     if (addGlassViewModel.index == 0 &&
-                            //         response.data!.docs![index].data![index1]
-                            //                 .type ==
-                            //             'glass') {
-                            //       return ShowData(
-                            //           times, response, index, index1);
-                            //     } else if (addGlassViewModel.index == 1 &&
-                            //         response.data!.docs![index].data![index1]
-                            //                 .type ==
-                            //             'Bottle') {
-                            //       return ShowData(
-                            //           times, response, index, index1);
-                            //     } else if (addGlassViewModel.index == 2 &&
-                            //         response.data!.docs![index].data![index1]
-                            //                 .type ==
-                            //             'Lg Bottle') {
-                            //       return ShowData(
-                            //           times, response, index, index1);
-                            //     }
-                            //     return SizedBox();
-                            //   },
-                            // );
-                          },
-                        ),
-                        CommonWidget.commonSizedBox(height: 100),
-                      ],
+                              // return ListView.builder(
+                              //   shrinkWrap: true,
+                              //   physics: NeverScrollableScrollPhysics(),
+                              //   itemCount:
+                              //       response.data!.docs![index].data!.length,
+                              //   itemBuilder: (context, index1) {
+                              //     String times = CommonWidget.convertDateForm(
+                              //         response.data!.docs![index].date!)!;
+                              //     if (addGlassViewModel.index == 0 &&
+                              //         response.data!.docs![index].data![index1]
+                              //                 .type ==
+                              //             'glass') {
+                              //       return ShowData(
+                              //           times, response, index, index1);
+                              //     } else if (addGlassViewModel.index == 1 &&
+                              //         response.data!.docs![index].data![index1]
+                              //                 .type ==
+                              //             'Bottle') {
+                              //       return ShowData(
+                              //           times, response, index, index1);
+                              //     } else if (addGlassViewModel.index == 2 &&
+                              //         response.data!.docs![index].data![index1]
+                              //                 .type ==
+                              //             'Lg Bottle') {
+                              //       return ShowData(
+                              //           times, response, index, index1);
+                              //     }
+                              //     return SizedBox();
+                              //   },
+                              // );
+                            },
+                          ),
+                          CommonWidget.commonSizedBox(height: 100),
+                        ],
+                      );
+                    }
+                    return Padding(
+                      padding: EdgeInsets.only(top: 100.sp),
+                      child: Text('Something went wrong'),
                     );
-                  }
-                  return Padding(
-                    padding: EdgeInsets.only(top: 100.sp),
-                    child: Text('Something went wrong'),
-                  );
-                },
-              )
-            ],
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -677,7 +688,7 @@ class _WaterGraphScreenState extends State<WaterGraphScreen> {
       children: [
         CommonWidget.commonBackButton(
           onTap: () {
-            Get.back();
+            Get.offAll(() => BottomNavScreen());
           },
         ),
         CommonText.textBoldWight500(text: TextConst.water, fontSize: 18.sp),

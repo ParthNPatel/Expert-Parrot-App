@@ -6,6 +6,7 @@ import 'package:expert_parrot_app/constant/image_const.dart';
 import 'package:expert_parrot_app/constant/text_const.dart';
 import 'package:expert_parrot_app/constant/text_styel.dart';
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
+import 'package:expert_parrot_app/view/bottom_nav_screen.dart';
 import 'package:expert_parrot_app/viewModel/get_heart_rate_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -37,185 +38,195 @@ class _HeartRateScreenState extends State<HeartRateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CommonWidget.commonBackGround(
-        body: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            children: [
-              CommonWidget.commonSizedBox(height: 10),
-              header(),
-              CommonWidget.commonSizedBox(height: 13),
-              DottedLine(
-                lineLength: double.infinity,
-                lineThickness: 1.0,
-                dashLength: 10.0,
-                dashColor: Color(0xffbac2ba),
-                dashRadius: 0.0,
-                dashGapLength: 6.0,
-                dashGapColor: Colors.transparent,
-                dashGapRadius: 0.0,
-              ),
-              CommonWidget.commonSizedBox(height: 23),
-              GetBuilder<GetHeartRateViewModel>(
-                builder: (controller) {
-                  if (controller.getHeartRateApiResponse.status ==
-                      Status.LOADING) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        color: CommonColor.greenColor,
-                      ),
-                    );
-                  }
-                  if (controller.getHeartRateApiResponse.status ==
-                      Status.COMPLETE) {
-                    GetHeartRateResponseModel response =
-                        controller.getHeartRateApiResponse.data;
+    return WillPopScope(
+      onWillPop: () async {
+        Get.offAll(() => BottomNavScreen());
+        return false;
+      },
+      child: Scaffold(
+        body: CommonWidget.commonBackGround(
+          body: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                CommonWidget.commonSizedBox(height: 10),
+                header(),
+                CommonWidget.commonSizedBox(height: 13),
+                DottedLine(
+                  lineLength: double.infinity,
+                  lineThickness: 1.0,
+                  dashLength: 10.0,
+                  dashColor: Color(0xffbac2ba),
+                  dashRadius: 0.0,
+                  dashGapLength: 6.0,
+                  dashGapColor: Colors.transparent,
+                  dashGapRadius: 0.0,
+                ),
+                CommonWidget.commonSizedBox(height: 23),
+                GetBuilder<GetHeartRateViewModel>(
+                  builder: (controller) {
+                    if (controller.getHeartRateApiResponse.status ==
+                        Status.LOADING) {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: CommonColor.greenColor,
+                        ),
+                      );
+                    }
+                    if (controller.getHeartRateApiResponse.status ==
+                        Status.COMPLETE) {
+                      GetHeartRateResponseModel response =
+                          controller.getHeartRateApiResponse.data;
 
-                    final List<ChartData> chartData = List.generate(
-                        response.data!.docs!.reversed.toList().length >= 7
-                            ? 7
-                            : response.data!.docs!.reversed.toList().length,
-                        (index) => ChartData(
-                            DateFormat("dd MMM").format(response
-                                .data!.docs!.reversed
-                                .toList()[index]
-                                .date!),
-                            response.data!.docs!.reversed
-                                .toList()[index]
-                                .rate!
-                                .toDouble()));
+                      final List<ChartData> chartData = List.generate(
+                          response.data!.docs!.reversed.toList().length >= 7
+                              ? 7
+                              : response.data!.docs!.reversed.toList().length,
+                          (index) => ChartData(
+                              DateFormat("dd MMM").format(response
+                                  .data!.docs!.reversed
+                                  .toList()[index]
+                                  .date!),
+                              response.data!.docs!.reversed
+                                  .toList()[index]
+                                  .rate!
+                                  .toDouble()));
 
-                    return Column(
-                      children: [
-                        Container(
-                          height: 270.sp,
-                          padding: EdgeInsets.symmetric(vertical: 20.sp),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20)),
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: 200.sp,
-                                child: SfCartesianChart(
-                                  series: <ChartSeries>[
-                                    SplineSeries<ChartData, String>(
-                                        dataSource: chartData,
-                                        xValueMapper: (ChartData data, _) =>
-                                            data.x,
-                                        yValueMapper: (ChartData data, _) =>
-                                            data.y,
-                                        color: CommonColor.greenColor)
-                                  ],
-                                  plotAreaBorderWidth: 0,
-                                  primaryXAxis: CategoryAxis(
-                                      arrangeByIndex: false,
-                                      opposedPosition: true,
-                                      axisLine: AxisLine(width: 0),
-                                      borderWidth: 0,
-                                      majorTickLines: MajorTickLines(size: 0),
-                                      minorTickLines: MinorTickLines(size: 0),
-                                      majorGridLines: MajorGridLines(width: 0),
-                                      minorGridLines: MinorGridLines(width: 0),
-                                      axisBorderType:
-                                          AxisBorderType.withoutTopAndBottom,
-                                      labelStyle: TextStyle(
-                                          color: CommonColor.greenColor,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 10.sp)),
-                                  primaryYAxis: CategoryAxis(isVisible: false),
+                      return Column(
+                        children: [
+                          Container(
+                            height: 270.sp,
+                            padding: EdgeInsets.symmetric(vertical: 20.sp),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20)),
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 200.sp,
+                                  child: SfCartesianChart(
+                                    series: <ChartSeries>[
+                                      SplineSeries<ChartData, String>(
+                                          dataSource: chartData,
+                                          xValueMapper: (ChartData data, _) =>
+                                              data.x,
+                                          yValueMapper: (ChartData data, _) =>
+                                              data.y,
+                                          color: CommonColor.greenColor)
+                                    ],
+                                    plotAreaBorderWidth: 0,
+                                    primaryXAxis: CategoryAxis(
+                                        arrangeByIndex: false,
+                                        opposedPosition: true,
+                                        axisLine: AxisLine(width: 0),
+                                        borderWidth: 0,
+                                        majorTickLines: MajorTickLines(size: 0),
+                                        minorTickLines: MinorTickLines(size: 0),
+                                        majorGridLines:
+                                            MajorGridLines(width: 0),
+                                        minorGridLines:
+                                            MinorGridLines(width: 0),
+                                        axisBorderType:
+                                            AxisBorderType.withoutTopAndBottom,
+                                        labelStyle: TextStyle(
+                                            color: CommonColor.greenColor,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 10.sp)),
+                                    primaryYAxis:
+                                        CategoryAxis(isVisible: false),
+                                  ),
                                 ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                        height: 12.sp,
+                                        width: 12.sp,
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: CommonColor.greenColor)),
+                                    SizedBox(width: 5.sp),
+                                    CommonText.textBoldWight500(
+                                        text: "Achieved",
+                                        fontSize: 13.sp,
+                                        color: CommonColor.blackColor0D0D0D),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                          CommonWidget.commonSizedBox(height: 20),
+                          Align(
+                              alignment: Alignment.centerLeft,
+                              child: CommonText.textBoldWight500(
+                                  text: response.data!.docs!.first.date
+                                              .toString()
+                                              .split(" ")
+                                              .first ==
+                                          DateTime.now()
+                                              .toString()
+                                              .split(" ")
+                                              .first
+                                      ? TextConst.today
+                                      : "",
+                                  fontSize: 15.sp,
+                                  color: CommonColor.blackColor1D253C)),
+                          CommonWidget.commonSizedBox(height: 20),
+                          Row(
+                            children: [
+                              Image.asset(
+                                ImageConst.hartIcon,
+                                scale: 4.5,
                               ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                      height: 12.sp,
-                                      width: 12.sp,
-                                      decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: CommonColor.greenColor)),
-                                  SizedBox(width: 5.sp),
-                                  CommonText.textBoldWight500(
-                                      text: "Achieved",
-                                      fontSize: 13.sp,
-                                      color: CommonColor.blackColor0D0D0D),
-                                ],
-                              )
+                              response.data!.docs != null &&
+                                      response.data!.docs!.isNotEmpty
+                                  ? CommonText.textBoldWight600(
+                                      text:
+                                          " ${response.data!.docs!.first.rate}",
+                                      fontSize: 20.sp,
+                                      color: CommonColor.blackColor1D253C)
+                                  : CommonText.textBoldWight600(
+                                      text: ' 0',
+                                      fontSize: 20.sp,
+                                      color: CommonColor.blackColor1D253C),
+                              CommonText.textBoldWight400(
+                                  text: response.data!.docs!.first.date
+                                              .toString()
+                                              .split(" ")
+                                              .first ==
+                                          DateTime.now()
+                                              .toString()
+                                              .split(" ")
+                                              .first
+                                      ? " is your Today's heart rate"
+                                      : " is your Last heart rate",
+                                  fontSize: 13.sp,
+                                  color: CommonColor.gery727272),
                             ],
                           ),
-                        ),
-                        CommonWidget.commonSizedBox(height: 20),
-                        Align(
-                            alignment: Alignment.centerLeft,
-                            child: CommonText.textBoldWight500(
-                                text: response.data!.docs!.first.date
-                                            .toString()
-                                            .split(" ")
-                                            .first ==
-                                        DateTime.now()
-                                            .toString()
-                                            .split(" ")
-                                            .first
-                                    ? TextConst.today
-                                    : "",
-                                fontSize: 15.sp,
-                                color: CommonColor.blackColor1D253C)),
-                        CommonWidget.commonSizedBox(height: 20),
-                        Row(
-                          children: [
-                            Image.asset(
-                              ImageConst.hartIcon,
-                              scale: 4.5,
-                            ),
-                            response.data!.docs != null &&
-                                    response.data!.docs!.isNotEmpty
-                                ? CommonText.textBoldWight600(
-                                    text: " ${response.data!.docs!.first.rate}",
-                                    fontSize: 20.sp,
-                                    color: CommonColor.blackColor1D253C)
-                                : CommonText.textBoldWight600(
-                                    text: ' 0',
-                                    fontSize: 20.sp,
-                                    color: CommonColor.blackColor1D253C),
-                            CommonText.textBoldWight400(
-                                text: response.data!.docs!.first.date
-                                            .toString()
-                                            .split(" ")
-                                            .first ==
-                                        DateTime.now()
-                                            .toString()
-                                            .split(" ")
-                                            .first
-                                    ? " is your Today's heart rate"
-                                    : " is your Last heart rate",
-                                fontSize: 13.sp,
-                                color: CommonColor.gery727272),
-                          ],
-                        ),
-                        CommonWidget.commonSizedBox(height: 12),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: response.data!.docs!.length,
-                          itemBuilder: (context, index) {
-                            String times = CommonWidget.convertDateForm(
-                                response.data!.docs![index].date!)!;
-                            return ShowData(times, response, index);
-                          },
-                        ),
-                        CommonWidget.commonSizedBox(height: 100),
-                      ],
+                          CommonWidget.commonSizedBox(height: 12),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: response.data!.docs!.length,
+                            itemBuilder: (context, index) {
+                              String times = CommonWidget.convertDateForm(
+                                  response.data!.docs![index].date!)!;
+                              return ShowData(times, response, index);
+                            },
+                          ),
+                          CommonWidget.commonSizedBox(height: 100),
+                        ],
+                      );
+                    }
+                    return Padding(
+                      padding: EdgeInsets.only(top: 100.sp),
+                      child: Text('Something went wrong'),
                     );
-                  }
-                  return Padding(
-                    padding: EdgeInsets.only(top: 100.sp),
-                    child: Text('Something went wrong'),
-                  );
-                },
-              )
-            ],
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -441,7 +452,7 @@ class _HeartRateScreenState extends State<HeartRateScreen> {
         CommonWidget.commonBackButton(
           onTap: () {
             _heartRateController.clear();
-            Get.back();
+            Get.offAll(() => BottomNavScreen());
           },
         ),
         CommonText.textBoldWight500(text: "Heart Rate", fontSize: 18.sp),

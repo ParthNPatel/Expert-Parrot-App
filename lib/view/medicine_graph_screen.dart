@@ -28,7 +28,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
   TextEditingController _emailOrMobileController = TextEditingController();
   String? verificationCode;
   DateTime dayOf = DateTime.now();
-  bool isDaily = true;
+  bool isDaily = false;
 
   List medScheduleList = [
     {
