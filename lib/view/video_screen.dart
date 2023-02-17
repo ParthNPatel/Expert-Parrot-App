@@ -43,9 +43,7 @@ class _VideoScreenState extends State<VideoScreen> {
       body: CommonWidget.commonBackGround(
         body: Column(
           children: [
-            CommonWidget.commonSizedBox(height: 10),
             header(),
-            CommonWidget.commonSizedBox(height: 6),
             CommonWidget.dottedLineWidget(),
             CommonWidget.commonSizedBox(height: 23),
             Expanded(
@@ -287,15 +285,7 @@ class _VideoScreenState extends State<VideoScreen> {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
-      leading: Row(
-        children: [
-          CommonWidget.commonBackButton(
-            onTap: () {
-              Get.back();
-            },
-          ),
-        ],
-      ),
+      leading: SizedBox(),
       title: CommonText.textBoldWight500(
           text: "Videos",
           fontSize: 18.sp,

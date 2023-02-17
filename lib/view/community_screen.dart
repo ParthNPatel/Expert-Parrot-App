@@ -63,10 +63,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       resizeToAvoidBottomInset: false,
-      //extendBody: false,
-      //primary: false,
       body: CommonWidget.commonBackGround(
         body: Column(
           children: [
