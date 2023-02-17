@@ -100,7 +100,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
                       controller.getReminderApiResponse.data;
                   return Expanded(
                     child: ListView.separated(
-                      reverse: true,
+                      // reverse: true,
                       shrinkWrap: true,
                       physics: BouncingScrollPhysics(),
                       itemCount: responseModel.data!.docs!.length,

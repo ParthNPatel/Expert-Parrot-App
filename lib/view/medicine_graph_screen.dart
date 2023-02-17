@@ -117,7 +117,9 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
     'Twice a day',
     'Thrice a day',
   ];
+
   List<String> listOfWeak = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
   List<List> listOfPiles = [
     [0, 1, 0],
     [0, 1, 1],
@@ -127,6 +129,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
     [0, 0, 1],
     [0, 1, 1]
   ];
+
   int selectedPilesDose = 0;
   int selectedPillIndex = 0;
   int limitData = 0;

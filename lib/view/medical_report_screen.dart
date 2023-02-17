@@ -38,7 +38,7 @@ class MedicalReportScreen extends StatefulWidget {
 class _MedicalReportScreenState extends State<MedicalReportScreen> {
   int index = 0;
 
-  bool isDaily = true;
+  bool isDaily = false;
 
   List medScheduleList = [
     {
@@ -83,6 +83,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
     },
     null,
   ];
+
   DateTime dayOf = DateTime.now();
 
   int medicineSelected = 0;
@@ -221,7 +222,6 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
                           }
                         }
                       }
-
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
