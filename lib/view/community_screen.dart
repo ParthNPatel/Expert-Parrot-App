@@ -70,13 +70,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
       body: CommonWidget.commonBackGround(
         body: Column(
           children: [
-            SizedBox(
-              height: 10,
-            ),
             header(),
-            SizedBox(
-              height: 13,
-            ),
             CommonWidget.dottedLineWidget(),
             SizedBox(
               height: 23,
@@ -817,16 +811,15 @@ class _CommunityScreenState extends State<CommunityScreen> {
     );
   }
 
-  Row header() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        CommonWidget.commonBackButton(
-          onTap: () {
-            Get.back();
-          },
-        ),
-        CommonText.textBoldWight500(text: "Community", fontSize: 18.sp),
+  Widget header() {
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      centerTitle: true,
+      leading: SizedBox(),
+      title: CommonText.textBoldWight500(
+          text: "Community", fontSize: 18.sp, color: Colors.black),
+      actions: [
         InkWell(
           onTap: () async {
             if (GetStorageServices.getUserLoggedInStatus() == true) {
@@ -846,7 +839,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
             height: 23.sp,
             width: 23.sp,
           ),
-        )
+        ),
       ],
     );
   }

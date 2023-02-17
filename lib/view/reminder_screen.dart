@@ -70,7 +70,9 @@ class _ReminderScreenState extends State<ReminderScreen> {
     'Twice a day',
     'Thrice a day',
   ];
+
   GetReminderViewModel getReminderViewModel = Get.put(GetReminderViewModel());
+
   @override
   void initState() {
     getReminderViewModel.getReminderViewModel();

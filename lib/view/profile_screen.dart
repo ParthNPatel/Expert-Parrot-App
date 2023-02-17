@@ -665,19 +665,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Row header() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        CommonWidget.commonBackButton(
-          onTap: () {
-            Get.back();
-          },
-        ),
-        Spacer(),
         CommonText.textBoldWight500(text: "Profile", fontSize: 18.sp),
-        SizedBox(
-          width: 11.w,
-        ),
-        Spacer(),
       ],
     );
   }
