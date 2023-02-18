@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final userDataResponseModel = userDataResponseModelFromJson(jsonString);
-
 import 'dart:convert';
 
 UserDataResponseModel userDataResponseModelFromJson(String str) =>
@@ -27,7 +23,7 @@ class UserDataResponseModel {
 
   Map<String, dynamic> toJson() => {
         "flag": flag,
-        "data": data!?.toJson(),
+        "data": data!.toJson(),
       };
 }
 
@@ -49,11 +45,17 @@ class Data {
     this.timeOffset,
     this.updatedAt,
     this.userTime,
+    this.calories,
+    this.kilometers,
+    this.steps,
   });
 
   String? id;
   String? loginId;
   String? loginType;
+  String? calories;
+  String? kilometers;
+  String? steps;
   DateTime? createdAt;
   List<dynamic>? dependents;
   String? fcmToken;
@@ -72,6 +74,9 @@ class Data {
         id: json["_id"],
         loginId: json["loginId"],
         loginType: json["loginType"],
+        calories: json["calories"],
+        kilometers: json["kilometers"],
+        steps: json["steps"],
         createdAt: DateTime.parse(json["createdAt"]),
         dependents: List<dynamic>.from(json["dependents"].map((x) => x)),
         fcmToken: json["fcm_token"],
@@ -91,6 +96,9 @@ class Data {
         "_id": id,
         "loginId": loginId,
         "loginType": loginType,
+        "calories": calories,
+        "kilometers": kilometers,
+        "steps": steps,
         "createdAt": createdAt!.toIso8601String(),
         "dependents": List<dynamic>.from(dependents!.map((x) => x)),
         "fcm_token": fcmToken,

@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_video_res_model.dart';
 import 'package:expert_parrot_app/components/video_shimmer.dart';
@@ -15,7 +14,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sizer/sizer.dart';
-
 import '../components/common_widget.dart';
 
 class VideoScreen extends StatefulWidget {

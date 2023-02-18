@@ -2,7 +2,6 @@ import 'package:expert_parrot_app/constant/api_const.dart';
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 import '../../components/common_widget.dart';
 import '../../view/bottom_nav_screen.dart';
@@ -43,6 +42,17 @@ class EditProfileRepo extends BaseService {
         color: Colors.red,
       );
     }
+    return response;
+  }
+
+  static Future editDailyStepsReport(
+      {required Map<String, dynamic> model}) async {
+    print('getBarrierToken   ${GetStorageServices.getBarrierToken()}');
+
+    var response = await APIService().getPutResponse(
+        url: APIConst.userData, apitype: APIType.aPut, body: model);
+    print("RESPONSE==>>${response}");
+
     return response;
   }
 }

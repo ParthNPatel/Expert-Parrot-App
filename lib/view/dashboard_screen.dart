@@ -2,6 +2,7 @@ import 'dart:developer' as log;
 import 'dart:math';
 import 'package:expert_parrot_app/Models/apis/api_response.dart';
 import 'package:expert_parrot_app/Models/repo/delete_medicine_repo.dart';
+import 'package:expert_parrot_app/Models/repo/edit_profile_repo.dart';
 import 'package:expert_parrot_app/Models/responseModel/date_record_medicine_res_model.dart';
 import 'package:expert_parrot_app/Models/responseModel/get_all_medicine_names_model.dart';
 import 'package:expert_parrot_app/components/common_widget.dart';
@@ -966,7 +967,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                           GetStorageServices.eraseSteps();
                                           GetStorageServices.eraseMiles();
 
-                                          selectMethod == 1
+                                          await selectMethod == 1
                                               ? GetStorageServices.setUserSteps(
                                                   _kmController.text.trim())
                                               : selectMethod == 2
@@ -976,6 +977,88 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                           .trim())
                                                   : GetStorageServices.setUserMiles(
                                                       "${int.parse(_kmController.text.trim())}");
+
+                                          String steps = GetStorageServices
+                                                      .getUserKm() !=
+                                                  null
+                                              ? '${(int.parse(GetStorageServices.getUserKm()) * 1408)}'
+                                              : GetStorageServices
+                                                          .getUserSteps() !=
+                                                      null
+                                                  ? '${(int.parse(GetStorageServices.getUserSteps()))}'
+                                                  : GetStorageServices
+                                                              .getUserMiles() !=
+                                                          null
+                                                      ? '${(double.parse(GetStorageServices.getUserMiles()) * 2112)}'
+                                                      : '0';
+
+                                          String calories = GetStorageServices
+                                                          .getUserKm() !=
+                                                      null &&
+                                                  GetStorageServices
+                                                          .getUserKm() !=
+                                                      ""
+                                              ? '${(int.parse(GetStorageServices.getUserKm()) * 136)}'
+                                              : GetStorageServices
+                                                              .getUserSteps() !=
+                                                          null &&
+                                                      GetStorageServices
+                                                              .getUserSteps() !=
+                                                          ""
+                                                  ? '${((int.parse(GetStorageServices.getUserSteps()) / 1408) * 136).toPrecision(1)}'
+                                                  : GetStorageServices
+                                                                  .getUserMiles() !=
+                                                              null &&
+                                                          GetStorageServices
+                                                                  .getUserMiles() !=
+                                                              ""
+                                                      ? '${(double.parse(GetStorageServices.getUserMiles()) * 85)}'
+                                                      : '0';
+
+                                          String kilometers = GetStorageServices
+                                                          .getUserKm() !=
+                                                      null &&
+                                                  GetStorageServices
+                                                          .getUserKm() !=
+                                                      ""
+                                              ? '${GetStorageServices.getUserKm()}'
+                                              : GetStorageServices
+                                                              .getUserSteps() !=
+                                                          null &&
+                                                      GetStorageServices
+                                                              .getUserSteps() !=
+                                                          ""
+                                                  ? '${(int.parse(GetStorageServices.getUserSteps()) / 1408).toPrecision(2)}'
+                                                  : GetStorageServices
+                                                                  .getUserMiles() !=
+                                                              null &&
+                                                          GetStorageServices
+                                                                  .getUserMiles() !=
+                                                              ""
+                                                      ? '${(int.parse(GetStorageServices.getUserMiles()) * 1.609344).toPrecision(2)}'
+                                                      : 'Na';
+
+                                          print("calories$calories");
+                                          print("kilometers$kilometers");
+                                          print("steps$steps");
+
+                                          var req = {
+                                            "calories": calories,
+                                            "kilometers": kilometers,
+                                            "steps": steps,
+                                          };
+
+                                          setState(
+                                            () {},
+                                          );
+
+                                          try {
+                                            EditProfileRepo
+                                                .editDailyStepsReport(
+                                                    model: req);
+                                          } on Exception catch (e) {
+                                            print("ERROR==>>${e}");
+                                          }
 
                                           Get.back();
                                         } else {
