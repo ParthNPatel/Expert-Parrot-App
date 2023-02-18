@@ -48,9 +48,11 @@ class EditProfileRepo extends BaseService {
   static Future editDailyStepsReport(
       {required Map<String, dynamic> model}) async {
     print('getBarrierToken   ${GetStorageServices.getBarrierToken()}');
-
-    var response = await APIService().getPutResponse(
+    print("111111");
+    print("model$model");
+    var response = await APIService().putDailyStepsReport(
         url: APIConst.userData, apitype: APIType.aPut, body: model);
+    print("22222");
     print("RESPONSE==>>${response}");
 
     return response;

@@ -99,11 +99,17 @@ class UserId {
     this.name,
     this.userImage,
     this.weight,
+    this.calories,
+    this.kilometers,
+    this.steps,
   });
 
   int? bmi;
   String? id;
   String? loginId;
+  String? calories;
+  String? kilometers;
+  String? steps;
   String? loginType;
   DateTime? createdAt;
   List<UserIdDependent>? dependents;
@@ -128,6 +134,9 @@ class UserId {
         id: json["_id"],
         loginId: json["loginId"],
         loginType: json["loginType"],
+        calories: json["calories"],
+        kilometers: json["kilometers"],
+        steps: json["steps"],
         createdAt: DateTime.parse(json["createdAt"]),
         dependents: List<UserIdDependent>.from(
             json["dependents"].map((x) => UserIdDependent.fromJson(x))),
@@ -152,6 +161,9 @@ class UserId {
         "bmi": bmi,
         "_id": id,
         "loginId": loginId,
+        "calories": calories,
+        "kilometers": kilometers,
+        "steps": steps,
         "loginType": loginType,
         "createdAt": createdAt!.toIso8601String(),
         "dependents": List<dynamic>.from(dependents!.map((x) => x.toJson())),

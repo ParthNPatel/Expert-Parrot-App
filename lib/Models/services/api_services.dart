@@ -122,6 +122,41 @@ class APIService {
     return response;
   }
 
+  Future putDailyStepsReport(
+      {required String url,
+      required APIType apitype,
+      Map<String, dynamic>? body,
+      Map<String, String>? header,
+      bool fileUpload = false}) async {
+    Map<String, String> headers = GetStorageServices.getBarrierToken() != null
+        ? {
+            'Authorization': 'Bearer ${GetStorageServices.getBarrierToken()}',
+            'Content-Type': 'application/json'
+          }
+        : {'Content-Type': 'application/json'};
+    try {
+      print("REQUEST PARAMETER url  $url");
+      print("REQUEST PARAMETER $body");
+
+      final request =
+          await http.MultipartRequest("PUT", Uri.parse(baseUrl + url));
+
+      request.headers.addAll(headers);
+
+      var result = await request.send();
+      String res = await result.stream.transform(utf8.decoder).join();
+
+      // print("resp${result.body}");
+      response = returnResponse(result.statusCode, res);
+      // print(result.statusCode);
+
+    } on SocketException {
+      throw FetchDataException('No Internet access');
+    }
+
+    return response;
+  }
+
   Future getPostResponse(
       {required String url,
       required APIType apitype,

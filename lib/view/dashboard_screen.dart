@@ -1053,6 +1053,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                           );
 
                                           try {
+                                            print("BODY==>>$req");
                                             EditProfileRepo
                                                 .editDailyStepsReport(
                                                     model: req);

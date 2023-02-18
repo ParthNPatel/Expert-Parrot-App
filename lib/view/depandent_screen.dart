@@ -369,7 +369,12 @@ class _DependentScreenState extends State<DependentScreen> {
                                                 scale: 4,
                                               ),
                                               CommonText.textBoldWight500(
-                                                  text: '2508',
+                                                  text: response
+                                                      .data!
+                                                      .dependents![currentIndex]
+                                                      .userId!
+                                                      .steps
+                                                      .toString(),
                                                   fontSize: 18.sp,
                                                   color: CommonColor
                                                       .blackColor434343),
@@ -386,12 +391,14 @@ class _DependentScreenState extends State<DependentScreen> {
                                               reportEventWidget(
                                                   height: 33,
                                                   padding: 10,
-                                                  text: '31 kcal',
+                                                  text:
+                                                      '${response.data!.dependents![currentIndex].userId!.calories.toString()} kcal',
                                                   image: ImageConst.kcalIcon),
                                               reportEventWidget(
                                                   padding: 0,
                                                   height: 43,
-                                                  text: '2 km ',
+                                                  text:
+                                                      '${response.data!.dependents![currentIndex].userId!.kilometers.toString()} km ',
                                                   image:
                                                       ImageConst.locationIcon),
                                             ]),
