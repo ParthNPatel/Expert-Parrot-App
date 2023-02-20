@@ -1,8 +1,11 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:expert_parrot_app/constant/api_const.dart';
 import 'package:expert_parrot_app/get_storage_services/get_storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:http/http.dart' as http;
 import '../../components/common_widget.dart';
 import '../../view/bottom_nav_screen.dart';
 import '../services/api_services.dart';
@@ -45,16 +48,30 @@ class EditProfileRepo extends BaseService {
     return response;
   }
 
-  static Future editDailyStepsReport(
-      {required Map<String, dynamic> model}) async {
-    print('getBarrierToken   ${GetStorageServices.getBarrierToken()}');
-    print("111111");
-    print("model$model");
-    var response = await APIService().putDailyStepsReport(
-        url: APIConst.userData, apitype: APIType.aPut, body: model);
-    print("22222");
-    print("RESPONSE==>>${response}");
+  static Future editDailyStepsReport({
+    required String calories,
+    required String kilometers,
+    required String steps,
+  }) async {
+    var headers = {
+      'Authorization': 'Bearer ${GetStorageServices.getBarrierToken()}',
+      'Content-Type': 'application/json'
+    };
+    var request =
+        http.Request('PUT', Uri.parse('http://52.66.209.219:5000/user/'));
+    request.body = json.encode({
+      "calories": "$calories",
+      "kilometers": "$kilometers",
+      "steps": "$steps"
+    });
+    request.headers.addAll(headers);
 
-    return response;
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      print(await response.stream.bytesToString());
+    } else {
+      print(response.reasonPhrase);
+    }
   }
 }

@@ -1056,7 +1056,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                             print("BODY==>>$req");
                                             EditProfileRepo
                                                 .editDailyStepsReport(
-                                                    model: req);
+                                                    calories: calories,
+                                                    kilometers: kilometers,
+                                                    steps: steps);
                                           } on Exception catch (e) {
                                             print("ERROR==>>${e}");
                                           }
