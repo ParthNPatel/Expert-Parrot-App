@@ -1062,7 +1062,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                           } on Exception catch (e) {
                                             print("ERROR==>>${e}");
                                           }
-
                                           Get.back();
                                         } else {
                                           CommonWidget.getSnackBar(
