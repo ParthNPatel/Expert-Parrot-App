@@ -535,7 +535,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                     //     color: CommonColor.lightYellowColor,
                     //     radius: 30),
                     PieChartSectionData(
-                        value: weekMissed.toDouble(),
+                        value: weekMissed.toDouble() + weekSnoozed.toDouble(),
                         showTitle: false,
                         color: CommonColor.lightRedColor,
                         radius: 25)
@@ -595,7 +595,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                       borderRadius: BorderRadius.circular(20)),
                 ),
                 CommonText.textBoldWight500(
-                    text: '$weekMissed Missed',
+                    text: '${weekMissed + weekSnoozed} Not Taken',
                     fontSize: 10.sp,
                     color: CommonColor.blackColor0D0D0D)
               ],

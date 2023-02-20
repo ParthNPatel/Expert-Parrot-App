@@ -80,6 +80,7 @@ class _DependentScreenState extends State<DependentScreen> {
       'color': Color.fromRGBO(242, 255, 159, 0.52),
     },
   ];
+
   int currentIndex = 0;
 
   GetDependentViewModel getDependentViewModel =
@@ -109,6 +110,8 @@ class _DependentScreenState extends State<DependentScreen> {
 
     if (response.data!.dependents!.isNotEmpty &&
         response.data!.dependents != []) {
+      print(
+          'USER ID====>>${response.data!.dependents![currentIndex].userId!.id}');
       await getGlassViewModel.getGlassViewModel(
           isLoading: false,
           userId: response.data!.dependents!.first.userId!.id);
@@ -117,6 +120,7 @@ class _DependentScreenState extends State<DependentScreen> {
           isLoading: false,
           userId: response.data!.dependents!.first.userId!.id);
     }
+    setState(() {});
   }
 
   @override
@@ -287,6 +291,8 @@ class _DependentScreenState extends State<DependentScreen> {
                                                     heartResp = controllerHeart
                                                         .getHeartRateApiResponse
                                                         .data;
+                                                print(
+                                                    "HEART RATE===>>${heartResp.data!.docs!.first.rate}");
                                                 return overViewWidget(
                                                   onTap: () {},
                                                   name: overViewData[index]
