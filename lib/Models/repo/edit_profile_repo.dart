@@ -20,11 +20,9 @@ class EditProfileRepo extends BaseService {
         url: APIConst.userData, apitype: APIType.aPut, body: model);
     print('EditProfile response===>>>  $response');
     if (response['flag'] == true) {
-      // GetStorageServices.setBarrierToken('${response['token']}');
-
       if (response['data']['profileSet'] == true) {
         var dataOfApi = response['data'];
-// print('${}')
+
         CommonWidget.updateUserDetails(
             height: '${dataOfApi['height']}',
             age: '${dataOfApi['age']}',
