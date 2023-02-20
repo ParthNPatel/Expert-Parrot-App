@@ -163,8 +163,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
     print('-=-=-=-=-=-= end ${endDate.toString().split(" ").first}');
     getWeekRecordMedicineViewModel.getWeekRecordMedicineViewModel(body: {
       "startDate": "${startDate.toString().split(" ").first}",
-      "endDate": /*"2023-01-30"*/
-          "${endDate.toString().split(" ").first}"
+      "endDate": "${endDate.toString().split(" ").first}"
     });
     getRecordMedicineViewModel.getRecordMedicineViewModel();
   }
@@ -196,8 +195,12 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                 GetRecordMedicineResponseModel respRM =
                     controllerRM.getRecordMedicineApiResponse.data;
 
-                if (tmpID == "") {
-                  tmpID = respRM.data![0].records![0].sId!;
+                try {
+                  if (tmpID == "") {
+                    tmpID = respRM.data![0].records![0].sId!;
+                  }
+                } catch (e) {
+                  // TODO
                 }
 
                 limitData = 0;
@@ -345,67 +348,7 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
                                           fontSize: 18.sp,
                                           color: CommonColor.blackColor0D0D0D)),
                                   CommonWidget.commonSizedBox(height: 4),
-                                  ListView.builder(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    reverse: true,
-                                    itemCount: respRM.data![selectedPilesDose]
-                                        .records!.length,
-                                    itemBuilder: (context, index) {
-                                      return medScheduleList[index] == null
-                                          ? SizedBox()
-                                          : medDetailsWidget(
-                                              medId: respRM
-                                                  .data![selectedPilesDose]
-                                                  .records![index]
-                                                  .sId!,
-                                              totalTimes: respRM
-                                                  .data![selectedPilesDose]
-                                                  .records![index]
-                                                  .totalTimes!,
-                                              pilesList: listOfPiles[index],
-                                              image: respRM
-                                                          .data![
-                                                              selectedPilesDose]
-                                                          .records![index]
-                                                          .appearance!
-                                                          .toLowerCase() ==
-                                                      'Tablet'
-                                                  ? ImageConst.med3Icon
-                                                  : respRM
-                                                              .data![
-                                                                  selectedPilesDose]
-                                                              .records![index]
-                                                              .appearance!
-                                                              .toLowerCase() ==
-                                                          'Cream'
-                                                      ? ImageConst.med1Icon
-                                                      : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() ==
-                                                              'Syrup'
-                                                          ? ImageConst.med2Icon
-                                                          : ImageConst.med2Icon,
-                                              medName: respRM
-                                                  .data![selectedPilesDose]
-                                                  .records![index]
-                                                  .name!,
-                                              medGm:
-                                                  '${respRM.data![selectedPilesDose].records![index].strength} gm',
-                                              iconColor: respRM
-                                                          .data![selectedPilesDose]
-                                                          .records![index]
-                                                          .appearance!
-                                                          .toLowerCase() ==
-                                                      'Tablet'
-                                                  ? Color(0xff21D200)
-                                                  : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() == 'Cream'
-                                                      ? Color(0xffFFDD2C)
-                                                      : respRM.data![selectedPilesDose].records![index].appearance!.toLowerCase() == 'Syrup'
-                                                          ? Color(0xff9255E5)
-                                                          : Color(0xff9255E5),
-                                              dose: respRM.data![selectedPilesDose].records![index].doses!,
-                                              index: index);
-                                    },
-                                  ),
+                                  pillsList(respRM),
                                   CommonWidget.commonSizedBox(height: 100),
                                 ],
                               )
@@ -427,6 +370,69 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
         ),
       ),
     );
+  }
+
+  Widget pillsList(GetRecordMedicineResponseModel respRM) {
+    try {
+      return ListView.builder(
+        physics: NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        reverse: true,
+        itemCount: respRM.data![selectedPilesDose].records!.length,
+        itemBuilder: (context, index) {
+          return medScheduleList[index] == null
+              ? SizedBox()
+              : medDetailsWidget(
+                  medId: respRM.data![selectedPilesDose].records![index].sId!,
+                  totalTimes: respRM
+                      .data![selectedPilesDose].records![index].totalTimes!,
+                  pilesList: listOfPiles[index],
+                  image: respRM.data![selectedPilesDose].records![index]
+                              .appearance!
+                              .toLowerCase() ==
+                          'Tablet'
+                      ? ImageConst.med3Icon
+                      : respRM.data![selectedPilesDose].records![index].appearance!
+                                  .toLowerCase() ==
+                              'Cream'
+                          ? ImageConst.med1Icon
+                          : respRM.data![selectedPilesDose].records![index]
+                                      .appearance!
+                                      .toLowerCase() ==
+                                  'Syrup'
+                              ? ImageConst.med2Icon
+                              : ImageConst.med2Icon,
+                  medName:
+                      respRM.data![selectedPilesDose].records![index].name!,
+                  medGm:
+                      '${respRM.data![selectedPilesDose].records![index].strength} gm',
+                  iconColor: respRM.data![selectedPilesDose].records![index]
+                              .appearance!
+                              .toLowerCase() ==
+                          'Tablet'
+                      ? Color(0xff21D200)
+                      : respRM.data![selectedPilesDose].records![index]
+                                  .appearance!
+                                  .toLowerCase() ==
+                              'Cream'
+                          ? Color(0xffFFDD2C)
+                          : respRM.data![selectedPilesDose].records![index]
+                                      .appearance!
+                                      .toLowerCase() ==
+                                  'Syrup'
+                              ? Color(0xff9255E5)
+                              : Color(0xff9255E5),
+                  dose: respRM.data![selectedPilesDose].records![index].doses!,
+                  index: index);
+        },
+      );
+    } catch (e) {
+      return Center(
+          child: Padding(
+        padding: EdgeInsets.only(top: 15.sp),
+        child: CommonText.textBoldWight500(text: "No Pills Added yet"),
+      ));
+    }
   }
 
   Column weekShowWidget() {
@@ -634,124 +640,134 @@ class _MedicineGraphScreenState extends State<MedicineGraphScreen> {
     );
   }
 
-  Column dailyGraph(GetRecordMedicineResponseModel respRM) {
-    return Column(
-      children: [
-        Container(
-          height: 120.sp,
-          alignment: Alignment.center,
-          // color: Colors.grey.shade300,
-          child: ListView.builder(
-              physics: BouncingScrollPhysics(),
-              scrollDirection: Axis.horizontal,
-              itemCount: limitData,
-              shrinkWrap: true,
-              reverse: true,
-              itemBuilder: (_, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Container(
-                        //  height: 150,
-                        // color: Colors.red,
-                        width: 28,
-                        child: ListView.builder(
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemCount: respRM.data![index].date ==
-                                  dayOf.toString().split(" ").first
-                              ? respRM.data![index].records![selectedPillIndex]
-                                  .totalTimes
-                              : 3,
-                          itemBuilder: (context, indexOfDose) {
-                            return Column(
-                              children: [
-                                pilesContainer(
-                                    completedDoses: respRM.data![index]
-                                        .records![selectedPillIndex].doses!,
-                                    selectMainDose: index,
-                                    selectedList: selectedPilesDose,
-                                    index: indexOfDose,
-                                    totalDoseLength: listOfPiles[index].length),
-                                Divider(
-                                  color: Colors.transparent,
-                                  height: 1,
-                                )
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-                      //  Spacer(),
-                      Container(
-                          // height: 40,
-                          // width: 22,
-                          child: CommonText.textBoldWight600(
-                              color: CommonColor.gery9D9D9D,
-                              fontSize: 10,
-                              text:
-                                  weekDayGen(date: respRM.data![index].date!))),
-                    ],
-                  ),
-                );
-              }),
-        ),
-        CommonWidget.commonSizedBox(height: 10),
-        Align(
+  Widget dailyGraph(GetRecordMedicineResponseModel respRM) {
+    try {
+      return Column(
+        children: [
+          Container(
+            height: 120.sp,
             alignment: Alignment.center,
-            child: SizedBox(
-              height: 30.sp,
-              child: ListView.separated(
+            // color: Colors.grey.shade300,
+            child: ListView.builder(
+                physics: BouncingScrollPhysics(),
                 scrollDirection: Axis.horizontal,
+                itemCount: limitData,
                 shrinkWrap: true,
-                itemCount: respRM.data![selectedPilesDose]
-                    .records![selectedPillIndex].totalTimes!,
-                separatorBuilder: (context, index) {
-                  return SizedBox(width: 20.sp);
-                },
-                itemBuilder: (context, index) {
-                  return respRM.data![selectedPilesDose]
-                          .records![selectedPillIndex].doses!
-                          .contains(index + 1)
-                      ? Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Image.asset(
-                                ImageConst.doubleTickIcon,
-                                scale: 4,
+                reverse: true,
+                itemBuilder: (_, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          //  height: 150,
+                          // color: Colors.red,
+                          width: 28,
+                          child: ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            itemCount: respRM.data![index].date ==
+                                    dayOf.toString().split(" ").first
+                                ? respRM.data![index]
+                                    .records![selectedPillIndex].totalTimes
+                                : 3,
+                            itemBuilder: (context, indexOfDose) {
+                              return Column(
+                                children: [
+                                  pilesContainer(
+                                      completedDoses: respRM.data![index]
+                                          .records![selectedPillIndex].doses!,
+                                      selectMainDose: index,
+                                      selectedList: selectedPilesDose,
+                                      index: indexOfDose,
+                                      totalDoseLength:
+                                          listOfPiles[index].length),
+                                  Divider(
+                                    color: Colors.transparent,
+                                    height: 1,
+                                  )
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                        //  Spacer(),
+                        Container(
+                            // height: 40,
+                            // width: 22,
+                            child: CommonText.textBoldWight600(
+                                color: CommonColor.gery9D9D9D,
+                                fontSize: 10,
+                                text: weekDayGen(
+                                    date: respRM.data![index].date!))),
+                      ],
+                    ),
+                  );
+                }),
+          ),
+          CommonWidget.commonSizedBox(height: 10),
+          Align(
+              alignment: Alignment.center,
+              child: SizedBox(
+                height: 30.sp,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  shrinkWrap: true,
+                  itemCount: respRM.data![selectedPilesDose]
+                      .records![selectedPillIndex].totalTimes!,
+                  separatorBuilder: (context, index) {
+                    return SizedBox(width: 20.sp);
+                  },
+                  itemBuilder: (context, index) {
+                    return respRM.data![selectedPilesDose]
+                            .records![selectedPillIndex].doses!
+                            .contains(index + 1)
+                        ? Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Image.asset(
+                                  ImageConst.doubleTickIcon,
+                                  scale: 4,
+                                ),
                               ),
-                            ),
-                            CommonText.textBoldWight400(
-                                text:
-                                    "${respRM.data![selectedPilesDose].records![selectedPillIndex].shceduleTime![index]}",
-                                fontSize: 12.sp)
-                          ],
-                        )
-                      : Row(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Image.asset(
-                                ImageConst.doubleTickIcon,
-                                scale: 4,
-                                color: Color(0xffFB0A0A).withOpacity(.8),
+                              CommonText.textBoldWight400(
+                                  text:
+                                      "${respRM.data![selectedPilesDose].records![selectedPillIndex].shceduleTime![index]}",
+                                  fontSize: 12.sp)
+                            ],
+                          )
+                        : Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Image.asset(
+                                  ImageConst.doubleTickIcon,
+                                  scale: 4,
+                                  color: Color(0xffFB0A0A).withOpacity(.8),
+                                ),
                               ),
-                            ),
-                            CommonText.textBoldWight400(
-                                text:
-                                    "${respRM.data![selectedPilesDose].records![selectedPillIndex].shceduleTime![index]}",
-                                fontSize: 12.sp)
-                          ],
-                        );
-                },
-              ),
-            )),
-        CommonWidget.commonSizedBox(height: 10),
-      ],
-    );
+                              CommonText.textBoldWight400(
+                                  text:
+                                      "${respRM.data![selectedPilesDose].records![selectedPillIndex].shceduleTime![index]}",
+                                  fontSize: 12.sp)
+                            ],
+                          );
+                  },
+                ),
+              )),
+          CommonWidget.commonSizedBox(height: 10),
+        ],
+      );
+    } catch (e) {
+      return Center(
+          child: Padding(
+        padding: EdgeInsets.only(top: 15.sp, bottom: 10.sp),
+        child: CommonText.textBoldWight500(
+            text: "No Medicine data for selected day."),
+      ));
+    }
   }
 
   String weekDayGen({required String date}) {
