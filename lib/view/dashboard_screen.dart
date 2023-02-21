@@ -2561,8 +2561,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                 bool isOpen = false;
                                 List tackDataPass = [];
                                 try {
-                                  //[1]  [1,2]   [1,2,3]
-
                                   int dose = int.parse(totalTimes);
                                   if (dose == takenDoses!.length) {
                                     isOpen = false;
@@ -2778,7 +2776,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                             message: 'Please try again!');
                                       }
                                     },
-                                    child: Text("Skipped"),
+                                    child: Text("Delete"),
                                   ),
                                 ];
                               }
