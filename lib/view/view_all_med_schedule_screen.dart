@@ -431,24 +431,14 @@ class _ViewAllMedScheduleScreenState extends State<ViewAllMedScheduleScreen> {
                                     onTap: () async {
                                       if (medId.isNotEmpty) {
                                         var resp = await DeleteMedicineRepo
-                                            .deleteMedicineRepo(id: medId);
-
-                                        if (resp["flag"] == true) {
-                                          CommonWidget.getSnackBar(
-                                              duration: 2,
-                                              color: CommonColor.greenColor
-                                                  .withOpacity(.4),
-                                              colorText: Colors.white,
-                                              title: "Done!",
-                                              message: 'Medicine Skipped!}');
-                                        } else {
-                                          CommonWidget.getSnackBar(
-                                              duration: 2,
-                                              color: Colors.red.withOpacity(.4),
-                                              colorText: Colors.white,
-                                              title: "Something went wrong!",
-                                              message: '${resp["data"]}');
-                                        }
+                                            .skipMedicineRepo(id: medId);
+                                        CommonWidget.getSnackBar(
+                                            duration: 2,
+                                            color: CommonColor.greenColor
+                                                .withOpacity(.4),
+                                            colorText: Colors.white,
+                                            title: "Done!",
+                                            message: 'Medicine Skipped!}');
                                       } else {
                                         CommonWidget.getSnackBar(
                                             duration: 2,

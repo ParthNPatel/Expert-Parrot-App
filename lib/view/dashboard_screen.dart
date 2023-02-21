@@ -193,6 +193,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   @override
   Widget build(BuildContext context) {
     log.log('BARRIER TOKEN :- ${GetStorageServices.getBarrierToken()}');
+    print("DATE==>${dayOf}");
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: CommonWidget.commonBackGround(body:
@@ -259,55 +260,50 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                           itemBuilder: (context, index) {
                             print("APP==>>${respDMR.data![index].appearance}");
                             try {
-                              return /*recordLength > 3
-                                            ? */
-                                  medDetailsWidget(
-                                      medId: "${respDMR.data![index].sId}",
-                                      totalTimes:
-                                          "${respDMR.data![index].totalTimes}",
-                                      takenDoses: respDMR.data![index].doses,
-                                      image: respDMR.data![index].appearance!
+                              return medDetailsWidget(
+                                  medId: "${respDMR.data![index].sId}",
+                                  totalTimes:
+                                      "${respDMR.data![index].totalTimes}",
+                                  takenDoses: respDMR.data![index].doses,
+                                  image: respDMR.data![index].appearance!
+                                                  .toLowerCase() ==
+                                              'tablet' ||
+                                          respDMR.data![index].appearance!
+                                                  .toLowerCase() ==
+                                              'capsule'
+                                      ? ImageConst.med3Icon
+                                      : respDMR.data![index].appearance!
                                                       .toLowerCase() ==
-                                                  'tablet' ||
+                                                  'cream' ||
                                               respDMR.data![index].appearance!
                                                       .toLowerCase() ==
-                                                  'capsule'
-                                          ? ImageConst.med3Icon
-                                          : respDMR.data![index]
-                                                          .appearance!
-                                                          .toLowerCase() ==
-                                                      'cream' ||
-                                                  respDMR.data![index]
-                                                          .appearance!
-                                                          .toLowerCase() ==
-                                                      'ointment' ||
-                                                  respDMR.data![index]
-                                                          .appearance!
-                                                          .toLowerCase() ==
-                                                      'syrup'
-                                              ? ImageConst.med1Icon
-                                              : respDMR.data![index].appearance!
-                                                          .toLowerCase() ==
-                                                      'injection'
-                                                  ? ImageConst.med2Icon
-                                                  : ImageConst.med2Icon,
-                                      medName: '${respDMR.data![index].name}',
-                                      medGm: '${respDMR.data![index].strength} gm',
-                                      iconColor: respDMR.data![index].appearance!.toLowerCase() == 'tablet'
-                                          ? Color(0xff21D200)
-                                          : respDMR.data![index].appearance!.toLowerCase() == 'cream'
-                                              ? Color(0xffFFDD2C)
-                                              : respDMR.data![index].appearance!.toLowerCase() == 'syrup'
-                                                  ? Color(0xff9255E5)
-                                                  : Color(0xff9255E5),
-                                      timeOfDay: '${respDMR.data![index].totalTimes} ${respDMR.data![index].appearance} ${respDMR.data![index].frequency}',
-                                      color: respDMR.data![index].appearance!.toLowerCase() == 'tablet'
-                                          ? Color.fromRGBO(69, 196, 44, 0.13)
-                                          : respDMR.data![index].appearance!.toLowerCase() == 'cream'
-                                              ? Color.fromRGBO(193, 196, 44, 0.13)
-                                              : respDMR.data![index].appearance!.toLowerCase() == 'syrup'
-                                                  ? Color.fromRGBO(111, 44, 196, 0.13)
-                                                  : Color.fromRGBO(111, 44, 196, 0.13));
+                                                  'ointment' ||
+                                              respDMR.data![index].appearance!
+                                                      .toLowerCase() ==
+                                                  'syrup'
+                                          ? ImageConst.med1Icon
+                                          : respDMR.data![index].appearance!
+                                                      .toLowerCase() ==
+                                                  'injection'
+                                              ? ImageConst.med2Icon
+                                              : ImageConst.med2Icon,
+                                  medName: '${respDMR.data![index].name}',
+                                  medGm: '${respDMR.data![index].strength} gm',
+                                  iconColor: respDMR.data![index].appearance!.toLowerCase() == 'tablet'
+                                      ? Color(0xff21D200)
+                                      : respDMR.data![index].appearance!.toLowerCase() == 'cream'
+                                          ? Color(0xffFFDD2C)
+                                          : respDMR.data![index].appearance!.toLowerCase() == 'syrup'
+                                              ? Color(0xff9255E5)
+                                              : Color(0xff9255E5),
+                                  timeOfDay: '${respDMR.data![index].totalTimes} ${respDMR.data![index].appearance} ${respDMR.data![index].frequency}',
+                                  color: respDMR.data![index].appearance!.toLowerCase() == 'tablet'
+                                      ? Color.fromRGBO(69, 196, 44, 0.13)
+                                      : respDMR.data![index].appearance!.toLowerCase() == 'cream'
+                                          ? Color.fromRGBO(193, 196, 44, 0.13)
+                                          : respDMR.data![index].appearance!.toLowerCase() == 'syrup'
+                                              ? Color.fromRGBO(111, 44, 196, 0.13)
+                                              : Color.fromRGBO(111, 44, 196, 0.13));
                             } catch (e) {
                               return SizedBox();
                             }
@@ -2684,30 +2680,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                     onTap: () async {
                                       if (medId.isNotEmpty) {
                                         var resp = await DeleteMedicineRepo
-                                            .deleteMedicineRepo(id: medId);
-
-                                        if (resp["flag"] == true) {
-                                          await userDataViewModel
-                                              .userDataViewModel();
-                                          dateMedicineRecordViewModel
-                                              .dateMedicineRecordViewModel(
-                                                  isLoading: false,
-                                                  model: {"date": "${dayOf}"});
-                                          CommonWidget.getSnackBar(
-                                              duration: 2,
-                                              color: CommonColor.greenColor
-                                                  .withOpacity(.4),
-                                              colorText: Colors.white,
-                                              title: "Done!",
-                                              message: 'Medicine Skipped!');
-                                        } else {
-                                          CommonWidget.getSnackBar(
-                                              duration: 2,
-                                              color: Colors.red.withOpacity(.4),
-                                              colorText: Colors.white,
-                                              title: "Something went wrong!",
-                                              message: '${resp["data"]}');
-                                        }
+                                            .skipMedicineRepo(id: medId);
+                                        CommonWidget.getSnackBar(
+                                            duration: 2,
+                                            color: CommonColor.greenColor
+                                                .withOpacity(.4),
+                                            colorText: Colors.white,
+                                            title: "Done!",
+                                            message: 'Medicine Skipped!');
                                       } else {
                                         CommonWidget.getSnackBar(
                                             duration: 2,

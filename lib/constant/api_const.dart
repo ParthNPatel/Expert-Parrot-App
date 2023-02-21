@@ -19,6 +19,7 @@ class APIConst {
   static String getReminder = "/user/reminders?";
   static String dependent = "/user/dependents";
   static String removeMedicine = "/medicine/delete/";
+  static String skipMedicine = "/medicine/skip";
   static String recordMedicine = "/medicine/record";
   static String weekRecordMedicine = "/medicine/date-range";
   static String allCategory = "/admin/category";
