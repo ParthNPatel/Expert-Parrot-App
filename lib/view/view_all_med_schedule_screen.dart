@@ -432,6 +432,12 @@ class _ViewAllMedScheduleScreenState extends State<ViewAllMedScheduleScreen> {
                                       if (medId.isNotEmpty) {
                                         var resp = await DeleteMedicineRepo
                                             .skipMedicineRepo(id: medId);
+                                        setState(() {});
+                                        dateMedicineRecordViewModel
+                                            .dateMedicineRecordViewModel(
+                                                model: {
+                                              "date": "${widget.date}"
+                                            });
                                         CommonWidget.getSnackBar(
                                             duration: 2,
                                             color: CommonColor.greenColor

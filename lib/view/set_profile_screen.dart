@@ -240,7 +240,8 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                               "userImage": "${image!.path}",
                               "age": "${ageController!.text.toString().trim()}",
                               "weight":
-                                  "${weightController!.text.toString().trim()}"
+                                  "${weightController!.text.toString().trim()}",
+                              "userTime": "${DateTime.now()}",
                             };
 
                             await EditProfileRepo.editProfileRepo(model: _req);

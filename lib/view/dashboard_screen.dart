@@ -170,6 +170,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     userDataViewModel.userDataViewModel();
     dateMedicineRecordViewModel.dateMedicineRecordViewModel(
         isLoading: true, model: {"date": "${DateTime.now()}"});
+    EditProfileRepo.updateUserTime();
     super.initState();
 
     print('getUserKm =============== > ${GetStorageServices.getUserKm()}');
@@ -2679,6 +2680,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                       if (medId.isNotEmpty) {
                                         var resp = await DeleteMedicineRepo
                                             .skipMedicineRepo(id: medId);
+
+                                        setState(() {});
+                                        dateMedicineRecordViewModel
+                                            .dateMedicineRecordViewModel(
+                                                isLoading: true,
+                                                model: {
+                                              "date": "${DateTime.now()}"
+                                            });
                                         CommonWidget.getSnackBar(
                                             duration: 2,
                                             color: CommonColor.greenColor

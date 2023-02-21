@@ -257,6 +257,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     "height": heightController!.text.toString().trim(),
                     "age": ageController!.text.toString().trim(),
                     "weight": weightController!.text.toString().trim(),
+                    "userTime": "${DateTime.now()}",
                   };
                 }
 

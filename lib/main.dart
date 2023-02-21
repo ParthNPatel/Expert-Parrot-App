@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:sizer/sizer.dart';
 import 'controller/handle_float_controller.dart';
 
@@ -19,6 +20,12 @@ void main() async {
 
   await Firebase.initializeApp();
   await GetStorage.init();
+
+  await Permission.notification.isDenied.then((value) {
+    if (value) {
+      Permission.notification.request();
+    }
+  });
 
   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
@@ -73,7 +80,6 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
-
 }
 
 class BaseBindings extends Bindings {

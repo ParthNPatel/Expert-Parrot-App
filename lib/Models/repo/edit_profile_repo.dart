@@ -60,7 +60,29 @@ class EditProfileRepo extends BaseService {
     request.body = json.encode({
       "calories": "$calories",
       "kilometers": "$kilometers",
-      "steps": "$steps"
+      "steps": "$steps",
+      "userTime": "${DateTime.now()}",
+    });
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      print(await response.stream.bytesToString());
+    } else {
+      print(response.reasonPhrase);
+    }
+  }
+
+  static Future updateUserTime() async {
+    var headers = {
+      'Authorization': 'Bearer ${GetStorageServices.getBarrierToken()}',
+      'Content-Type': 'application/json'
+    };
+    var request =
+        http.Request('PUT', Uri.parse('http://52.66.209.219:5000/user/'));
+    request.body = json.encode({
+      "userTime": "${DateTime.now()}",
     });
     request.headers.addAll(headers);
 
